@@ -35,25 +35,31 @@
     </nav>
   {%- endcapture -%}
 
-  {%- if collection.image and section.settings.show_collection_image -%}
-    <image-with-text-overlay reveal-on-scroll parallax class="image-overlay image-overlay--{{ section.settings.section_height }}" {% if section.settings.section_height == 'auto' %}style="--image-aspect-ratio: {{ collection.image.aspect_ratio }}"{% endif %}>
+  {%- if collection.metafields.banner.web_banner and section.settings.show_collection_image -%}
+  	  <div class="container">
+        <div class="page-header">
+          {{- breadcrumb -}}
+        </div>
+      </div>
+  	  <img loading="lazy" class="collmob hidden-tablet-and-up" src="{{collection.metafields.banner.mobile_banner}}"/>
+      <img loading="lazy" class="colldesk hidden-phone" src="{{collection.metafields.banner.web_banner}}"/> 
+    {%- comment -%}
+  	<image-with-text-overlay reveal-on-scroll parallax class="image-overlay image-overlay--{{ section.settings.section_height }}" {% if section.settings.section_height == 'auto' %}style="--image-aspect-ratio: {{ collection.image.aspect_ratio }}"{% endif %}>
       <div class="image-overlay__image-wrapper" {% if section.settings.section_height == 'auto' %}style="padding-bottom: {{ 100.0 | divided_by: collection.image.aspect_ratio }}%"{% endif %}>
         {%- comment -%}Performance note: this image must not be lazyloaded as it contributes to the LCP{%- endcomment -%}
         <picture>
-          <source media="(max-width: 740px)" {% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', ignore_src: true %}>
-          <img class="image-overlay__image" reveal {% render 'image-attributes', image: collection.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}>
+          <source media="(min-width: 769px)" {% render 'image-attributes', image: collection.metafields.banner.web_banner, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
+          <source media="(max-width: 768px)" {% render 'image-attributes', image: collection.metafields.banner.mobile_banner, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
+          <img class="image-overlay__image" reveal {% render 'image-attributes', image: collection.metafields.banner.web_banner, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}>
         </picture>
       </div>
-
-      <div class="container">
+      <div class="container visually-hidden">
         <div class="image-overlay__content-wrapper">
           {{- breadcrumb -}}
-
           <div class="image-overlay__content content-box content-box--{{ section.settings.text_width }} content-box--text-center content-box--center text-container">
             <h1 class="heading h1">
               <split-lines reveal>{{ collection.title }}</split-lines>
             </h1>
-
             {%- if section.settings.show_collection_description and collection.description != blank -%}
               <div class="image-overlay__text-container" reveal>
                 {{- collection.description -}}
@@ -63,6 +69,7 @@
         </div>
       </div>
     </image-with-text-overlay>
+  {%- endcomment -%}
   {%- else -%}
     <div class="container">
       <div class="page-header">

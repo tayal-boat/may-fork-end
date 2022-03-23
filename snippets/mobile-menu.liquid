@@ -97,10 +97,17 @@
                           </ul>
                         </collapsible-content>
                       {%- else -%}
-                        <a href="{{ sub_link.url }}" class="mobile-nav__link">{{ sub_link.title }}</a>
+                        <a href="{{ sub_link.url }}" class="mobile-nav__link">
+                      		{%- if sub_link.object.image -%}
+                              <img loading="lazy" sizes="240px" {% render 'image-attributes', image: sub_link.object.image, sizes: '240,480,720' %} alt="{{- sub_link.title -}}" />
+                            {%- else -%}
+                              {{- sub_link.title -}}
+                            {%- endif -%}
+                      	</a>
                       {%- endif -%}
                     </li>
                   {%- endfor -%}
+                  
                 </ul>
               {%- endif -%}
 
@@ -117,6 +124,18 @@
           {%- endif -%}
         </li>
       {%- endfor -%}
+      <li class="trackorder mobile-nav__item" data-level="1"><a class="trackorder mobile-nav__link heading h5" href="https://dtc.boat-lifestyle.com/track">Track Your Order</a></li>
+      {% if customer %}
+         <li class="your-acct mobile-nav__item" data-level="1"><a class="mobile-nav__link heading h5" href="/account">Account</a></li>
+      	 <li class="logout mobile-nav__item" data-level="1"><a class="mobile-nav__link heading h5" href="/">Logout</a></li>
+      {% else %}         
+      	 <li class="register mobile-nav__item" data-level="1"><a class="mobile-nav__link heading h5" href="/account/register">Register</a></li>
+      {% endif %}
+      {% if customer %}
+         <li class="mobile-nav__item" data-level="1">
+            <a class="trackorder mobile-nav__link heading h5" href="https://boat-lifestyle.com/apps/ret">Manage Your Order</a>
+         </li>
+      {% endif %}
     </ul>
   </div>
 

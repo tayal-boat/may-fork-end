@@ -18,12 +18,33 @@
 
     {% unless featured %}
       <h1 class="product-meta__title heading h3">{{ product.title }}</h1>
+      {% render 'product-subtitles' %}
     {% else %}
       <h2 class="product-meta__title heading h3">
         <a href="{{ product.url }}">{{ product.title }}</a>
       </h2>
     {% endunless %}
+	{%- if section.settings.show_product_rating or section.settings.show_sku -%}
+      <div class="product-meta__reference">
+        {%- if section.settings.show_product_rating -%}
+        {%- comment -%}
+          <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-reviews-pocket" is="review-link" data-smooth-scroll class="product-meta__reviews-badge hidden-lap-and-up">{%- render 'product-rating', product: product -%}</a>
+          <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-tabs" is="review-link" data-smooth-scroll class="product-meta__reviews-badge hidden-pocket">{%- render 'product-rating', product: product -%}</a>
+        {%- endcomment -%}
+        {% comment %}Start automatically added Judge.me widget{% endcomment %}
+          {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
+        {% comment %}End automatically added Judge.me widget{% endcomment %}
+        {%- endif -%}
 
+        {%- if section.settings.show_sku -%}
+          <span class="product-meta__sku text--subdued text--xxsmall" {% if product.selected_or_first_available_variant.sku == blank %}style="display: none"{% endif %} data-product-sku-container>
+            {{- 'product.general.sku' | t }}
+            <span class="product-meta__sku-number" data-product-sku-number>{{ product.selected_or_first_available_variant.sku }}</span>
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    {% render 'product-offers' %}
     <div class="product-meta__price-list-container" role="region" aria-live="polite">
       <div class="price-list" data-product-price-list>
         {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
@@ -31,9 +52,9 @@
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.price | money_with_currency -}}
+              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.price | money -}}
+              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
           </span>
 
@@ -41,18 +62,18 @@
             <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency -}}
+              {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.compare_at_price | money -}}
+              {{- product.selected_or_first_available_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
           </span>
         {%- else -%}
           <span class="price price--large">
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.price | money_with_currency -}}
+              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.price | money -}}
+              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
           </span>
         {%- endif -%}
@@ -87,7 +108,13 @@
         {%- endunless -%}
       </div>
     </div>
-
+	<p class="inclusive">Inclusive of all taxes</p>
+    {%- if template contains 'product' -%}
+    {% render 'product-payment-partner' %}
+    {%- endif -%}
+    {%- if product.tags contains 'sale-timer' -%}
+    {% render 'countdown-timer', title: "Special Offer Ends In", end_date: "Mar 31, 2022" %}
+    {%- endif -%}
     {%- if section.settings.show_taxes_included -%}
       {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
         <p class="product-meta__taxes-included text--small">
@@ -111,21 +138,7 @@
       {%- endform -%}
     </product-payment-terms>
 
-    {%- if section.settings.show_product_rating or section.settings.show_sku -%}
-      <div class="product-meta__reference">
-        {%- if section.settings.show_product_rating -%}
-          <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-reviews-pocket" is="review-link" data-smooth-scroll class="product-meta__reviews-badge hidden-lap-and-up">{%- render 'product-rating', product: product -%}</a>
-          <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-tabs" is="review-link" data-smooth-scroll class="product-meta__reviews-badge hidden-pocket">{%- render 'product-rating', product: product -%}</a>
-        {%- endif -%}
-
-        {%- if section.settings.show_sku -%}
-          <span class="product-meta__sku text--subdued text--xxsmall" {% if product.selected_or_first_available_variant.sku == blank %}style="display: none"{% endif %} data-product-sku-container>
-            {{- 'product.general.sku' | t }}
-            <span class="product-meta__sku-number" data-product-sku-number>{{ product.selected_or_first_available_variant.sku }}</span>
-          </span>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
+    
   </product-meta>
 
   {%- render 'product-form', product: product, update_url: update_url -%}

@@ -6307,6 +6307,43 @@
       }
     });
   })();
+
+// Clevertap Events   
+
+// Homepage Events
+	var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+    const slides = document.querySelectorAll('.slideshow__slide-list .slideshow__slide');
+    slides.forEach((slide, i) => {
+      slide.addEventListener('click', function() {
+          let imageTitle = slide.querySelector('.image_alt').innerText;
+          alert(imageTitle)
+          let slideNum = `${i+1}`
+          clevertap.event.push("Homepage Banner clicked", {
+            "Banner Number": 'Banner ' + slideNum,
+            "Banner Title": imageTitle,
+            "userSource": userSource
+          })
+      })
+    });
+	$('.featured-collections').on('click', function(){
+        const sectionTitle = $(this).siblings('.section__header').find('.tabs-nav__item[aria-expanded="true"]').text();
+        clevertap.event.push("Homepage Cards section clicked", {
+          "userSource": userSource,
+          "secttion Title": sectionTitle
+        });
+    });
+    $('.product-item__quick-form').on('click', function() {
+      	let prodTitle = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.product-item-meta__title').text();
+        let prodPrice = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.price--highlight').text().split('price')[1];
+      	clevertap.event.push("Quick Buy Clicked", {
+          "Product Title": prodTitle,
+          "Price": prodPrice,
+          "userSource": userSource
+        });
+    })
 })();
 /*!
 * focus-trap 6.7.1

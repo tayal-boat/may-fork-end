@@ -150,9 +150,9 @@
 
                   {%- capture line_item_properties -%}
                     {%- unless line_item.product.has_only_default_variant -%}
-                      <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.variant.title }}</span>
+                      <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.variant.option1 }}</span>
                     {%- endunless -%}
-
+					
                     {%- if line_item.selling_plan_allocation -%}
                       <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.selling_plan_allocation.selling_plan.name }}</span>
                     {%- endif -%}
@@ -216,10 +216,10 @@
                       {%- render 'icon' with 'minus' -%}
                     </a>
 
-                    <input is="input-number" class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
+                    <input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
 
                     {%- if allow_more -%}
-                      <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                      <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                         {%- render 'icon' with 'plus' -%}
                       </a>
                     {%- else -%}
@@ -247,6 +247,16 @@
                 </div>
               </div>
             </div>
+            {% if line_item.quantity > 6 %}
+              <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+            {% endif %}
+            {% if line_item.product.variants.size > 1 %}
+            
+            
+            <p>More than one variants.</p>
+            
+
+            {% endif %}
           </line-item>
         {%- endfor -%}
       </form>
@@ -317,7 +327,7 @@
           {%- endfor -%}
         </ul>
       {%- endif -%}
-
+	  {%- comment -%}
       {%- if section.settings.show_order_note or shipping_tax_note != '' -%}
         <div class="mini-cart__actions text--subdued text--xsmall">
           {%- if section.settings.show_order_note -%}
@@ -335,8 +345,10 @@
           {%- endif -%}
         </div>
       {%- endif -%}
-
+      {%- endcomment -%}
+      <div id="zestmoney-widget-control-cart"></div>
       {%- if section.settings.show_checkout_button -%}
+      	{% render 'gokwik-checkout' %}
         <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
           <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
 

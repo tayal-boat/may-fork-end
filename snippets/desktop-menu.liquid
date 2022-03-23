@@ -16,7 +16,10 @@
 
       <li class="header__linklist-item {% if link.links.size > 0 or mega_menu_block != '' %}has-dropdown{% endif %}" data-item-title="{{ link.title | escape }}">
         <a class="header__linklist-link link--animated" href="{{ link.url }}" {% if link.links.size > 0 or mega_menu_block != '' %}aria-controls="desktop-menu-{{ forloop.index }}" aria-expanded="false"{% endif %}>
-          {{- link.title -}}
+          <span class="linklist--title">{{- link.title -}}</span>
+          {%- if link.links.size > 0 -%}
+             {% render 'icon' with 'dropdown-arrow-right', direction_aware: true %}
+          {%- endif -%}
         </a>
 
         {%- if mega_menu_block != '' -%}
@@ -107,9 +110,12 @@
           <ul hidden id="desktop-menu-{{ forloop.index }}" class="nav-dropdown {% if link.levels == 1 %}nav-dropdown--restrict{% endif %} list--unstyled" role="list">
             {%- for sub_link in link.links -%}
               <li class="nav-dropdown__item {% if sub_link.links.size > 0 %}has-dropdown{% endif %}">
-                <a class="nav-dropdown__link link--faded" href="{{ sub_link.url }}" {% if sub_link.links.size > 0 %}aria-controls="desktop-menu-{{ forloop.parentloop.index }}-{{ forloop.index }}" aria-expanded="false"{% endif %}>
-                  {{- sub_link.title -}}
-
+                <a class="nav-dropdown__link link--faded test" href="{{ sub_link.url }}" {% if sub_link.links.size > 0 %}aria-controls="desktop-menu-{{ forloop.parentloop.index }}-{{ forloop.index }}" aria-expanded="false"{% endif %}>
+                  {%- if sub_link.object.image -%}
+                  	<img loading="lazy" sizes="400px" {% render 'image-attributes', image: sub_link.object.image, sizes: '240,480,720,960,1200,1440,1680,1920,2160' %} alt="{{- sub_link.title -}}" />
+                  {%- else -%}
+                  	{{- sub_link.title -}}
+                  {%- endif -%}
                   {%- if sub_link.links.size > 0 -%}
                     {% render 'icon' with 'dropdown-arrow-right', direction_aware: true %}
                   {%- endif -%}

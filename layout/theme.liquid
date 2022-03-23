@@ -20,7 +20,7 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="theme-color" content="{{ settings.header_background }}">
-
+	<meta name="facebook-domain-verification" content="qad1e3gldwmxjf6luncdygpvcpduub" />
     <title>{% if page_title == blank %}{{ shop.name }}{% else %}{{ page_title }}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% endif %}</title>
 
     {%- if page_description -%}
@@ -32,7 +32,29 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     {%- if settings.favicon -%}
       <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
     {%- endif -%}
-
+    <!-- Google Tag Manager -->
+	<script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-BZTQ6ZT');
+    </script>
+    <!-- Google Tag Manager Ends -->
+    <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=AW-816285276"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-816285276', {'send_page_view': false});
+      </script>
+    <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
     {%- comment -%}Few prefech to increase performance on commonly used third-parties{%- endcomment -%}
     <link rel="preconnect" href="https://cdn.shopify.com">
     <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
@@ -41,12 +63,15 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     {%- unless settings.heading_font.system? and settings.text_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}
-
+	<link rel="alternate stylesheet" href="{{ 'bootstrap.min.css' | asset_url }}" title="styles" as="style" onload="this.title='';this.rel='stylesheet'">
     {%- comment -%}Preload important resources{%- endcomment -%}
     <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
     <link rel="preload" as="script" href="{{ 'vendor.js' | asset_url }}">
     <link rel="preload" as="script" href="{{ 'theme.js' | asset_url }}">
-
+    <link rel="preload" as="script" href="{{ 'jquery.min.js' | asset_url }}">
+    {% if template == 'product' %}
+    <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
+	{% endif %}
     {%- comment -%}
       IMPLEMENTATION NOTE: for improving performance, Focal tries to preload images on known pages (such as blog page,
       product or collection pages). In order to keep a main JS file size minimal, the theme also lazyloads non-essential
@@ -70,14 +95,20 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     {% render 'microdata-schema' %}
     {% render 'css-variables', direction: direction %}
     {% render 'js-variables', direction: direction %}
-
+    
+	
+    
     <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
-
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="{{ 'jquery.min.js' | asset_url }}"></script>
     <script src="{{ 'vendor.js' | asset_url }}" defer></script>
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
-
+    
+	{%- render 'wizrocket_variables_generator' -%}
+    {% render 'clevertap' %}
     {{ content_for_header }}
+    
   </head>
 
   {%- assign feature_classes = '' -%}
@@ -87,6 +118,16 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
   {%- endif -%}
 
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-BZTQ6ZT"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     {%- comment -%}Common SVG definitions that we are re-using in several places{%- endcomment -%}
     <svg class="visually-hidden">
       <linearGradient id="rating-star-gradient-half">
@@ -161,5 +202,14 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
       {%- section 'footer' -%}
     {%- endif -%}
+    {% render 'back-in-stock-helper' %}
+    {% render 'judgeme_core' %}
+    {% render 'zest-money-widget' %}
+    {% render 'gokwik' %}
+    
+    <!-- google dynamic remarketing tag for theme.liquid -->
+    {%- render 'google-adwords-remarketing' -%}
+    <!-- Preciso Script -->
+    {%- render 'preciso' -%}
   </body>
 </html>
