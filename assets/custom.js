@@ -180,13 +180,19 @@
        
        $("#mini-cart-form .line-item").each(function (i, obj) {
          var product_title = $(this).find('.product-item-meta__title').text();
-         alert(product_title)
+         
          var product_id = $(this).find('.product-item-meta__title').attr('data-product_id');
          var product_price = $(this).find('.price--highlight').text().split('price')[1];
          var product_category = $(this).find('.product-item-meta__title').attr('data-product_type');
          var quantity = $(this).find('.quantity-selector__input').val();
-         if (i == 0) { product_title_concat = product_title }
-         else { product_title_concat = product_title_concat + ',' + product_title }
+         if (i == 0) { 
+           product_title_concat = product_title ;
+           alert(product_title)
+         }
+         else { 
+           product_title_concat = product_title_concat + ',' + product_title;
+           alert(product_title)
+         }
          var item = {
              'item_name': product_title,
              'item_id': product_id,
