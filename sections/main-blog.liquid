@@ -1,3 +1,4 @@
+<script src="{{ 'infinite-scroll.min.js' | asset_url }}"></script>
 <section>
   <div class="main-banner-img">
   	<div class="page-header cf hidden-phone">
@@ -95,13 +96,33 @@
               {%- render 'article-item', article: article, heading_size: 'h4' -%}
             {%- endfor -%}
           </article-list>
-
+		  <div id="spinner1" class="spinner text-center">
+            <img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Spinner-0.9s-60px.gif?v=1630394416" alt="Load More" />
+          </div>
           {%- render 'pagination', paginate: paginate -%}
         {%- endpaginate -%}
       </div>
     </div>
   {%- endif -%}
 </section>
+
+<script>
+let ias = new InfiniteAjaxScroll('.article-list', {
+    item: '.article-item',
+    next: '.next',
+    pagination: '.pagination',
+    spinner: {
+      element: '.spinner',
+      delay: 300,
+      show: function(element) {
+        element.style.display = 'block';
+      },
+      hide: function(element) {
+        element.style.display = 'none';
+      }
+    }
+  });
+</script>
 
 {% schema %}
 {
