@@ -200,7 +200,6 @@
          datalayer_items.push(item)
       });
       clevertap.event.push("Checkout Button Clicked", {
-        	
           "Amount": cart_total_price,
           "Product Name": product_title_concat
       });
