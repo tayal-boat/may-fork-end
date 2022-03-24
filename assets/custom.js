@@ -170,7 +170,8 @@
           "userSource": userSource
         });
     });
-	$('.gokwik-checkout').click(function () {
+    $(window).load(function() {
+		$('.gokwik-checkout').click(function () {
       alert('gokwik');
        clevertap.event.push('GoKwik Button Clicked');
     });
@@ -217,4 +218,6 @@
           }
       });
     });
+    });
+	
     
