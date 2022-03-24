@@ -35,9 +35,19 @@
         });
   		{%- elsif template == 'product' -%}
   		clevertap.event.push("Product Viewed", {
-          "Page Title": '{{product.title}}',
-          "Page Url": '{{product.url}}',
+        {%- assign product__price = product.price | plus: 0 | divided_by: 100 -%}
+          "Product Name": '{{product.title}}',
+          "Product Id": {{product.id}},
+          "Product Category": '{{product.type}}',
+          "Product Price": {{product__price}},
+          "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+          "IsProductAvailable": {{product.available}},
           "userSource": userSource
+        });
+        clevertap.profile.push({
+          "Site": {
+              "Product Name": '{{product.title}}' 
+          }
         });
         {%- else -%}
         var pageURL = window.location.href;

@@ -69,12 +69,8 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     <link rel="preload" as="script" href="{{ 'vendor.js' | asset_url }}">
     <link rel="preload" as="script" href="{{ 'theme.js' | asset_url }}">
     <link rel="preload" as="script" href="{{ 'jquery.min.js' | asset_url }}">
-    {% if template == 'product' %}
-    <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
-	{% endif %}
-    {% if template == 'page' %}
-    <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
-	{% endif %}
+    
+    
     {%- comment -%}
       IMPLEMENTATION NOTE: for improving performance, Focal tries to preload images on known pages (such as blog page,
       product or collection pages). In order to keep a main JS file size minimal, the theme also lazyloads non-essential
@@ -107,9 +103,17 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     <script src="{{ 'vendor.js' | asset_url }}" defer></script>
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" async="async"></script>
     
 	{%- render 'wizrocket_variables_generator' -%}
     {% render 'clevertap' %}
+    {% if template == 'product' %}
+    <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
+    {%- render 'product-js' -%}
+	{% endif %}
+    
+    
+    
     {{ content_for_header }}
     
   </head>

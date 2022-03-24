@@ -1,4 +1,19 @@
 <section>
+  <div class="main-banner-img">
+  	<div class="page-header cf hidden-phone">
+      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-desktop.jpg?v=1604480765" alt="Blogs" />
+    </div>
+    <div class="page-header cf hidden-tablet-and-up">
+      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-Mobile.jpg?v=1604480761" alt="Blogs" />
+    </div>
+    {% comment %}
+    {% if blog.url == "/blogs/blog" %}
+      <h1 class="majortitle text-white">the boAt blog</h1>
+    {% else %}
+      <h1 class="majortitle text-white">Trending News at boAt</h1>
+    {% endif %}
+    {% endcomment %}
+  </div>
   {%- if blog.articles_count == 0 -%}
     <div class="empty-state text-container">
       <h1 class="heading h1">{{ blog.title }}</h1>
@@ -11,7 +26,7 @@
     </div>
   {%- else -%}
     {%- if section.settings.show_blog_title -%}
-      <div class="container">
+      <div class="container visually-hidden">
         <div class="page-header">
           <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb breadcrumb--floating text--xsmall hidden-phone">
             <ol class="breadcrumb__list" role="list">
@@ -35,7 +50,7 @@
             </ol>
           </nav>
 
-          <div class="page-header__text-wrapper text-container">
+          <div class="page-header__text-wrapper text-container visually-hidden">
             <h1 class="heading h1">{{ blog.title }}</h1>
           </div>
         </div>
@@ -72,7 +87,7 @@
       </link-bar>
     {%- endif -%}
 
-    <div class="vertical-breather vertical-breather--margin vertical-breather--extra-tight">
+    <div class="vertical-breather vertical-breather--margin vertical-breather--extra-tight mt-5">
       <div class="container">
         {%- paginate blog.articles by section.settings.articles_per_page -%}
           <article-list {% if settings.stagger_blog_posts_apparition %}stagger-apparition{% endif %} class="article-list article-list--stacked">

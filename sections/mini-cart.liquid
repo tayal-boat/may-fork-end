@@ -146,11 +146,11 @@
                     {%- endunless -%}
                   {%- endif -%}
 
-                  <a href="{{ line_item.url }}" class="product-item-meta__title text--small">{{ line_item.product.title }}</a>
+                  <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">{{ line_item.product.title }}</a>
 
                   {%- capture line_item_properties -%}
                     {%- unless line_item.product.has_only_default_variant -%}
-                      <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.variant.option1 }}</span>
+                      <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.variant.option1 | camelcase  }}</span>
                     {%- endunless -%}
 					
                     {%- if line_item.selling_plan_allocation -%}
@@ -354,6 +354,7 @@
 
           {{- 'cart.general.checkout' | t -}}
           <span class="square-separator"></span>
+          <input class="cart-total" value="{{cart.total_price | money_with_currency}}" type="hidden">
           {{- cart.total_price | money_with_currency -}}
         </button>
       {%- else -%}
