@@ -172,5 +172,11 @@
     });
 	$('.gokwik-checkout').click(function () {
        clevertap.event.push('GoKwik Button Clicked');
-    })
+    });
+    $('.checkout-button').click(function() {
+       var cart_total_price = {{cart.total_price}};
+       alert();
+       var product_title_concat = "";
+       var datalayer_items = [];
+    });
     
