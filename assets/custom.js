@@ -187,9 +187,11 @@
          var quantity = $(this).find('.quantity-selector__input').val();
          if (i == 0) { 
            product_title_concat = product_title ;
+           alert('inside if');
          }
          else { 
            product_title_concat = product_title_concat + ',' + product_title;
+           alert('inside else');
          }
          var item = {
              'item_name': product_title,
@@ -199,6 +201,7 @@
              'quantity': quantity
          }
          datalayer_items.push(item)
+         alert('after datalayer')
       });
       clevertap.event.push("Checkout Button Clicked", {
           "Amount": cart_total_price,
