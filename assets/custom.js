@@ -171,11 +171,9 @@
         });
     });
 	$('.gokwik-checkout').click(function () {
-      alert('gokwik');
        clevertap.event.push('GoKwik Button Clicked');
     });
     $('#mini-cart-form').submit(function() {
-      alert('after btn click');
        var cart_total_price = $('.cart-total').val();
        var product_title_concat = ""
        var datalayer_items = []
@@ -188,11 +186,9 @@
          var quantity = $(this).find('.quantity-selector__input').val();
          if (i == 0) { 
            product_title_concat = product_title ;
-           alert('inside if');
          }
          else { 
            product_title_concat = product_title_concat + ',' + product_title;
-           alert('inside else');
          }
          var item = {
              'item_name': product_title,
@@ -202,9 +198,7 @@
              'quantity': quantity
          }
          datalayer_items.push(item)
-         alert('after datalayer');
       });
-      alert('before clevertap');
       clevertap.event.push("Checkout Button Clicked", {
           "Amount": cart_total_price,
           "Product Name": product_title_concat
