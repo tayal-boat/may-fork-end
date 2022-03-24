@@ -191,7 +191,7 @@
              'item_id': product_id,
              'price': product_price,
              'item_category': product_category,
-             'quantity': qu
+             'quantity': quantity
          }
          datalayer_items.push(item)
       });
