@@ -52,7 +52,27 @@
             }
           });
       });
-    var productTitle = '{{product.title}}';
+      $(".shopify-payment-button").click(function(){
+        var variant_title = $(".color-swatch__radio:checked").val();
+        clevertap.event.push("Buy Now", {
+            "Product Name": '{{product.title}}' + ' - ' + variant_title,
+            "Product Id": {{product.id}},
+            "Product Category": '{{product.type}}',
+            "Amount": {{product__price}},
+            "Quantity": 1,
+            "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+            "userSource": userSource
+          });
+        clevertap.profile.push({
+          "Site": {
+            "BN Product Name": '{{product.title}}' + ' - ' + variant_title,
+            "BN Amount": {{product__price}},
+            "BN Quantity": 1,
+            "BN Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+          }
+        });
+      })
+      var productTitle = '{{product.title}}';
       productTitle = productTitle + ' - boAt Lifestyle';
       $(".product-tabs__content").find("img").attr("alt", productTitle);
     
