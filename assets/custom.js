@@ -180,6 +180,7 @@
        
        $("#mini-cart-form .line-item").each(function (i, obj) {
          var product_title = $(this).find('.product-item-meta__title').text();
+         alert(product_title)
          var product_id = $(this).find('.product-item-meta__title').attr('data-product_id');
          var product_price = $(this).find('.price--highlight').text().split('price')[1];
          var product_category = $(this).find('.product-item-meta__title').attr('data-product_type');
