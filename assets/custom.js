@@ -199,9 +199,8 @@
          }
          datalayer_items.push(item)
       });
-      alert(product_title_concat)
-      alert(cart_total_price)
       clevertap.event.push("Checkout Button Clicked", {
+        	
           "Amount": cart_total_price,
           "Product Name": product_title_concat
       });
