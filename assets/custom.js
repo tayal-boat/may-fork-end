@@ -171,6 +171,7 @@
         });
     });
 	$('.gokwik-checkout').click(function () {
+      alert('gokwik');
        clevertap.event.push('GoKwik Button Clicked');
     });
     $('#mini-cart-form').submit(function() {
