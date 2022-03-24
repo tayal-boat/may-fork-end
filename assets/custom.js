@@ -162,6 +162,7 @@
         });
     });
     $('.product-item__quick-form').on('click', function() {
+      	alert();
       	let prodTitle = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.product-item-meta__title').text();
         let prodPrice = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.price--highlight').text().split('price')[1];
       	clevertap.event.push("Quick Buy Clicked", {
