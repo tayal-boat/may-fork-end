@@ -178,7 +178,7 @@
        var product_title_concat = ""
        var datalayer_items = []
        
-       $(".line-item").each(function (i, obj) {
+       $("#mini-cart-form .line-item").each(function (i, obj) {
          var product_title = $(this).find('.product-item-meta__title').text();
          var product_id = $(this).find('.product-item-meta__title').attr('data-product_id');
          var product_price = $(this).find('.price--highlight').text().split('price')[1];
