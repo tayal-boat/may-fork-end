@@ -76,7 +76,43 @@
       productTitle = productTitle + ' - boAt Lifestyle';
       $(".product-tabs__content").find("img").attr("alt", productTitle);
     
-    
+// FAQs block JS
+    if($('.new-productpart-footer-content').length) {
+        document.querySelector('.new-productpart-footer-content h3').textContent = 'FAQs';
+    }
+    $("p.product-ques").append(`<span class="expand icon-faq"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down-arrow_1.png?v=1616067880" /></span>`)
+        $("p.product-ques").click(function(){
+          $(this).next(".product-ans").slideToggle("fast");
+          $(this).find(".icon-faq").toggleClass("collapsed").removeClass("expand");
+          $(this).closest(".ac-tab-new").siblings(".ac-tab-new").find(".product-ans").slideUp("fast");
+          $(this).closest(".ac-tab-new").siblings(".ac-tab-new").find(".icon-faq").removeClass("collapsed").addClass("expand");
+        })
+        if($(".new-productpart-footer-content .ac-tab-new").length > 7) {
+            $(".new-productpart-footer-content .ac-col").append('<div class="view-more-faqs"><span class="outer-text"><span class="more-text">View More</span><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down-arrow.png?v=1611821970" /></span></div>')
+        }
+        $('.new-productpart-footer-content .ac-tab-new:gt(6)').hide();
+        $('.view-more-faqs span.outer-text').click(function() {
+            $('.view-more-faqs span.more-text').text(function(i, text){
+                return text === "View More" ? "View Less" : "View More";
+            })
+            $('.new-productpart-footer-content .ac-tab-new:gt(6)').slideToggle(200);
+            if($('.view-more-faqs span.more-text').text() == "View Less") {
+              $('.view-more-faqs img').addClass("rotated");
+            }
+            else {
+              $('.view-more-faqs img').removeClass("rotated");
+            }
+        });
+        $(".video-new img, .manual-new img").attr("alt", "");
+        $('[data-toggle="tooltip"]').tooltip();
+        $(".productPart-two-new .productpart-two-content, .productPart-third-new .productpart-third-content, .productPart-fourthA-new .productpart-fourth-contentA").attr("data-aos", "");
+        $(".manual-new").click(function(e) {
+          if($(".manual-new").attr("href") == "") {
+            e.preventDefault();
+             $(this).attr("data-target", "#manualModal");
+             $(this).attr("data-toggle", "modal");
+          }
+        })
     
     
     
