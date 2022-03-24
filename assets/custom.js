@@ -195,6 +195,16 @@
          }
          datalayer_items.push(item)
       });
-
+      clevertap.event.push("Checkout Button Clicked", {
+          "Amount": cart_total_price,
+          "Product Name": product_title_concat
+      });
+      dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+      dataLayer.push({
+          'event': 'begin_checkout',
+          'ecommerce': {
+          	'items': datalayer_items
+          }
+      });
     });
     
