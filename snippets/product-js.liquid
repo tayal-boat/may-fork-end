@@ -10,15 +10,49 @@
         "userSource": userSource
      });
     });
-    $('.product-item__quick-form').on('click', function() {
-      	let prodTitle = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.product-item-meta__title').text();
-        let prodPrice = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.price--highlight').text().split('price')[1];
-      	clevertap.event.push("Quick Buy Clicked", {
-          "Product Title": prodTitle,
-          "Price": prodPrice,
-          "userSource": userSource
-        });
-    });
+    $("#AddToCart").click(function(){
+        var isPreOrder;
+        {% if product.tags contains "preorder" %}
+        	isPreOrder = true;
+        {% else %}
+        	isPreOrder = false;
+        {% endif %}
+      	var variant_title = $(".color-swatch__radio:checked").val();
+          {%- assign product__price = bold_price | plus: 0 | divided_by: 100 -%}
+          clevertap.event.push("Added to Cart", {
+            "Product Name": '{{product.title}}' + ' - ' + variant_title,
+            "Product Id": {{product.id}},
+            "Product Category": '{{product.type}}',
+            "Amount": {{product__price}},
+            "Quantity": 1,
+            "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+            "source": 'Product Page',
+            "isPreOrdered": isPreOrder,
+            "userSource": userSource
+          });
+          clevertap.profile.push({
+            "Site": {
+                "A2C Product Name": '{{product.title}}' + ' - ' + variant_title,
+                "A2C Amount": {{product__price}},
+                "A2C Quantity": 1,
+                "A2C Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+            }
+          });
+          dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+          dataLayer.push({
+            'event': 'add_to_cart',
+            'ecommerce': {
+              'items': [{
+                'item_name': '{{product.title}}',
+               'item_id': {{product.id}},
+               'price': {{bold_price | plus: 0 | divided_by: 100}},
+               'item_category': '{{product.type}}',
+               'item_variant': 'variant_title',
+                'quantity': '1'
+              }]
+            }
+          });
+      });
     
     
     
