@@ -175,7 +175,6 @@
     });
     $('.checkout-button').click(function() {
        var cart_total_price = $('.cart-total').val();
-       alert(cart_total_price);
        var product_title_concat = ""
        var datalayer_items = []
     });
