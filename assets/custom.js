@@ -174,7 +174,7 @@
        clevertap.event.push('GoKwik Button Clicked');
     });
     $('.checkout-button').click(function() {
-      alert();
+      alert('after btn click');
        var cart_total_price = $('.cart-total').val();
        var product_title_concat = ""
        var datalayer_items = []
@@ -201,8 +201,9 @@
              'quantity': quantity
          }
          datalayer_items.push(item)
-         alert('after datalayer')
+         alert('after datalayer');
       });
+      alert('before clevertap');
       clevertap.event.push("Checkout Button Clicked", {
           "Amount": cart_total_price,
           "Product Name": product_title_concat
