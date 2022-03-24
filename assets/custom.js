@@ -173,38 +173,38 @@
 	$('.gokwik-checkout').click(function () {
        clevertap.event.push('GoKwik Button Clicked');
     });
-    $('.checkout-button').click(function() {
-       var cart_total_price = $('.cart-total').val();
-       var product_title_concat = ""
-       var datalayer_items = []
+//     $('.checkout-button').click(function() {
+//        var cart_total_price = $('.cart-total').val();
+//        var product_title_concat = ""
+//        var datalayer_items = []
        
-       $("#mini-cart-form .line-item").each(function (i, obj) {
-         var product_title = $(this).find('.product-item-meta__title').text();
-         var product_id = $(this).find('.product-item-meta__title').attr('data-product_id');
-         var product_price = $(this).find('.price--highlight').text().split('price')[1];
-         var product_category = $(this).find('.product-item-meta__title').attr('data-product_type');
-         var quantity = $(this).find('.quantity-selector__input').val();
-         if (i == 0) { product_title_concat = product_title }
-         else { product_title_concat = product_title_concat + ',' + product_title }
-         var item = {
-             'item_name': product_title,
-             'item_id': product_id,
-             'price': product_price,
-             'item_category': product_category,
-             'quantity': quantity
-         }
-         datalayer_items.push(item)
-      });
-      clevertap.event.push("Checkout Button Clicked", {
-          "Amount": cart_total_price,
-          "Product Name": product_title_concat
-      });
-      dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
-      dataLayer.push({
-          'event': 'begin_checkout',
-          'ecommerce': {
-          	'items': datalayer_items
-          }
-      });
-    });
+//        $("#mini-cart-form .line-item").each(function (i, obj) {
+//          var product_title = $(this).find('.product-item-meta__title').text();
+//          var product_id = $(this).find('.product-item-meta__title').attr('data-product_id');
+//          var product_price = $(this).find('.price--highlight').text().split('price')[1];
+//          var product_category = $(this).find('.product-item-meta__title').attr('data-product_type');
+//          var quantity = $(this).find('.quantity-selector__input').val();
+//          if (i == 0) { product_title_concat = product_title }
+//          else { product_title_concat = product_title_concat + ',' + product_title }
+//          var item = {
+//              'item_name': product_title,
+//              'item_id': product_id,
+//              'price': product_price,
+//              'item_category': product_category,
+//              'quantity': quantity
+//          }
+//          datalayer_items.push(item)
+//       });
+//       clevertap.event.push("Checkout Button Clicked", {
+//           "Amount": cart_total_price,
+//           "Product Name": product_title_concat
+//       });
+//       dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+//       dataLayer.push({
+//           'event': 'begin_checkout',
+//           'ecommerce': {
+//           	'items': datalayer_items
+//           }
+//       });
+//     });
     
