@@ -170,5 +170,7 @@
           "userSource": userSource
         });
     });
-	
+	$('.gokwik-checkout').click(function () {
+       clevertap.event.push('GoKwik Button Clicked');
+    })
     
