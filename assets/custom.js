@@ -174,8 +174,8 @@
        clevertap.event.push('GoKwik Button Clicked');
     });
     $('.checkout-button').click(function() {
-       var cart_total_price = '{{- cart.total_price | money_with_currency -}}'
-       alert();
+       var cart_total_price = $('.cart-total').val();
+       alert(cart_total_price);
        var product_title_concat = ""
        var datalayer_items = []
     });
