@@ -223,8 +223,8 @@
 */
 
 $('.footer__item-title').append(`
-	<span class="expand toggle">+</span>
-	<span class="collapse hide toggle">+</span>
+	<span class="expanded toggle">+</span>
+	<span class="collapsed hide toggle">-</span>
 `)
 $('.footer__item--links').click(function() {
 	$(this).find('.footer__item-content').slideToggle();
