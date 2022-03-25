@@ -240,10 +240,3 @@ if (window.matchMedia("(max-width: 767px)").matches) {
 * 
 */
 
-document.addEventListener("DOMContentLoaded", function() {
-    var endlessScroll = new Ajaxinate({
-      container: '#Huratips-Loop',
-      pagination: '#Huratips-Pagination',
-      loadingText: '<center style="margin-top: 20px;"><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Spinner-0.9s-60px.gif?v=1630394416" alt="Load More" /></center>',
-    });
-});
