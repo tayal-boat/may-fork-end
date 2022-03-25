@@ -227,4 +227,5 @@ $('.footer__item-title').append(`
 `)
 $('.footer__item--links').click(function() {
 	$(this).find('.footer__item-content').slideToggle();
+  	$(this).find('span.expan').toggleClass('expanded');
 })
