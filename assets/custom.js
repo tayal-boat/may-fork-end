@@ -222,6 +222,9 @@
 * 
 */
 
+$('.footer__item--links').append(`
+	<span class="expand">+</span>
+`)
 $('.footer__item--links').click(function() {
 	$(this).find('.footer__item-content').slideToggle();
 })
