@@ -6033,7 +6033,7 @@
               <div class="cart-notification__text-wrapper">
                 <span class="cart-notification__heading heading hidden-phone">${window.themeVariables.strings.cartItemAdded}</span>
                 <span class="cart-notification__heading heading hidden-tablet-and-up">${window.themeVariables.strings.cartItemAddedShort}</span>
-                <a href="${window.themeVariables.routes.cartUrl}" class="cart-notification__view-cart link">${window.themeVariables.strings.cartViewCart}</a>
+                <a href="${window.themeVariables.routes.cartUrl}" aria-controls="mini-cart" class="cart-notification__view-cart link">${window.themeVariables.strings.cartViewCart}</a>
               </div>
               
               ${closeButtonHtml}
