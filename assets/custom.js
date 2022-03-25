@@ -222,7 +222,7 @@
 * 
 */
 
-$('.footer__item--links').append(`
+$('.footer__item-title').append(`
 	<span class="expand">+</span>
 `)
 $('.footer__item--links').click(function() {
