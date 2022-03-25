@@ -128,3 +128,87 @@
  * "photoswipe": v4.1.3. PhotoSwipe is only loaded on demand to power the zoom feature on product page. If the zoom
  * feature is disabled, then this script is never loaded.
  */
+
+/*
+* ------------------------------------------------------------------------------------------------------------
+* CLEVERTAP EVENTS
+* ------------------------------------------------------------------------------------------------------------
+* 
+*/
+
+// Homepage Events
+	var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+    const slides = document.querySelectorAll('.slideshow__slide-list .slideshow__slide');
+    slides.forEach((slide, i) => {
+      slide.addEventListener('click', function() {
+          let imageTitle = slide.querySelector('.image_alt').innerText;
+          alert(imageTitle)
+          let slideNum = `${i+1}`
+          clevertap.event.push("Homepage Banner clicked", {
+            "Banner Number": 'Banner ' + slideNum,
+            "Banner Title": imageTitle,
+            "userSource": userSource
+          })
+      })
+    });
+	$('.featured-collections').on('click', function(){
+        const sectionTitle = $(this).siblings('.section__header').find('.tabs-nav__item[aria-expanded="true"]').text();
+        clevertap.event.push("Homepage Cards section clicked", {
+          "userSource": userSource,
+          "secttion Title": sectionTitle
+        });
+    });
+    $('.product-item__quick-form').on('click', function() {
+      	let prodTitle = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.product-item-meta__title').text();
+        let prodPrice = $(this).parents('.product-item__image-wrapper').siblings('.product-item__info').find('.price--highlight').text().split('price')[1];
+      	clevertap.event.push("Quick Buy Clicked", {
+          "Product Title": prodTitle,
+          "Price": prodPrice,
+          "userSource": userSource
+        });
+    });
+	$('.gokwik-checkout').click(function () {
+       clevertap.event.push('GoKwik Button Clicked');
+    });
+    $('#mini-cart-form').submit(function() {
+       var cart_total_price = $('.cart-total').val();
+       var product_title_concat = ""
+       var datalayer_items = []
+       
+       $("#mini-cart .line-item").each(function (i, obj) {
+         var product_title = $(this).find('.product-item-meta__title').text();
+         var product_id = $(this).find('.product-item-meta__title').attr('data-product_id');
+         var product_price = $(this).find('.price--highlight').text().split('price')[1];
+         var product_category = $(this).find('.product-item-meta__title').attr('data-product_type');
+         var quantity = $(this).find('.quantity-selector__input').val();
+         if (i == 0) { 
+           product_title_concat = product_title ;
+         }
+         else { 
+           product_title_concat = product_title_concat + ',' + product_title;
+         }
+         var item = {
+             'item_name': product_title,
+             'item_id': product_id,
+             'price': product_price,
+             'item_category': product_category,
+             'quantity': quantity
+         }
+         datalayer_items.push(item)
+      });
+      clevertap.event.push("Checkout Button Clicked", {
+          "Amount": cart_total_price,
+          "Product Name": product_title_concat
+      });
+      dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+      dataLayer.push({
+          'event': 'begin_checkout',
+          'ecommerce': {
+          	'items': datalayer_items
+          }
+      });
+    });
+    
