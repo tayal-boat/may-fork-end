@@ -223,5 +223,5 @@
 */
 
 $('.footer__item--links').click(function() {
-	$(this).find('.footer__item--content').slideDown();
+	$(this).find('.footer__item-content').slideDown();
 })
