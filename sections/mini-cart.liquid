@@ -172,7 +172,7 @@
                     {%- endunless -%}
                   {%- endcapture -%}
 
-       
+        <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant>{{ 'cart.general.remove' | t }}</a>
 
                   <div class="product-item-meta__price-list-container text--small">
                     <div class="price-list hidden-tablet-and-up">
@@ -224,8 +224,12 @@
                       </span>
                     {%- endif -%}
                   </div>
-
-                  <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant>{{ 'cart.general.remove' | t }}</a>
+                         {%- if line_item_properties != blank -%}
+                    <div class="product-item-meta__property-list">
+                      {{- line_item_properties -}}
+                    </div>
+                  {%- endif -%}
+                 
                 </line-item-quantity>
               </div>
 
@@ -242,11 +246,7 @@
                   {{- line_price -}}
                 </div>
               </div>
-                         {%- if line_item_properties != blank -%}
-                    <div class="product-item-meta__property-list">
-                      {{- line_item_properties -}}
-                    </div>
-                  {%- endif -%}
+
             </div>
             {% if line_item.quantity > 6 %}
               <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
