@@ -19,8 +19,9 @@
    }
    $("#subscribe_pop").on("click",function(){var e=document.getElementById("pop_email").value;""!==e&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)?localStorage.getItem("userEmailId")===e?$(".aluser-msg").show():(localStorage.setItem("userEmailId",e),localStorage.setItem("MyPopup","popOnce"),clevertap.onUserLogin.push({Site:{Email:e,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:e,Source:"Popup"}),$(".thankyou-msg-pop").show(),setTimeout(function(){$(".pop-overlay, .boathead-pop").fadeOut()},5e3)):$(".error-msg-pop").show(),setTimeout(function(){$(".error-msg-pop").fadeOut()},5e3)}),$(".pop-overlay, .close-pop").click(function(){localStorage.setItem("MyPopup","popOnce"),$(".pop-overlay, .boathead-pop").fadeOut()}),$("#subscribe-btn").on("click",function(e){var o=document.getElementById("subscriber-email").value;""!==o&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(o)?localStorage.getItem("userEmailId")===o?$(".input-block").append('<p class="aluser-msg text-white">You are already subscribed!</p>').show():(localStorage.setItem("userEmailId",o),clevertap.onUserLogin.push({Site:{Email:o,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:o,Source:"Footer"}),$(".input-block").append('<p class="thankyou-msg text-white">Thank You for subscribing. Please check your inbox!</p>').show(),$("#subscriber-email").val("")):$(".input-block").append('<p class="error-msg text-white">Please enter a valid email Id!</p>').show(),setTimeout(function(){$(".thankyou-msg, .error-msg, .aluser-msg").remove()},5e3)}),$(".download-box a").click(function(){clevertap.event.push("Download App Clicked")});
 	
-   $(".footer__item-content .linklist__item").each(function(){
-     var item;
+   $(".footer__item-content").each(function(){
+     $(this).find('.linklist__item').each(function() {
+     	var item;
        $(this).click(function(e){
          item = $(this).find('a').text();
          alert(item)
@@ -29,6 +30,8 @@
           "Source": "Footer"
         });
        })
+     })
+     
    });
 //    $(window).on('load', function(){
 //     $("ul.tmenu_submenu_type_flyout li").each(function(){ 
