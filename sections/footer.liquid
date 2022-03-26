@@ -7,6 +7,42 @@
     --text-color: {{ settings.footer_text_color.red }}, {{ settings.footer_text_color.green }}, {{ settings.footer_text_color.blue }};
     --border-color: {{ border_color.red }}, {{ border_color.green }}, {{ border_color.blue }};
   }
+  .footer-logo {max-width: 85px;}
+  .signup-form .input-block {
+    display: block;
+    height: 52px;
+    padding: 5px 5px 0px;
+    border: 1px solid #333;
+    border-radius: 5px;
+  }
+  .signup-form .input-block #subscriber-email {
+   height: 40px;
+    background: transparent;
+    border: 0;
+    width: 60%;
+    display: inline-block;
+    float: left;
+    font-size: 12px;
+    padding: 0 12px;
+    color: #ccc;
+  }
+  .signup-form .input-block #subscribe-btn {
+    background: #FF0000;
+    border-radius: 0;
+   	line-height: normal;
+    height: 40px;
+    width: 40%;
+    letter-spacing: 0;
+    font-weight: bold;
+    display: inline-block;
+    float: left;
+    padding: 0;
+  }
+  .error-msg, .thankyou-msg, .aluser-msg {
+   	color: #ff0000 !important;
+    font-size: 11px;
+    margin-top: 5px !important;
+  }
 </style>
 
 <footer class="footer {% if settings.footer_background == settings.background %}footer--bordered{% endif %}">
@@ -68,10 +104,16 @@
                 {%- endif -%}
 
                 <div class="footer__item-content">
+                  <div class="footer-logo" style="margin-top: 10px;">
+                    <a href="{{shop.url}}" class="p-0">
+                        <img class="footer-logo" loading="lazy" sizes="100px" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Boat-Logo_200x.png?v=1600753267" alt="logo">
+                    </a>
+                  </div>
                   {%- if block.settings.content != blank -%}
                     {{- block.settings.content -}}
                   {%- endif -%}
-
+				  {% render 'footer--newsletter' %}
+                  {%- comment -%}
                   {%- form 'customer', id: 'footer-newsletter', class: 'footer__newsletter-form form' -%}
                     {%- if form.posted_successfully? -%}
                       <div class="form__banner banner banner--success">
@@ -95,6 +137,7 @@
                       </div>
                     {%- endif -%}
                   {%- endform -%}
+                  {%- endcomment -%}
                 </div>
             {%- endcase -%}
           {%- endcapture -%}
@@ -192,8 +235,6 @@
           {%- endform -%}
         {%- endif -%}
 
-        <span class="footer__copyright text--xsmall text--subdued">{{ shop.name }} <span class="square-separator square-separator--block square-separator--subdued"></span> {{ powered_by_link | replace: '<a', '<a class="link--faded"' }}</span>
-
         {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
           <div class="footer__payment-methods">
             <span class="footer__payment-methods-label text--xsmall text--subdued">{{ 'footer.general.we_accept' | t }}</span>
@@ -205,6 +246,7 @@
             </div>
           </div>
         {%- endif -%}
+        <span class="footer__copyright text--xsmall text--subdued"><span class="copy">&copy; {{ "now" | date: "%Y" }} Imagine Marketing Limited. All Rights Reserved.</span></span>
       </div>
     </div>
   </div>

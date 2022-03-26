@@ -249,7 +249,7 @@
                 {%- assign sidebar_width = 0 -%}
               {%- endif -%}
 
-              <div class="product-list__inner">
+              <div class="product-list__inner" id="Huratips-Loop">
                 {%- assign desktop_number_of_products_minus_one = section.settings.desktop_products_per_row | minus: 1 -%}
                 {%- assign gap_width = 24.0 | divided_by: section.settings.desktop_products_per_row | times: desktop_number_of_products_minus_one -%}
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
@@ -258,9 +258,15 @@
                   {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
                 {%- endfor -%}
               </div>
+              <div id="Huratips-Pagination">
+                {% if paginate.next %}
+                <a href="{{ paginate.next.url }}">Loading More</a>
+                {% endif %}  
+              </div>
             </product-list>
+        	
 
-            {%- render 'pagination', paginate: paginate, use_ajax: true -%}
+            {% comment %}{%- render 'pagination', paginate: paginate, use_ajax: true -%}{% endcomment %}
           {%- endpaginate -%}
 
           {%- if section.settings.promotion_position == 'bottom' -%}
@@ -289,6 +295,15 @@
     </product-facet>
   </div>
 </section>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var endlessScroll = new Ajaxinate({
+      container: '#Huratips-Loop',
+      pagination: '#Huratips-Pagination',
+      loadingText: '<center style="margin-top: 20px;"><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Spinner-0.9s-60px.gif?v=1630394416" alt="Load More" /></center>',
+    });
+});
+</script>
 
 {% schema %}
 {
