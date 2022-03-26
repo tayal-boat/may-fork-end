@@ -3,29 +3,20 @@
 
   <header class="drawer__header">
     <p class="drawer__title heading h6">
-      {%- case settings.cart_icon -%}
-        {%- when 'shopping_bag' -%}
-          {%- render 'icon' with 'header-cart' -%}
+      Your Cart
 
-        {%- when 'shopping_cart' -%}
-          {%- render 'icon' with 'header-shopping-cart' -%}
-
-        {%- when 'tote_bag' -%}
-          {%- render 'icon' with 'header-tote-bag' -%}
-      {%- endcase -%}
-
-      {%- if cart.item_count == 0 -%}
+     <span class="ms-3">( {%- if cart.item_count == 0 -%}
         {{- 'cart.general.title' | t -}}
       {%- else -%}
         {{- 'cart.general.item_count' | t: count: cart.item_count -}}
-      {%- endif -%}
+       {%- endif -%})</span>
     </p>
 
     <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
       {%- render 'icon' with 'close' -%}
     </button>
   </header>
-
+<div class="ribbon">{{section.settings.cart_announcement}}</div>
   {%- if cart.item_count == 0 -%}
     <div class="drawer__content drawer__content--center">
       <p>{{ 'cart.general.empty' | t }}</p>
@@ -172,16 +163,13 @@
                     {%- endunless -%}
                   {%- endcapture -%}
 
-                  {%- if line_item_properties != blank -%}
-                    <div class="product-item-meta__property-list">
-                      {{- line_item_properties -}}
-                    </div>
-                  {%- endif -%}
+
 
                   <div class="product-item-meta__price-list-container text--small">
-                    <div class="price-list hidden-tablet-and-up">
+                    <div class="price-list">
                       {{- line_price -}}
                       {{- unit_price -}}
+ 
                     </div>
 
                     {%- if unit_price != blank -%}
@@ -189,7 +177,9 @@
                         {{- unit_price -}}
                       </div>
                     {%- endif -%}
+
                   </div>
+                  
                 </div>
 
                 {%- if line_item.line_level_discount_allocations != blank -%}
@@ -227,25 +217,19 @@
                         {%- render 'icon' with 'plus' -%}
                       </span>
                     {%- endif -%}
+                                           {%- if line_item_properties != blank -%}
+                    <div class="product-item-meta__property-list">
+                      {{- line_item_properties -}}
+                    </div>
+                  {%- endif -%}
                   </div>
-
-                  <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant>{{ 'cart.general.remove' | t }}</a>
+  
+<a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
                 </line-item-quantity>
               </div>
 
-              <div class="line-item__price-list-container text--small hidden-phone">
-                {%- if settings.show_vendor -%}
-                  {%- comment -%}
-                    IMPLEMENTATION NOTE: in the design, the price is aligned in regards of the product title (not the brand). It was a
-                    bit hard to do as we cannot set a fixed margin, so I am actually adding an empty vendor to simulate the same height
-                  {%- endcomment -%}
-                  <span class="product-item-meta__vendor heading heading--xxsmall" style="visibility: hidden">x</span>
-                {%- endif -%}
 
-                <div class="price-list price-list--stack">
-                  {{- line_price -}}
-                </div>
-              </div>
+
             </div>
             {% if line_item.quantity > 6 %}
               <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
@@ -253,7 +237,7 @@
             {% if line_item.product.variants.size > 1 %}
             
             
-            <p>More than one variants.</p>
+            <p class="margin">More than one variants.</p>
             
 
             {% endif %}
@@ -381,6 +365,12 @@
     {
       "type": "paragraph",
       "content": "Free shipping notice can be configured in global cart settings."
+    },
+    {
+      "type": "html",
+      "id": "cart_announcement",
+      "label": "announcement",
+      "default": "Free Shipping, COD Available"
     },
     {
       "type": "checkbox",
