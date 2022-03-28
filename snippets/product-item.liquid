@@ -20,8 +20,10 @@
           {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
         {%- endif -%}
       	<span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
-  	  {%- elsif tag contains 'meta-label-' -%}
-  		<span class="label label--highlight {{ tag | remove: 'meta-label-' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+  	  {%- else -%}
+  	    {% unless tag contains 'meta-label-lowest-price' %}
+  			<span class="label label--highlight {{ tag | remove: 'meta-label-' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+  		{% endunless %}
       {%- endif -%}
   	 
     {%- endfor -%}
