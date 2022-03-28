@@ -14,7 +14,8 @@
       {%- if tag contains '__label' -%}
         <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
   	  {%- elsif tag contains 'meta-label-lowest-price' -%}
-  		<span class="label label--custom r"><span>You {{ 'collection.product.discount_html' | t: savings: savings }}</span></span>
+  		{%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
+  		<span class="label label--custom r"><span>You save {{savings}}</span></span>
       {%- endif -%}
     {%- endfor -%}
 
