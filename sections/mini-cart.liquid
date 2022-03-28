@@ -1,3 +1,19 @@
+<style>
+  button.checkout-button.button.button--primary.button--full {
+  background: red;
+    width: 48%;
+    height: 50px;
+    padding: 0;
+  letter-spacing: normal;
+}
+  .drawer__footer--bordered {
+    padding-top: 8px;
+    padding-bottom: 0;
+  }
+  .loader-button__text {
+    text-transform: capitalize;
+  }
+</style>
 
 <cart-drawer section="{{ section.id }}" id="mini-cart" class="mini-cart drawer drawer--large">
   <span class="drawer__overlay"></span>
@@ -332,17 +348,21 @@
         </div>
       {%- endif -%}
       {%- endcomment -%}
+ <div class="d-flex justify-content-between">
+   <span class="cart-total pb-2"> <b>Total:</b></span>
+      <input class="cart-total" value="{{cart.total_price | money_with_currency}}" type="hidden">
+   <b> {{- cart.total_price | money_with_currency -}}</b>
+                 </div>
       <div id="zestmoney-widget-control-cart"></div>
+    
       {%- if section.settings.show_checkout_button -%}
+        <div class="row justify-content-center">
       	{% render 'gokwik-checkout' %}
         <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-          <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
-
-          {{- 'cart.general.checkout' | t -}}
-          <span class="square-separator"></span>
-          <input class="cart-total" value="{{cart.total_price | money_with_currency}}" type="hidden">
-          {{- cart.total_price | money_with_currency -}}
+        Pay Via Card 
+          
         </button>
+      </div>
       {%- else -%}
         <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
       {%- endif -%}
