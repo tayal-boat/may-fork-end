@@ -55,16 +55,16 @@
           {%- unless product.has_only_default_variant -%}
             <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" update-url {% if variant_picker_block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-sticky-form__variants">
               {%- for option in product.options_with_values -%}
-                {%- assign option_downcase = option.name | downcase -%}
+                {%- assign option_downcase = option.name | capitalize -%}
                 {%- capture option_id -%}sticky-form-option-{{ section.id }}-{{ forloop.index }}{%- endcapture -%}
                 {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
 
-                <div class="select-wrapper" data-selector-type="dropdown" data-wrapper-name="{{ option.name | capitalize | replace: ' ', '-'}}">
+                <div class="select-wrapper" data-selector-type="dropdown" data-wrapper-name="{{ option.name | downcase | replace: ' ', '-'}}">
                   <combo-box fit-toggle initial-focus-selector="[aria-selected='true']" id="{{ option_id }}-combo-box" class="combo-box">
                     <span class="combo-box__overlay"></span>
 
                     <header class="combo-box__header">
-                      <p class="combo-box__title heading h6">{{ option.name | capitalize }}</p>
+                      <p class="combo-box__title heading h6">{{ option.name }}</p>
 
                       <button type="button" class="combo-box__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
                         {%- render 'icon' with 'close' -%}
