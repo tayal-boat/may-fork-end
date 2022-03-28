@@ -16,10 +16,10 @@
   <product-sticky-form form-id="{{ product_form_id }}" hidden class="product-sticky-form">
     <div class="container">
       <div class="product-sticky-form__inner">
-        <div class="product-sticky-form__content-wrapper hidden-pocket">
+        <div class="product-sticky-form__content-wrapper">
           <div class="product-sticky-form__image-wrapper">
             {%- assign featured_media = product.selected_or_first_available_variant.featured_image | default: product.featured_media -%}
-            <img class="product-sticky-form__image" loading="lazy" sizes="55px" {% render 'image-attributes', image: featured_media, sizes: '55,110,165' %}>
+            <img class="product-sticky-form__image hidden-pocket" loading="lazy" sizes="55px" {% render 'image-attributes', image: featured_media, sizes: '55,110,165' %}>
           </div>
 
           <div class="product-sticky-form__info">
@@ -53,7 +53,7 @@
         {%- comment -%}This form is a simplified representation of the main form, and therefore uses its own code path{%- endcomment -%}
         <div class="product-sticky-form__form">
           {%- unless product.has_only_default_variant -%}
-            <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" update-url {% if variant_picker_block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-sticky-form__variants hidden-pocket">
+            <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" update-url {% if variant_picker_block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-sticky-form__variants">
               {%- for option in product.options_with_values -%}
                 {%- assign option_downcase = option.name | downcase -%}
                 {%- capture option_id -%}sticky-form-option-{{ section.id }}-{{ forloop.index }}{%- endcapture -%}

@@ -84,6 +84,11 @@
         <input type="hidden" name="checkout">
 
         {%- for line_item in cart.items -%}
+          {%- if line_item.product.url contains '?' -%}
+            {%- assign product_url_contains_query = true -%}
+          {%- else -%}
+            {%- assign product_url_contains_query = false -%}
+          {%- endif -%}
           <line-item class="line-item">
             <div class="line-item__content-wrapper">
               <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
@@ -252,11 +257,7 @@
               <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
             {% endif %}
             {% if line_item.product.variants.size > 1 %}
-            
-            
-            <p class="margin">More than one variants.</p>
-            
-
+            	<p class="margin visually-hidden">More than one variants.</p>
             {% endif %}
           </line-item>
         {%- endfor -%}
