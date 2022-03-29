@@ -3,7 +3,16 @@
   {%- when 'ar' or 'arc' or 'dv' or 'fa' or 'ha' or 'he' or 'kwh' or 'ks' or 'ku' or 'ps' or 'ur' or 'yi' -%}
     {%- assign direction = 'rtl' -%}
 {%- endcase -%}
-
+<style>
+  #mobile-menu-drawer .social-media__item{ box-shadow:none;}
+#mobile-menu-drawer .social-media {
+    padding: 12px;
+    border-top: 1px solid rgba(var(--text-color), 0.15);
+}
+  .drawer__footer.drawer__footer--tight.drawer__footer--bordered {
+    padding: 0;
+}
+</style>
 <mobile-navigation append-body id="mobile-menu-drawer" class="drawer {% if direction == 'ltr' %}drawer--from-left{% endif %}">
   <span class="drawer__overlay"></span>
 
@@ -78,7 +87,7 @@
 
             <collapsible-content id="mobile-menu-{{ forloop.index }}" class="collapsible">
               {%- if link.links.size > 0 -%}
-                <ul class="mobile-nav list--unstyled" role="list">
+                <ul class="mobile-nav list--unstyled overflow-auto" role="list">
                   {%- for sub_link in link.links -%}
                     <li class="mobile-nav__item" data-level="2">
                       {%- if sub_link.links.size > 0 -%}
@@ -97,9 +106,9 @@
                           </ul>
                         </collapsible-content>
                       {%- else -%}
-                        <a href="{{ sub_link.url }}" class="mobile-nav__link">
+                        <a href="{{ sub_link.url }}" class="mobile-nav__link" >
                       		{%- if sub_link.object.image -%}
-                              <img loading="lazy" sizes="240px" {% render 'image-attributes', image: sub_link.object.image, sizes: '240,480,720' %} alt="{{- sub_link.title -}}" />
+ <img loading="lazy" {% render 'image-attributes', image: sub_link.object.image, sizes: '240,480,720' %} alt="{{- sub_link.title -}}" />
                             {%- else -%}
                               {{- sub_link.title -}}
                             {%- endif -%}
@@ -124,35 +133,22 @@
           {%- endif -%}
         </li>
       {%- endfor -%}
-      <li class="trackorder mobile-nav__item" data-level="1"><a class="trackorder mobile-nav__link heading h5" href="https://dtc.boat-lifestyle.com/track">Track Your Order</a></li>
-      {% if customer %}
-         <li class="your-acct mobile-nav__item" data-level="1"><a class="mobile-nav__link heading h5" href="/account">Account</a></li>
-      	 <li class="logout mobile-nav__item" data-level="1"><a class="mobile-nav__link heading h5" href="/">Logout</a></li>
-      {% else %}         
-      	 <li class="register mobile-nav__item" data-level="1"><a class="mobile-nav__link heading h5" href="/account/register">Register</a></li>
-      {% endif %}
-      {% if customer %}
-         <li class="mobile-nav__item" data-level="1">
-            <a class="trackorder mobile-nav__link heading h5" href="https://boat-lifestyle.com/apps/ret">Manage Your Order</a>
-         </li>
-      {% endif %}
+                       {% if shop.customer_accounts_enabled %}
+              
+                <li class="mobile-nav__item"><a class="trackorder mobile-nav__link heading h5" href="https://dtc.boat-lifestyle.com/track">Track Your Order</a></li>
+                {% if customer %}
+                <li class="mobile-nav__item"><a class="trackorder mobile-nav__link heading h5" href="https://boat-lifestyle.com/apps/ret">Manage Your Order</a></li>
+                {% endif %}
+               
+              {% endif %}
+ 
     </ul>
-  </div>
-
-  {%- if section.settings.show_locale_selector and shop.published_locales.size > 1 -%}
-    {%- assign locale_selector = true -%}
-  {%- endif -%}
-
-  {%- if section.settings.show_currency_selector and shop.enabled_currencies.size > 1 -%}
-    {%- assign currency_selector = true -%}
-  {%- endif -%}
-
-  {%- if shop.customer_accounts_enabled or locale_selector or currency_selector -%}
+      {%- if shop.customer_accounts_enabled or locale_selector or currency_selector -%}
     <div class="drawer__footer drawer__footer--tight drawer__footer--bordered">
       <div class="mobile-nav__footer">
         {%- if shop.customer_accounts_enabled -%}
-          <a class="icon-text" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">
-            {%- render 'icon' with 'header-customer' -%}
+          <a class="icon-text mobile-nav__link heading h5" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">
+           
             {{- 'header.general.account' | t -}}
           </a>
         {%- endif -%}
@@ -235,4 +231,16 @@
       </div>
     </div>
   {%- endif -%}
+
+  </div>
+
+  {%- if section.settings.show_locale_selector and shop.published_locales.size > 1 -%}
+    {%- assign locale_selector = true -%}
+  {%- endif -%}
+
+  {%- if section.settings.show_currency_selector and shop.enabled_currencies.size > 1 -%}
+    {%- assign currency_selector = true -%}
+  {%- endif -%}
+
+ {% render 'social-media' %}
 </mobile-navigation>
