@@ -109,21 +109,6 @@
       </div>
     </div>
 	<p class="inclusive">Inclusive of all taxes</p>
-
-
-    <product-payment-terms form-id="{{ product_form_id }}">
-      {%- assign product_installment_form_id = 'product-installment-form-' | append: section.id | append: '-' | append: product.id -%}
-
-      {%- form 'product', product, id: product_installment_form_id -%}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        {{- form | payment_terms -}}
-      {%- endform -%}
-    </product-payment-terms>
-
-    
-  </product-meta>
-
-  {%- render 'product-form', product: product, update_url: update_url -%}
     {%- if template contains 'product' -%}
     {% render 'product-payment-partner' %}
     {%- endif -%}
@@ -143,6 +128,21 @@
         </p>
       {%- endif -%}
     {%- endif -%}
+
+    <product-payment-terms form-id="{{ product_form_id }}">
+      {%- assign product_installment_form_id = 'product-installment-form-' | append: section.id | append: '-' | append: product.id -%}
+
+      {%- form 'product', product, id: product_installment_form_id -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        {{- form | payment_terms -}}
+      {%- endform -%}
+    </product-payment-terms>
+
+    
+  </product-meta>
+
+  {%- render 'product-form', product: product, update_url: update_url -%}
+
   {%- assign help_page = section.settings.help_page -%}
 
   {%- if section.settings.show_share_buttons or help_page != blank -%}
