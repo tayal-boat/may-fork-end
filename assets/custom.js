@@ -235,20 +235,7 @@ if (window.matchMedia("(max-width: 767px)").matches) {
 
 /*
 * ------------------------------------------------------------------------------------------------------------
-* INFINITE SCROLL
+* 
 * ------------------------------------------------------------------------------------------------------------
 * 
 */
-
-
-$(document).ready(function() {
-
-})
-$('.cart-notification__view-cart').on('click', function() {
-  console.log('clicked link');
-//   alert();
-		let pageUrl = location.href;
-        if(pageUrl.indexOf('#cart') != -1){
-            console.log('clicked link');
-        }
-})
