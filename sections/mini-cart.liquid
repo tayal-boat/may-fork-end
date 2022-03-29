@@ -384,32 +384,8 @@
 </cart-drawer>
 <script>
   $('.edit-cart').change(function() {
-  	const responseJson = await response.json();
-      if (response.ok) {
-        this.dispatchEvent(new CustomEvent("variant:added", {
-          bubbles: true,
-          detail: {
-            variant: responseJson.hasOwnProperty("items") ? responseJson["items"][0] : responseJson
-          }
-        }));
-        fetch(`${window.themeVariables.routes.cartUrl}.js`).then(async (response2) => {
-          const cartContent = await response2.json();
-          document.documentElement.dispatchEvent(new CustomEvent("cart:updated", {
-            bubbles: true,
-            detail: {
-              cart: cartContent
-            }
-          }));
-          cartContent["sections"] = responseJson["sections"];
-          document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
-            bubbles: true,
-            detail: {
-              cart: cartContent,
-              openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawer") === null
-            }
-          }));
-        });
-      }
+  	let selected_id = $(this).val();
+    alert(selected_id)
   })
 </script>
 
