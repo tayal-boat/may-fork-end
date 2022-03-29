@@ -385,25 +385,31 @@
 <script>
   $('.edit-cart').change(function() {
   	let selected_id = $(this).val();
-    let formData = {
-     'items': [{
-      'id': selected_id,
-      'quantity': 1
-      }]
-    };
-    fetch(window.Shopify.routes.root + 'cart/add.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => {
-      return response.json();
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-	});
+    let cart = $.getJSON('/cart.js');
+      Shopify.queue = [];
+      cart.done(function(){
+        cart = cart.responseJSON;
+        let items = cart.items;
+
+//to simplify things I am omitting my conditions and just using a forloop to push the items into the queue
+        for (var i=0;i<variant_array.length;i++){
+          Shopify.queue.push({
+            variantId: selected_id
+          })
+        }
+
+        if (Shopify.queue.length){
+          processQueue();
+        }
+        function processQueue(){
+          if (Shopify.queue.length){
+            let request = Shopify.queue.shift();
+            Shopify.addItem(request.selected_id, 1, processQueue);
+          }else{
+            location.reload();
+          }
+        }
+      })
   })
 </script>
 
