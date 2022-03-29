@@ -241,13 +241,8 @@ if (window.matchMedia("(max-width: 767px)").matches) {
 */
 
 
-$(document).ready(function() {
-$('.cart-notification__view-cart').on('click', function(e) {
-  e.preventDefault();
-  alert();
+
 		let pageUrl = location.href;
         if(pageUrl.indexOf('#cart') != -1){
             console.log('clicked link');
         }
-})
-})
