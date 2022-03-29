@@ -265,7 +265,7 @@
             	<p class="margin visually-hidden">More than one variants.</p>
             {% endif %}
             
-            <select name="updates[]" data-product-id="{{line_item.product.id}}" class="edit-cart visually-hidden">
+            <select name="updates[]" data-product-id="{{line_item.product.id}}" class="edit-cart">
               {% for variant in line_item.product.variants %}
               <option id="{{variant.id}}" value="{{variant.id}}" {% if variant.inventory_quantity == 0 %}disabled{% endif %}>{{variant.option1}}</option>
               {% endfor %}
@@ -407,6 +407,7 @@
     })
     .then(response => {
       return response.json();
+      $('.product-item-meta a').attr('data-product_id', selected_id)
     })
     .catch((error) => {
       console.error('Error:', error);
