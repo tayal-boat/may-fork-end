@@ -359,24 +359,29 @@ background: #ff000000;
                     </a>
 
                     <input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
-
-                    {%- if allow_more -%}
-                      <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+					{%- if line_item.product.id == 6591986958434 -%}
+                      <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 0 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                         {%- render 'icon' with 'plus' -%}
                       </a>
-                    {%- else -%}
-                      <span class="quantity-selector__button" aria-label="{{ 'cart.general.no_more_stock' | t | escape }}" data-tooltip="{{ 'cart.general.no_more_stock' | t | escape }}">
-                        {%- render 'icon' with 'plus' -%}
-                      </span>
+                    {% else %}
+                      {%- if allow_more -%}
+                        <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                          {%- render 'icon' with 'plus' -%}
+                        </a>
+
+                      {%- else -%}
+                        <span class="quantity-selector__button" aria-label="{{ 'cart.general.no_more_stock' | t | escape }}" data-tooltip="{{ 'cart.general.no_more_stock' | t | escape }}">
+                          {%- render 'icon' with 'plus' -%}
+                        </span>
+                      {%- endif -%}
                     {%- endif -%}
-                                           {%- if line_item_properties != blank -%}
+                  {%- if line_item_properties != blank -%}
                     <div class="product-item-meta__property-list">
                       {{- line_item_properties -}}
                     </div>
                   {%- endif -%}
                   </div>
-  
-<a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
+				  <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
                 </line-item-quantity>
               </div>
 
@@ -389,6 +394,11 @@ background: #ff000000;
             {% if line_item.product.variants.size > 1 %}
             	<p class="margin visually-hidden">More than one variants.</p>
             {% endif %}
+            <select name="updates[]" data-product-id="{{line_item.product.id}}" class="edit-cart visually-hidden">
+              {% for variant in line_item.product.variants %}
+              <option id="{{variant.id}}" value="{{variant.id}}" {% if variant.inventory_quantity == 0 %}disabled{% endif %}>{{variant.option1}}</option>
+              {% endfor %}
+            </select>
           </line-item>
         {%- endfor -%}
       </form>
@@ -508,6 +518,30 @@ background: #ff000000;
     </openable-element>
   {%- endif -%}
 </cart-drawer>
+<script>
+  $('.edit-cart').change(function() {
+  	let selected_id = $(this).val();
+    let formData = {
+     'items': [{
+      'id': selected_id,
+      'quantity': 1
+      }]
+    };
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      return response.json();
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+	});
+  })
+</script>
 
 {% schema %}
 {

@@ -1,0 +1,126 @@
+<div class="section-new-launches section-{{section.id}}">
+  <div class="row">
+    <div class="col-12">
+       <h2 class="sectiontitle align-center text-center">
+        <span>{{ section.settings.section_title }}</span>
+      </h2>
+    </div>
+  </div>
+  <div class="new-product">
+  	{% for block in section.blocks %}
+  	{% assign product = block.settings.product_new_launches %}
+    <div class="row product-row">
+      <div class="col-md-6 image-col">
+        {% for variant in product.variants %}
+        	{% if variant.available == true %}
+      			<img src="{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}" alt="{{product.title}}" data-id="{{variant.id}}" data-qty="{{variant.inventory_quantity}}" />
+        	{% endif %}
+        {% endfor %}
+        {% for variant in product.variants %}
+        	{% if variant.available == false %}
+      			<img src="{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}" alt="{{product.title}}" data-id="{{variant.id}}" data-qty="{{variant.inventory_quantity}}" />
+        	{% endif %}
+        {% endfor %}
+      </div>
+      <div class="col-md-6 content-col">
+        {%- render 'product-info', product: product, featured: true, update_url: false -%}
+        
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+{% schema %}
+  {
+    "name": "boAt New Launches",
+    "settings": [
+		{
+			"type": "text",
+			"id": "section_title",
+			"label": "Section Title",
+			"default": "New Launches"
+		}
+	],
+	"blocks": [
+		{
+			"name": "New Launched Product",
+			"type": "New-Launches",
+			"settings": [
+                {
+                "type": "product",
+                "id": "product_new_launches",
+                "label": "Product"
+                },
+                {
+                "type": "text",
+                "id": "product_category",
+                "label": "Category"
+                },
+                {
+                "type": "checkbox",
+                "id": "sale_price_checkbox",
+                "label": "Show Sale Price"
+                },
+                {
+                "type": "text",
+                "id": "sale_price",
+                "label": "Sale Price"
+                },
+                {
+                "type": "text",
+                "id": "product_desc",
+                "label": "Description"
+                },
+                {
+                "type": "text",
+                "id": "feature_1",
+                "label": "Feature 1"
+                },
+                {
+                "type": "text",
+                "id": "feature_2",
+                "label": "Feature 2"
+                },
+                {
+                "type": "text",
+                "id": "feature_3",
+                "label": "Feature 3"
+                },
+                {
+                "type": "text",
+                "id": "feature_4",
+                "label": "Feature 4"
+                },
+                {
+                "type": "text",
+                "id": "feature_5",
+                "label": "Feature 5"
+                }
+			]
+		}
+  	],
+	"presets": [
+      {
+        "name": "boAt New Launches",
+        "category": "layout",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
