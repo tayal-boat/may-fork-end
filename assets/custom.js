@@ -240,3 +240,8 @@ if (window.matchMedia("(max-width: 767px)").matches) {
 * 
 */
 
+
+
+$('.notification__view-cart').on('click', function() {
+	alert();
+})
