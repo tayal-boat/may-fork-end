@@ -1697,6 +1697,7 @@ p + .button-group,
 
 .section__color-wrapper {
   display: flow-root; /* Modern clearfix */
+  background: rgb(var(--section-background, var(--background)));
 }
 
 .section__color-wrapper--boxed {
@@ -5368,6 +5369,11 @@ select:focus,
 }
 
 /* This variation remove the border and add a shadow on scroll */
+.drawer__header--shadowed {
+  height: auto;
+  border-bottom: none;
+  padding-bottom: 6px;
+}
 
 [dir="ltr"] .drawer__header--shadowed::after {
   left: 0;
@@ -5472,17 +5478,18 @@ select:focus,
 }
 
 .drawer__footer {
-    margin-top: auto;
-    padding: 12px 16px 0; /* The footer in drawer has a slightly smaller padding in block direction */
+  margin-top: auto;
+  padding-top: 20px;
+  padding-bottom: 20px; /* The footer in drawer has a slightly smaller padding in block direction */
   z-index: 1;
   transform: translateZ(0); /* For some reason position: relative cause an issue on Safari so I use this to promote the element */
 }
 
-/* @supports (padding: max(0px)) {
+@supports (padding: max(0px)) {
   .drawer__footer {
     padding-bottom: max(20px, env(safe-area-inset-bottom, 0px) + 20px);
   }
-} */
+}
 
 .drawer__footer--bordered {
   box-shadow: 0 1px rgb(var(--root-border-color)) inset; /* We use box-shadow due to the shadow */
@@ -8446,6 +8453,10 @@ input:checked + .popover__choice-label::after,
 }
 
 @media screen and (min-width: 741px) {
+  .mini-cart__drawer-footer {
+    padding-bottom: var(--container-gutter);
+  }
+
   .mini-cart__discount {
     justify-content: flex-end;
   }
@@ -8531,6 +8542,7 @@ input:checked + .popover__choice-label::after,
     position: absolute;
     top: 0;
     width: 240px;
+    height: 100%;
     overflow: hidden;
     text-align: center;
   }
@@ -9443,7 +9455,7 @@ input:checked + .popover__choice-label::after,
 .header__wrapper {
   display: flex;
   align-items: center;
-  padding: 12px 0;
+  padding: 20px 0;
 }
 
 .header__inline-navigation {
@@ -9922,6 +9934,9 @@ input:checked + .popover__choice-label::after,
 
 /* Level 2 */
 
+[dir="ltr"] .mobile-nav .mobile-nav {
+  padding-left: 8px;
+}
 
 [dir="rtl"] .mobile-nav .mobile-nav {
   padding-right: 8px;
@@ -11630,6 +11645,7 @@ input:checked + .popover__choice-label::after,
 
 @media screen and (max-width: 740px) {
   .product:not(.product--featured) {
+    margin-top: var(--container-gutter);
     margin-bottom: 36px;
   }
 }
@@ -11736,8 +11752,9 @@ input:checked + .popover__choice-label::after,
   position: relative;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
+  margin-top: 18px;
 }
 
 .product__thumbnail-scroll-shadow {
@@ -11990,6 +12007,7 @@ input:checked + .popover__choice-label::after,
   display: block;
   margin: 24px 0;
   padding-bottom: 16px;
+  border-bottom: 1px solid rgb(var(--border-color));
 }
 
 .product-meta__price-list-container {
@@ -14976,7 +14994,7 @@ shopify-payment-terms {
     #main {
     	background: #1a1a1a;
     }
-    .container-fluid{padding:0}
+    .container-fluid {padding: 0;}
     .breadcrumb {
     	background: transparent;
     }
@@ -15020,6 +15038,10 @@ shopify-payment-terms {
   	.product-item-meta__title,
   	.price.price--highlight {
     	font-weight: bold;
+    }
+    .color-swatch__item {
+    	width: 36px;
+      	height: 36px;
     }
 .color-swatch__radio:checked~label {
       box-shadow: 0 0 2px 0px #212b36, 0 0 5px 5px red;
@@ -15110,8 +15132,15 @@ label.color-swatch__item {
     color: white;
     height: 50px;
     font-size: 12px;
-    padding: 6px 14px;
+    padding: 6px 12px;
 }
+    .drawer__header {
+        padding-top: 14px;
+        padding-bottom: 14px;
+        max-height: 90px;
+        background: #ff0000;
+        height: 50px;    border: 0;
+    }
     
 /* Drawer Footer CSS */
     .drawer__footer:before {
@@ -15136,7 +15165,7 @@ label.color-swatch__item {
     	padding-bottom: 12px;padding-left: 12px;
     }
    .mini-cart__recommendations-list .product-item__info {
-     margin:0;max-width: 200px;min-width: 140px;
+      margin:0;max-width: 200px;min-width: 140px;
     }
     .quantity-selector--small .quantity-selector__input {
     padding: 0;font-weight: 900;width: 24px;
@@ -15203,12 +15232,12 @@ label.color-swatch__item {
     	font-size: 10px;
     }
     .line-item__remove-button {
-    right: 4vw;
+    	    right: 4vw;
     position: absolute;
-    top: 3rem;
+    top: 3.8rem;
     }
     .mini-cart__recommendations-inner {
-    	background: #f1f1f1;  
+    	background: #f1f1f1;    border-top: 3px solid #0006;
     }
     .mini-cart__recommendations-heading {
  color: #000;
@@ -15225,7 +15254,7 @@ label.color-swatch__item {
         background: #ff0000;
         padding: 3px 5px;
         border-radius: 2px;
-      	color: #fff;    text-decoration: none;
+      	color: #fff;
     }
     #zestmoney-widget-control-cart {
     	margin: 0 0 20px !important;
@@ -15320,8 +15349,16 @@ label.color-swatch__item {
     }
     .shopify-section--main-collection .product-item {opacity: 1!important;}
     .shopify-section--product-recommendations > .section {
-    	margin-bottom: 0;    background: #fff;
-      	padding-bottom: 2rem;
+    	margin-bottom: 0;
+      	padding-bottom: 2rem !important;
+      	padding-top: 2rem !important;
+      	background: white;
+    }
+    .section__color-wrapper {
+    	background: white;
+    }
+    .shopify-section--product-recommendations > .section h3 {
+    	color: black;
     }
     
 /* Blogs Page CSS */
