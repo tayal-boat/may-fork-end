@@ -11,16 +11,7 @@
   	{% assign product = block.settings.product_new_launches %}
     <div class="row product-row">
       <div class="col-md-6 image-col">
-        {% for variant in product.variants %}
-        	{% if variant.available == true %}
-      			<img src="{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}" alt="{{product.title}}" data-id="{{variant.id}}" data-qty="{{variant.inventory_quantity}}" />
-        	{% endif %}
-        {% endfor %}
-        {% for variant in product.variants %}
-        	{% if variant.available == false %}
-      			<img src="{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}" alt="{{product.title}}" data-id="{{variant.id}}" data-qty="{{variant.inventory_quantity}}" />
-        	{% endif %}
-        {% endfor %}
+        {%- render 'product-media', product: product -%}
       </div>
       <div class="col-md-6 content-col">
         {%- render 'product-info', product: product, featured: true, update_url: false -%}
