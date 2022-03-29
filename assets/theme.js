@@ -6041,12 +6041,6 @@
           </div>
         </div>
       `;
-        $('.cart-notification__view-cart').on('click', function() {
-		let pageUrl = location.href;
-        if(pageUrl.indexOf('#cart') != -1){
-            console.log('clicked link');
-        }
-})
       } else {
         this.classList.add("cart-notification--error");
         this.innerHTML = `
