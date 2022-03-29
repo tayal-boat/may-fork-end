@@ -241,11 +241,12 @@ if (window.matchMedia("(max-width: 767px)").matches) {
 */
 
 
-
+$(document).ready(function() {
 $('.cart-notification__view-cart').on('click', function() {
   alert();
 		let pageUrl = location.href;
         if(pageUrl.indexOf('#cart') != -1){
             console.log('clicked link');
         }
+})
 })
