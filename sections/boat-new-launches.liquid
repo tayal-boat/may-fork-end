@@ -11,13 +11,20 @@
   	{% assign product = block.settings.product_new_launches %}
     <div class="row product-row">
       <div class="col-md-6 image-col">
-        {%- render 'product-media', product: product -%}
+        {% for variant in product.variants %}
+        	{% if variant.available == true %}
+      			<img src="{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}" alt="{{product.title}}" data-id="{{variant.id}}" data-qty="{{variant.inventory_quantity}}" />
+        	{% endif %}
+        {% endfor %}
+        {% for variant in product.variants %}
+        	{% if variant.available == false %}
+      			<img src="{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}" alt="{{product.title}}" data-id="{{variant.id}}" data-qty="{{variant.inventory_quantity}}" />
+        	{% endif %}
+        {% endfor %}
       </div>
       <div class="col-md-6 content-col">
         {%- render 'product-info', product: product, featured: true, update_url: false -%}
-        <product-payment-container class="product-form__payment-container" {{ block.shopify_attributes }}>
-        	<button type="submit" data-product-add-to-cart-button data-use-primary class="product-form__add-button button button--primary button--full">{{- 'product.form.add_to_cart' | t -}}</button>
-        </product-payment-container>
+        
       </div>
     </div>
     {% endfor %}
