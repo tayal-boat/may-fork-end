@@ -4966,7 +4966,8 @@
     connectedCallback() {
       this.id.disabled = false;
       if (window.themeVariables.settings.cartType === "page" || window.themeVariables.settings.pageType === "cart") {
-        return;
+//         return;
+        this.addEventListener("submit", this._onSubmit.bind(this));
       }
       this.addEventListener("submit", this._onSubmit.bind(this));
     }
