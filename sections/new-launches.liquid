@@ -713,29 +713,6 @@
         {% endif %}
         {% endfor %}
       </div>
-      <div class="outer-featured">
-         <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow_2.png?v=1642498226" prod-id = "{{product.id}}" class="non-active-click angle {{product.id}}_f-l {{product.id}}_swipe f-l" />
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow.png?v=1642498059" prod-id = "{{product.id}}" class="angle {{product.id}}_f-r {{product.id}}_swipe f-r" />
-        <div class="featured-img-div {{p_id}}_featured" prod-id ="{{p_id}}">
-          {% assign i = -1 %} 
-          {% for variant in product.variants %} 
-          {% if variant.available == true %}
-          {% assign i =  i | plus: 1 %}
-        <div swatch-num = "{{i}}" class="{{color}}_featured featured_img">
-            <img prod-id ="{{p_id}}" swatch-num = "{{i}}"style="width: 80%;height: 80;margin: auto;"src = "{{variant.metafields.my_fields.newlaunchimage  | image_url: width: 100, height: 100}}">
-          </div>
-          {% endif %}
-        {% endfor %}
-          {% for variant in product.variants %} 
-          {% if variant.available == false %}
-          {% assign i =  i | plus: 1 %}
-        <div swatch-num = "{{i}}" class="{{color}}_featured featured_img">
-            <img prod-id ="{{p_id}}" swatch-num = "{{i}}"style="width: 80%;height: 80;margin: auto;"src = "{{variant.metafields.my_fields.newlaunchimage  | image_url: width: 100, height: 100}}">
-          </div>
-          {% endif %}
-        {% endfor %}
-        </div>
-      </div>
     </div>
     <div class="product-info-div" data-cat="{{ product.type }}">
       <img class="vector-1" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_6085a897-ef0f-41c5-9690-3de81a71112f.png?v=1642419136" />
@@ -927,7 +904,6 @@
   })
   $('.featured-img-div').each((k,ele)=>{
   let i = ele.getAttribute('prod-id');
-//   console.log($(`.${i}_featured .featured_img`).length);
     if($(`.${i}_featured .featured_img`).length < 5){
     $(`.${i}_f-r`).hide();
     $(`.${i}_f-l`).hide();
@@ -937,9 +913,6 @@
     let i = ele.target.getAttribute('prod-id')
   $(`.${ele.target.getAttribute('prod-id')}_featured .slick-next`).click();
   $(`.${ele.target.getAttribute('prod-id')}_swipe`).removeClass('non-active-click')
-//   console.log($(`.${ele.target.getAttribute('prod-id')}_featured .active-featured`).attr('data-slick-index'));
-//   console.log($(`.${i}_featured .featured_img`));
-//console.log($(`.${ele.target.getAttribute('prod-id')}_featured .slick-active`)[3].getAttribute('data-slick-index'));
   if($(`.${ele.target.getAttribute('prod-id')}_featured .slick-active`)[3].getAttribute('data-slick-index') == parseInt($(`.${i}_featured .featured_img`).length - 1)){
   $(`.${ele.target.getAttribute('prod-id')}_f-r`).addClass('non-active-click');
   }
@@ -1015,7 +988,6 @@
     ele.target.classList.add('active-swatch');
     $(`.${k}_nld .featured_img`).removeClass('active-featured');
     $(`.${k}_nld .featured_img`).each((l,ele2)=>{
-//       console.log(ele2);
       if(ele2.getAttribute('swatch-num') == i){
       ele2.classList.add('active-featured');
       }
@@ -1056,13 +1028,8 @@
   );
 
   $('.featured_img').on('click',(ele)=>{
-//     console.log(ele.target)
-//     let i = ele.target.getAttribute('var-id');
-//     console.log(i);
     let j = ele.target.getAttribute('swatch-num');
     let k = ele.target.getAttribute('prod-id');
-//     console.log(j);
-    //     $(`.` + `${i}` + `_color-swatch`).click();
     $(`.${k}_nld .${ele.target.getAttribute('prod-id')}_var`).slick('slickGoTo', j);
     if($(`.${k}_nld .${ele.target.getAttribute('prod-id')}_var`).attr('active-slide') == j){
       $(`.${k}_nld .featured_img`).removeClass('active-featured'); 
@@ -1071,11 +1038,7 @@
         ele2.classList.add('active-featured');
         }
       })
-//       $(`.${k}_nld .${i}_inner_featured`).addClass('active-featured');
     }
-    //     $('.color-swatch').removeClass('active-swatch');
-    //     $(`.${i}_color-swatch`).addClass('active-swatch');
-
   })
 
    $('.outer-container.new--launch').on('afterChange', function(event, slick, currentSlide, nextSlide){
