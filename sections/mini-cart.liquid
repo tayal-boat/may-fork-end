@@ -21,7 +21,7 @@ background: #ff000000;
  div#zestmoney-widget-control-cart {
     margin-bottom: 12px!important;
 }
-#mini-cart .total {
+#mini-cart .drawer__footer--bordered {
      box-shadow: 0 0px 10px #878787b8; /* We use box-shadow due to the shadow */
 }  
 /*     gokwick        */
@@ -407,11 +407,7 @@ background: #ff000000;
         {%- endfor -%}
       </form>
 
-
-    </div>
-
-    <footer class="mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered">
-            {%- if section.settings.show_recommendations -%}
+      {%- if section.settings.show_recommendations -%}
         <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
           {%- assign acceptable_recommendations_count = 0 -%}
 
@@ -462,6 +458,9 @@ background: #ff000000;
           {%- endif -%}
         </cart-drawer-recommendations>
       {%- endif -%}
+    </div>
+
+    <footer class="mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered">
       {%- capture shipping_tax_note -%}{{ 'cart.general.shipping_tax_note' | t }}{%- endcapture -%}
 
       {%- if cart.cart_level_discount_applications != blank -%}
@@ -493,8 +492,7 @@ background: #ff000000;
         </div>
       {%- endif -%}
       {%- endcomment -%}
-      <div class="total">
- <div class="d-flex mt-2 justify-content-between">
+ <div class="d-flex justify-content-between">
    <span class="cart-total pb-2"> <b>Total:</b></span>
       <input class="cart-total" value="{{cart.total_price | money_with_currency}}" type="hidden">
    <b> {{- cart.total_price | money_with_currency -}}</b>
@@ -512,7 +510,6 @@ background: #ff000000;
       {%- else -%}
         <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
       {%- endif -%}
-      </div>
     </footer>
   {%- endif -%}
 
