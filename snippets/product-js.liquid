@@ -1,5 +1,53 @@
 <script type="text/javascript">
   $(document).ready(function() {
+    $(".usp_section, .productDescriptions1").attr("data-aos", "");
+    function usp_height(height, source) {
+            if (source == "web") {
+                $(".only-desktop.usp_section").css({
+                    "display": "block",
+                    "height": height,
+                });
+                $(".mobile-only.usp_section").css("display", "none");
+            }
+            else if (source == "mobile") {
+                $(".mobile-only.usp_section").css({
+                    "display": "block",
+                    "height": height,
+                });
+                $(".only-desktop.usp_section").css("display", "none");
+            }
+        };
+
+        function update_usp_height(source) {
+            if (source == "web") {
+                if ($(window).width() >= 1250) {
+                    usp_height("150px", source);
+                }
+                else if ($(window).width() > 766 && $(window).width() < 1250) {
+                    usp_height("100px", source);
+                }
+            }
+            else if (source == "mobile") {
+                if ($(window).width() > 620 && $(window).width() <= 766) {
+                    usp_height("830px", source);
+                }
+                else if ($(window).width() > 450 && $(window).width() <= 620) {
+                    usp_height("650px", source);
+                }
+                else if ($(window).width() <= 450) {
+                    usp_height("510px", source);
+                }
+            }
+        };
+        if($(".only-desktop.usp_section").length && $(".mobile-only.usp_section").length) {
+          update_usp_height("web");
+          update_usp_height("mobile");
+
+          $(window).resize(function () {
+              update_usp_height("web");
+              update_usp_height("mobile");
+          });
+        }
     {%- assign product__price = product.price | plus: 0 | divided_by: 100 -%}
   	$('#zestmoney-widget-control').click(function() {
      clevertap.event.push("ZestMoney Widget Clicked", {
@@ -118,7 +166,7 @@
       productTitle = productTitle + ' - boAt Lifestyle';
       $(".product-tabs__content").find("img").attr("alt", productTitle);
     
-      $(".usp_section, .productDescriptions1").attr("data-aos", "");
+      
     
 // FAQs block JS
     if($('.new-productpart-footer-content').length) {
