@@ -1,177 +1,1238 @@
-{%- capture status -%}
-  {%- form 'recover_customer_password' -%}
-    {%- if form.posted_successfully? -%}
-      {%- assign is_recover_posted_successfully = true -%}
-    {%- else -%}
-      {%- assign is_recover_posted_successfully = false -%}
-    {%- endif -%}
-  {%- endform -%}
-{%- endcapture -%}
+{%- capture status -%} {%- form 'recover_customer_password' -%} {%- if
+form.posted_successfully? -%} {%- assign is_recover_posted_successfully = true
+-%} {%- else -%} {%- assign is_recover_posted_successfully = false -%} {%- endif
+-%} {%- endform -%} {%- endcapture -%}
 
-<section>
-  <div class="container">
-    {%- comment -%}
-    --------------------------------------------------------------------------------------------------------------------
-    CUSTOMER LOGIN FORM
-    --------------------------------------------------------------------------------------------------------------------
-    {%- endcomment -%}
+<style>
+  .access-div {
+    display: none !important;
+  }
+  .test {
+    padding-top: 30px;
+    justify-content: center;
+  }
+  .ImgDiv {
+    margin: 0 !important;
+  }
+  .Logo {
+    width: 370px !important;
+  }
+  .LabelSpan {
+    display: none;
+  }
+  .phone-input::placeholder {
+    font-size: 14px;
+    color: grey;
+    transform: translate(1px, -1px);
+  }
+  #phone-input {
+    border-radius: 30px !important;
+    border: 1.2px solid #ed1d25 !important;
+    padding-left: 20px !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    letter-spacing: 0 !important;
+  }
+  .login-otp {
+    border-radius: 30px !important;
+    background: #ed1d25 !important;
+    justify-content: center !important;
+    text-align: center;
+    padding: 11px 25px;
+    width: 100% !important;
+    outline: none;
+    font-weight: 700;
+  }
+  .cf {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .Container {
+    padding: 0 !important;
+  }
+  .LoginBox {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  .ShowBox {
+    padding: 0 !important;
+  }
+  .Form {
+    background: url("https://cdn.shopify.com/s/files/1/0057/8938/4802/files/background_Web.png?v=1641813624");
+    background-size: cover;
+  }
+  .Container {
+    margin-bottom: 0 !important;
+  }
+  .LoginSignBox {
+    margin-bottom: 0 !important;
+  }
+  #content {
+    padding-bottom: 0 !important;
+  }
+  .inner-form {
+    width: 380px;
+    margin: auto;
+    margin-top: 40px;
+    padding: 0px;
+    position: relative;
+    color: red;
+  }
+  .white-dash {
+    position: absolute;
+    height: auto;
+    bottom: -16px;
+    left: -8px;
+  }
+  .white-dash > img {
+    width: 1px;
+    height: 126px;
+  }
+  .white-dash2 {
+    position: absolute;
+    height: auto;
+    top: -20px;
+    right: -8px;
+  }
+  .white-dash2 > img {
+    width: 1px;
+    height: 126px;
+  }
+  .Conditions {
+    color: white;
+    font-weight: 400 !important;
+  }
+  .Conditions > a {
+    color: #d5d4d4 !important;
+    font-weight: 700 !important;
+    margin-left: 1.5px !important;
+  }
+  .dash {
+    width: 12%;
+    margin: auto;
+  }
+  .ButtonDiv > div {
+    width: 100% !important;
+  }
+  .enter-code-div {
+    color: #ed1d25;
+    text-align: center;
+    display: none;
+    margin-bottom: 40px;
+    margin-top: 22px;
+    letter-spacing: 0 !important;
+  }
+  .enter-code-div > p {
+    color: #ed1d25;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .resend-flex {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    display: none;
+  }
+  .resend-flex > p {
+    font-size: 12px !important;
+    font-weight: 600;
+    display: flex;
+    width: 100%;
+    color: #e7e0e0;
+    font-weight: 600;
+    align-items: center;
+  }
+  .resend {
+    color: #ed1d25 !important;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .resend > button {
+    font-size: 12px !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .dash2 {
+    width: 8%;
+    display: none;
+    margin-top: 32px;
+    margin-bottom: 20px;
+  }
+  .enter-code-div {
+    color: #ed1d25;
+    text-align: center;
+    max-width: 360px;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: space-between;
+    display: none;
+    margin-bottom: 40px;
+    margin-top: 22px;
+    letter-spacing: 0 !important;
+  }
+  .enter-code-div > p {
+    color: #ed1d25;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0 !important;
+    letter-spacing: 0 !important;
+  }
+  .dots {
+    padding: 0 10px;
+    height: 12px;
+  }
+  .GuestDiv {
+  }
+  @media (max-width: 768px) {
+    .Logo {
+      width: 96% !important;
+    }
+    .enter-code-div {
+      color: #ed1d25;
+      text-align: center;
+      max-width: 400px;
+      display: flex;
+      margin: auto;
+      align-items: center;
+      justify-content: space-between;
+      display: none;
+      margin-bottom: 40px;
+      margin-top: 22px;
+    }
+    .enter-code-div > p {
+      color: #ed1d25;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 0 !important;
+    }
+  }
+  @media (min-width: 768px) {
+    .otp-input-boxes__parent {
+      width: 100%;
+      margin-left: 0;
+    }
+    .white-dash2.active-dash > img {
+      margin-top: 7.1vw;
+    }
+    .otp-input-boxes__parent .otp-input-box {
+      border-radius: 8px;
+    }
+    .enter-code-div {
+      color: #ed1d25;
+      text-align: center;
+      max-width: 400px;
+      display: flex;
+      margin: auto;
+      align-items: center;
+      justify-content: space-between;
+      display: none;
+      margin-bottom: 40px;
+      margin-top: 22px;
+    }
+    .enter-code-div > p {
+      color: #ed1d25;
+      text-align: center;
+      font-size: 15.5px;
+      font-weight: 800;
+      margin-bottom: 0 !important;
+    }
+  }
+  @media (max-width: 400px) {
+    .inner-form {
+      width: 325px;
+    }
+  }
+</style>
+<div class="enter-code-div">
+  <img
+    class="dots1 dots"
+    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_copy_4.png?v=1641813623"
+  />
+  <p>
+    Enter the 6-digit code sent to your phone number
+    <span class="phone-num-top"></span>
+  </p>
+  <img
+    class="dots2 dots"
+    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_copy_4.png?v=1641813623"
+  />
+</div>
+<div class="FullContainer">
+  <div class="Container">
+    <div class="WebHeading WebHeadingForMobile">Login or SignUp</div>
+    <div class="WebHeading WebHeadingForDesktop">Login to Get Started</div>
+    <div class="LoginSignBox">
+      <div class="LoginBox">
+        <div class="ShowBox">
+          <div class="test">
+            <div class="ImgDiv">
+              <img
+                class="Logo"
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_4_a667e42b-3e55-400a-98ad-745ea53a2e8d.png?v=1641813623"
+                class="primary_logo lazyloaded"
+                width="190px"
+                height="136px"
+                alt="boat"
+              />
+            </div>
+            <div class="SpanDiv access-div">
+              <div class="SpanDetailDiv">
+                <span class="SpanDetail"
+                  >Get access to your orders &amp; track previous order
+                </span>
+              </div>
+            </div>
+          </div>
 
-    <div id="login-form-container">
-      <div class="page-header">
-        <div class="page-header__text-wrapper text-container">
-          <h1 class="heading h2">{{ 'customer.login.title' | t }}</h1>
-          <p>{{ 'customer.login.instructions' | t }}</p>
+          <form class="Form">
+            <div class="inner-form">
+              <div class="white-dash">
+                <img
+                  src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_2cbe4213-a59b-4e67-9531-f10dc4127822.png?v=1641888851"
+                />
+              </div>
+              <div class="white-dash2">
+                <img
+                  src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_2cbe4213-a59b-4e67-9531-f10dc4127822.png?v=1641888851"
+                />
+              </div>
+
+              <div class="InputDiv InputDiv1">
+                <span class="LabelSpan">Phone Number</span>
+                <input
+                  type="text"
+                  placeholder="Phone number"
+                  name="phone_number"
+                  class="Input phone-input"
+                  value=""
+                  id="phone-input"
+                  maxlength="10"
+                />
+              </div>
+
+              <div class="OtpDiv">
+                <div class="OtpImgDiv">
+                  <div class="OtpImg">
+                    <img
+                      class="OtpLogo"
+                      src="https://cdn.shopify.com/s/files/1/0508/4869/4431/files/Verification_OTP_Icon-01.svg?v=1630757259"
+                      class="primary_logo lazyloaded"
+                      width="190px"
+                      height="143px"
+                      alt="Otp"
+                    />
+                  </div>
+                  <span class="hiddenPhone" style="margin-bottom: 17px"
+                    >Sent to <span style="color: red">*******123</span>
+                  </span>
+                  <!--                                       <div class="InputDiv InputDivOTP"><span class="LabelSpan">OTP</span><input type="text" name="otp" class="Input" value=""></div>` -->
+                </div>
+              </div>
+              <div class="resend-flex">
+                <p>
+                  Didn't recieve the code?
+                  <span class="resend"
+                    ><button
+                      style="padding: 0 !important"
+                      type="button"
+                      class="ResendOTPButton"
+                      disabled
+                    >
+                      Resend
+                    </button></span
+                  >
+                </p>
+
+                <span class="ResendOTPTimer"><span>00:30</span></span>
+              </div>
+              <div class="ButtonDiv" style="margin-top: 30px">
+                <div style="display: flex; width: 95%">
+                  <button class="login-otp" type="submit" class="Button">
+                    LOGIN WITH OTP
+                  </button>
+                </div>
+              </div>
+
+              <span class="AccountExists"
+                >Your account doesn't exists, Please sign up</span
+              >
+              <span class="Valid">Valid Phone Number is required</span>
+              <span class="ValidOtp">Please provide valid OTP.</span>
+              <div class="Conditions">
+                By Continuing, you agree to boAt's
+                <a
+                  href="https://boatlifestylein.myshopify.com/pages/terms-of-use"
+                  >Terms and Conditions</a
+                ><br />
+                and
+                <a
+                  href="https://boatlifestylein.myshopify.com/pages/privacy-policy"
+                  >Privacy Policy</a
+                >
+              </div>
+              <div class="dash">
+                <img
+                  src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_4_2bd5abbb-caa5-472b-ba78-be953d0457fd.png?v=1642444083"
+                />
+              </div>
+              <div class="dash dash2">
+                <img
+                  src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_6_d962df41-3d15-45ff-b55e-d4221f95f82f.png?v=1641828784"
+                />
+              </div>
+              {% unless shop.checkout.guest_login %}
+              <p
+                class="right"
+                style="
+                  padding-top: 10px;
+                  letter-spacing: 0.8px;
+                  font-size: 12px;
+                  font-weight: 600;
+                "
+              >
+                <a
+                  href="{{ routes.account_register_url }}"
+                  id="customer_register_link"
+                  >Sign Up as New Customer</a
+                >
+              </p>
+              {% endunless %}
+              <div class="GuestDiv">
+                <a
+                  href="https://boatlifestylein.myshopify.com"
+                  style="color: #ed1d25"
+                  >Continue as Guest</a
+                >
+              </div>
+              <!--                       <span class="OtpMsg">DO NOT SHARE OTP TO ANYONE.</span> -->
+            </div>
+            <input
+              style="display: none"
+              class="auto-input"
+              type="text"
+              autocomplete="one-time-code"
+            />
+            <!--                                 <input type="text" autocomplete="one-time-code" inputmode="numeric" style="display:none;"> -->
+          </form>
         </div>
-      </div>
-
-      <div class="page-content page-content--small">
-        <div class="account__block-list">
-          {%- for block in section.blocks -%}
-            <div class="account__block-item" {{ block.shopify_attributes }}>
-              {%- case block.type -%}
-                {%- when '@app' -%}
-                  {%- render block -%}
-
-                {%- when 'liquid' -%}
-                  {{- block.settings.liquid -}}
-
-                {%- when 'login' -%}
-                  {%- form 'customer_login', name: 'login', class: 'form' -%}
-                    {%- if form.errors -%}
-                      <div class="banner banner--error form__banner" id="login-form-error">
-                        <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
-                        <p class="banner__content">{{ form.errors.messages['form'] }}</p>
-                      </div>
-                    {%- endif -%}
-
-                    <div class="input">
-                      <input type="email" id="customer[email]" autocomplete="email" class="input__field" name="customer[email]" required="required" {% if form.errors %}aria-invalid="true" aria-describedby="login-form-error"{% endif %}>
-                      <label for="customer[email]" class="input__label">{{ 'customer.login.email' | t }}</label>
-                    </div>
-
-                    <div class="input">
-                      <input type="password" id="customer[password]" class="input__field" name="customer[password]" required="required" autocomplete="current-password" {% if form.errors %}aria-invalid="true" aria-describedby="login-form-error"{% endif %}>
-                      <label for="customer[password]" class="input__label">{{ 'customer.login.password' | t }}</label>
-
-                      <button type="button" class="input__field-link link text--xsmall text--subdued" data-action="switch-login-form">{{ 'customer.login.forgot_password' | t }}</button>
-                    </div>
-
-                    <button type="submit" is="loader-button" class="form__submit button button--primary button--full">{{ 'customer.login.submit' | t }}</button>
-
-                    <span class="form__secondary-action text--subdued">
-                      {{- 'customer.login.new_customer' | t -}}
-                      <a href="{{ routes.account_register_url }}" class="link">{{ 'customer.login.create_account' | t }}</a>
-                    </span>
-                  {%- endform -%}
-              {%- endcase -%}
-            </div>
-          {%- endfor -%}
-        </div>
-      </div>
-    </div>
-
-    {%- comment -%}
-    --------------------------------------------------------------------------------------------------------------------
-    CUSTOMER RECOVERY FORM
-    --------------------------------------------------------------------------------------------------------------------
-    {%- endcomment -%}
-
-    <div id="recover-form-container" style="display: none">
-      <div class="page-header">
-        <div class="page-header__text-wrapper text-container">
-          <h1 class="heading h2">{{ 'customer.recover_password.title' | t }}</h1>
-
-          {%- unless is_recover_posted_successfully -%}
-            <p>{{ 'customer.recover_password.instructions' | t }}</p>
-          {%- endunless -%}
-        </div>
-      </div>
-
-      <div class="page-content page-content--small">
-        {%- form 'recover_customer_password', name: 'recover', class: 'form' -%}
-          {%- if form.errors -%}
-            <div class="banner banner--error form__banner" id="recovery-form-error">
-              <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
-              <p class="banner__content">{{ form.errors.messages['form'] }}</p>
-            </div>
-          {%- endif -%}
-
-          {%- if form.posted_successfully? -%}
-            <div class="banner banner--success form__banner">
-              <span class="banner__ribbon">{% render 'icon' with 'form-success' %}</span>
-              <p class="banner__content">{{ 'customer.recover_password.success' | t }}</p>
-            </div>
-          {%- else -%}
-            <div class="input">
-              <input type="email" id="customer[recover_email]" class="input__field" name="email" required="required" {% if form.errors %}aria-invalid="true" aria-describedby="recovery-form-error"{% endif %}>
-              <label for="customer[recover_email]" class="input__label">{{ 'customer.recover_password.email' | t }}</label>
-            </div>
-
-            <button type="submit" is="loader-button" class="form__submit button button--primary button--full">{{ 'customer.recover_password.submit' | t }}</button>
-          {%- endif -%}
-
-          {%- unless form.posted_successfully? -%}
-            <span class="form__secondary-action text--subdued">
-              {{- 'customer.recover_password.remember_password' | t -}}
-              <button type="button" class="link" data-action="switch-login-form">{{ 'customer.recover_password.back_to_login' | t }}</button>
-            </span>
-          {%- endunless -%}
-        {%- endform -%}
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // The script for this is very minimal so we just embed it here
-    window.addEventListener('DOMContentLoaded', () => {
-      const loginFormElement = document.getElementById('login-form-container'),
-        recoverFormElement = document.getElementById('recover-form-container');
+<style>
+    .Conditions{
+      font-weight:600;
+    }
+  .FullContainer{
+    width: 100%;
+  }
+  .Container{
+    padding: 15px;
+    position: relative;
+  }
+  .WebHeading{
+    font-weight:600;
+    text-align: center;
+    position: relative;
+    font-family: "Humanist521BT-Roman", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+      sans-serif;
+    font-size: 20px;
+    color: #011e42;
+    text-transform: uppercase;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-direction: row;
+    -webkit-box-pack: center;
+    justify-content: center;
+    width: 100%;
 
-      const switchForms = () => {
-        loginFormElement.style.display = (window.getComputedStyle(loginFormElement).display) === 'block' ? 'none' : 'block';
-        recoverFormElement.style.display = (window.getComputedStyle(recoverFormElement).display) === 'block' ? 'none' : 'block';
+    color: red;
+  }
+  @media (min-width: 1040px) {
+    .WebHeading{
+  /*     font-size: 25px; */
+      font-size: 20px;
+      letter-spacing: 0.8px;
+    }
+  }
+  .LoginSignBox{
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    -webkit-box-align: center;
+    align-items: center;
+  }
+  @media (min-width: 767px) {
+    .LoginSignBox{
+      margin-bottom: 50px;
+    }
+  }
+  .LoginBox{
+    width: 96%;
+    padding: 10px;
+    font-family: "Humanist521BT-Roman", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+      sans-serif;
+  }
+
+    @media (max-width: 766.9px) {
+
+      .SpanDetailDiv{
+       width: 258px;
+        font-weight:600 !important;
+    }
+
+     .SpanDetail{
+       display: inline-block;
+      text-align: center;
+     }
+
+    .Input{
+      margin-left: 0% !important;
+      width: 100% !important;
+
+    }
+
+    .Button{
+      border-radius: 5px;
+    }
+
+    .WebHeadingForDesktop{
+      display: none;
+    }
+
+      .Conditions br {display: none;}
+
+  }
+
+  @media (min-width: 767px) {
+    .LoginBox{
+  /*     width: 420px; */
+      width: 380px;
+    }
+
+
+
+    .test{
+      display: flex;
+      align-items: center;
+    }
+    .ImgDiv{
+      margin-right: 25px;
+    }
+    .Logo{
+      width:120px;
+    }
+    .SpanDetailDiv{
+      width: 100%;
+      font-weight:600 !important;
+    }
+    .Input{
+      margin-left: 3% !important;
+      width: 90% !important;
+
+    }
+    .Button{
+      border-radius: 8px;
+    }
+    .WebHeadingForMobile{
+      display: none;
+    }
+
+
+  }
+  .ShowBox{
+    width: 100%;
+    background-color: #fff;
+    padding: 10px;
+    height: 100%;
+  }
+    .ImgDiv{
+      text-align:center;
+    }
+    .Logo{
+      margin: auto;
+      width:120px;
+    }
+  .Form{
+    margin-bottom:0px;
+    margin-top: 30px;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+  }
+    .SpanDetail{
+    letter-spacing: 0.8px;
+      font-size: 12px;
+  /*     margin-bottom: 30px; */
+  /*     text-align: center; */
+    }
+  .InputDiv{
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .LabelSpan{
+    margin-bottom: 0.3rem;
+    font-size: 11.5px;
+    padding: 0px 4px;
+    position: absolute;
+    top: -11px;
+    left: 21px;
+    background: white;
+    opacity: 0.95;
+  /*   font-weight: 500 !important; */
+    color: #000000 !important;
+  }
+  .Input{
+      height: 45px !important;
+      border-width: 2px !important;
+  /*     width: 90% !important; */
+      padding: 10px !important;
+      font-size: 18px !important;
+      appearance: none !important;
+      border-radius: 5px !important;
+      outline: none !important;
+      background-color: rgb(255, 255, 255) !important;
+  /*     border: 1px solid rgb(230, 232, 231) !important; */
+      border: 1.3px solid rgb(0, 0, 0) !important;
+      color: #000000 !important;
+      letter-spacing: 0.8px !important;
+
+  /*         margin-left: 3% !important; */
+
+  }
+    .AccountExists{
+      display: none;
+    margin: auto;
+    color: red;
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 2px 10px;
+    }
+  .Valid{
+    display: none;
+    margin: auto;
+    color: red;
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 2px 10px;
+  }
+  .ValidOtp{
+    display: none;
+    margin: auto;
+    color: red;
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 2px 10px;
+  }
+  .OtpMsg{
+    display: none;
+    margin: auto;
+    margin-top:10px;
+  /*   color: #5bbe1c; */
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 2px 10px;
+  }
+  .Span{
+    /* position: absolute; */
+    right: 0;
+    color: red;
+    font-size: 12px;
+    border-radius: 10px;
+    padding: 2px 10px;
+    font-weight:600px;
+  }
+    .Conditions{
+      letter-spacing: 0px;
+      font-size: 11px;
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 600px;
+      line-height: 1.6;
+    }
+    .Conditions a{
+      color:red;
+    }
+  .ButtonDiv{
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-direction: row;
+    -webkit-box-align: center;
+    align-items: center;
+    margin-top: 15px;
+    -webkit-box-pack: center;
+    justify-content: center;
+    font-weight:600;
+    display: flex;
+  }
+  .Button{
+    background: red;
+    width: 100%;
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 15px;
+    padding: 11px 20px;
+    transition-duration: 0.5s;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    font-family: "MyriadPro-Regular", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+      sans-serif;
+  }
+  .GuestDiv {
+      text-align: center;
+      font-size: 15px;
+      color: #5bbe1c;
+      padding: 10px 0px;
+      font-weight: 600;
+      padding-top: 0;
+  }
+    .resend button{
+      background: transparent !important;
+      color: #919191 !important;
+      font-weight: 700;
+      margin: auto;
+      width: max-content;
+
+    }
+    .ResendOTPTimer
+    {
+      display:none;
+      text-align: center;
+      letter-spacing: 0.8px;
+      font-size: 13px;
+
+    }
+    .ResendOTPTimer span{
+      color:#ed1c24;
+    }
+
+
+    .otp-input-boxes__parent {
+      display: flex;
+      justify-content: center;
+      height: 65px;
+    }
+
+    .otp-input-boxes__parent .otp-input-box {
+      margin: .5rem;
+      padding: 0;
+      line-height: inherit;
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9px;
+      font-size: 1rem;
+      color: #333;
+      text-align: center;
+  /*     --bg-opacity: 1;
+      background-color: #f7fafc;
+      background-color: rgba(247,250,252,var(--bg-opacity)); */
+      background: transparent;
+      --border-opacity: 1;
+  /*     border-color: #f7fafc; */
+      border: 1px solid rgba(128, 128, 128,var(--border-opacity));
+  /*     text-shadow: grey 0px 0px 0px; */
+    }
+    .resend-flex {padding: 0 5px}
+
+    @media (max-width: 1024px) {
+      .otp-input-boxes__parent .otp-input-box {
+          margin: .5rem 0.25rem;
+          width: 40px;
+          height: 40px;
+      }
+    }
+
+    .otp-input-boxes__parent .otp-input-box:focus {
+  /*     --bg-opacity: 1;
+      background-color: #edf2f7;
+      background-color: rgba(237,242,247,var(--bg-opacity)); */
+      --border-opacity: 1;
+  /*     border-color: red; */
+      border-color: rgba(153, 204, 0,var(--border-opacity));
+  /*     box-shadow: 0 0 0 3px rgb(153, 204, 0 / 50%); */
+    }
+    .right{
+      display: flex;
+      margin-bottom: 15px;
+    }
+    #customer_register_link{
+      color: white;
+      text-decoration: none;
+      border: 1px solid white;
+      width: 100%;
+      text-align: center;
+      padding: 7px 0px;
+      border-radius: 30px;
+      font-weight: 300;
+      font-size: 15px;
+    }
+    .login-otp{
+      font-size: 15px;
+      letter-spacing: 5px;
+      height: 47.625px;
+    }
+    .GuestDiv a{
+      font-size: 14px;
+  	  text-decoration: underline;
+    }
+    .WebHeading.WebHeadingForMobile{
+      display: none;
+    }
+    .WebHeading.WebHeadingForDesktop{
+      display: none;
+    }
+    .otp-input-box::placeholder{
+      transform: translateY(9px);
+      color: grey;
+    }
+    .otp-input-box{
+      background: white !important;
+    }
+    .ResendOTPTimer {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ResendOTPButton{
+      background: transparent !important;
+      border: none; !important
+      padding: 0 !important;
+      font-size: 10px !important;
+      color: #919191;
+    }
+    .ButtonDiv{
+      margin-top: 30px;
+    }
+    .otp-input-boxes__parent .otp-input-box {
+      margin: 0.5rem 0.25rem;
+      width: 16%;
+      height: auto;
+      aspect-ratio: 0.92;
+      border: 0.1px solid #c22d2d !important;
+  }
+    #customer_register_link:hover {
+      border-color: white;
+      color: red;
+      transition: all 0.5s;
+      background-color:white;
+      font-weight: 600;
+    }
+    button{
+      outline: none !important;
+      color: #ffff;
+    }
+    button:focus{
+      outline: none !important;
+    }
+</style>
+
+<script type="text/javascript">
+  $(".Form").on("submit", function (event) {
+    event.preventDefault();
+    var values = $(this).serializeArray();
+    console.log("form-submit", values);
+    if (values.length == 1) {
+      var phone_number;
+      var is_valid;
+      if (values[0].name == "phone_number") {
+        phone_number = values[0].value;
+        var is_valid = phone_number.match(/^[0-9]{10}$/);
+      }
+      if (is_valid) {
+        $(".Valid").hide();
+        $(".AccountExists").hide();
+        clevertap.event.push("Login", {
+          Phone: phone_number,
+        });
+        var settings = {
+          url: "https://boat-api.farziengineer.co/requestotp",
+          method: "POST",
+          timeout: 0,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            phone_number: phone_number,
+            type: "login",
+          }),
+        };
+
+        $.ajax(settings)
+          .then(function (response) {
+            if (response.status == "success") {
+              $(".InputDiv input[name='phone_number']").attr("readonly", true);
+              if ($(".InputDivOTP").length == 0) {
+                // 								<span class="LabelSpan">OTP</span><input type="text" name="otp" class="Input" value="">
+
+                $(".OtpDiv").after(`
+                <div class="InputDiv InputDivOTP">
+                    <!-- This is the div where the otp fields are generated by Javascript -->
+                    <div class="otp-input-boxes__parent" id="OTPInput">
+                    </div>
+                    <!-- Change this name attribute to mach your form submission pMake sure you update the id in the javascript code if any changeto the id attribute -->
+                    <input hidden id="otp" name="otp" value="">
+                </div>`);
+                $(".hiddenPhone").text(
+                  "Sent to ******" +
+                    phone_number.substr(phone_number.length - 4)
+                );
+                $(".InputDiv1").css("display", "none");
+                $(".OtpDiv").css("display", "none");
+                $(".test").css("display", "none");
+                $(".Conditions").css("display", "none");
+                $(".GuestDiv").css("display", "none");
+                $(".right").css("display", "none");
+                $(".enter-code-div > p > span").text(`+91-${phone_number}`);
+                $(".enter-code-div").css("display", "flex");
+                $(".Conditions").css("display", "block");
+                $(".login-otp").css("margin-top", "0px");
+                $(".login-otp").text("CONFIRM");
+                $(".dash").hide();
+                $(".dash2").show();
+                $(".resend-flex").css("display", "flex");
+                $(".white-dash2").css("top", "-12px");
+                $(".white-dash2").addClass("active-dash");
+
+                /* This creates all the OTP input fields dynamically. Change the otp_length variable  to change the OTP Length */
+                const $otp_length = 6;
+
+                const element = document.getElementById("OTPInput");
+                for (let i = 0; i < $otp_length; i++) {
+                  let inputField = document.createElement("input"); // Creates a new input element
+                  inputField.className = "otp-input-box";
+                  inputField.placeholder = "__";
+                  inputField.type = "tel";
+                  // Do individual OTP input styling here;
+                  //                             inputField.style.cssText = "color: transparent; text-shadow: 0 0 0 gray;"; // Input field text styling. This css hides the text caret
+                  inputField.id = "otp-field" + i; // Don't remove
+                  inputField.maxLength = 1; // Sets individual field length to 1 char
+                  element.appendChild(inputField); // Adds the input field to the parent div (OTPInput)
+                }
+
+                /*  This is for switching back and forth the input box for user experience */
+                const inputs = document.querySelectorAll("#OTPInput > *[id]");
+                for (let i = 0; i < inputs.length; i++) {
+                  inputs[i].addEventListener("keydown", function (event) {
+                    if (event.key === "Backspace") {
+                      if (inputs[i].value == "") {
+                        if (i != 0) {
+                          inputs[i - 1].focus();
+                        }
+                      } else {
+                        inputs[i].value = "";
+                      }
+                    } else if (event.key === "ArrowLeft" && i !== 0) {
+                      inputs[i - 1].focus();
+                    } else if (
+                      event.key === "ArrowRight" &&
+                      i !== inputs.length - 1
+                    ) {
+                      inputs[i + 1].focus();
+                    } else if (
+                      event.key != "ArrowLeft" &&
+                      event.key != "ArrowRight"
+                    ) {
+                      inputs[i].setAttribute("type", "text");
+                      inputs[i].value = ""; // Bug Fix: allow user to change a random otp digit after pressing it
+                      //setTimeout(function() {
+                      //  inputs[i].setAttribute("type", "password");
+                      //}, 1000); // Hides the text after 1 sec
+                    }
+                  });
+                  inputs[i].addEventListener("input", function () {
+                    inputs[i].value = inputs[i].value.toUpperCase(); // Converts to Upper case. Remove .toUpperCase() if conversion isnt required.
+                    if (i === inputs.length - 1 && inputs[i].value !== "") {
+                      return true;
+                    } else if (inputs[i].value !== "") {
+                      inputs[i + 1].focus();
+                    }
+                  });
+                }
+
+                $(function () {
+                  // This code will execute when your jQuery code is loaded
+                  //                             alert("compile is OK");
+                  $(".ButtonDiv").css("margin-top", "40px");
+                });
+
+                $(function () {
+                  // This code will execute when your jQuery code is loaded
+                  //                             alert("compile is OK");
+                  $(".InputDiv").css("margin-bottom", "0px");
+                });
+
+                $(function () {
+                  // This code will execute when your jQuery code is loaded
+                  //                             alert("compile is OK");
+                  $(".Form").css("margin-top", "0px");
+                });
+              }
+              $(".Button").text("Verify");
+              $(".WebHeading").text("Verify OTP");
+              $(".ResendOTPTimer").show();
+              $(".OtpMsg").show();
+              timer();
+            }
+            if (response.status == "failed") {
+              $(".AccountExists").show();
+              window.location.href =
+                "https://boatlifestylein.myshopify.com/account/register";
+            }
+          })
+          .catch(function (response) {
+            console.log(response);
+          });
+      } else {
+        $(".Valid").show();
+      }
+    }
+    if (values.length == 2) {
+      var phone_number;
+      var otp;
+      for (var i = 0; i < 2; i++) {
+        if (values[i].name == "phone_number") {
+          phone_number = values[i].value;
+        }
+        if (values[i].name == "otp") {
+          const inputs = document.querySelectorAll("#OTPInput > *[id]");
+          let compiledOtp = "";
+          for (let i = 0; i < inputs.length; i++) {
+            compiledOtp += inputs[i].value;
+          }
+          otp = compiledOtp;
+        }
+      }
+      var settings = {
+        url: "https://boat-api.farziengineer.co/verifyotp",
+        method: "POST",
+        timeout: 0,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          phone_number: phone_number,
+          otp: otp,
+          type: "login",
+        }),
+      };
+
+      $.ajax(settings)
+        .then(function (response) {
+          if (response.status == "success") {
+            window.location.href = response.url;
+          }
+          if (response.status == "failed") {
+            $(".ValidOtp").show();
+          }
+        })
+        .catch(function (response) {
+          console.log(response);
+        });
+    }
+  });
+
+  function timer() {
+    var timeleft = 30;
+    $(".ResendOTPTimer span").css("color", "red");
+    var downloadTimer = setInterval(function () {
+      if (timeleft <= 0) {
+        clearInterval(downloadTimer);
+        //                     $('.ResendOTPTimer').hide()
+        $(".ResendOTPButton").removeAttr("disabled");
+        //                     $(".ResendOTPButton").show()
+        $(".ResendOTPButton")[0].style.setProperty("color", "red", "important");
+        $(".ResendOTPTimer span").css("color", "#919191");
       }
 
-      {% if is_recover_posted_successfully %}
-        switchForms();
-      {% else %}
-        if (window.location.hash === '#recover') {
-          switchForms();
-        }
-      {% endif %}
+      if (timeleft <= 9) {
+        $(".ResendOTPTimer span").text("00:0" + timeleft.toString());
+      } else {
+        $(".ResendOTPTimer span").text("00:" + timeleft.toString());
+      }
+      timeleft -= 1;
+    }, 1000);
+  }
 
-      Array.from(document.querySelectorAll('[data-action="switch-login-form"]')).forEach((button) => {
-        button.addEventListener('click', () => switchForms());
+  $(".ResendOTPButton").on("click", function () {
+    var phone_number = $(".InputDiv input[name='phone_number']").val();
+    $(".Valid").hide();
+    $(".AccountExists").hide();
+    $(".ValidOtp").hide();
+    var settings = {
+      url: "https://boat-api.farziengineer.co/requestotp",
+      method: "POST",
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        phone_number: phone_number,
+        type: "login",
+      }),
+    };
+
+    $.ajax(settings)
+      .then(function (response) {
+        if (response.status == "success") {
+          $(".InputDiv input[name='phone_number']").attr("readonly", true);
+          $(".Button").text("Submit");
+          $(".WebHeading").text("VERIFY YOUR MOBILE");
+          $(".ResendOTPTimer").show();
+          $(".ResendOTPButton").attr("disabled", "disabled");
+          $(".ResendOTPButton")[0].style.setProperty(
+            "color",
+            "#919191",
+            "important"
+          );
+          timer();
+          $(".OtpMsg").show();
+        }
+        if (response.status == "failed") {
+          $(".AccountExists").show();
+          window.location.href =
+            "https://www.boat-lifestyle.com/account/register";
+        }
+      })
+      .catch(function (response) {
+        console.log(response);
       });
-    });
-  </script>
-</section>
+  });
+</script>
 
-{% schema %}
-{
-  "name": "Customer login",
-  "class": "shopify-section--main-customers-login",
-  "blocks": [
-    {
-      "type": "@app"
-    },
-    {
-      "type": "liquid",
-      "name": "Liquid",
-      "settings": [
-        {
-          "type": "liquid",
-          "id": "liquid",
-          "label": "Liquid",
-          "info": "Add app snippets or other Liquid code to create advanced customizations."
+<script type="text/javascript">
+  jQuery(function() {
+    jQuery("input[value='Login']").click(function() {
+      localStorage.setItem("login", 1);
+    });
+  });
+  function showRecoverPasswordForm() {
+    document.getElementById('recover-password').style.display = 'block';
+    document.getElementById('login_form').style.display='none';
+    return false;
+  }
+
+  function hideRecoverPasswordForm() {
+    document.getElementById('recover-password').style.display = 'none';
+    document.getElementById('login_form').style.display = 'block';
+    return false;
+  }
+
+  if (window.location.hash == '#recover') { showRecoverPasswordForm() }
+
+  // reset_success is only true when the reset form is
+  {% if reset_success %}
+    showRecoverPasswordForm();
+  {% endif %}
+</script>
+
+<!--User Login CleverTap Event  -->
+<script>
+  $(document).ready(function () {
+    if ($("button.Button").text() == "LOGIN WITH OTP") {
+      $("button.Button").on("click", function () {
+        let cleverID = clevertap.getCleverTapID();
+        var phoneNumber = $(".InputDiv input[name='phone_number']").val();
+        // 	console.log("LOGIN WITH OTP Clicks",cleverID);
+
+        if (phoneNumber != "" && phoneNumber.length >= 10) {
+          //       alert(phoneNumber+"\n"+cleverID);
+
+          clevertap.event.push("Login", {
+            "CleverTap ID": cleverID,
+            Phone: phoneNumber,
+            Name: "LOGIN WITH OTP Clicks",
+          });
         }
-      ]
-    },
-    {
-      "type": "login",
-      "name": "Login form",
-      "limit": 1
+      });
     }
-  ]
-}
-{% endschema %}
+  });
+
+  if ("OTPCredential" in window) {
+    window.addEventListener("DOMContentLoaded", (e) => {
+      const input = document.querySelector(
+        'input[autocomplete="one-time-code"]'
+      );
+      if (!input) return;
+      const ac = new AbortController();
+      console.log(ac.signal);
+      const form = input.closest("form");
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          setTimeout(() => {
+            ac.abort();
+          }, 20000);
+        });
+      }
+      console.log(input);
+      console.log(form);
+      navigator.credentials
+        .get({
+          otp: { transport: ["sms"] },
+          signal: ac.signal,
+        })
+        .then((otp) => {
+          console.log(otp);
+          input.value = otp.code;
+          var OTP = input.value.toString();
+          for (var i = 0; i < 6; i++) {
+            $("#OTPInput")[0].childNodes[i + 1].value = OTP[i];
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }
+
+  //                                         var losefocus = setInterval(function(){
+  //                     console.log($('#otp-field5').val())
+  //                     if(($('#otp-field5').val() != '') && $('#otp-field5').val() != undefined){
+  //                         $('#otp-field5').blur()
+  //                         clearInterval(losefocus)
+  //                          $(".login-otp").submit();
+  //                     }
+  //                 },1)
+</script>
+
+<style>
+
+  .SpanDiv{
+    display: flex;
+    justify-content: center;
+    }
+   .OtpDiv{
+     display: none;
+   }
+
+     .OtpImgDiv{
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+     }
+     .OtpImg{
+       display: inline-block;
+     }
+
+  }
+</style>
+
+{% schema %} { "name": "Customer login", "class":
+"shopify-section--main-customers-login", "blocks": [ { "type": "@app" }, {
+"type": "liquid", "name": "Liquid", "settings": [ { "type": "liquid", "id":
+"liquid", "label": "Liquid", "info": "Add app snippets or other Liquid code to
+create advanced customizations." } ] }, { "type": "login", "name": "Login form",
+"limit": 1 } ] } {% endschema %}

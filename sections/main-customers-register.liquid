@@ -1,104 +1,1130 @@
-<section>
-  <div class="container">
-    <div class="page-header">
-      <div class="page-header__text-wrapper text-container">
-        <h1 class="heading h2">{{ 'customer.register.title' | t }}</h1>
-        <p>{{ 'customer.register.instructions' | t }}</p>
-      </div>
+<div class="enter-code-div">
+  <img
+    class="dots1 dots"
+    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_copy_4.png?v=1641813623"
+  />
+  <p>
+    Enter the 6-digit code sent to your<br />phone number
+    <span class="phone-num-top"></span>
+  </p>
+  <img
+    class="dots2 dots"
+    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_copy_4.png?v=1641813623"
+  />
+</div>
+<div class="FullContainer">
+  <div class="Container">
+    <div class="WebHeading">
+      <img
+        class="dots1 dots"
+        src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_copy_4.png?v=1641813623"
+      />
+      Create Your Account
+      <img
+        class="dots2 dots"
+        src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_copy_4.png?v=1641813623"
+      />
     </div>
+    <div class="LoginSignBox">
+      <div class="LoginBox">
+        <div class="ShowBox">
+          <form class="Form">
+            <div class="white-dash">
+              <img
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_2cbe4213-a59b-4e67-9531-f10dc4127822.png?v=1641888851"
+              />
+            </div>
+            <div class="white-dash2">
+              <img
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Vector_Smart_Object_2cbe4213-a59b-4e67-9531-f10dc4127822.png?v=1641888851"
+              />
+            </div>
+            <div class="OtpDiv">
+              <div class="OtpImgDiv">
+                <div class="OtpImg">
+                  <img
+                    class="OtpLogo"
+                    src="https://cdn.shopify.com/s/files/1/0508/4869/4431/files/Verification_OTP_Icon-01.svg?v=1630757259"
+                    class="primary_logo lazyloaded"
+                    width="190px"
+                    height="143px"
+                    alt="Otp"
+                  />
+                </div>
+                <span class="hiddenPhone" style="margin-bottom: 17px"
+                  >Sent to <span style="color: #ed1c24">*******123</span>
+                </span>
+                <!--                             <div class="InputDiv InputDivOTP"><span class="LabelSpan">OTP</span><input type="text" name="otp" class="Input" value=""></div>` -->
+              </div>
+            </div>
+            <div class="InputDiv InputDivPhone">
+              <!--                                     <span class="LabelSpan">Phone Number +91</span> -->
+              <input
+                type="text"
+                oninput="numberOnly(this.id);"
+                pattern="^\d{3}\d{3}\d{4}$"
+                placeholder="Phone Number +91"
+                name="phone_number"
+                id="c_phno"
+                class="Input"
+                value=""
+                maxlength="10"
+              />
+            </div>
+            <div class="InputDiv">
+              <!--                                     <span class="LabelSpan">First Name</span> -->
+              <input
+                type="text"
+                placeholder="First Name"
+                name="first_name"
+                id="c_fname"
+                class="Input"
+                value=""
+              />
+            </div>
+            <div class="InputDiv">
+              <!--                                     <span class="LabelSpan">Last Name</span> -->
+              <input
+                type="text"
+                placeholder="Last Name"
+                name="last_name"
+                id="c_lname"
+                class="Input"
+                value=""
+              />
+            </div>
+            <div class="InputDiv">
+              <!--                                     <span class="LabelSpan">Email</span> -->
+              <input
+                type="text"
+                pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                title="Invalid email address"
+                placeholder="Email"
+                name="email"
+                id="c_email"
+                class="Input"
+                value=""
+              />
+            </div>
+            <div class="resend-flex">
+              <p>
+                Didn't recieve the code?
+                <span class="resend"
+                  ><button
+                    style="padding: 0 !important"
+                    type="button"
+                    class="ResendOTPButton"
+                    disabled
+                  >
+                    Resend
+                  </button></span
+                >
+              </p>
 
-    <div class="page-content page-content--small">
-      <div class="account__block-list">
-        {%- for block in section.blocks -%}
-          <div class="account__block-item" {{ block.shopify_attributes }}>
-            {%- case block.type -%}
-              {%- when '@app' -%}
-                {%- render block -%}
-
-              {%- when 'liquid' -%}
-                {{- block.settings.liquid -}}
-
-              {%- when 'register' -%}
-                {%- form 'create_customer', name: 'create', class: 'form', id: 'register-customer' -%}
-                  {%- if form.errors -%}
-                    <div class="banner banner--error form__banner" id="login-form-error">
-                      <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
-                      <div class="banner__content">{{ form.errors | default_errors }}</div>
-                    </div>
-                  {%- endif -%}
-
-                  {%- if request.locale.iso_code == 'ja' -%}
-                    <div class="input">
-                      <input type="text" id="customer[last_name]" class="input__field" name="customer[last_name]" required="required" autocomplete="family-name" {% if form.errors contains 'last_name' %}aria-invalid="true" aria-describedby="register-form-error"{% endif %}>
-                      <label for="customer[last_name]" class="input__label">{{ 'customer.register.last_name' | t }}</label>
-                    </div>
-
-                    <div class="input">
-                      <input type="text" id="customer[first_name]" class="input__field" name="customer[first_name]" required="required" autocomplete="given-name" {% if form.errors contains 'first_name' %}aria-invalid="true" aria-describedby="register-form-error"{% endif %}>
-                      <label for="customer[first_name]" class="input__label">{{ 'customer.register.first_name' | t }}</label>
-                    </div>
-                  {%- else -%}
-                    <div class="input">
-                      <input type="text" id="customer[first_name]" class="input__field" name="customer[first_name]" required="required" autocomplete="given-name" {% if form.errors contains 'first_name' %}aria-invalid="true" aria-describedby="register-form-error"{% endif %}>
-                      <label for="customer[first_name]" class="input__label">{{ 'customer.register.first_name' | t }}</label>
-                    </div>
-
-                    <div class="input">
-                      <input type="text" id="customer[last_name]" class="input__field" name="customer[last_name]" required="required" autocomplete="family-name" {% if form.errors contains 'last_name' %}aria-invalid="true" aria-describedby="register-form-error"{% endif %}>
-                      <label for="customer[last_name]" class="input__label">{{ 'customer.register.last_name' | t }}</label>
-                    </div>
-                  {%- endif -%}
-
-                  <div class="input">
-                    <input type="email" id="customer[email]" class="input__field" name="customer[email]" required="required" autocomplete="email" {% if form.errors contains 'email' %}aria-invalid="true" aria-describedby="register-form-error"{% endif %}>
-                    <label for="customer[email]" class="input__label">{{ 'customer.register.email' | t }}</label>
-                  </div>
-
-                  <div class="input">
-                    <input type="password" id="customer[password]" class="input__field" name="customer[password]" required="required" autocomplete="new-password" {% if form.errors contains 'password' %}aria-invalid="true" aria-describedby="register-form-error"{% endif %}>
-                    <label for="customer[password]" class="input__label">{{ 'customer.register.password' | t }}</label>
-                  </div>
-
-                  <button type="submit" is="loader-button" class="form__submit button button--primary button--full">{{ 'customer.register.submit' | t }}</button>
-
-                  <span class="form__secondary-action text--subdued">
-                    {{- 'customer.register.already_have_account' | t -}}
-                    <a href="{{ routes.account_login_url }}" class="link">{{ 'customer.register.login' | t }}</a>
-                  </span>
-                {%- endform -%}
-            {%- endcase -%}
+              <span class="ResendOTPTimer"><span>00:30</span></span>
+            </div>
+            <span class="Valid">Please enter complete details correctly.</span>
+            <span class="ValidOtp">Please provide valid otp.</span>
+            <span class="EmailAlreadyExists"
+              >User with this Email already exists.</span
+            >
+            <span class="PhoneAlreadyExists">Phone Number already exists.</span>
+            <div class="ButtonDiv">
+              <div style="display: flex">
+                <button type="submit" class="Button">Sign Up</button>
+              </div>
+            </div>
+            <!--                                 <span class="OtpMsg">DO NOT SHARE OTP TO ANYONE.</span> -->
+          </form>
+          <p class="right" style="padding-top: 8px">
+            Returning Customer ?<a
+              style="color: red"
+              href="{{ routes.account_login_url }}"
+              id="customer_login_link"
+              >&nbsp Log in</a
+            >
+          </p>
+          <div class="Conditions">
+            By Continuing, you agree to boAt's
+            <a href="https://boatlifestylein.myshopify.com/pages/terms-of-use"
+              >Terms and Conditions</a
+            ><br />and
+            <a href="https://boatlifestylein.myshopify.com/pages/privacy-policy"
+              >Privacy Policy</a
+            >
           </div>
-        {%- endfor -%}
+          <div class="normal-dash">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_4_2bd5abbb-caa5-472b-ba78-be953d0457fd.png?v=1642444083"
+            />
+          </div>
+          <div class="dash dash2">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_6_d962df41-3d15-45ff-b55e-d4221f95f82f.png?v=1641828784"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-{% schema %}
-{
-  "name": "Customer register",
-  "class": "shopify-section--main-customers-register",
-  "blocks": [
-    {
-      "type": "@app"
-    },
-    {
-      "type": "liquid",
-      "name": "Liquid",
-      "settings": [
-        {
-          "type": "liquid",
-          "id": "liquid",
-          "label": "Liquid",
-          "info": "Add app snippets or other Liquid code to create advanced customizations."
-        }
-      ]
-    },
-    {
-      "type": "register",
-      "name": "Register form",
-      "limit": 1
+<style>
+  .Conditions{
+  letter-spacing: 0.1px;
+  font-size: 11.8px;
+  color: white;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 200;
+  display: none;
+  margin-top: 16px;
+  }
+  .Conditions a{
+  color: white;
+  font-weight: 600;
+  padding-left: 1px;
+  }
+  .Conditions{
+  color: white;
+  font-weight: 400 !important;
+  }
+  .Conditions > a{
+  color: white !important;
+  font-weight: 700 !important;
+  margin-left: 1.5px !important;
+  }
+    .FullContainer{
+      width: 100%;
+  /*           margin-top: 50px; */
+      font-weight:600;
     }
-  ]
-}
-{% endschema %}
+    @media (min-width: 1000px) {
+      .FullContainer{
+        margin-top: 0px;
+      }
+    }
+    .Container{
+      padding: 15px;
+      margin-bottom: 100px;
+      position: relative;
+    }
+    .WebHeading{
+      text-align: center;
+      position: relative;
+      font-family: "Humanist521BT-Roman", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+        sans-serif;
+      font-size: 20px;
+      color: #011e42;
+      text-transform: capitalize;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      flex-direction: row;
+      -webkit-box-pack: center;
+      justify-content: center;
+      padding: 15px 0 0 0;
+      width: 100%;
+
+      color: #ed1c24;
+    }
+    @media (min-width: 1040px) {
+      .WebHeading{
+        font-size: 25px;
+        letter-spacing: 0.8px;
+      }
+    }
+    .LoginSignBox{
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      flex-direction: column;
+      -webkit-box-align: center;
+      align-items: center;
+    }
+    .OtpMsg{
+      display: none;
+      margin: auto;
+      margin-top:10px;
+    /*   color: #5bbe1c; */
+      font-size: 12px;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+
+      @media (max-width: 766.9px){
+
+        .Button{
+              border-radius: 5px;
+        }
+      }
+
+    @media (min-width: 767px) {
+
+      .Button{
+              border-radius: 10px;
+      }
+
+      .LoginSignBox{
+        margin-bottom: 50px;
+      }
+    }
+    .LoginBox{
+      width: 96%;
+      padding: 10px;
+      font-family: "Humanist521BT-Roman", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+        sans-serif;
+    }
+    @media (min-width: 767px) {
+      .LoginBox{
+        width: 420px;
+      }
+    }
+    .ShowBox{
+      width: 100%;
+      background-color: #fff;
+      padding: 10px;
+      height: 100%;
+    }
+      .ImgDiv{
+        text-align:center;
+      }
+      .Logo{
+        margin: auto;
+      }
+    .Form{
+      margin-top: 30px;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      flex-direction: column;
+    }
+      .SpanDetail{
+      letter-spacing: 0.8px;
+        font-size: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+    .InputDiv{
+      position: relative;
+      margin-bottom: 18px;
+    }
+    .LabelSpan{
+      margin-bottom: 0.3rem;
+      font-size: 11.5px;
+      padding: 0px 4px;
+      position: absolute;
+      top: -11px;
+      left: 12px;
+      background: white;
+      opacity: 0.95;
+      font-weight: 400 !important;
+      color: #000000 !important;
+    }
+    .Input{
+        font-weight: 400 !important;
+        height: 50px !important;
+        border-width: 2px !important;
+        width: 100% !important;
+        padding: 10px !important;
+        font-size: 14px !important;
+        appearance: none !important;
+        border-radius: 5px !important;
+        outline: none !important;
+        background-color: rgb(255, 255, 255) !important;
+        border: 1.3px solid rgb(0, 0, 0) !important;
+        color: #000000 !important;
+        letter-spacing: 0.8px !important;
+
+    }
+    .Valid{
+      display: none;
+      margin: auto;
+      color: red;
+      font-size: 12px;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+    .ValidOtp{
+      display: none;
+      margin: auto;
+      color: red;
+      font-size: 12px;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+    .EmailAlreadyExists{
+      display: none;
+      margin: auto;
+      color: red;
+      font-size: 12px;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+    .PhoneAlreadyExists{
+      display: none;
+      margin: auto;
+      color: red;
+      font-size: 12px;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+    .Span{
+      /* position: absolute; */
+      right: 0;
+      color: red;
+      font-size: 12px;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+
+    .ButtonDiv{
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      flex-direction: row;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+    }
+    .Button{
+      width: 100%;
+      text-transform: uppercase;
+      color: #fff;
+      font-size: 15px;
+      padding: 11px 20px 8px;
+      transition-duration: 0.5s;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      font-family: "MyriadPro-Regular", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+        sans-serif;
+      background: #ed1c24;
+    }
+    .ResendOTPButton{
+        display:inline-block;
+        background: none!important;
+        color: #5bbe1c;
+        font-weight: 700;
+        margin: auto;
+        width: max-content;
+
+      }
+      .ResendOTPTimer
+      {
+        display:none;
+        text-align: center;
+        letter-spacing: 0.8px;
+        font-size: 13px;
+
+      }
+      .ResendOTPTimer span{
+        color:#ed1c24;
+      }
+
+
+      .otp-input-boxes__parent {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .otp-input-boxes__parent .otp-input-box {
+        margin: .5rem;
+        margin-left: 0;
+        padding: 0;
+        line-height: inherit;
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        width: 3rem;
+        height: 3rem;
+        border-radius: .25rem;
+        font-size: 1rem;
+        color: #333;
+        text-align: center;
+    /*     --bg-opacity: 1;
+        background-color: #f7fafc;
+        background-color: rgba(247,250,252,var(--bg-opacity)); */
+        background: transparent;
+        --border-opacity: 1;
+    /*     border-color: #f7fafc; */
+        border: 1px solid rgba(128, 128, 128,var(--border-opacity));
+    /*     text-shadow: grey 0px 0px 0px; */
+      }
+
+      @media (max-width: 1024px) {
+        .otp-input-boxes__parent .otp-input-box {
+            margin: 0.5rem 0.25rem 0.5rem 0;
+            width: 40px;
+            height: 40px;
+        }
+      }
+
+      .otp-input-boxes__parent .otp-input-box:focus {
+    /*     --bg-opacity: 1;
+        background-color: #edf2f7;
+        background-color: rgba(237,242,247,var(--bg-opacity)); */
+        --border-opacity: 1;
+    /*     border-color: #99cc00; */
+        border-color: rgba(153, 204, 0,var(--border-opacity));
+    /*     box-shadow: 0 0 0 3px rgb(153, 204, 0 / 50%); */
+      }
+      .LoginSignBox{
+      background: url('https://cdn.shopify.com/s/files/1/0057/8938/4802/files/background_Web.png?v=1641813624');
+            background-size: cover;
+      }
+      .ShowBox{
+      background: transparent;
+      }
+      .cf{
+      padding: 0!important;
+      max-width: none;
+      }
+      .Container{
+      padding: 0;
+      }
+      .InputDiv > input{
+  border-radius: 30px !important;
+  border: 1.2px solid #ed1d25 !important;
+  padding-left: 20px !important;
+  font-size: 16px !important;
+  margin: 0 !important;
+  width: 100% !important;
+   height: 45px !important;
+        letter-spacing: 0 !important;
+      }
+      .InputDiv > input::placeholder{
+  font-size: 14px;
+  color: grey;
+  transform: translate(1px,-1px);
+  }
+     .otp-input-box::placeholder{
+  transform: translateY(13px);
+  color: grey;
+  }
+  .ButtonDiv .Button{
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  border-radius: 30px !important;
+  padding: 15px 0 !important;
+  letter-spacing: 2px !important;
+  font-weight: 700 !important;
+  height: 47.625px;
+
+      }
+  .right {
+  font-size: 11px;
+  color: white;
+  text-align: center;
+  font-weight: 400;
+  }
+      #customer_login_link{
+      text-transform: uppercase;
+  color: #ed1d25 !important;
+  font-weight: 600;
+      }
+      .WebHeading{
+      margin-bottom: 35px;
+      font-weight: 800;
+      }
+      .Container{
+      margin-bottom: 0px !important;
+      }
+      #content{
+      padding-bottom: 0!important;
+      }
+      .LoginSignBox{
+      margin-bottom: 0;
+      }
+      .otp-input-box::placeholder{
+  transform: translateY(13px);
+  color: #bfbbbb;
+  }
+  .otp-input-box{
+  background: white !important;
+  border: 1px solid #ed1c24 !important;
+  }
+  .otp-input-boxes__parent .otp-input-box {
+  margin: 0.5rem 0.25rem;
+  width: 16%;
+  height: auto;
+  aspect-ratio: 0.92;
+  border-radius: 8px;
+  }
+      .OtpImgDiv{
+      display: none !important;
+      }
+      .enter-code-div{
+  color: #ed1d25;
+  text-align: center;
+  max-width: 360px;
+  display: flex;
+  margin: auto;
+  align-items: center;
+  justify-content: space-between;
+  /*   display: none;    */
+  }
+  .enter-code-div > p{
+  color: #ed1d25;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  }
+  .resend-flex{
+  display: flex;
+  justify-content: space-between;
+  display: none;
+  margin-top: -10px;
+  }
+  .resend-flex > p{
+  font-size: 12px !important;
+  color: white;
+  font-weight: 500;
+  }
+      .resend{
+        color: #ed1d25 !important;
+        cursor: pointer;
+        padding: 0px !important;
+        display: inline-block;
+        padding-left: 2px !important;
+      }
+      .resend > button{
+        color: gray!important;
+        display:"inline-block"
+      }
+  .dash2 {
+  width: 7%;
+  display: none;
+  margin: auto;
+  margin-top: 32px;
+  margin-bottom: 20px;
+  }
+  .ResendOTPTimer {
+  font-size: 12px;
+  font-weight: 600;
+  }
+      .resend button{
+  background: transparent !important;
+  border: none; !important
+  padding: 0 !important;
+  font-size: 10px !important;
+  color: #919191 !important;
+  }
+      .enter-code-div{
+  color: #ed1d25;
+  text-align: center;
+  display: none;
+  margin-bottom: 40px;
+  margin-top: 22px;
+  }
+  .enter-code-div > p{
+  color: #ed1d25;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  }
+  .white-dash {
+  position: absolute;
+  height: auto;
+  bottom: -16px;
+  left: -10px;
+  /*     z-index: 9999; */
+  }
+  .white-dash > img{
+  width: 1px;
+  height: 126px;
+  }
+  .white-dash2 {
+  position: absolute;
+  height: auto;
+  top: 18px;
+  right: -10px;
+  /*     z-index: 9999; */
+  }
+  .white-dash2 > img{
+  width: 1px;
+  height: 126px;
+  }
+      .ShowBox{
+      position: relative;
+      }
+      .normal-dash{
+  width: 10%;
+  margin: auto;
+  margin-top: -12px;
+      }
+      .dots{
+          padding: 0 10px;
+  height: 12px;
+      }
+      .WebHeading{
+      display: flex;
+      align-items: center;
+      max-width: 420px;
+      margin: auto;
+      margin-bottom: 35px;
+      justify-content: space-around;
+      font-size: 22px;
+      }
+      button{
+        outline: none !important;
+      }
+      button:focus{
+        outline: none !important;
+      }
+</style>
+
+<script>
+  $(".Form").on("submit", function (event) {
+    event.preventDefault();
+    var values = $(this).serializeArray();
+    if (values.length == 4) {
+      var phone_number;
+      var email;
+      var first_name;
+      var last_name;
+      for (var i = 0; i < 4; i++) {
+        if (values[i].name == "first_name") {
+          first_name = values[i].value;
+        }
+        if (values[i].name == "last_name") {
+          last_name = values[i].value;
+        }
+        if (values[i].name == "email") {
+          email = values[i].value;
+        }
+        if (values[i].name == "phone_number") {
+          phone_number = values[i].value;
+        }
+        if (values[i].name == "otp") {
+          otp = values[i].value;
+        }
+      }
+      var is_valid = phone_number.match(/^[0-9]{10}$/);
+      if (phone_number && email && first_name && last_name && is_valid) {
+        $(".Valid").hide();
+        $(".EmailAlreadyExists").hide();
+        $(".PhoneAlreadyExists").hide();
+        var settings = {
+          url: "https://boat-api.farziengineer.co/requestotp",
+          method: "POST",
+          timeout: 0,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            phone_number: phone_number,
+            email: email,
+            type: "sign up",
+          }),
+        };
+        $.ajax(settings)
+          .then(function (response) {
+            if (response.status == "success") {
+              $(".InputDiv input[name='first_name']").attr("readonly", true);
+              $(".InputDiv input[name='last_name']").attr("readonly", true);
+              $(".InputDiv input[name='email']").attr("readonly", true);
+              $(".InputDiv input[name='phone_number']").attr("readonly", true);
+              $(".InputDiv input[name='first_name']").hide();
+              $(".InputDiv input[name='last_name']").hide();
+              $(".InputDiv input[name='email']").hide();
+              $(".InputDiv input[name='phone_number']").hide();
+              $(".LabelSpan").hide();
+              $(".OtpDiv").after(`
+                              <div class="InputDiv InputDivOTP">
+                                  <!-- This is the div where the otp fields are generated by Javascript -->
+                                  <div class="otp-input-boxes__parent" id="OTPInput">
+                                  </div>
+                                  <!-- Change this name attribute to mach your form submission parameters. Make sure you update the id in the javascript code if any changes are made to the id attribute -->
+                                  <input hidden id="otp" name="otp" value="">
+                              </div>`);
+              $(".OtpDiv").css("display", "block");
+              $(".hiddenPhone").text(
+                "Sent to ******" + phone_number.substr(phone_number.length - 4)
+              );
+              $(".Button").text("CONFIRM");
+              $(".WebHeading").text("VERIFY YOUR MOBILE NUMBER");
+              $(".ResendOTPTimer").show();
+              $(".enter-code-div > p > span").text(`+91-${phone_number}`);
+              $(".Form .InputDiv").hide();
+              $(".Form .InputDiv")[0].style.display = "flex";
+              $(".ButtonDiv").css("margin-top", "40px");
+              $(".WebHeading").css("display", "none");
+              $(".enter-code-div").css("display", "flex");
+              $(".resend-flex").css("display", "flex");
+              $(".Conditions").css("display", "block");
+              $(".right").css("display", "none");
+              $(".dash2").css("display", "block");
+              $(".white-dash2").css("top", "28px");
+              $(".white-dash2").addClass("active-dash");
+              $(".normal-dash").css("display", "none");
+
+              /* This creates all the OTP input fields dynamically. Change the otp_length variable  to change the OTP Length */
+              const $otp_length = 6;
+
+              const element = document.getElementById("OTPInput");
+              for (let i = 0; i < $otp_length; i++) {
+                let inputField = document.createElement("input"); // Creates a new input element
+                inputField.className = "otp-input-box";
+                inputField.type = "text";
+                inputField.placeholder = "___";
+                // Do individual OTP input styling here;
+                //                             inputField.style.cssText = "color: transparent; text-shadow: 0 0 0 gray;"; // Input field text styling. This css hides the text caret
+                inputField.id = "otp-field" + i; // Don't remove
+                inputField.maxLength = 1; // Sets individual field length to 1 char
+                element.appendChild(inputField); // Adds the input field to the parent div (OTPInput)
+              }
+
+              /*  This is for switching back and forth the input box for user experience */
+              const inputs = document.querySelectorAll("#OTPInput > *[id]");
+              for (let i = 0; i < inputs.length; i++) {
+                inputs[i].addEventListener("keydown", function (event) {
+                  if (event.key === "Backspace") {
+                    if (inputs[i].value == "") {
+                      if (i != 0) {
+                        inputs[i - 1].focus();
+                      }
+                    } else {
+                      inputs[i].value = "";
+                    }
+                  } else if (event.key === "ArrowLeft" && i !== 0) {
+                    inputs[i - 1].focus();
+                  } else if (
+                    event.key === "ArrowRight" &&
+                    i !== inputs.length - 1
+                  ) {
+                    inputs[i + 1].focus();
+                  } else if (
+                    event.key != "ArrowLeft" &&
+                    event.key != "ArrowRight"
+                  ) {
+                    inputs[i].setAttribute("type", "text");
+                    inputs[i].value = ""; // Bug Fix: allow user to change a random otp digit after pressing it
+                    //                                 setTimeout(function() {
+                    //                                   inputs[i].setAttribute("type", "password");
+                    //                                 }, 1000); // Hides the text after 1 sec
+                  }
+                });
+                inputs[i].addEventListener("input", function () {
+                  inputs[i].value = inputs[i].value.toUpperCase(); // Converts to Upper case. Remove .toUpperCase() if conversion isnt required.
+                  if (i === inputs.length - 1 && inputs[i].value !== "") {
+                    return true;
+                  } else if (inputs[i].value !== "") {
+                    inputs[i + 1].focus();
+                  }
+                });
+              }
+              $(".OtpMsg").show();
+              timer();
+            }
+            if (response.status == "failed") {
+              console.log(response);
+              console.log(response.status);
+              console.log(response.message);
+              if (
+                response.message ==
+                "email already exists, please use different email"
+              ) {
+                console.log(response);
+                console.log(response.status);
+                console.log(response.message);
+                $(".EmailAlreadyExists").show();
+              }
+              if (
+                response.message == "phone number already exists, please login"
+              ) {
+                $(".PhoneAlreadyExists").show();
+              }
+            }
+          })
+          .catch(function (response) {
+            console.log(response);
+            clevertap.event.push("Customer SignUp Complete Clicks", {
+              Name: first_name + " " + last_name,
+              Email: email,
+              Phone: phone_number,
+            });
+          });
+      } else {
+        $(".Valid").show();
+      }
+    }
+    if (values.length == 5) {
+      var phone_number;
+      var email;
+      var first_name;
+      var last_name;
+      var otp;
+      for (var i = 0; i < 5; i++) {
+        if (values[i].name == "first_name") {
+          first_name = values[i].value;
+        }
+        if (values[i].name == "last_name") {
+          last_name = values[i].value;
+        }
+        if (values[i].name == "email") {
+          email = values[i].value;
+        }
+        if (values[i].name == "phone_number") {
+          phone_number = values[i].value;
+        }
+        if (values[i].name == "otp") {
+          const inputs = document.querySelectorAll("#OTPInput > *[id]");
+          let compiledOtp = "";
+          for (let i = 0; i < inputs.length; i++) {
+            compiledOtp += inputs[i].value;
+          }
+          //                 otp = values[i].value
+          otp = compiledOtp;
+        }
+      }
+      var settings = {
+        url: "https://boat-api.farziengineer.co/verifyotp",
+        method: "POST",
+        timeout: 0,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: JSON.stringify({
+          email: email,
+          first_name: first_name,
+          last_name: last_name,
+          phone_number: phone_number,
+          otp: otp,
+          type: "signup",
+        }),
+      };
+
+      $.ajax(settings)
+        .then(function (response) {
+          if (response.status == "success") {
+            window.location.href = response.url;
+          }
+          if (response.status == "failed") {
+            $(".ValidOtp").show();
+          }
+        })
+        .catch(function (response) {
+          console.log(response);
+        });
+    }
+  });
+
+  function timer() {
+    var timeleft = 30;
+    $(".ResendOTPTimer span").css("color", "red");
+    var downloadTimer = setInterval(function () {
+      if (timeleft <= 0) {
+        clearInterval(downloadTimer);
+        //                   $('.ResendOTPTimer').hide()
+        //                   $('.ResendOTPTimer')[0].style.color="red!important";
+        document
+          .getElementsByClassName("ResendOTPTimer")[0]
+          .getElementsByTagName("span")[0].style.color = "gray";
+        $(".ResendOTPButton").removeAttr("disabled");
+        $(".ResendOTPButton").show();
+        $(".ResendOTPButton")[0].style.setProperty("color", "red", "important");
+      }
+      if (timeleft <= 9) {
+        $(".ResendOTPTimer span").text("00:0" + timeleft.toString());
+      } else {
+        $(".ResendOTPTimer span").text("00:" + timeleft.toString());
+      }
+      timeleft -= 1;
+    }, 1000);
+  }
+
+  $(".ResendOTPButton").on("click", function () {
+    var phone_number = $(".InputDiv input[name='phone_number']").val();
+    var email = $(".InputDiv input[name='email']").val();
+    $(".Valid").hide();
+    $(".EmailAlreadyExists").hide();
+    $(".PhoneAlreadyExists").hide();
+    var settings = {
+      url: "https://boat-api.farziengineer.co/requestotp",
+      method: "POST",
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify({
+        phone_number: phone_number,
+        email: email,
+        type: "sign up - resendotp",
+      }),
+    };
+    $.ajax(settings)
+      .then(function (response) {
+        if (response.status == "success") {
+          $(".InputDiv input[name='first_name']").attr("readonly", true);
+          $(".InputDiv input[name='last_name']").attr("readonly", true);
+          $(".InputDiv input[name='email']").attr("readonly", true);
+          $(".InputDiv input[name='phone_number']").attr("readonly", true);
+          $(".Button").text("Submit");
+          $(".WebHeading").text("VERIFY YOUR MOBILE NUMBER");
+          $(".ResendOTPTimer").show();
+          $(".ResendOTPButton").attr("disabled", "disabled");
+          //                   $(".ResendOTPButton").hide()
+          $(".ResendOTPButton")[0].style.setProperty(
+            "color",
+            "#919191",
+            "important"
+          );
+          timer();
+          $(".OtpMsg").show();
+        }
+        if (response.status == "failed") {
+          if (
+            response.message[0].message ==
+            "User with this Email already exists."
+          ) {
+            $(".EmailAlreadyExists").show();
+          }
+          if (response.message[0].message == "Phone Number already exists.") {
+            $(".PhoneAlreadyExists").show();
+          }
+        }
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  });
+</script>
+
+<style>
+  .SpanDiv {
+    display: flex;
+    justify-content: center;
+  }
+  .OtpDiv {
+    display: none;
+  }
+
+  .OtpImgDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .OtpImg {
+    display: inline-block;
+  }
+
+  .resend {
+    color: #ed1d25 !important;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .resend > button {
+    font-size: 12px !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  @media (max-width: 768px) {
+    .resend-flex {
+      margin-top: -13px;
+    }
+    .resend-flex > p {
+      font-size: 11px;
+    }
+    .enter-code-div {
+      color: #ed1d25;
+      text-align: center;
+      max-width: 420px;
+      display: flex;
+      margin: auto;
+      align-items: center;
+      justify-content: space-between;
+      display: none;
+      margin-bottom: 40px;
+      margin-top: 22px;
+    }
+    .enter-code-div > p {
+      color: #ed1d25;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 0 !important;
+    }
+  }
+  @media (min-width: 768px) {
+    .InputDiv.InputDivOTP {
+      width: 113%;
+      margin-left: -2.1vw;
+    }
+    .white-dash2.active-dash > img {
+      margin-top: 7.8vw;
+    }
+    .otp-input-boxes__parent .otp-input-box {
+      border-radius: 8px;
+    }
+    .enter-code-div {
+      color: #ed1d25;
+      text-align: center;
+      max-width: 400px;
+      display: flex;
+      margin: auto;
+      align-items: center;
+      justify-content: space-between;
+      display: none;
+      margin-bottom: 40px;
+      margin-top: 22px;
+    }
+    .enter-code-div > p {
+      color: #ed1d25;
+      text-align: center;
+      font-size: 15.5px;
+      font-weight: 800;
+      margin-bottom: 0 !important;
+    }
+  }
+</style>
+
+<!--Customer SignUp Complete Clicks CleverTap Event  -->
+<script>
+  $(document).ready(function () {
+    if ($("button.Button").text() == "Sign Up") {
+      $("button.Button").on("click", function () {
+        var firstName = $(".InputDiv input[name='first_name']").val();
+        var lastName = $(".InputDiv input[name='last_name']").val();
+        var phoneNumber = $(".InputDiv input[name='phone_number']").val();
+        var emailAdd = $(".InputDiv input[name='email']").val();
+
+        var name = firstName + " " + lastName;
+
+        if (
+          firstName != "" &&
+          lastName != "" &&
+          emailAdd != "" &&
+          phoneNumber != ""
+        ) {
+          //       alert(name+"\n"+emailAdd+"\n"+phoneNumber);
+
+          clevertap.event.push("Customer SignUp Complete Clicks", {
+            Name: name,
+            Email: emailAdd,
+            Phone: phoneNumber,
+          });
+        }
+      });
+    }
+  });
+</script>
+
+<script>
+  function numberOnly(id) {
+    // Get element by id which passed as parameter within HTML element event
+    var element = document.getElementById(id);
+    // This removes any other character but numbers as entered by user
+    element.value = element.value.replace(/[^0-9]/gi, "");
+  }
+</script>
+
+{% schema %} { "name": "Customer register", "class":
+"shopify-section--main-customers-register", "blocks": [ { "type": "@app" }, {
+"type": "liquid", "name": "Liquid", "settings": [ { "type": "liquid", "id":
+"liquid", "label": "Liquid", "info": "Add app snippets or other Liquid code to
+create advanced customizations." } ] }, { "type": "register", "name": "Register
+form", "limit": 1 } ] } {% endschema %}
