@@ -1,153 +1,20 @@
 <style>
   button.checkout-button.button.button--primary.button--full {
-background: #ff000000;
-    color: red;
+  background: red;
     width: 48%;
     height: 50px;
     padding: 0;
-    border-radius: 4px;
-    border: 2px solid;
-    letter-spacing: normal;
+  letter-spacing: normal;
 }
+  .drawer__footer--bordered {
+    padding-top: 8px;
+    padding-bottom: 0;
+  }
   .loader-button__text {
     text-transform: capitalize;
   }
-  header.drawer__header {
-    background: red;    height: 40px;
-}
- .drawer__title {
-    margin-left: -12px;
-}
- div#zestmoney-widget-control-cart {
-    margin-bottom: 12px!important;
-}
-#mini-cart .drawer__footer--bordered {
-     box-shadow: 0 0px 10px #878787b8; /* We use box-shadow due to the shadow */
-}  
-/*     gokwick        */
-  
-{% if settings.goEnable %}
-.gokwik-checkout {
-  width: 48%;
-  margin-bottom: 10px;
-}
-.gokwik-checkout button {
-    max-width: 100%;
-    width: 100%;
-    border: 1px solid transparent;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: red;
-    position: relative;
-    margin: 0;
-    border-radius: 4px;
-    padding: 0;
-    text-align: center;
-    height: 50px;
-}
-#gokwik-buy-now.disabled, .gokwik-disabled{
-  opacity:0.5;
-  cursor: not-allowed;
-  }
-  .gokwik-checkout button:focus {
-  outline: none;
-}
-.gokwik-checkout button > span {
-  display: flex;color: {{ settings.secClr }};
-}
+</style>
 
-.gokwik-checkout button > span.btn-text > span:last-child {
-	padding-top: 3px;
-    font-size: 12px;
-    line-height: 10px;
-}
-.gokwik-checkout button > span.btn-text > span:first-child {
-    font-weight: 600;
-    font-size: calc(var(--base-font-size) - 3px);
-    text-transform: capitalize;
-}
-
-.gokwik-checkout button > span.pay-opt-icon img:first-child {
-  margin-right: 10px;
-  margin-left: 10px;
-}
-/* aditionl */
-
-{% endif %}
-  
-{% if settings.goBuynowEnable %}
- #gokwik-buy-now {
-   background: {{ settings.btnBClr }};
-   width: 100%;
-   color: {{ settings.btnTextClr }};
-   cursor: pointer;
-   line-height: 1;
-   border: none;
-   padding: 15px 10px;
-   letter-spacing: .2em;
-   font-size: 12px;
-   margin-bottom:10px;
- }
-
-  
-{% endif %}
-/* Loader CSS */
-  #btn-loader{
-    display: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    justify-content: center;
-    align-items: center;
-    background:{{ settings.priClr }};
-    border-radius:12px;
-  } 
-
-.cir-loader,
-.cir-loader:after {
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-}
-.cir-loader {
-  margin: 6px auto;
-  font-size: 10px;
-  position: relative;
-  text-indent: -9999em;
-  border-top: 0.5em solid rgba(255, 255, 255, 0.2);
-  border-right: 0.5em solid rgba(255, 255, 255, 0.2);
-  border-bottom: 0.5em solid rgba(255, 255, 255, 0.2);
-  border-left: 0.5em solid #ffffff;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: load8 1.1s infinite linear;
-  animation: load8 1.1s infinite linear;
-}
-@-webkit-keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-</style> 
 <cart-drawer section="{{ section.id }}" id="mini-cart" class="mini-cart drawer drawer--large">
   <span class="drawer__overlay"></span>
 
@@ -361,7 +228,7 @@ background: #ff000000;
                       {%- render 'icon' with 'minus' -%}
                     </a>
 
- <input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
+                    <input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
 					{%- if line_item.product.id == 6591986958434 -%}
                       <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 0 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                         {%- render 'icon' with 'plus' -%}
@@ -500,7 +367,7 @@ background: #ff000000;
       <div id="zestmoney-widget-control-cart"></div>
     
       {%- if section.settings.show_checkout_button -%}
-        <div class="row justify-content-around">
+        <div class="row justify-content-center">
       	{% render 'gokwik-checkout' %}
         <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
         Pay Via Card 
@@ -545,6 +412,12 @@ background: #ff000000;
       console.error('Error:', error);
 	});
   })
+  
+  {% for line_item in cart.items %}
+  {% if line_item.quantity > 7 %}
+  alert({{line_item.title}})
+  {% endif %}
+  {% endfor %}
 </script>
 
 {% schema %}
