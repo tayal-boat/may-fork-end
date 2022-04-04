@@ -9,12 +9,14 @@
     line-height: normal;
     background: #ff0000;
     border-radius: 2em !important;
+    position: relative;
   }
   ul.slick-dots {
   	display: flex!important;
     align-items: center;
     justify-content: center;
-    text-align: center
+    text-align: center;
+    padding: 0;
   }
   ul.slick-dots li {
   	list-style: none;
@@ -28,7 +30,9 @@
     background: #ccc;
     z-index: 99999;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
+    left: 50%;
+    border-radius: 2em;
   }
   ul.slick-dots li.slick-active:before {
   	background: #ff0000;
@@ -303,8 +307,9 @@
     background: #e00c1a;
   }
   .outer-container .slick-dots > li{
-    margin: 0px 6px;
+    margin: 0px 2px;
     width: 1.5vw;
+    cursor: pointer;
   }
   .special-price{
   	background: red;
@@ -448,8 +453,9 @@
       margin: 0px 3px;
       width: 5vw;
     }
-    .slick-dots{
-    bottom: -8px;
+    .outer-container .slick-dots {
+        bottom: 29px;
+        position: relative;
     }
   }
   .outer-container .slick-prev{
@@ -675,6 +681,30 @@
     }
   }
   
+  .apply_coupon_spinner {
+  	margin: 0 auto;
+    height: 20px;
+    width: 20px;
+    animation: rotate 0.8s infinite linear;
+    border: 2px solid white;
+    border-right-color: transparent;
+    border-radius: 50%;
+    display:none;
+    position: absolute;
+    bottom: 22%;
+    left: 42%;
+    transform: translate(-50%, -50%);
+  }
+  @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+  
 </style>
 <div class="row">
   <div class="col-12">
@@ -683,8 +713,8 @@
     </h2>
   </div>
 </div>
-<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1.png?v=1642498138" class="left-click nl-click non-active-click" />
-<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow_1.png?v=1642498059" class="right-click nl-click" />
+<!-- <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1.png?v=1642498138" class="left-click nl-click non-active-click" /> -->
+<!-- <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow_1.png?v=1642498059" class="right-click nl-click" /> -->
 <div class="outer-container new--launch">
   {% for block in section.blocks %}
   {% assign product = block.settings.product_new_launches %}
@@ -792,7 +822,9 @@
           {%- form 'product', product, is: 'product-form', id: form_id -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-            <button type="submit" {% if show_cta %}is="loader-button"{% endif %} class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">Add To Cart</button>
+            <button type="submit" {% if show_cta %}is="loader-button"{% endif %} class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">Add To Cart
+              <div class="apply_coupon_spinner"></div>
+          </button>
           {%- endform -%}
           {% else %}
           <div class="inner-atc-sold" var-id="{{variant.id}}">Sold Out</div>
@@ -1055,8 +1087,8 @@
                       });
   
    })
-   $('.inner-atc').click(function() {
-    let varId = $(this).attr('var-id');
+   $('.new-launch-atc .product-item__cta').click(function() {
+    let varId = $(this).siblings('input[name="id"]').val();
    	let activeVar = $(this).parents('.product-info-div').find('.active-swatch').attr('data-title');
     let prodTitle = $(this).parents('.product-info-div').find('.product-title').text();
     let varPrice = $(this).parents('.product-info-div').find('.'+varId+'_var-price').text();
@@ -1072,14 +1104,14 @@
     });
    })
    
-      $('.product-desc').append(`<span class="read-more" style = "position: absolute;bottom: -1px;right: 0px;padding-left: 7px;background: #242424;color: red;font-weight: 600;">...Read more</span>`)
+      $('.product-desc').append(`<span class="read-more" style = "cursor:pointer;position: absolute;bottom: -1px;right: 0px;padding-left: 7px;background: #242424;color: red;font-weight: 600;">...Read more</span>`)
 
       $('.read-more').click((event)=>{
 //           event.target.parentNode.style.overflowY = "auto";
           window.location.href = event.target.parentNode.getAttribute('prod_url');
 //           event.target.style.display = "none";
          })
-//       $('.product-desc').append(`<span class="read-less" style="color: red;font-weight: 600;padding-left: 6px;">...Read&nbspless</span>`);
+//       $('.product-desc').append(`<span class="read-less" style="cursor:pointer;color: red;font-weight: 600;padding-left: 6px;">...Read&nbspless</span>`);
 //    $('.read-less').click((event)=>{
 //           event.target.parentNode.style.height = "16vw";   
 //           $('.read-more').css('display','block');
@@ -1090,9 +1122,19 @@
 $('.color-swatch-div > div').each(function() {
 	$(this).click(function() {
 		let selected_variant = $(this).attr('var-id');
+<!-- 		$(this).parents('.color-swatch-div').siblings('.atc-outer').find('.product-item__cta').text("ADDING...") -->
 		$(this).parents('.color-swatch-div').siblings('.atc-outer').find('input[name="id"]').val(selected_variant)
 	})
 	
 })
+	$('.new-launch-atc .product-item__cta').click(function() {
+        $(this).css('color', 'transparent');
+        $(this).find('.apply_coupon_spinner').show();
+		setTimeout(function(e) {
+			$('.new-launch-atc .product-item__cta').css('color', 'white');
+        	$('.new-launch-atc .product-item__cta').find('.apply_coupon_spinner').hide();
+		}, 2000)
+    })
+
   
 {% endjavascript %}
