@@ -239,8 +239,19 @@ $('.footer__item-content .linklist__item').each(function() {
     	"Item": item,
     	"Source": "Footer"
     });
-  })
-})
+  });
+});
+
+$('.header__inline-navigation .header__linklist-item ').each(function() {
+  $(this).on('click', function() {
+    let header_item = $(this).text().trim();
+    alert(header_item)
+//   	clevertap.event.push("Footer Menu Item Clicked ", {
+//     	"Item": item,
+//     	"Source": "Footer"
+//     });
+  });
+});
 
 
 /*
