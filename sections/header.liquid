@@ -128,7 +128,11 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
               {%- render 'icon' with 'header-hamburger' -%}
             </button>
           {%- endif -%}
-
+		  {% comment %} Commented by SearchTap team
+          <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
+            {%- render 'icon' with 'header-search' -%}
+          </a>
+          {% endcomment %}
  
         </div>
 
@@ -262,12 +266,19 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
             {%- render 'icon' with 'header-email' -%}
           </button>
 
+          {% comment %} Commented by SearchTap team
+
           {%- if section.settings.header_layout != 'logo_center_search_open' -%}
             <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area hidden-pocket hidden-lap {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'search.general.title' | t | escape }}" aria-controls="search-drawer" aria-expanded="false">
               {%- render 'icon' with 'header-search' -%}
             </a>
           {%- endif -%}
-
+          
+          {% endcomment %}
+		  
+          {%comment%}Desktop Searchbox Added By SearchTap team{%endcomment%}
+          {% render 'st-searchbox-desktop' %}
+          
           {%- if shop.customer_accounts_enabled -%}
             <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{% if customer %}{{ 'header.general.account' | t | escape }}{% else %}{{ 'header.general.login' | t | escape }}{% endif %}">
               {%- render 'icon' with 'header-customer' -%}
@@ -337,6 +348,8 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
       </nav>
     {%- endif -%}
   </div>
+  {%comment%}Mobile Searchbox added by SearchTap team{%endcomment%}
+  {%render 'st-searchbox-mobile'%}
 </store-header>
 
 {%- comment -%}
