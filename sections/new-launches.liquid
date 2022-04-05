@@ -512,7 +512,7 @@
   position: absolute;
   left: 0;
   top: 3vw;
-  width: 5vw !important;
+  width: 5vw;
   }
   .vector-2{
       position: absolute;
@@ -705,7 +705,7 @@
 </div>
 <!-- <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1.png?v=1642498138" class="left-click nl-click non-active-click" /> -->
 <!-- <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow_1.png?v=1642498059" class="right-click nl-click" /> -->
-<div class="outer-container new--launch owl-carousel">
+<div class="outer-container new--launch">
   {% for block in section.blocks %}
   {% assign product = block.settings.product_new_launches %}
   {% assign p_id = product.id %}
@@ -960,19 +960,39 @@
       ele.style.display = "block";
     }
   });
-  $('.owl-carousel').owlCarousel({
-	items: 1,
-	navigation : true,
+  $('.outer-container.new--launch').slick({
+    infinite: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    draggable: false,
+    dots: true,
+    arrows: true,
+    fade: true,
+//     autoplay: true,
+//     autoplaySpeed: 3000
   });
-  $('.owl-carousel .var-img-div').owlCarousel({
-	items: 1,
+  $('.var-img-div').slick({
+    infinite: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    fade: true,
+    arrows: false,
+    responsive: [
+    {
+      breakpoint: 768,
+      settings: {
+        draggable: true,
+        swipe: false
+      },
+    }
+  ],
   });
   $('.color-swatch').on('click',(ele)=>{
     let i = ele.target.getAttribute('swatch-num');
     let j = ele.target.getAttribute('var-id');
     let k = ele.target.getAttribute('prod-id');
-<!--     $(`.${ele.target.getAttribute('prod-id')}_var`).slick('slickGoTo', i); -->
-<!--     $(`.${ele.target.getAttribute('prod-id')}_featured`).slick('slickGoTo', i); -->
+    $(`.${ele.target.getAttribute('prod-id')}_var`).slick('slickGoTo', i);
+    $(`.${ele.target.getAttribute('prod-id')}_featured`).slick('slickGoTo', i);
     if($(`.${k}_nld .${ele.target.getAttribute('prod-id')}_var`).attr('active-slide') == i){
     $(`.${k}_nld .color-swatch`).removeClass('active-swatch');
     ele.target.classList.add('active-swatch');
@@ -1101,8 +1121,10 @@
 $('.color-swatch-div > div').each(function() {
 	$(this).click(function() {
 		let selected_variant = $(this).attr('var-id');
+<!-- 		$(this).parents('.color-swatch-div').siblings('.atc-outer').find('.product-item__cta').text("ADDING...") -->
 		$(this).parents('.color-swatch-div').siblings('.atc-outer').find('input[name="id"]').val(selected_variant)
 	})
+	
 })
 	$('.new-launch-atc .product-item__cta').click(function() {
         $(this).css('color', 'transparent');
