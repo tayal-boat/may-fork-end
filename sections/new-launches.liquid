@@ -3,20 +3,21 @@
 <style>
   .shopify-section--newlaunches {overflow-x: hidden;}
   .new-launch-atc  .product-item__cta {
-  	margin: 0;
-    height: 30px;
+    margin: 0;
+    position:relative;
+    font-size:0.9vw;
+    height: 3rem;
     padding: 0 20px;
+    border-radius: 4px!important;
+    width: 100%;
     line-height: normal;
     background: #ff0000;
-    border-radius: 2em !important;
-    position: relative;
   }
   ul.slick-dots {
-  	display: flex!important;
+    padding: 0;
+    display: flex!important;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 0;
   }
   ul.slick-dots li {
   	list-style: none;
@@ -90,7 +91,7 @@
   }
   .product-info-div{
     width: 45%;
-    background: #242424;
+    background: #2f2f2f;
     padding: 1% 5%;
     display: flex;
     flex-direction: column;
@@ -242,17 +243,16 @@
   }
   .inner-atc-sold{
     background: grey;
-    color: white;
+    border: 1px solid;
     font-weight: 600;
     padding: 0.28vw 2.3vw;
+    line-height: 1.5;
     font-size: 0.9vw;
     display: flex;
     text-transform: uppercase;
-    border-radius: 20px;
+    border-radius: 4px;
     text-decoration: none !important;
     justify-content: center;
-    align-items: center;
-    height: max-content;
   }
   .explore-product {
     background: transparent;
@@ -263,16 +263,15 @@
     font-size: 0.9vw;
     display: flex;
     text-transform: uppercase;
-    border-radius: 20px;
+    border-radius: 4px;
     text-decoration: none !important;
     justify-content: center;
     align-items: center;
-    height: max-content;
 }
   .atc-outer {
     display: flex;
     justify-content: space-evenly;
-    width: 70%;
+    width: 70%;    gap: 10px;
 }
   .featured-img-div .slick-track{
     margin: auto !important;
@@ -394,22 +393,10 @@
       height: 18px;
     }
     .explore-product {
-    background: transparent;
-    color: #e00c1a !important;
-    border: 1px solid #e00c1a;
-    font-weight: 600;
-    padding: 0.6vw 2.4vw;
     font-size: 3vw;
-    display: flex;
-    text-transform: uppercase;
-    border-radius: 20px;
-    text-decoration: none !important;
-    justify-content: center;
-    align-items: center;
-    height: max-content;
+
 }
     .inner-atc-sold {
-      padding: 0.6vw 6.4vw;
       font-size: 3vw;
     }
     .inner-atc {
@@ -491,6 +478,9 @@
      width: 1.5vw;
   }
   @media (max-width: 768px){
+    button.product-item__cta.button.button--primary {
+    font-size: 3vw;
+}
     .product-feature-div {
     	max-width: 70%;
       	column-count: 1;
@@ -752,10 +742,15 @@
       <div class="product-subtitle">{{block.settings.product_category}}</div>
       <div class="product-title">{{product.title}}</div>
       
+       <span class="special-price">Special launch price</span>
       {% assign i = -1 %} 
       {% for variant in product.variants %}
       {% assign i =  i | plus: 1 %} 
-      <div swatch-num = "{{i}}" class="var-price {{variant.id}}_var-price"> <span class="special-price">Special launch price</span> Rs. {{variant.price | divided_by: 100}}</div>
+     {% if block.settings.sale_price_checkbox %}
+      <div swatch-num = "{{i}}" class="var-price {{variant.id}}_var-price">  Rs. {{block.settings.sale_price}}</div>
+      {% else %}
+      <div swatch-num = "{{i}}" class="var-price {{variant.id}}_var-price">Rs. {{variant.price | divided_by: 100}}</div>
+      {% endif %}
       {% endfor %}
       <div class="choose-headers">
         <p class="desc-head active-header">Description</p>
@@ -793,7 +788,7 @@
         {% endif %}
         {% assign i =  i | plus: 1 %} 
 
-        <div prod-id ="{{p_id}}" var-id = "{{variant.id}}" swatch-num = "{{i}}" color = {{color}} class="color-swatch {{color}} {{variant.id}}_color-swatch" style="color:white; background: {{color}}" data-title="{{title}}"></div>
+<div prod-id ="{{p_id}}" var-id = "{{variant.id}}" swatch-num = "{{i}}" color = {{color}} class="color-swatch {{color}} {{variant.id}}_color-swatch" style="color:white; background: {{color}}" data-title="{{title}}"></div>
         {% endif %}
         {% endfor %}
         {% for variant in product.variants %}
@@ -806,7 +801,7 @@
         {% endif %}
         {% assign i =  i | plus: 1 %} 
 
-        <div prod-id ="{{p_id}}" var-id = "{{variant.id}}" swatch-num = "{{i}}" color = {{color}} class="color-swatch {{color}} {{variant.id}}_color-swatch" style="color:white; background: {{color}}"></div>
+  <div prod-id ="{{p_id}}" var-id = "{{variant.id}}" swatch-num = "{{i}}" color = {{color}} class="color-swatch {{color}} {{variant.id}}_color-swatch" style="color:white; background: {{color}}"></div>
         {% endif %}
         {% endfor %}
       </div>
@@ -818,13 +813,15 @@
 
         <div class="new-launch-atc {{variant.id}}_new_launch_atc">
           {% if variant.available == true %}
-          {%- capture form_id -%}product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}{%- endcapture -%}
+ {%- capture form_id -%}product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}{%- endcapture -%}
           {%- form 'product', product, is: 'product-form', id: form_id -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-            <button type="submit" {% if show_cta %}is="loader-button"{% endif %} class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">Add To Cart
-              <div class="apply_coupon_spinner"></div>
-          </button>
+
+  <button type="submit" {% if show_cta %}is="loader-button"{% endif %} class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">Add To Cart
+   <div class="apply_coupon_spinner"></div>
+  </button>
+
           {%- endform -%}
           {% else %}
           <div class="inner-atc-sold" var-id="{{variant.id}}">Sold Out</div>
@@ -1104,7 +1101,9 @@
     });
    })
    
-      $('.product-desc').append(`<span class="read-more" style = "cursor:pointer;position: absolute;bottom: -1px;right: 0px;padding-left: 7px;background: #242424;color: red;font-weight: 600;">...Read more</span>`)
+
+//      $('.product-desc').append(`<span class="read-more" style = "position: absolute;bottom: -1px;right: 0px;padding-left: 7px;color: red;font-weight: 600;">...Read more</span>`)
+
 
       $('.read-more').click((event)=>{
 //           event.target.parentNode.style.overflowY = "auto";
