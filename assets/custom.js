@@ -211,26 +211,6 @@
           }
       });
     });
-    
-
-
-
-/*
-* ------------------------------------------------------------------------------------------------------------
-* FOOTER ACCORDIAN
-* ------------------------------------------------------------------------------------------------------------
-* 
-*/
-if (window.matchMedia("(max-width: 767px)").matches) {
-  $('.footer__item-title').append(`
-	<span class="expanded toggle">+</span>
-	<span class="collapsed visually-hidden toggle">-</span>
-  `);
-  $('.footer__item--links').click(function() {
-      $(this).find('.footer__item-content').slideToggle();
-      $(this).find('span.toggle').toggleClass('visually-hidden');
-  });
-}
 
 $('.footer__item-content .linklist__item').each(function() {
   $(this).on('click', function() {
@@ -251,6 +231,26 @@ $('.header__inline-navigation .header__linklist-item').each(function() {
     });
   });
 });
+    
+
+
+
+/*
+* ------------------------------------------------------------------------------------------------------------
+* FOOTER AND HEADER JS
+* ------------------------------------------------------------------------------------------------------------
+* 
+*/
+if (window.matchMedia("(max-width: 767px)").matches) {
+  $('.footer__item-title').append(`
+	<span class="expanded toggle">+</span>
+	<span class="collapsed visually-hidden toggle">-</span>
+  `);
+  $('.footer__item--links').click(function() {
+      $(this).find('.footer__item-content').slideToggle();
+      $(this).find('span.toggle').toggleClass('visually-hidden');
+  });
+}
 
 $('.mobile-nav  .mobile-nav__item').each(function() {
   $(this).on('click', function() {
