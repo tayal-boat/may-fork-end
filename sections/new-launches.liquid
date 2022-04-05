@@ -967,14 +967,70 @@
   $('.owl-carousel .var-img-div').owlCarousel({
 	items: 1,
   });
-  var swatch_id;
-  $('color-swatch').each(function() {
-	$(this).click(function() {
-		swatch_id = $(this).attr('var-id');
-		alert(swatch_id)
-})
-  })
+  $('.color-swatch').on('click',(ele)=>{
+    let i = ele.target.getAttribute('swatch-num');
+    let j = ele.target.getAttribute('var-id');
+    let k = ele.target.getAttribute('prod-id');
+    $(`.${ele.target.getAttribute('prod-id')}_var`).goTo(i);
+    $(`.${ele.target.getAttribute('prod-id')}_featured`).goTo(i);
+    if($(`.${k}_nld .${ele.target.getAttribute('prod-id')}_var`).attr('active-slide') == i){
+    $(`.${k}_nld .color-swatch`).removeClass('active-swatch');
+    ele.target.classList.add('active-swatch');
+    $(`.${k}_nld .featured_img`).removeClass('active-featured');
+    $(`.${k}_nld .featured_img`).each((l,ele2)=>{
+      if(ele2.getAttribute('swatch-num') == i){
+      ele2.classList.add('active-featured');
+      }
+    })
+    $(`.${k}_nld .var-price`).hide();
+    $(`.` + `${j}` + `_var-price`).show();
+    $(`.${k}_nld .new-launch-atc`).hide();
+    $(`.${j}_new_launch_atc`).show();
+    }
+  });
 
+  $('.color-swatch').each((i,ele)=>{
+    if(ele.getAttribute('swatch-num') == 0){
+      ele.classList.add('active-swatch');
+      $(`.${ele.getAttribute('var-id')}_new_launch_atc`).show();
+    }
+  })
+   $('.outer-container.new--launch').on('afterChange', function(event, slick, currentSlide, nextSlide){
+    $('.nl-click').removeClass('non-active-click')
+     if($('.nld.slick-active').attr('data-slick-index') == parseInt($('.nld').length - 1)){
+  $('.right-click').addClass('non-active-click');
+  }
+     if($('.nld.slick-active').attr('data-slick-index') == 0){
+  $('.left-click').addClass('non-active-click');
+  } 
+     
+  });
+  
+  $('.var-img-div').on('beforeChange', function(event, slick, currentSlide, nextSlide){
+    let k = event.target.getAttribute('prod-id');
+    $(`.${k}_nld .var-img-div`).attr('active-slide',nextSlide);
+//     console.log(nextSlide);
+    $(`.` + `${event.target.getAttribute('prod-id')}` + `_featured`).goTo(nextSlide);
+    $(`.${k}_nld .featured_img`).removeClass('active-featured');
+//     console.log(`.` + `${event.target.getAttribute('prod-id')}` + `_inner_featured`);
+
+    $(`.${k}_nld .featured_img`).each((i,ele)=>{
+      if(ele.getAttribute('swatch-num') == nextSlide){
+        ele.classList.add('active-featured');
+      }
+    });
+  });
+
+   $(`.featured-img-div`).on('afterChange', function(event, slick, currentSlide, nextSlide){
+     let i = event.target.getAttribute('prod-id');
+     $(`.${i}_swipe`).removeClass('non-active-click');
+     if($(`.${i}_featured .slick-active`)[0].getAttribute('data-slick-index') == 0){
+  $(`.${i}_f-l`).addClass('non-active-click');
+  }  
+      if($(`.${i}_featured .slick-active`)[3].getAttribute('data-slick-index') == parseInt($(`.${i}_featured .featured_img`).length - 1)){
+  $(`.${i}_f-r`).addClass('non-active-click');
+  }
+    })
   $('.feature-head').on('click',()=>{
                         $('.choose-headers > p').removeClass('active-header');
   $('.feature-head').addClass('active-header');
