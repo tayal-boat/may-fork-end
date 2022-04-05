@@ -255,7 +255,6 @@ $('.header__inline-navigation .header__linklist-item').each(function() {
 $('.mobile-nav  .mobile-nav__item').each(function() {
   $(this).on('click', function() {
     let header_mob_item = $(this).text().trim();
-    alert(header_mob_item)
   	clevertap.event.push("Header Menu Item Clicked", {
     	"Item": header_mob_item,
     	"Source": "Header Mobile"
