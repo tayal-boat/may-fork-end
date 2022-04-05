@@ -232,6 +232,13 @@ if (window.matchMedia("(max-width: 767px)").matches) {
   });
 }
 
+$('.footer__item-content .linklist__item').each(function() {
+  $(this).on('click', function() {
+    let footer_item = $(this).text();
+  	alert(footer_item);
+  })
+})
+
 
 /*
 * ------------------------------------------------------------------------------------------------------------
