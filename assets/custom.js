@@ -235,7 +235,10 @@ if (window.matchMedia("(max-width: 767px)").matches) {
 $('.footer__item-content .linklist__item').each(function() {
   $(this).on('click', function() {
     let footer_item = $(this).text().trim();
-  	alert(footer_item);
+  	clevertap.event.push("Footer Menu Item Clicked ", {
+    	"Item": item,
+    	"Source": "Footer"
+    });
   })
 })
 
