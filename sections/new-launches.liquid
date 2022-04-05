@@ -720,14 +720,14 @@
       <div active-slide = "0" class="var-img-div {{p_id}}_var" prod-id ="{{p_id}}">
         {% for variant in product.variants %}
         {% if variant.available == true %}
-        <div class="var_img" data-var-id="{{variant.id}}">
+        <div class="var_img">
           <img src = "{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}">    
         </div>
         {% endif %}
         {% endfor %}
         {% for variant in product.variants %}
         {% if variant.available == false %}
-        <div class="var_img" data-var-id="{{variant.id}}">
+        <div class="var_img">
           <img src = "{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}">    
         </div>
         {% endif %}
@@ -971,8 +971,8 @@
     let i = ele.target.getAttribute('swatch-num');
     let j = ele.target.getAttribute('var-id');
     let k = ele.target.getAttribute('prod-id');
-    $(`.${ele.target.getAttribute('prod-id')}_var`).goTo(i);
-    $(`.${ele.target.getAttribute('prod-id')}_featured`).goTo(i);
+    $(`.${ele.target.getAttribute('prod-id')}_var`).slick('slickGoTo', i);
+    $(`.${ele.target.getAttribute('prod-id')}_featured`).slick('slickGoTo', i);
     if($(`.${k}_nld .${ele.target.getAttribute('prod-id')}_var`).attr('active-slide') == i){
     $(`.${k}_nld .color-swatch`).removeClass('active-swatch');
     ele.target.classList.add('active-swatch');
@@ -1010,7 +1010,7 @@
     let k = event.target.getAttribute('prod-id');
     $(`.${k}_nld .var-img-div`).attr('active-slide',nextSlide);
 //     console.log(nextSlide);
-    $(`.` + `${event.target.getAttribute('prod-id')}` + `_featured`).goTo(nextSlide);
+    $(`.` + `${event.target.getAttribute('prod-id')}` + `_featured`).slick('slickGoTo', nextSlide);
     $(`.${k}_nld .featured_img`).removeClass('active-featured');
 //     console.log(`.` + `${event.target.getAttribute('prod-id')}` + `_inner_featured`);
 
