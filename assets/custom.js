@@ -263,6 +263,8 @@ $('.mobile-nav  .mobile-nav__item').each(function() {
   });
 });
 
+$('.mobile-nav__item:first-child button').attr('aria-expanded', true);
+
 
 /*
 * ------------------------------------------------------------------------------------------------------------
