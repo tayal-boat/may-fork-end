@@ -211,13 +211,33 @@
           }
       });
     });
+
+$('.footer__item-content .linklist__item').each(function() {
+  $(this).on('click', function() {
+    let footer_item = $(this).text().trim();
+  	clevertap.event.push("Footer Menu Item Clicked", {
+    	"Item": footer_item,
+    	"Source": "Footer"
+    });
+  });
+});
+
+$('.header__inline-navigation .header__linklist-item').each(function() {
+  $(this).on('click', function() {
+    let header_item = $(this).text().trim();
+  	clevertap.event.push("Header Menu Item Clicked", {
+    	"Item": header_item,
+    	"Source": "Header Desktop"
+    });
+  });
+});
     
 
 
 
 /*
 * ------------------------------------------------------------------------------------------------------------
-* FOOTER ACCORDIAN
+* FOOTER AND HEADER JS
 * ------------------------------------------------------------------------------------------------------------
 * 
 */
@@ -231,6 +251,18 @@ if (window.matchMedia("(max-width: 767px)").matches) {
       $(this).find('span.toggle').toggleClass('visually-hidden');
   });
 }
+
+$('.mobile-nav  .mobile-nav__item').each(function() {
+  $(this).on('click', function() {
+    let header_mob_item = $(this).text().trim();
+  	clevertap.event.push("Header Menu Item Clicked", {
+    	"Item": header_mob_item,
+    	"Source": "Header Mobile"
+    });
+  });
+});
+
+$('.mobile-nav__item:first-child button').attr('aria-expanded', true);
 
 
 /*
