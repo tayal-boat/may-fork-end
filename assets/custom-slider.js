@@ -4,7 +4,7 @@ let dots = Array.from(document.querySelectorAll(".dt"));
       let slider_track = document.querySelector(".slider_track");
       let prevBtn = document.querySelector(".prev_ar");
       let nextBtn = document.querySelector(".next_ar");	
-	 let intervalTime = Number(document.querySelector('.interval_time').textContent)*1000;
+	 let intervalTime = Number(document.querySelector('.interval_time').textContent);
       const previousSlide = () => {
         let slInd;
         let prevSlide;
