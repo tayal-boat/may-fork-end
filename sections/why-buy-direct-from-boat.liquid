@@ -1,0 +1,127 @@
+<style> 
+  .why-buy {
+    background-image: url({{section.settings.bgimage | img_url: 'master'}});
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    margin-top: 30px;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 20px;
+  }
+  .why-buy h3.heading {
+  	font-size: 2vw;
+  }
+  @media screen and (min-width: 1025px) {
+    .why-buy .row-icons {
+      max-width: 60%;
+      width: 100%;
+      margin: auto !important;
+      opacity: 0;
+      border-left: 1px solid #FFF;
+    }
+    .heading-row {
+      width: 40%;
+    }
+    .col-4.icon_.text-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .why-buy {
+    	flex-direction: column;
+    }
+    .why-buy h3.heading {
+      font-size: 6vw;
+    }
+    .why-buy .row-icons {
+    	margin-top: 20px !important;
+    }
+    .col-4.icon_.text-center {
+    	margin-top: 15px;
+    }
+  }
+</style>
+<div class="why-buy py-4" reveal-on-scroll>
+  <div class="row heading-row">
+    <div class="col-12 text-center">
+    	<h3 class="heading h2 my">{{ section.settings.section_heading }}</h3>
+    </div>
+  </div>
+  <div class="row row-icons">
+    {% for block in section.blocks %}
+    <div class="col-4 icon_ text-center">
+      <div class="img_container image-zoom">
+      	<img loading="lazy" {% render 'image-attributes', image: block.settings.image %} alt="{{block.settings.text}}">    
+      </div>
+      <div class="text_container">
+        <p class="block-heading text-uppercase"><strong>{{block.settings.text}}</strong></p> 
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script type="text/javascript">
+$(window).on('load', function() {
+	$('.why-buy .row-icons').css('opacity', '1');
+})
+</script>
+
+{% schema %}
+  {
+    "name": "Why Buy Direct From boAt",
+	"class": "why-buy-direct-from-boat",
+    "settings": [
+		{
+			"type": "text",
+			"id": "section_heading",
+			"label": "Section Heading"
+		},
+		{
+            "type": "image_picker",
+            "id": "bgimage",
+            "label": "Background Image"
+        }
+	],
+	"blocks": [
+		{
+          "name": "why-buy",
+          "type": "why-buy",
+          "settings": [
+              {
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Image"
+              },
+              {
+                  "type": "text",
+                  "id": "text",
+                  "label": "Block Heading"
+              }
+		  ]
+		}
+	],
+	"presets": [
+		{
+          "name": "Why Buy Direct From boAt",
+          "category": "image",
+          "settings": {}
+		}
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+
+{% endjavascript %}
