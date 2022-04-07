@@ -1,4 +1,4 @@
-  let slides = Array.from(document.querySelectorAll(".slides"));
+  let slides = Array.from(document.querySelectorAll(".slidesr"));
       let autoSlide = true;
 let dots = Array.from(document.querySelectorAll(".dt"));
       let slider_track = document.querySelector(".slider_track");
