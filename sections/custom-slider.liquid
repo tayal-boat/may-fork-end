@@ -1,7 +1,269 @@
+<style>
+    .custom_slides {
+        width: 100%;
+        overflow: hidden;
+     position:relative;
+     margin-bottom:20px;
+      }
+      .slider_track {
+        width: 100%;
+        display: block;
+        float:left;
+        height: 100%;
+        position:relative;
+      }
+      .slide img {
+        width: 100vw;
+      }
+.arr{
+	display:none;
+}
+      .prev_ar,
+      .next_ar {
+        position: absolute;
+        top: 50%;
+        cursor: pointer;
+        font-size: 30px;
+      }
+      .prev_ar {
+        left: 2%;
+      }
+      .next_ar {
+        right: 2%;
+      }
+      .dots_indc {
+        position: absolute;
+        left: 50%;
+        z-index: 100;
+        bottom:2%;
+        transform:translateX(-50%);
+        display: flex;
+        flex-direction: row;
+      }
+      .slide {
+        opacity: 0;
+        transition:all 0.4s ease-in;
+      }
+      .slide_dis {
+        display: none;
+      }
+      .active_slide {
+        opacity: 1;
+      }
+      .arr svg {
+        width: 30px;
+        height: auto;
+        border: solid 1px #000;
+        border-radius: 40px;
+        padding: 6px;
+      }
+.dt{
+	width:12px;
+  height:12px;
+  border:solid 2px #747D7D;
+  border-radius:40px;
+  background-color:transparent;
+  display:block!important;
+  margin:10px;
+  transition:all 0.3s ease-in;
+}
+.active_dt{
+	background-color:#747D7D;
+}
+.custom_slides .hidden{
+	display:none;
+}
+.dt{
+	cursor:pointer;
+}
+      @media (max-width: 1000px) {
+        .desk {
+          display: none;
+        }
+        .mob {
+          display: block;
+        }
+      }
+@media(max-width:768px){
+  .arr{
+  	display:none;
+  }
+}
+@media(min-width:768px){
+  .arr{
+  	display:block;
+  }
+}
+      @media (min-width: 1000px) {
+        .desk {
+          display: block;
+        }
+        .mob {
+          display: none;
+        }
+      } 
+</style>
+<script src="{{ 'custom-slider.js' | asset_url }}" defer="defer"></script>
+<div class="custom_slides">
+  {% assign interval = section.settings.interval_time %}
+  <span class="interval_time hidden">{{interval}}</span>
+      <div class="slider_track">
+        {% for bl in section.blocks %}
+  	<div class="slide slide_op {% if forloop.index == 1 %}active_slide{% endif %} slide_{{forloop.index}}" {% if forloop.index == 1 %}style="display: block;"{% else %} style="display:none"{% endif %}> 
+      {% if bl.type == 'image' %}
+      {% if bl.settings.slide_link != empty %}
+      <a href="{{ bl.settings.slide_link}}">
+            <img
+              src="{{bl.settings.desk_slider_img | img_url: 'master'}}"
+              alt=""
+              class="desk {% if forloop.index == 1 %} preload {% endif %}"
+            />
+            <img
+              src="{{bl.settings.mob_slider_img | img_url: 'master'}}"
+              alt=""
+              class="mob {% if forloop.index == 1 %} preload {% endif %}"
+            />
+          </a>
+      {%else%}
+      	 <img
+              src="{{bl.settings.desk_slider_img | img_url: 'master'}}"
+              alt=""
+              class="desk {% if forloop.index == 1 %} preload {% endif %}"
+            />
+            <img
+              src="{{bl.settings.mob_slider_img | img_url: 'master'}}"
+              alt=""
+              class="mob {% if forloop.index == 1 %} preload {% endif %}"
+            />
+      {% endif %}
+      {% else %}
+      	{% if bl.settings.video_link == empty %}
+      		<video autoplay muted width="100%" loop class="desk" >
+      			<source src="{{bl.settings.video_url_desk}}"/>
+      		</video>
+     		 <video autoplay muted width="100%" loop class="mob" >
+      			<source src="{{bl.settings.video_url_mob}}"/>
+      		</video>
+      	{% else %}
+      		<a href="{{bl.settings.video_link}}">
+      			<video autoplay muted width="100%" loop class="desk">
+      			<source src="{{bl.settings.video_url_desk}}"/>
+      		</video>
+               <video autoplay muted width="100%" loop class="mob" >
+      			<source src="{{bl.settings.video_url_mob}}"/>
+      		</video>
+      		</a>
+      	{% endif %}
+      {% endif %}
+        </div>
+  {% endfor %}
+              <div class="dots_indc">
+                {% for bl in section.blocks %}
+        			<div class="dt  {% if forloop.index == 1 %}active_dt {% endif %}" data-sec="slide_{{forloop.index}}"></div>
+                {% endfor %}
+      </div>
+      </div>
+  {% if section.settings.enable_arr %}
+      <div class="arr">
+        <div class="prev_ar">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-chevron-left"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+            />
+          </svg>
+        </div>
+        <div class="next_ar">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-chevron-right"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+            />
+          </svg>
+        </div>
+      </div>
+  {% endif %}
+    </div>
+
 {% schema %}
   {
-    "name": "Section name",
-    "settings": []
+    "name": "custom slider",
+    "settings": [
+				{
+					"type":"number",
+					"label":"Slider interval in seconds",
+					"id":"interval_time"
+				},
+				{
+					"type":"checkbox",
+					"label":"Display Arrows",
+					"id":"enable_arr"
+				}
+			],
+	"blocks":[
+				{
+					"type":"image",
+					"name":"image_block",
+					"settings":[
+									{
+										"type":"image_picker",
+										"id":"desk_slider_img",
+										"label":"Pick image for desktop"
+									},
+									{
+										"type":"image_picker",
+										"id":"mob_slider_img",
+										"label":"Pick image for mobile"
+									},
+									{
+										"type":"text",
+										"id":"slide_link",
+										"label":"Slide link url"
+									}
+								]
+				},
+				{
+					"type":"video",
+					"name":"video_block",
+					"settings":[
+					  {
+						"type":"text",
+						"id":"video_url_desk",
+						"label":"Video url desktop"
+					  },
+					  {
+						"type":"text",
+						"id":"video_url_mob",
+						"label":"Video url mobile"
+					  },
+					  {
+						"type":"url",
+						"id":"video_link",
+						"label":"Enter slide link"
+					  }
+					]
+				}
+			],
+	"presets":[
+			{
+				"category": "slider",
+				"name":"sl"
+			}
+		]
   }
 {% endschema %}
 
