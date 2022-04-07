@@ -33,6 +33,14 @@
 
     --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
   }
+    {% if section.settings.bgimage != blank %}
+    .shopify-section--custom-gallery section {
+    	background-image: url({{section.settings.bgimage | img_url: 'master'}});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    {% endif %}
    .shopify-section--custom-gallery .gallery__item {
         width: 100%;
         flex-direction: row;
@@ -67,7 +75,7 @@
       margin: 0px 0 30px;
     }
   	.shopify-section--custom-gallery .description {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 400;
       margin: 0px 0 30px;
     }
@@ -215,6 +223,11 @@
       "label": "Heading",
       "default": "Gallery"
     },
+	{
+	  "type": "image_picker",
+	  "id": "bgimage",
+	  "label": "Background Image"
+	},
     {
       "type": "checkbox",
       "id": "show_arrows",
