@@ -1,7 +1,10 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
 <style>
-  .shopify-section--newlaunches {overflow-x: hidden;}
+  .shopify-section--newlaunches {
+    overflow-x: hidden;
+    display: none;
+  }
   .new-launch-atc  .product-item__cta {
     margin: 0;
     position:relative;
@@ -26,17 +29,16 @@
   ul.slick-dots li:before {
   	content: "";
     position: absolute;
-    width: 20px;
+    width: 100%;
     height: 3px;
-    background: #ccc;
-    z-index: 99999;
+    background: #444;
     top: 50%;
     transform: translate(-50%, -50%);
     left: 50%;
     border-radius: 2em;
   }
   ul.slick-dots li.slick-active:before {
-  	background: #ff0000;
+  	background: #ccc;
   }
   ul.slick-dots li button {
   	visibility: hidden;
@@ -245,7 +247,7 @@
     background: grey;
     border: 1px solid;
     font-weight: 600;
-    padding: 0.28vw 2.3vw;
+    padding: 0 2.3vw;
     line-height: 1.5;
     font-size: 0.9vw;
     display: flex;
@@ -253,6 +255,8 @@
     border-radius: 4px;
     text-decoration: none !important;
     justify-content: center;
+    height: 45px;
+    line-height: 45px;
   }
   .explore-product {
     background: transparent;
@@ -267,6 +271,8 @@
     text-decoration: none !important;
     justify-content: center;
     align-items: center;
+    height: 45px;
+    line-height: 45px;
 }
   .atc-outer {
     display: flex;
@@ -307,7 +313,7 @@
   }
   .outer-container .slick-dots > li{
     margin: 0px 2px;
-    width: 1.5vw;
+    width: 2vw;
     cursor: pointer;
   }
   .special-price{
@@ -705,11 +711,11 @@
 </div>
 <!-- <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1.png?v=1642498138" class="left-click nl-click non-active-click" /> -->
 <!-- <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow_1.png?v=1642498059" class="right-click nl-click" /> -->
-<div class="outer-container new--launch">
+<div class="outer-container new--launch" reveal-on-scroll>
   {% for block in section.blocks %}
   {% assign product = block.settings.product_new_launches %}
   {% assign p_id = product.id %}
-  <div class="nld {{p_id}}_nld">
+  <div class="nld {{p_id}}_nld slick-slide">
     
     <div class="outer-div">
 
@@ -720,15 +726,15 @@
       <div active-slide = "0" class="var-img-div {{p_id}}_var" prod-id ="{{p_id}}">
         {% for variant in product.variants %}
         {% if variant.available == true %}
-        <div class="var_img">
-          <img alt="{{}}" src = "{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}">    
+        <div class="var_img slick-slide">
+          <img alt="{{product.title}}" loading="lazy" {% render 'image-attributes', image: variant.metafields.my_fields.newlaunchimage %}>    
         </div>
         {% endif %}
         {% endfor %}
         {% for variant in product.variants %}
         {% if variant.available == false %}
-        <div alt="{{}}" class="var_img">
-          <img src = "{{variant.metafields.my_fields.newlaunchimage | img_url : "master"}}">    
+        <div alt="{{product.title}}" class="var_img">
+          <img loading="lazy" {% render 'image-attributes', image: variant.metafields.my_fields.newlaunchimage %}>    
         </div>
         {% endif %}
         {% endfor %}
@@ -835,7 +841,12 @@
   {% endfor %}
 
 </div>
-  
+
+<script type="text/javascript">
+$(window).on('load', function() {
+	$('.shopify-section--newlaunches').fadeIn();
+})
+</script>
 
 {% schema %}
 {
