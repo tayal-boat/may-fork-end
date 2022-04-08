@@ -48,33 +48,6 @@
     --primary-button-text-color: {{ item_background.red }}, {{ item_background.green }}, {{ item_background.blue }};
     --section-box-background: {{ item_background.red }}, {{ item_background.green }}, {{ item_background.blue }};
   }
-    .shopify-section--timeline .timeline__content {
-    	padding: 20px;
-    }
-    .shopify-section--timeline .timeline__content .heading {
-    	font-weight: bold;
-    }
-    .shopify-section--timeline .timeline__content .button {
-      	background: transparent;
-      	color: #FF0000;
-      	letter-spacing: 0;
-      	padding: 0;
-      	text-transform: unset;
-      	line-height: normal;
-    	border-bottom: 1px solid #ff0000;
-    }
-    .timeline__content {
-    	background-color: #f7f7f7;
-    }
-    .icon--col {
-    	background: white;
-    }
-    
-    @media screen and (min-width: 1025px) {
-    	.timeline__item {
-            background-color: #f7f7f7;
-        }
-    }
 </style>
 
 <section class="section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -85,7 +58,7 @@
       {%- endif -%}
 
       {%- if section.settings.title != blank -%}
-        <h3 class="heading h2">{{ section.settings.title }}</h3>
+        <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
       {%- endif -%}
     </header>
 
@@ -110,7 +83,7 @@
                 <div id="block-{{ section.id }}-{{ block.id }}" class="timeline__item" {% unless forloop.first %}hidden{% endunless %} {{ block.shopify_attributes }}>
                   <div class="timeline__image-wrapper">
                     {%- if block.settings.image != blank -%}
-                      <img alt="{{ block.settings.title | escape }}" class="timeline__image" loading="lazy" sizes="(max-width: 740px) 81vw, 490px" {% render 'image-attributes', image: block.settings.image, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
+                      <img alt="{{block.settings.alt_imgtext}}" class="timeline__image" loading="lazy" sizes="(max-width: 740px) 81vw, 490px" {% render 'image-attributes', image: block.settings.image, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
                     {%- else -%}
                       {{ 'image' | placeholder_svg_tag: 'timeline__image placeholder-background' }}
                     {%- endif -%}
@@ -121,51 +94,7 @@
                       {%- if block.settings.title != blank -%}
                         <h2 class="heading h5">{{ block.settings.title | escape }}</h2>
                       {%- endif -%}
-                      <div class="description-box">
-                        {%- if block.settings.icon_1 != blank -%}
-                        <div class="row description--row my-3 align-items-center">
-                          {%- if block.settings.icon_1 != blank -%}
-                            <div class="col-3 icon--col">
-                            	<img alt="{{ block.settings.title | escape }}" class="timeline__icon__image m-0" loading="lazy" sizes="(max-width: 740px) 81vw, 490px" {% render 'image-attributes', image: block.settings.icon_1, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
-                            </div>
-                          {%- endif -%}
-                          {%- if block.settings.icon_desc_1 != blank -%}
-                            <div class="col-9 text--col">
-                              <p class="icon_description text-black">{{block.settings.icon_desc_1}}</p>
-                            </div>
-                          {%- endif -%}
-                        </div>
-                        {%- endif -%}
-                        {%- if block.settings.icon_2 != blank -%}
-                        <div class="row description--row my-3 align-items-center">
-                          {%- if block.settings.icon_2 != blank -%}
-                            <div class="col-3 icon--col">
-                            	<img alt="{{ block.settings.title | escape }}" class="timeline__icon__image m-0" loading="lazy" sizes="(max-width: 740px) 81vw, 490px" {% render 'image-attributes', image: block.settings.icon_2, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
-                            </div>
-                          {%- endif -%}
-                          {%- if block.settings.icon_desc_2 != blank -%}
-                            <div class="col-9 text--col">
-                              <p class="icon_description text-black">{{block.settings.icon_desc_2}}</p>
-                            </div>
-                          {%- endif -%}
-                        </div>
-                        {%- endif -%}
-                        {%- if block.settings.icon_3 !=blan -%}
-                        <div class="row description--row my-3 align-items-center">
-                          {%- if block.settings.icon_3 !=blan -%}
-                            <div class="col-3 icon--col">
-                            	<img alt="{{ block.settings.title | escape }}" class="timeline__icon__image m-0" loading="lazy" sizes="(max-width: 740px) 81vw, 490px" {% render 'image-attributes', image: block.settings.icon_3, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
-                            </div>
-                          {%- endif -%}
-                          {%- if block.settings.icon_desc_3 !=blan -%}
-                            <div class="col-9 text--col">
-                              <p class="icon_description text-black">{{block.settings.icon_desc_3}}</p>
-                            </div>
-                          {%- endif -%}
-                        </div>
-                        {%- endif -%}
-                      </div>
-                      
+
                       {%- if block.settings.content != blank -%}
                         {{- block.settings.content -}}
                       {%- endif -%}
@@ -207,8 +136,8 @@
 
 {% schema %}
 {
-  "name": "Timeline",
-  "class": "shopify-section--timeline",
+  "name": "boAt Timeline",
+  "class": "shopify-section--boat-timeline",
   "max_blocks": 5,
   "blocks": [
     {
@@ -222,35 +151,10 @@
           "info": "1000 x 1000px .jpg recommended"
         },
         {
-          "type": "image_picker",
-          "id": "icon_1",
-          "label": "Icon 1"
+          "type": "text",
+          "id": "alt_imgtext",
+          "label": "alt_imgtext"
         },
-		{
-		  "type": "text",
-		  "id": "icon_desc_1",
-		  "label": "Icon 1 Description"
-		},
-		{
-          "type": "image_picker",
-          "id": "icon_2",
-          "label": "Icon 2"
-        },
-		{
-		  "type": "text",
-		  "id": "icon_desc_2",
-		  "label": "Icon 2 Description"
-		},
-		{
-          "type": "image_picker",
-          "id": "icon_3",
-          "label": "Icon 3"
-        },
-		{
-		  "type": "text",
-		  "id": "icon_desc_3",
-		  "label": "Icon 3 Description"
-		},
         {
           "type": "text",
           "id": "label",
@@ -346,7 +250,7 @@
   ],
   "presets": [
     {
-      "name": "Timeline",
+      "name": "boAt Timeline",
       "blocks": [
         {
           "type": "item",
