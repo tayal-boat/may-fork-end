@@ -46,6 +46,16 @@
       --section-block-overlay-opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
     }
   {%- endfor -%}
+  
+    @media screen and (min-width: 769px) {
+    	.list-collections__item-list >a {
+            width: 47%;
+        }
+      .list-collections__item-list {
+      	grid-gap: 40px;
+        gap: 40px;
+      }
+    }
 </style>
 
 <section class="section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -150,7 +160,12 @@
 
                   {%- if section.settings.layout == 'grid' and collection_image.aspect_ratio > 2.5 -%}
                     {%- assign height_constraint = 800 | at_most: collection_image.height -%}
-                    <img alt="{{block.settings.alt_imgtext}}" class="list-collections__item-image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="{{ image_sizes }}" {% render 'image-attributes', image: collection_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400', height_constraint: height_constraint, crop: 'center' %}>
+                	<picture>
+                      <source media="(min-width: 768px)" srcset="{{block.settings.image | img_url: 'master'}}">
+                      <source media="(max-width: 767px)" srcset="{{block.settings.mobile_image | img_url: 'master'}}">
+                      <img src="{{block.settings.image | img_url: 'master'}}" alt="{{collection.title}}" />
+                    </picture>
+<!--                     <img alt="{{block.settings.alt_imgtext}}" class="list-collections__item-image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="{{ image_sizes }}" {% render 'image-attributes', image: collection_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400', height_constraint: height_constraint, crop: 'center' %}> -->
                   {%- else -%}
                     <img alt="{{block.settings.alt_imgtext}}" class="list-collections__item-image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="{{ image_sizes }}" {% render 'image-attributes', image: collection_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800' %}>
                   {%- endif -%}
@@ -221,7 +236,13 @@
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image",
+          "label": "Desktop Image",
+          "info": "Grid and carousel modes: 1100 x 1400px .jpg recommended / Collage mode: 1320 x 1480px .jpg recommended (highlighted image) and 1320 x 700px .jpg recommended (normal image)"
+        },
+		{
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile Image",
           "info": "Grid and carousel modes: 1100 x 1400px .jpg recommended / Collage mode: 1320 x 1480px .jpg recommended (highlighted image) and 1320 x 700px .jpg recommended (normal image)"
         },
         {
