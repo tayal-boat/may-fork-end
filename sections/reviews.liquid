@@ -1,0 +1,411 @@
+<div class="container reviewss vertical-breather section-id-{{ section.id }}" data-section-type="custom-row">
+  <div class="new-launches-headings launch-head trendsetter">
+    <h3 class="heading h2 text-center mb-3 text-black">What They Say About Us:</h2>
+<!--   <h6>Browse through the trending boAt gears and taste your own Nirvana.</h6> -->
+  </div>
+  
+  <div class="flexible-layout valign-{{ section.settings.alignment }} testimonials trending">
+    {% for block in section.blocks %}
+
+    {% if block.type == 'image' %}
+    {% assign text_scale_mult = '1' %}
+    {% if block.settings.width == 'quarter' %}{% assign text_scale_mult = '4' %}
+    {% elsif block.settings.width == 'third' %}{% assign text_scale_mult = '3' %}
+    {% elsif block.settings.width == 'half' %}{% assign text_scale_mult = '2' %}
+    {% elsif block.settings.width == 'two-thirds' %}{% assign text_scale_mult = '1.5' %}
+    {% elsif block.settings.width == 'three-quarters' %}{% assign text_scale_mult = '1.333' %}
+    {% endif %}
+
+    <div class="column-{{ block.settings.width }} block-id-{{ block.id }} top-trending" {{ block.shopify_attributes }}>
+      <div class="image-block slide">
+        {% if block.settings.link_url != blank %}<a href="{{ block.settings.link_url }}">{% endif %}
+
+        {% if block.settings.image == blank %}
+        <div class="placeholder-image {% if block.settings.text != blank %}dark{% endif %}">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        {% else %}
+          <img loading="lazy" {% render 'image-attributes', image: block.settings.image %} alt="{{block.settings.text}}">    
+        {% endif %}
+
+        {% if block.settings.text != blank %}
+        <div class="overlay-text overlay-centre">
+          <div class="inner">
+            <div class="text">
+              <div class="snap-text">
+                <div>{{ block.settings.text | escape }}</div>
+                {% if block.settings.subtext != blank %}<div class="second-line">{{ block.settings.subtext | escape }}</div>{% endif %}
+                <span class="shop-now">SHOP NOW</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if block.settings.link_url != blank %}</a>{% endif %}
+      </div>
+    </div>
+
+    {% else %}
+
+    <div class="column-{{ block.settings.width }}" {{ block.shopify_attributes }}>
+      {% if block.type == 'text' %}
+      {% if block.settings.title != blank %}
+      <h1 class="majortitle in-content">{{ block.settings.title | escape }}</h1>
+      {% endif %}
+
+      <div class="user-content">{{ block.settings.text }}</div>
+
+      {% elsif block.type == 'video' %}
+      <div class="video-container"
+        data-video-id="{{ block.settings.video_url.id }}"
+        data-video-url="{{ block.settings.video_url }}"
+        data-video-type="{{ block.settings.video_url.type }}">
+      </div>
+
+      {% elsif block.type == 'html' %}
+      <div class="custom-html">
+        {{ block.settings.code }}
+      </div>
+
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<style type="text/css">
+  {%- for block in section.blocks -%}
+  {%- if block.type == 'image' and block.settings.text != blank -%}
+  {%- assign background_alpha = block.settings.overlay_bg | color_extract: 'alpha' -%}
+  .section-id-{{ section.id }} .block-id-{{ block.id }} .overlay-text .text > div {
+    color: {{ block.settings.overlay_color }};
+    background: {% if background_alpha == 0 %}transparent{% else %}{{ block.settings.overlay_bg | color_modify: 'alpha', 0.8 }}{% endif %};
+  }
+  {%- endif -%}
+  {%- endfor -%}
+  .boatheads-reviews {
+  	background-color: #dcdcdc;
+  }
+  .boatheads-reviews span.shop-now {
+  	color: #000;
+    font-size: 12px;
+    border: 1px solid #fff;
+    border-radius: 2em;
+    padding: 6px 20px;
+    line-height: 12px;
+    background: #fff;
+    font-weight: bold;
+    width:120px;
+    margin: auto;
+    position: absolute;
+    top: 77%;
+    z-index: 9;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+   .boatheads-reviews .top-trending {
+      background: linear-gradient(to bottom, transparent 0%, transparent 30%, #eb2128 30%, #eb2128 100%);
+  }
+</style>
+<script type="text/javascript">
+$(document).ready(function($) {
+  	var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+    $('.reviewss').on('click', function(){
+      clevertap.event.push("Homepage Testimonials section clicked", {"userSource": userSource});
+    });
+});
+</script>
+{% schema %}
+  {
+    "name": "what they say about us",
+	"class": "boatheads-reviews",
+    "max_blocks": 5,
+    "settings": [
+      {
+        "type": "select",
+        "id": "alignment",
+        "label": "Vertical alignment",
+        "default": "top",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "middle",
+            "label": "Middle"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image",
+        "settings": [
+          {
+            "type": "select",
+            "id": "width",
+            "label": "Width",
+            "default": "half",
+            "options": [
+              {
+                "value": "quarter",
+                "label": "25%"
+              },
+              {
+                "value": "third",
+                "label": "33%"
+              },
+              {
+                "value": "half",
+                "label": "50%"
+              },
+              {
+                "value": "two-thirds",
+                "label": "66%"
+              },
+              {
+                "value": "three-quarters",
+                "label": "75%"
+              },
+              {
+                "value": "full",
+                "label": "100%"
+              }
+            ]
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "url",
+            "id": "link_url",
+            "label": "Link"
+          },
+          {
+            "type": "header",
+            "content": "Caption"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Caption"
+          },
+          {
+            "type": "text",
+            "id": "subtext",
+            "label": "Caption line 2"
+          },
+          {
+            "type": "color",
+            "id": "overlay_color",
+            "label": "Color",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "overlay_bg",
+            "label": "Background",
+            "default": "rgba(0,0,0,0)"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "name": "Text",
+        "settings": [
+          {
+            "type": "select",
+            "id": "width",
+            "label": "Width",
+            "default": "half",
+            "options": [
+              {
+                "value": "quarter",
+                "label": "25%"
+              },
+              {
+                "value": "third",
+                "label": "33%"
+              },
+              {
+                "value": "half",
+                "label": "50%"
+              },
+              {
+                "value": "two-thirds",
+                "label": "66%"
+              },
+              {
+                "value": "three-quarters",
+                "label": "75%"
+              },
+              {
+                "value": "full",
+                "label": "100%"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text"
+          }
+        ]
+      },
+      {
+        "type": "video",
+        "name": "Embedded video",
+        "settings": [
+          {
+            "type": "select",
+            "id": "width",
+            "label": "Width",
+            "default": "half",
+            "options": [
+              {
+                "value": "quarter",
+                "label": "25%"
+              },
+              {
+                "value": "third",
+                "label": "33%"
+              },
+              {
+                "value": "half",
+                "label": "50%"
+              },
+              {
+                "value": "two-thirds",
+                "label": "66%"
+              },
+              {
+                "value": "three-quarters",
+                "label": "75%"
+              },
+              {
+                "value": "full",
+                "label": "100%"
+              }
+            ]
+          },
+          {
+            "id": "video_url",
+            "type": "video_url",
+            "label": "Video URL",
+            "accept": ["youtube", "vimeo"],
+            "info": "Supports Youtube and Vimeo",
+            "default": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc"
+          }
+        ]
+      },
+      {
+        "type": "html",
+        "name": "Custom HTML",
+        "settings": [
+          {
+            "type": "select",
+            "id": "width",
+            "label": "Width",
+            "default": "half",
+            "options": [
+              {
+                "value": "quarter",
+                "label": "25%"
+              },
+              {
+                "value": "third",
+                "label": "33%"
+              },
+              {
+                "value": "half",
+                "label": "50%"
+              },
+              {
+                "value": "two-thirds",
+                "label": "66%"
+              },
+              {
+                "value": "three-quarters",
+                "label": "75%"
+              },
+              {
+                "value": "full",
+                "label": "100%"
+              }
+            ]
+          },
+          {
+            "type": "textarea",
+            "id": "code",
+            "label": "HTML"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "what they say about us",
+        "category": "Image",
+        "settings": {
+            "alignment": "middle"
+        },
+        "blocks": [
+          {
+            "type": "image",
+            "settings": {
+              "width": "half"
+            }
+          },
+          {
+            "type": "text",
+            "settings": {
+              "title": "Welcome",
+              "text": "<p>Use this text to share information about your store with your customers.</p><p>Describe products, share announcements, or welcome customers to your store.</p>",
+              "width": "half"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Image row",
+        "category": "Image",
+        "blocks": [
+          {
+            "type": "image",
+            "settings": {
+              "width": "third"
+            }
+          },
+          {
+            "type": "image",
+            "settings": {
+              "width": "third"
+            }
+          },
+          {
+            "type": "image",
+            "settings": {
+              "width": "third"
+            }
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
