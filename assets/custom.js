@@ -145,7 +145,6 @@
     slides.forEach((slide, i) => {
       slide.addEventListener('click', function() {
           let imageTitle = slide.querySelector('.image_alt').innerText;
-          alert(imageTitle)
           let slideNum = `${i+1}`
           clevertap.event.push("Homepage Banner clicked", {
             "Banner Number": 'Banner ' + slideNum,
