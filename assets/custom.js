@@ -141,19 +141,6 @@
     if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
     else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
     else userSource = 'Desktop';
-    const slides = document.querySelectorAll('.slideshow__slide-list .slideshow__slide');
-    slides.forEach((slide, i) => {
-      slide.addEventListener('click', function() {
-          let imageTitle = slide.querySelector('.image_alt').innerText;
-          alert(imageTitle)
-          let slideNum = `${i+1}`
-          clevertap.event.push("Homepage Banner clicked", {
-            "Banner Number": 'Banner ' + slideNum,
-            "Banner Title": imageTitle,
-            "userSource": userSource
-          })
-      })
-    });
 	$('.featured-collections').on('click', function(){
         const sectionTitle = $(this).siblings('.section__header').find('.tabs-nav__item[aria-expanded="true"]').text();
         clevertap.event.push("Homepage Cards section clicked", {
