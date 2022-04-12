@@ -23,6 +23,16 @@
       {%- endif -%}
   	 {%- else -%}
     {%- endfor -%}
+  	{%- for tag in product.tags -%}
+        {%- if tag contains 'meta-label-' -%}
+          <span class="productlabel general  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+        {%- endif -%}
+		{%- if tag contains 'meta-label-lowest-price' -%}
+		  <span class="productlabel general lowest-price">
+			<span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
+		  </span>
+		{%- endif -%}
+      {%- endfor -%}
 
     {%- unless product.available -%}
       <span class="label label--subdued">{{ 'collection.product.sold_out' | t }}</span>
