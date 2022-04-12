@@ -218,6 +218,13 @@ $('.header__inline-navigation .header__linklist-item').each(function() {
     });
   });
 });
+
+$('a[aria-controls="mini-cart"]').click(function() {
+	clevertap.event.push('Slider Cart Opened', {
+      "Cart Items": {{ cart.item_count }},
+      "Source": "Header"
+    });
+})
     
 
 
