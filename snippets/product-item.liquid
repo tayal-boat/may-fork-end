@@ -10,6 +10,7 @@
 
 <product-item class="product-item {% unless product.available %}product-item--sold-out{% endunless %}" {% if reveal %}reveal{% endif %}>
   {%- capture product_labels -%}
+  {% comment %}
     {%- for tag in product.tags -%}
       {%- if tag contains '__label' -%}
         <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
@@ -23,19 +24,18 @@
       {%- endif -%}
   	 {%- else -%}
     {%- endfor -%}
+  {% endcomment %}
   	{%- for tag in product.tags -%}
         {%- if tag contains 'meta-label-' -%}
-          <span class="productlabel general  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+          <span class="label label--custom {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
         {%- endif -%}
-		{%- if tag contains 'meta-label-lowest-price' -%}
-		  <span class="productlabel general lowest-price">
+		{%- if settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag contains 'meta-label-lowest-price' -%}
 			<span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
-		  </span>
 		{%- endif -%}
       {%- endfor -%}
 
     {%- unless product.available -%}
-      <span class="label label--subdued">{{ 'collection.product.sold_out' | t }}</span>
+      <span class="label label--subdued visually-hidden">{{ 'collection.product.sold_out' | t }}</span>
     {%- endunless -%}
 
     {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
