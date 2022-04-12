@@ -29,10 +29,12 @@
   	  {%- unless tag contains 'meta-label-lowest-price' -%}
         {%- if tag contains 'meta-label-' -%}
           <span class="label label--highlight {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
-        {%- endif -%}
+        {% elsif settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag contains 'meta-label-lowest-price' %}
+  		  <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
+  		{%- endif -%}
   	  {%- endunless -%}
 		{%- if settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag contains 'meta-label-lowest-price' -%}
-			<span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
+			
 		{%- endif -%}
       {%- endfor -%}
 
