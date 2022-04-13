@@ -52,7 +52,7 @@
     {%- endcapture -%}
 
     {%- if processed_blocks > 1 -%}
-      <tabs-nav arrows class="tabs-nav tabs-nav--loose">
+      <tabs-nav arrows class="tabs-nav tabs-nav--loose hidden-pocket">
         <scrollable-content class="tabs-nav__scroller hide-scrollbar">
           <div class="tabs-nav__scroller-inner">
             <div class="tabs-nav__item-list">
@@ -182,12 +182,12 @@
             {%- when 'description' -%}
               {%- if product.description != blank -%}
                 <div {% unless processed_blocks == 0 %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="product-tabs__tab-item-wrapper">
-                  <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up hidden-pocket" aria-controls="block-{{ section.id }}-{{ block.id }}-content" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}">
+                  <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up" aria-controls="block-{{ section.id }}-{{ block.id }}-content" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}">
                     {{- 'product.general.description' | t -}}
                     {%- render 'icon' with 'chevron' -%}
                   </button>
 
-                  <collapsible-content {% if processed_blocks == 0 %}open{% endif %} id="block-{{ section.id }}-{{ block.id }}-content" class="collapsible" hidden>
+                  <collapsible-content {% if processed_blocks == 0 %}open{% endif %} id="block-{{ section.id }}-{{ block.id }}-content" class="collapsible">
                     <div class="product-tabs__tab-item-content rte">
                       {{- product.description -}}
                     </div>
@@ -205,7 +205,7 @@
 
             {%- when 'reviews' -%}
               <div {% unless processed_blocks == 0 %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="product-tabs__tab-item-wrapper" {{ block.shopify_attributes }}>
-                <button is="toggle-button" id="product-{{ product.id }}-reviews-pocket" class="collapsible-toggle heading heading--small hidden-lap-and-up hidden-pocket anchor" aria-controls="block-{{ section.id }}-{{ block.id }}-content" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}">
+                <button is="toggle-button" id="product-{{ product.id }}-reviews-pocket" class="collapsible-toggle heading heading--small hidden-lap-and-up anchor" aria-controls="block-{{ section.id }}-{{ block.id }}-content" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}">
                   {%- assign rating_count = product.metafields.reviews.rating_count.value | default: 0 -%}
                   {{- 'product.general.reviews' | t: rating_count: rating_count }} {%- render 'icon' with 'chevron' -%}
                 </button>
@@ -232,7 +232,7 @@
 
             {%- if title != blank and content != blank -%}
               <div {% unless processed_blocks == 0 %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="product-tabs__tab-item-wrapper" {{ block.shopify_attributes }}>
-                <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up hidden-pocket" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}-content">
+                <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}-content">
                   {{- title -}}
                   {%- render 'icon' with 'chevron' -%}
                 </button>
@@ -256,7 +256,7 @@
           {%- when 'liquid' -%}
             {%- if block.settings.title != blank and block.settings.liquid != blank -%}
               <div {% unless processed_blocks == 0 %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="product-tabs__tab-item-wrapper" {{ block.shopify_attributes }}>
-                <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up hidden-pocket" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}-content">
+                <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}-content">
                   {{- block.settings.title | escape -}}
                   {%- render 'icon' with 'chevron' -%}
                 </button>
