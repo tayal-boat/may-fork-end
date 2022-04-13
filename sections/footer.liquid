@@ -278,7 +278,16 @@
         {%- endif -%}
         <div class="row mt-4 footer-bottom-row">
           <div class="col-lg-4 text-center mt-4 payment-box">
-            <img loading="lazy" {% render 'image-attributes', image: settings.payment_strip %} alt="Payment"> 
+            {% comment %}
+            <img loading="lazy" {% render 'image-attributes', image: settings.payment_strip %} alt="Payment">
+            {% endcomment %}
+            {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+            	<div class="payment-methods-list payment-methods-list--auto">
+                  {% for type in shop.enabled_payment_types %}
+                    {{ type | payment_type_svg_tag }}
+                  {% endfor %}
+                </div>
+            {%- endif -%}
           </div>
           <div class="download-box col-lg-8 mt-3">
             <p>DOWNLOAD THE APP</p>
