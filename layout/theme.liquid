@@ -263,6 +263,21 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     {%comment%} Added by SearchTap team{%endcomment%}
     {% section 'searchtap' %}
     {%comment%}
+	<!--   NO RESULTS FOUND EVENT begins   -->
+    {% if template contains 'search' %}
+    	<script>
+          setTimeout(function() {
+            if($('#searchModalContainer').hasClass('st-no-results')) {
+              let noURL = window.location.href;
+              var noTerm = noURL.split('=')[1].replaceAll('%20', ' ');
+              console.log(noTerm);
+              clevertap.event.push("No Results Found", {
+                "Search Term": noTerm
+              });
+            }
+          }, 3000)
+    	</script>
+      {% endif %}
     {% unless template contains 'product' or template contains 'search' %}
     	{%- render 'bottom-navbar-mobile' -%}
     {% endunless %}
