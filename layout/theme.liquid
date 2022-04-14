@@ -106,12 +106,12 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
 	
     
     <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" async></script>
     <script src="{{ 'jquery.min.js' | asset_url }}"></script>
     <script src="{{ 'vendor.js' | asset_url }}" defer></script>
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
-    <script src="https://unpkg.com/aos@2.3.0/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.0/dist/aos.js" async></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" async="async"></script>
 <!--     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
 <!--     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
@@ -127,16 +127,26 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
 	{%- render 'wizrocket_variables_generator' -%}
     {% render 'clevertap' %}
     {% if template contains 'product' %}
-    <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
-    {%- render 'product-js' -%}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+      <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
+      {%- render 'product-js' -%}
+      {%- render 'w369-widget' -%}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	{% endif %}
-    {% if template contains 'collection' %}{{ 'https://cdn.shopify.com/s/files/1/0382/4185/files/ajaxinate.js?937' | script_tag }}{% endif %}
-
-    
-    
-    
-    
+	<!--  INFINITE SCROLL begins    -->
+    {% if template contains 'collection' or template contains 'blog' %}
+    	{{ 'https://cdn.shopify.com/s/files/1/0382/4185/files/ajaxinate.js?937' | script_tag }}
+    	<script>
+          document.addEventListener("DOMContentLoaded", function() {
+              var endlessScroll = new Ajaxinate({
+                container: '#Huratips-Loop',
+                pagination: '#Huratips-Pagination',
+                loadingText: '<center style="margin:20px auto 0;max-width: 50px;"><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader.gif?v=1649585765" alt="Load More" /></center>',
+              });
+          });
+        </script>
+    {% endif %}
+    <!--  INFINITE SCROLL ends    -->
+    {%- render 'boat-ve' -%}
   </head>
 
   {%- assign feature_classes = '' -%}
@@ -155,6 +165,7 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
         style="display: none; visibility: hidden"
       ></iframe
     ></noscript>
+    
     <!-- End Google Tag Manager (noscript) -->
     {%- comment -%}Common SVG definitions that we are re-using in several places{%- endcomment -%}
     <svg class="visually-hidden">
@@ -239,7 +250,7 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     <!-- google dynamic remarketing tag for theme.liquid -->
     {%- render 'google-adwords-remarketing' -%}
     <!-- Preciso Script -->
-    {%- render 'preciso' -%}
+    {%- comment -%}{%- render 'preciso' -%}{%- endcomment -%}
     {% if template == 'collection' or template == 'product' %}
       <script>
         scrollLoad = function(){setTimeout( function(){

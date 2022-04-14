@@ -45,8 +45,52 @@
   }
   .brand-text a {text-decoration: none !important;}
   .social--media .social-media__item {
-   box-shadow: none;
+   	box-shadow: none;
   }
+  .footer-bottom-row {
+   	width: 100%;
+  }
+  .download-box {
+   	display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  .download-box p {
+   margin: 0 2em;
+   font-weight: bold;
+  }
+  .download-box a {
+   display: inline-block;
+   margin: 0 10px;
+  }
+      
+      @media screen and (max-width: 767px) {
+        .footer .container {padding: 0 10px;}
+        .footer-bottom-row {
+        	margin: 0; 
+        }
+        .payment-box {
+        	order: 1;
+        }
+        .download-box {
+            display: block;
+            text-align: center;
+            padding: 0;
+          	margin-bottom: 20px;
+        }
+        .download-box p {
+            margin: 2em 2em 1em;
+        }
+        .download-box a {
+            margin: 0px 5px;
+            width: 47%;
+            float: left;
+        }
+        .footer__copyright {
+            justify-content: center;
+        }
+      }
 </style>
 
 <footer class="footer {% if settings.footer_background == settings.background %}footer--bordered{% endif %}">
@@ -247,7 +291,7 @@
             {%- endif -%}
           {%- endform -%}
         {%- endif -%}
-
+		{%- comment -%}
         {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
           <div class="footer__payment-methods">
             <span class="footer__payment-methods-label text--xsmall text--subdued">{{ 'footer.general.we_accept' | t }}</span>
@@ -259,6 +303,28 @@
             </div>
           </div>
         {%- endif -%}
+        {%- endcomment -%}
+        <div class="row mt-4 footer-bottom-row">
+          <div class="col-lg-4 text-center mt-4 payment-box">
+            {% comment %}
+            <img loading="lazy" {% render 'image-attributes', image: settings.payment_strip %} alt="Payment">
+            {% endcomment %}
+            {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+            	<div class="payment-methods-list payment-methods-list--auto">
+                  {% for type in shop.enabled_payment_types %}
+                    {{ type | payment_type_svg_tag }}
+                  {% endfor %}
+                </div>
+            {%- endif -%}
+          </div>
+          <div class="download-box col-lg-8 mt-3">
+            <p>DOWNLOAD THE APP</p>
+            <a href="https://play.google.com/store/apps/details?id=boatlifestylein.android.app" target="_blank">
+              <img loading="lazy" alt="Google play" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/google-play.png?v=1608620293"></a>
+            <a href="https://apps.apple.com/us/app/id1521646593" target="_blank">
+              <img loading="lazy" alt="Apple Store" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/app-store.png?v=1608620293"></a>
+          </div>
+    	</div>
         <span class="footer__copyright text--xsmall text--subdued"><span class="copy">&copy; {{ "now" | date: "%Y" }} Imagine Marketing Limited. All Rights Reserved.</span></span>
       </div>
     </div>
@@ -288,6 +354,11 @@
   "class": "shopify-section--footer",
   "max_blocks": 5,
   "settings": [
+	{
+      "type": "image_picker",
+      "id": "payment_strip",
+      "label": "Payment Image"
+    },
     {
       "type": "checkbox",
       "id": "show_payment_icons",
