@@ -90,23 +90,30 @@
   {% assign tag_article = 'meta-' | append: coll  %}
 		<div class="RelatedPosts">
           <div class="related-article-list">
-            {% paginate blogs.blog.articles by 100000 %}
-            {% for article in blogs.blog.articles %}
-              {% if article.tags contains tag_article %}
-              <div class="related-article">
-                  <a href="{{ article.url }}">
-                   <img loading="lazy" class="lazyload" src="{{ article.image | img_url: '' }}" alt="{{ article.title }}" />
-                  </a>
-                  <p class="addin_title text-white"><a class="text-white" href="{{ article.url }}">{{ article.title }}</a></p>
-                  <p class="excerpt">
-                    <a href="{{ article.url }}">
-                      Read More
-                    </a>
-                  </p>
+            <scrollable-content {% unless section.settings.show_arrows %}draggable{% endunless %} class="gallery__list-wrapper {% if section.blocks.size >= 3 %}is-scrollable{% endif %} hide-scrollbar">
+              <div class="container">
+                <div class="gallery__list">
+                  {% paginate blogs.blog.articles by 100000 %}
+                  {% for article in blogs.blog.articles %}
+                    {% if article.tags contains tag_article %}
+                    <div class="related-article">
+                        <a href="{{ article.url }}">
+                         <img loading="lazy" class="lazyload" src="{{ article.image | img_url: '' }}" alt="{{ article.title }}" />
+                        </a>
+                        <p class="addin_title text-white"><a class="text-white" href="{{ article.url }}">{{ article.title }}</a></p>
+                        <p class="excerpt">
+                          <a href="{{ article.url }}">
+                            Read More
+                          </a>
+                        </p>
+                    </div>
+                    {% endif %}
+                  {% endfor %}
+                  {% endpaginate %}
+                </div>
               </div>
-              {% endif %}
-  			{% endfor %}
-            {% endpaginate %}
+            </scrollable-content>
+            
           </div>
     	</div>
   <style>
