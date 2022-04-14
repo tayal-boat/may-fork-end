@@ -67,7 +67,6 @@
 
       
         {%- capture slide_content -%}
-      <a href="{{ block.settings.button_1_link }}">
           <div class="slideshow__image-wrapper {% if mobile_image != blank %}hidden-pocket{% endif %}" {% if section.settings.transition_type == 'reveal' %}reveal-visibility{% endif %}>
             <span class="image_alt visually-hidden">{{ block.settings.alt_text | escape }}</span>
             {%- if image != blank -%}
@@ -92,7 +91,7 @@
               {{- mobile_image | image_url: width: 500 | image_tag: loading: loading_attribute_value, draggable: false, class: 'slideshow__image', sizes: '100vw', widths: '500', preload: preload_image -}}
             </div>
           {%- endif -%}
-            </a>
+
           {%- comment -%}
           ----------------------------------------------------------------------------------------------------------------
           CONTENT PART
@@ -113,7 +112,9 @@
             {%- endif -%}
 
             {%- capture buttons -%}
-
+              {%- if block.settings.button_1_text != blank -%}
+                <a href="{{ block.settings.button_1_link }}" class="button button--primary">{{ block.settings.button_1_text | escape }}</a>
+              {%- endif -%}
 
               {%- if block.settings.button_2_text != blank -%}
                 <a href="{{ block.settings.button_2_link }}" class="button button--primary">{{ block.settings.button_2_text | escape }}</a>
