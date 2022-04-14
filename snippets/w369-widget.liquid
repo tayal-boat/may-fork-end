@@ -1,4 +1,15 @@
 
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+  
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign money_price =  price  | divided_by: 100
+-%}
 <style>
     .w369-tag-line.boat{
         color:#fff;font-weight:700;font-size:12px;
@@ -13,32 +24,12 @@
     .w369-tag-line.boat {
        font-size: 11px !important;
     }
-  .div-header.boat {
-  	justify-content: start;
-  }
+  .div-header.boat {}
 
 #qikify-stickycart-app #w369-widget-control{
     display: none!important;
 }
 </style>
-{% comment %}
-    Renders a w369 widget
-    Usage:
-    {% render 'w369'%}
-{% endcomment %}
-
-{%- liquid
-  if use_variant
-    assign target = product.selected_or_first_available_variant
-  else
-    assign target = product
-  endif
-  
-  assign compare_at_price = target.compare_at_price
-  assign price = target.price | default: 1999
-  assign money_price =  price  | divided_by: 100
--%}
-
 <script type="text/javascript" src="https://9877-pl-widget.capitalfloat.com/assets/widget/widget.js"></script>
 <script>
         let _w369 = new w369({
@@ -52,7 +43,7 @@
                 code: '44902875-33be-4841-8315-0b0cec2be81a',
                 productMetaData: {
                     type: '1',
-                    theme: '2'
+                    theme: '1'
                 },
                 amount: {{money_price}},
                 preferredTenure: 0
