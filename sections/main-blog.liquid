@@ -90,17 +90,34 @@
       <div class="container">
         {%- paginate blog.articles by section.settings.articles_per_page -%}
           <article-list {% if settings.stagger_blog_posts_apparition %}stagger-apparition{% endif %} class="article-list article-list--stacked">
-            {%- for article in blog.articles -%}
-              {%- render 'article-item', article: article, heading_size: 'h4' -%}
-            {%- endfor -%}
+            <div class="article-list-inner" id="Huratips-Loop">
+              {%- for article in blog.articles -%}
+                {%- render 'article-item', article: article, heading_size: 'h4' -%}
+              {%- endfor -%}
+            </div>
+            <div id="Huratips-Pagination">
+                {% if paginate.next %}
+                <a href="{{ paginate.next.url }}">Loading More</a>
+                {% endif %}  
+              </div>
           </article-list>
 
-          {%- render 'pagination', paginate: paginate -%}
+          {%- comment -%}{%- render 'pagination', paginate: paginate -%}{%- endcomment -%}
         {%- endpaginate -%}
       </div>
     </div>
   {%- endif -%}
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var endlessScroll = new Ajaxinate({
+      container: '#Huratips-Loop',
+      pagination: '#Huratips-Pagination',
+      loadingText: '<center style="margin:20px auto 0;max-width: 50px;"><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader.gif?v=1649585765" alt="Load More" /></center>',
+    });
+});
+</script>
 
 {% schema %}
 {
