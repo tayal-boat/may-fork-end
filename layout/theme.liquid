@@ -76,7 +76,9 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.0/dist/aos.css">
     <link rel="alternate stylesheet" href="{{ 'bootstrap.min.css' | asset_url }}" title="styles" as="style" onload="this.title='';this.rel='stylesheet'">
     
-    
+	{% if template contains 'page' %}
+    <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
+	{% endif %}
     {%- comment -%}
       IMPLEMENTATION NOTE: for improving performance, Focal tries to preload images on known pages (such as blog page,
       product or collection pages). In order to keep a main JS file size minimal, the theme also lazyloads non-essential
@@ -125,10 +127,10 @@ NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing 
     	{{ content_for_header | replace: '  ', '' | strip_newlines }}
     {%- endcapture -%}
     {{ content_for_header }}
-    {{ 'boat.css' | asset_url | stylesheet_tag }}
 	{%- render 'wizrocket_variables_generator' -%}
     {% render 'clevertap' %}
     {% if template contains 'product' %}
+      <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
       {%- render 'product-js' -%}
       
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
