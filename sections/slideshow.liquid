@@ -59,7 +59,7 @@
    
       {%- if forloop.index > 2 -%}
           {%- assign loading_attribute_value = 'lazy' -%}
-          {%- assign preload_image = true -%}
+          {%- assign preload_image = false -%}
         {%- else -%}
           {%- assign loading_attribute_value = 'eager' -%}
           {%- assign preload_image = true -%}
@@ -67,7 +67,6 @@
 
       
         {%- capture slide_content -%}
-      <a href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}javascript:void(0) {% endif %}" >
           <div class="slideshow__image-wrapper {% if mobile_image != blank %}hidden-pocket{% endif %}" {% if section.settings.transition_type == 'reveal' %}reveal-visibility{% endif %}>
             <span class="image_alt visually-hidden">{{ block.settings.alt_text | escape }}</span>
             {%- if image != blank -%}
@@ -92,7 +91,7 @@
               {{- mobile_image | image_url: width: 500 | image_tag: loading: loading_attribute_value, draggable: false, class: 'slideshow__image', sizes: '100vw', widths: '500', preload: preload_image -}}
             </div>
           {%- endif -%}
-      </a>
+
           {%- comment -%}
           ----------------------------------------------------------------------------------------------------------------
           CONTENT PART
@@ -308,11 +307,6 @@
           "type": "text",
           "id": "alt_text",
           "label": "alt-imgtext"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "banner link"
         },
         {
           "type": "header",
