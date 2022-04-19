@@ -2,28 +2,29 @@
   <!-- Indicators -->
   <ul class="carousel-indicators">
     {% for block in section.blocks %}
-    <li data-target="#demo" data-slide-to="{{forloop.index}}" {% if forloop.first %}class="active"{% endif %}></li>
+    	<li data-target="#bs_slide" data-slide-to="{{forloop.index}}" {% if forloop.first %}class="active"{% endif %}></li>
     {% endfor %}
   </ul>
 
   <!-- The slideshow -->
   <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="la.jpg" alt="Los Angeles">
-    </div>
-    <div class="carousel-item">
-      <img src="chicago.jpg" alt="Chicago">
-    </div>
-    <div class="carousel-item">
-      <img src="ny.jpg" alt="New York">
-    </div>
+    {% for block in section.blocks %}
+      <div class="carousel-item active">
+        <picture>
+          <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
+          <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
+          <img class="image-overlay__image" reveal {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}>
+        </picture>
+      </div>
+    {% endfor %}
+    
   </div>
 
   <!-- Left and right controls -->
-  <a class="carousel-control-prev" href="#demo" data-slide="prev">
+  <a class="carousel-control-prev" href="#bs_slide" data-slide="prev">
     <span class="carousel-control-prev-icon"></span>
   </a>
-  <a class="carousel-control-next" href="#demo" data-slide="next">
+  <a class="carousel-control-next" href="#bs_slide" data-slide="next">
     <span class="carousel-control-next-icon"></span>
   </a>
 
