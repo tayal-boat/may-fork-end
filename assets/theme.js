@@ -3313,7 +3313,7 @@
       this.addEventListener("touchmove", (event) => {
         const touchClientX = event.touches[0].clientX - this.firstTouchClientX;
         if (Math.abs(touchClientX) > threshold) {
-//           event.preventDefault();
+          event.preventDefault();
         }
       }, { passive: false });
     }
