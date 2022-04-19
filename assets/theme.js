@@ -3315,7 +3315,7 @@
         if (Math.abs(touchClientX) > threshold) {
           event.preventDefault();
         }
-      }, { passive: false });
+      }, { passive: true });
     }
   };
 
