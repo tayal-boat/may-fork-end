@@ -1,0 +1,154 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css" integrity="sha512-OTcub78R3msOCtY3Tc6FzeDJ8N9qvQn1Ph49ou13xgA9VsH9+LRxoFU6EqLhW4+PKRfU+/HReXmSZXHEkpYoOA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div id="homepage-carousel">
+  <!-- The slideshow -->
+  <div class="carousel-inner owl-carousel owl-loading">
+    {% for block in section.blocks %}
+      <div class="carousel--item">
+        <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
+        <a href="{{block.settings.slide_url}}" class="slide-url">
+          <picture>
+            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
+            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
+            <img class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
+          </picture>
+        </a>
+      </div>
+    {% endfor %}
+    
+  </div>
+
+</div>
+<style>
+  #homepage-carousel .owl-next, #homepage-carousel .owl-prev {
+  	position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    color: white !important;
+    line-height: 40px !important;
+    background-color: #ff0000 !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    opacity: .4;
+    transition: all .4s ease-in-out;
+  }
+  #homepage-carousel .owl-next:hover, #homepage-carousel .owl-prev:hover {opacity: 1;}
+  #homepage-carousel .owl-next {right: 10px;}
+  #homepage-carousel .owl-prev {left: 10px;}
+  #homepage-carousel .owl-next span, #homepage-carousel .owl-prev span {
+  	line-height: 30px;
+    font-size: 50px;
+    position: relative;
+    color: white;
+    width: 30px;
+    height: 30px;
+  }
+  #homepage-carousel .owl-next span {right: -1px;}
+  #homepage-carousel .owl-prev span {left: -1px;}
+  #homepage-carousel .owl-dots {
+  	display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    height: max-content;
+  }
+  #homepage-carousel button.owl-dot {
+    width: 40px;
+    height: 3px;
+    background: #444!important;
+    margin: 0 2px;
+    border-radius: 2em;
+ }
+ #homepage-carousel button.owl-dot.active {
+  background: #fff!important;
+ }
+ 
+  @media screen and (max-width: 767px) {
+    #homepage-carousel .owl-next, .owl-prev {display: none;}
+    #homepage-carousel .owl-dots {position: static;margin-top: 10px;}
+  }
+</style>
+
+<script>
+	$(document).ready(function(){
+      $(".owl-carousel").owlCarousel({
+        items: 1,
+        loop: true,
+        nav: true,
+        lazyLoad: true,
+        autoplay: true,
+        autoplayTimeout: 7000,
+        merge: true,
+        startPosition: 0,
+        smartSpeed:500,
+        animateOut: 'fadeOut',
+    	animateIn: 'fadeIn',
+        pullDrag: false,
+        checkVisible: false,
+        responsiveClass:true,
+        stopOnHover: true
+      });
+    });
+  	const slides = document.querySelectorAll('.carousel-inner .carousel--item');
+    slides.forEach((slide, i) => {
+      slide.addEventListener('click', function() {
+          let imageTitle = slide.querySelector('.image_alt').innerText;
+          let slideNum = `${i+1}`
+          clevertap.event.push("Homepage Banner clicked", {
+            "Banner Number": 'Banner ' + slideNum,
+            "Banner Title": imageTitle,
+            "userSource": userSource
+          })
+      })
+    });
+</script>
+
+{% schema %}
+  {
+    "name": "Bootstrap Slideshow",
+	"class": "bootstrap-carousel",
+    "settings": [],
+	"blocks": [
+		{
+          "name": "slideshow",
+          "type": "slideshow",
+          "settings": [
+			{
+			  "type": "image_picker",
+			  "id": "desktop_image",
+			  "label": "Desktop Image"
+			},
+			{
+			  "type": "image_picker",
+			  "id": "mobile_image",
+			  "label": "Mobile Image"
+			},
+			{
+			  "type": "url",
+			  "id": "slide_url",
+			  "label": "Slide URL"
+			}
+		  ]
+		}
+	],
+	"presets": [
+		{
+          "name": "Bootstrap Slideshow",
+          "category": "image",
+          "settings": {
+          }
+        }
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
