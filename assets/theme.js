@@ -3312,20 +3312,10 @@
       });
       this.addEventListener("touchmove", (event) => {
         const touchClientX = event.touches[0].clientX - this.firstTouchClientX;
-        if (dif > 10 && !right) {
-          nextSlide();
-          nextDt();
-          right = true;
-        } else if (dif < 0 && !left) {
-          previousSlide();
-          prevDt();
-          left = true;
+        if (Math.abs(touchClientX) > threshold) {
+          event.preventDefault();
         }
-      },     
-slider_track.addEventListener("touchend", function (e) {
-        left = false;
-        right = false;
-      });
+      }, { passive: false });
     }
   };
 
