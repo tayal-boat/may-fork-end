@@ -7,6 +7,7 @@
   <div class="carousel-inner owl-carousel owl-loading ">
     {% for block in section.blocks %}
       <div class="carousel-item active">
+        <span class="image_alt visually-hidden">{{ desktop_image.alt | escape }}</span>
         <a href="{{block.settings.slide_url}}" class="slide-url">
           <picture>
             <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
@@ -87,6 +88,18 @@
         responsiveClass:true,
         dots: true
       });
+    });
+  	const slides = document.querySelectorAll('.carousel-inner .carousel-item');
+    slides.forEach((slide, i) => {
+      slide.addEventListener('click', function() {
+          let imageTitle = slide.querySelector('.image_alt').innerText;
+          let slideNum = `${i+1}`
+          clevertap.event.push("Homepage Banner clicked", {
+            "Banner Number": 'Banner ' + slideNum,
+            "Banner Title": imageTitle,
+            "userSource": userSource
+          })
+      })
     });
 </script>
 
