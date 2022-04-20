@@ -525,28 +525,15 @@
   {%- endif -%}
 </cart-drawer>
 <script>
-  $('.edit-cart').change(function() {
-  	let selected_id = $(this).val();
-    let formData = {
-     'items': [{
-      'id': selected_id,
-      'quantity': 1
-      }]
-    };
-    fetch(window.Shopify.routes.root + 'cart/add.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => {
-      return response.json();
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-	});
-  })
+  setInterval(function () {
+  if ($('.cart-total').val() > 49000) {
+    $('.mini-cart__drawer-footer .checkout-button, .mini-cart__drawer-footer .gokwik-checkout').hide()
+    $('.mini-cart__drawer-footer .cart-val-error').html(`Cart value cannot be greater than <strong>49000!</strong> Reduce cart value to proceed.`).show();
+  } else {
+    $('.mini-cart__drawer-footer .checkout-button, .mini-cart__drawer-footer .gokwik-checkout').show()
+    $('.mini-cart__drawer-footer .cart-val-error').hide()
+  }
+}, 100)
 </script>
 
 {% schema %}
