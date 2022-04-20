@@ -343,7 +343,7 @@
                           <span class="heading h6">{{ 'cart.general.total' | t }}</span>
                           <input class="cart-total" value="{{ cart.total_price | divided_by: 100 }}" hidden>
                           <span class="heading h6">{{ cart.total_price | money_with_currency }}</span>
-                          <p class="cart-val-error"></p>
+<!--                           <p class="cart-val-error"></p> -->
                         </div>
 
                         {%- if cart.cart_level_discount_applications != blank -%}
@@ -396,11 +396,15 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-				{% render 'gokwik-checkout' %}
-                <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
-                  <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
-                  {{- 'cart.general.checkout' | t -}}
-                </button>
+                {% if cart.total_price <= 4700000 or line_item.quantity < 8  %}
+                  {% render 'gokwik-checkout' %}
+                  <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
+                    <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
+                    {{- 'cart.general.checkout' | t -}}
+                  </button>
+                {% else %}
+                  <p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-</strong> and must not contain more than <strong>7 units!</strong> Modify your cart to proceed.</p>
+              {% endif %}
               </div>
 
               {%- if section.settings.show_payment_methods and shop.enabled_payment_types.size > 0 -%}
@@ -422,6 +426,7 @@
   </div>
 </section>
 
+{% comment %}
 <script>
 	var cartVal = $('.cart-total').val();
     $('.line-item').each(function() {
@@ -436,6 +441,7 @@
      }
    })
 </script>
+{% endcomment %}
 
 {% schema %}
 {
