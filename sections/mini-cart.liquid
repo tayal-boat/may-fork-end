@@ -495,7 +495,7 @@
       {%- endcomment -%}
  <div class="d-flex justify-content-between">
    <span class="cart-total pb-2"> <b>Total:</b></span>
-      <input class="cart-total" value="100" type="hidden">
+      <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
    <b> {{- cart.total_price | money_with_currency -}}</b>
                  </div>
       <div id="zestmoney-widget-control-cart"></div>
@@ -525,10 +525,8 @@
   {%- endif -%}
 </cart-drawer>
 <script>
-  $(document).ready(function() {
-  	setInterval(function () {
+  setInterval(function () {
     let cartVal = $('.cart-total').val();
-    console.log(cartVal);
     if ($('.cart-total').val() > 49000) {
       alert();
       $('.mini-cart__drawer-footer .checkout-button, .mini-cart__drawer-footer .gokwik-checkout').hide()
@@ -538,8 +536,6 @@
       $('.mini-cart__drawer-footer .cart-val-error').hide()
     }
   }, 100)
-  })
-  
 </script>
 
 {% schema %}
