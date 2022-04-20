@@ -1,1185 +1,1218 @@
 <!DOCTYPE html>
-<html
-  lang="{{ locale }}"
-  dir="{{ direction }}"
-  class="{{ checkout_html_classes }}"
->
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0"
-    />
-    <meta name="referrer" content="origin" />
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
     <meta http-equiv="cache-control" content="no-cache" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>{{ page_title }}</title>
-    {{
-      content_for_header
-    }}
-    {{
-      checkout_stylesheets
-    }}
-    {{
-      checkout_scripts
-    }}
-    {{
-      "jquery.min.js" | asset_url | script_tag
-    }}
+    {{ content_for_header }}
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+    {{ 'jquery.min.js' | asset_url | script_tag }}
     <script src="https://boatfc-media.farziengineer.co/pincode/pincodes.js"></script>
     <!-- Google Tag Manager -->
 
-    <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({
-          "gtm.start": new Date().getTime(),
-          event: "gtm.js",
-        });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", "GTM-BZTQ6ZT");
-    </script>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+
+        })(window, document, 'script', 'dataLayer', 'GTM-BZTQ6ZT');</script>
 
     <!-- End Google Tag Manager -->
-    {%- render 'boat-ve' -%}
 
     <!-- Single Checkout Page Styling Begins -->
     <style>
-      .loginup {
-        color: white;
-        background-color: #ea2126;
-      }
-
-      .loginup:hover {
-        background-color: #b51b0d;
-        color: white;
-      }
-
-      .placeord {
-        color: white;
-        background-color: #ea2126;
-      }
-
-      .placeord:hover {
-        background-color: #b51b0d;
-      }
-
-      .section.section--shipping-address {
-        padding: 0;
-      }
-
-      .new_checkout {
-        display: flex;
-        padding: 0 15px;
-        margin: 20px 0;
-      }
-
-      input[type="text"] {
-        border-style: none none solid none;
-      }
-
-      input[type="tel"],
-      #checkout_billing_address_country,
-      #checkout_billing_address_province {
-        border-style: none none solid none;
-      }
-
-      .form-wrapper {
-        margin-top: 30px;
-      }
-
-      .row {
-        display: flex;
-      }
-
-      .column1,
-      .column2 {
-        flex: 50%;
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-
-      .form-group {
-        position: relative;
-      }
-
-      .form-label {
-        position: absolute;
-        left: 0;
-        top: 10px;
-        color: #999;
-        background-color: #fff;
-        z-index: 10;
-        transition: transform 150ms ease-out, font-size 150ms ease-out;
-      }
-
-      .focused .form-label {
-        transform: translateY(-125%);
-        font-size: 0.75em;
-      }
-
-      .form-input {
-        position: relative;
-        padding: 12px 0px 5px 0;
-        width: 100%;
-        outline: 0;
-        border: 0;
-        box-shadow: 0 1px 0 0 #e5e5e5;
-        transition: box-shadow 150ms ease-out;
-      }
-
-      .form-input:focus {
-        box-shadow: 0 1px 0 0 #000;
-      }
-
-      .form-input.filled {
-        box-shadow: 0 0.5px 0 0 ##ffffff;
-      }
-
-      .field__label::after {
-        content: "*";
-        color: red;
-      }
-
-      .but-cont {
-        display: flex;
-      }
-
-      p {
-        padding-right: 60px;
-        padding-left: 20px;
-      }
-
-      p [type="radio"]:checked + label,
-      p [type="radio"]:not(:checked) + label {
-        position: relative;
-        padding-left: 28px;
-        cursor: pointer;
-        font-size: 14px;
-        line-height: 20px;
-        display: inline-block;
-        color: #666;
-      }
-
-      .opt [type="radio"]:checked + label,
-      .opt [type="radio"]:not(:checked) + label {
-        position: relative;
-        padding-left: 20px;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: bold;
-        line-height: 20px;
-        display: inline-block;
-        color: #000000;
-      }
-
-      p [type="radio"]:checked + label:before,
-      p [type="radio"]:not(:checked) + label:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0px;
-        width: 15px;
-        height: 15px;
-        border: 1px solid #ddd;
-        border-radius: 100%;
-        background: white;
-      }
-
-      .opt [type="radio"]:checked + label:before,
-      .opt [type="radio"]:not(:checked) + label:before {
-        content: "";
-        position: absolute;
-        left: -8px;
-        top: 20px;
-        width: 13px;
-        height: 13px;
-        border: 1px solid #ddd;
-        border-radius: 100%;
-        background: white;
-      }
-
-      p [type="radio"]:checked + label:after,
-      p [type="radio"]:not(:checked) + label:after {
-        content: "";
-        width: 11px;
-        height: 11px;
-        background: red;
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        border-radius: 100%;
-        -webkit-transition: all 0.2s ease;
-        transition: all 0.2s ease;
-      }
-
-      .opt [type="radio"]:checked + label:after,
-      .opt [type="radio"]:not(:checked) + label:after {
-        content: "";
-        width: 9px;
-        height: 9px;
-        background: red;
-        position: absolute;
-        top: 23px;
-        left: -5px;
-        border-radius: 100%;
-        -webkit-transition: all 0.2s ease;
-        transition: all 0.2s ease;
-      }
-
-      [type="radio"]:not(:checked) + label:after {
-        opacity: 0;
-        -webkit-transform: scale(0);
-        transform: scale(0);
-      }
-
-      [type="radio"]:checked + label:after {
-        opacity: 1;
-        -webkit-transform: scale(1);
-        transform: scale(1);
-      }
-
-      .pay-cont {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .opt {
-        display: flex;
-        border-style: none none solid none;
-        border-width: 1px;
-        border-color: #cccccc;
-      }
-
-      .section--payment-method .radio-wrapper.content-box__row .input-radio {
-        vertical-align: -16px;
-        height: 13px;
-        width: 13px;
-      }
-
-      .section--billing-address .radio-wrapper.content-box__row .input-radio {
-        height: 13px;
-        width: 13px;
-      }
-
-      .section--billing-address .radio-wrapper.content-box__row {
-        padding-left: 0px;
-      }
-
-      .section--billing-address .section__text {
-        padding-left: 0px;
-      }
-
-      .section--payment-method .radio-wrapper.content-box__row {
-        padding: 0px;
-      }
-
-      label.radio__label__primary.content-box__emphasis {
-        width: 50%;
-      }
-
-      .radio__label__accessory {
-        width: 100% !important;
-      }
-
-      #gift-cards {
-        width: 100%;
-        margin: 0 !important;
-        /* padding: 8px 8px; */
-        border: 1px px solid black;
-        margin-top: 10px;
-        -webkit-appearance: checkbox !important;
-        appearance: auto;
-        background: white;
-        border-radius: 3px;
-        border-color: white;
-        margin-bottom: 24px;
-        border-bottom: 1px solid lightgrey;
-        color: grey;
-      }
-      #gift-wrap {
-        -webkit-appearance: checkbox !important;
-      }
-
-      .gift-wrap label {
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .gift-icon {
-        height: 17px;
-        width: auto;
-        margin-right: 5px;
-        align-self: flex-start;
-      }
-
-      @media screen and (max-width: 767px) {
-        /*         .radio__label__primary.content-box__emphasis img{
-            max-width:50% !important;
-        } */
-
-        .card-opts {
-          min-width: 32%;
+        .loginup {
+            color: white;
+            background-color: #EA2126;
         }
 
-        .radio__label__accessory .card-opts img {
-          max-width: 22% !important;
+        .loginup:hover {
+            background-color: #b51b0d;
+            color: white;
         }
 
-        .card-opts img {
-          max-width: 25% !important;
+        .placeord {
+            color: white;
+            background-color: #EA2126;
         }
 
-        .card-opts h3 {
-          display: none !important;
+        .placeord:hover {
+            background-color: #b51b0d;
         }
 
-        .radio__label.payment-method-wrapper {
-          width: 100%;
-          display: flex !important;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
+        .section.section--shipping-address {
+            padding: 0;
+        }
+
+        .new_checkout {
+            display: flex;
+            padding: 0 15px;
+            margin: 20px 0;
+        }
+
+        input[type=text] {
+            border-style: none none solid none;
+        }
+
+        input[type=tel],
+        #checkout_billing_address_country,
+        #checkout_billing_address_province {
+            border-style: none none solid none;
+        }
+
+
+        .form-wrapper {
+            margin-top: 30px;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .column1,
+        .column2 {
+            flex: 50%;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: #999;
+            background-color: #fff;
+            z-index: 10;
+            transition: transform 150ms ease-out, font-size 150ms ease-out;
+        }
+
+        .focused .form-label {
+            transform: translateY(-125%);
+            font-size: 0.75em;
+        }
+
+        .form-input {
+            position: relative;
+            padding: 12px 0px 5px 0;
+            width: 100%;
+            outline: 0;
+            border: 0;
+            box-shadow: 0 1px 0 0 #e5e5e5;
+            transition: box-shadow 150ms ease-out;
+        }
+
+        .form-input:focus {
+            box-shadow: 0 1px 0 0 #000;
+        }
+
+        .form-input.filled {
+            box-shadow: 0 0.5px 0 0 ##ffffff;
+        }
+
+        .field__label::after {
+            content: "*";
+            color: red;
+        }
+
+        .but-cont {
+            display: flex;
+        }
+
+        p {
+            padding-right: 60px;
+            padding-left: 20px;
+        }
+
+        p [type="radio"]:checked+label,
+        p [type="radio"]:not(:checked)+label {
+            position: relative;
+            padding-left: 28px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 20px;
+            display: inline-block;
+            color: #666;
+        }
+
+        .opt [type="radio"]:checked+label,
+        .opt [type="radio"]:not(:checked)+label {
+            position: relative;
+            padding-left: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 20px;
+            display: inline-block;
+            color: #000000;
+        }
+
+        p [type="radio"]:checked+label:before,
+        p [type="radio"]:not(:checked)+label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 15px;
+            height: 15px;
+            border: 1px solid #ddd;
+            border-radius: 100%;
+            background: white;
+        }
+
+        .opt [type="radio"]:checked+label:before,
+        .opt [type="radio"]:not(:checked)+label:before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 20px;
+            width: 13px;
+            height: 13px;
+            border: 1px solid #ddd;
+            border-radius: 100%;
+            background: white;
+        }
+
+        p [type="radio"]:checked+label:after,
+        p [type="radio"]:not(:checked)+label:after {
+            content: '';
+            width: 11px;
+            height: 11px;
+            background: red;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            border-radius: 100%;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        .opt [type="radio"]:checked+label:after,
+        .opt [type="radio"]:not(:checked)+label:after {
+            content: '';
+            width: 9px;
+            height: 9px;
+            background: red;
+            position: absolute;
+            top: 23px;
+            left: -5px;
+            border-radius: 100%;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        [type="radio"]:not(:checked)+label:after {
+            opacity: 0;
+            -webkit-transform: scale(0);
+            transform: scale(0);
+        }
+
+        [type="radio"]:checked+label:after {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+
+
+
+        .pay-cont {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .opt {
+            display: flex;
+            border-style: none none solid none;
+            border-width: 1px;
+            border-color: #cccccc;
+        }
+
+        .section--payment-method .radio-wrapper.content-box__row .input-radio {
+            vertical-align: -16px;
+            height: 13px;
+            width: 13px;
+        }
+
+        .section--billing-address .radio-wrapper.content-box__row .input-radio {
+            height: 13px;
+            width: 13px;
+        }
+
+        .section--billing-address .radio-wrapper.content-box__row {
+            padding-left: 0px
+        }
+
+        .section--billing-address .section__text {
+            padding-left: 0px
+        }
+
+        .section--payment-method .radio-wrapper.content-box__row {
+            padding: 0px
+        }
+
+        label.radio__label__primary.content-box__emphasis {
+            width: 50%;
         }
 
         .radio__label__accessory {
-          width: 170px;
+            width: 100% !important;
         }
 
-        .section--payment-method .input-radio {
-          vertical-align: 12px !important;
+        #gift-cards {
+            width: 100%;
+            margin: 0 !important;
+            /* padding: 8px 8px; */
+            border: 1px px solid black;
+            margin-top: 10px;
+            -webkit-appearance: checkbox !important;
+            appearance: auto;
+            background: white;
+            border-radius: 3px;
+            border-color: white;
+            margin-bottom: 24px;
+            border-bottom: 1px solid lightgrey;
+            color: grey;
+        }
+      #gift-wrap{
+		-webkit-appearance: checkbox !important;
+      }
+
+        .gift-wrap label {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .login {
-          flex-direction: column;
+        .gift-icon {
+            height: 17px;
+            width: auto;
+            margin-right: 5px;
+            align-self: flex-start;
         }
 
-        .login-col {
-          margin-bottom: 10px;
+        @media screen and (max-width: 767px) {
+            /*         .radio__label__primary.content-box__emphasis img{
+            max-width:50% !important;
+        } */
+
+            .card-opts {
+                min-width: 32%;
+            }
+
+            .radio__label__accessory .card-opts img {
+                max-width: 22% !important;
+            }
+
+            .card-opts img {
+                max-width: 25% !important;
+            }
+
+            .card-opts h3 {
+                display: none !important;
+            }
+
+            .radio__label.payment-method-wrapper {
+                width: 100%;
+                display: flex !important;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .radio__label__accessory {
+                width: 170px;
+            }
+
+            .section--payment-method .input-radio {
+                vertical-align: 12px !important;
+            }
+
+            .login {
+                flex-direction: column;
+            }
+
+            .login-col {
+                margin-bottom: 10px;
+            }
+
+            .login button {
+                width: 47% !important;
+                margin: auto;
+            }
+
         }
 
-        .login button {
-          width: 47% !important;
-          margin: auto;
-        }
-      }
-
-      .hide-div {
-        display: none !important;
-      }
-
-      .radio-wrapper.content-box__row .input-radio {
-        border: 1px solid #ddd;
-        border-radius: 100%;
-        background: white;
-      }
-
-      .radio-wrapper.content-box__row .input-radio:checked {
-        background: red;
-      }
-
-      button#continue_button {
-        font-size: 16px;
-        font-weight: normal !important;
-        padding: 10px !important;
-      }
-
-      img.cred {
-        display: block;
-        max-width: 90%;
-        margin: 12px auto;
-      }
-
-      .product__price {
-        display: flex;
-        justify-content: flex-end;
-      }
-
-      .original__price {
-        display: none !important;
-        font-size: 11px;
-      }
-
-      .original-price--text {
-        text-decoration: line-through;
-      }
-
-      .discount {
-        color: #ff0000;
-        font-size: 11px;
-      }
-
-      .product {
-        border-bottom: 1px solid #ccc;
-      }
-
-      .product:last-child {
-        border-bottom: 0;
-      }
-
-      del.order-summary__small-text.skeleton-while-loading--sm {
-        display: none;
-      }
-
-      .freebie-text {
-        margin: 20px 0;
-        background: #000;
-        color: #fff;
-        padding: 12px;
-        border-radius: 5px;
-        display: none;
-      }
-
-      .breadcrumb__item:last-child .space {
-        display: none;
-      }
-
-      .freebie-text a {
-        color: #fff;
-      }
-
-      .original__price:last-child {
-        display: block !important;
-      }
-
-      .product__description__name.order-summary__emphasis {
-        font-size: 12px;
-      }
-
-      @media screen and (max-width: 767px) {
-        .alert--msg {
-          margin-top: 10px !important;
+        .hide-div {
+            display: none !important;
         }
 
-        /*         .section.section--reductions.hidden-on-desktop {display: none!important;} */
-      }
 
-      .opt input[type="radio"] {
-        display: none;
-      }
-      #checkout_shipping_address_first_name:focus,
-      #checkout_shipping_address_last_name:focus,
-      #checkout_shipping_address_address1:focus,
-      #checkout_shipping_address_address2:focus,
-      #checkout_shipping_address_city:focus,
-      #checkout_shipping_address_country:focus,
-      #checkout_shipping_address_province:focus,
-      #checkout_shipping_address_zip:focus,
-      #checkout_shipping_address_phone:focus,
-      #checkout_email:focus {
-        outline: none;
-        box-shadow: none;
-      }
 
-      #first:focus,
-      #last:focus,
-      #apt:focus,
-      #address:focus,
-      #city:focus,
-      #country:focus,
-      #state:focus,
-      #pin:focus,
-      #phone:focus,
-      #email:focus {
-        outline: none;
-        box-shadow: none;
-      }
+        .radio-wrapper.content-box__row .input-radio {
+            border: 1px solid #ddd;
+            border-radius: 100%;
+            background: white;
+        }
 
-      #first,
-      #last,
-      #apt,
-      #address,
-      #city,
-      #country,
-      #state,
-      #pin,
-      #phone,
-      #email {
-        border-style: none none solid none;
-      }
+        .radio-wrapper.content-box__row .input-radio:checked {
+            background: red;
+        }
 
-      .opt div:last-child {
-        align-self: flex-end;
-        width: 40%;
-      }
 
-      .break {
-        flex-basis: 100%;
-        height: 0;
-      }
+        button#continue_button {
+            font-size: 16px;
+            font-weight: normal !important;
+            padding: 10px !important;
+        }
 
-      .gift-box-img {
-        height: 82px;
-        width: 99px;
-        margin-right: 15px;
-        margin-left: 10px;
-      }
+        img.cred {
+            display: block;
+            max-width: 90%;
+            margin: 12px auto;
+        }
 
-      .gift-box-opt {
-        display: flex;
-        align-items: center;
-      }
+        .product__price {
+            display: flex;
+            justify-content: flex-end;
+        }
 
-      .gift-wrap {
-        display: flex;
-        align-items: center;
-        border: 1px solid #d1d1d1;
-        padding: 15px 0;
-        background: #ffffff;
-        border-radius: 7px;
-        box-shadow: 0px 1px 2px #9d9b9b;
-        margin-top: 10px;
-        margin-bottom: 20px;
-      }
+        .original__price {
+            display: none;
+            font-size: 11px;
+        }
 
-      .gift-wrap-props {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
+        .original-price--text {
+            text-decoration: line-through;
+        }
 
-      .gift-wrap-props h1 {
-        font-size: 18px;
-        font-weight: 500;
-      }
+        .discount {
+            color: #ff0000;
+            font-size: 11px;
+        }
 
-      .gift-wrap-props p {
-        padding: 0px;
-      }
+        .product {
+            border-bottom: 1px solid #ccc;
+        }
 
-      .gift-wrap:hover {
-        background: #dbd9d9;
-      }
+        .product:last-child {
+            border-bottom: 0;
+        }
 
-      .gift-card {
-        display: flex;
-        align-items: center;
-        border: 1px solid #d1d1d1;
-        padding: 15px 0;
-        background: #ffffff;
-        border-radius: 7px;
-        box-shadow: 0px 1px 2px #9d9b9b;
-        margin-top: 10px;
-      }
+        del.order-summary__small-text.skeleton-while-loading--sm {
+            display: none;
+        }
 
-      .gift-card-props {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
+        .freebie-text {
+            margin: 20px 0;
+            background: #000;
+            color: #fff;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+        }
 
-      .gift-card-props h1 {
-        font-size: 18px;
-        font-weight: 500;
-      }
+        .breadcrumb__item:last-child .space {
+            display: none;
+        }
 
-      .gift-card-props p {
-        padding: 0px;
-      }
+        .freebie-text a {
+            color: #fff;
+        }
 
-      .gift-card:hover {
-        background: #dbd9d9;
-      }
+        /*       .original__price:last-child {display: none!important;} */
 
-      .gift-card-img {
-        height: 80px;
-        width: 80px;
-        margin-right: 15px;
-      }
+        .product__description__name.order-summary__emphasis {
+            font-size: 10px;
+        }
 
-      .gift-card-opt {
-        display: flex;
-        align-items: center;
-      }
+        @media screen and (max-width: 767px) {
+            .alert--msg {
+                margin-top: 10px !important;
+            }
 
-      .gift-box-notifier {
-        margin-top: 5px;
-      }
+            /*         .section.section--reductions.hidden-on-desktop {display: none!important;} */
+        }
+
+
+        #checkout_shipping_address_first_name:focus,
+        #checkout_shipping_address_last_name:focus,
+        #checkout_shipping_address_address1:focus,
+        #checkout_shipping_address_address2:focus,
+        #checkout_shipping_address_city:focus,
+        #checkout_shipping_address_country:focus,
+        #checkout_shipping_address_province:focus,
+        #checkout_shipping_address_zip:focus,
+        #checkout_shipping_address_phone:focus,
+        #checkout_email:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+
+        #first:focus,
+        #last:focus,
+        #apt:focus,
+        #address:focus,
+        #city:focus,
+        #country:focus,
+        #state:focus,
+        #pin:focus,
+        #phone:focus,
+        #email:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+
+        #first,
+        #last,
+        #apt,
+        #address,
+        #city,
+        #country,
+        #state,
+        #pin,
+        #phone,
+        #email {
+            border-style: none none solid none;
+        }
+
+
+        .opt div:last-child {
+            align-self: flex-end;
+            width: 40%;
+        }
+
+        .break {
+            flex-basis: 100%;
+            height: 0;
+        }
+
+        .gift-box-img {
+                height: 82px;
+    width: 99px;
+    margin-right: 15px;
+    margin-left: 10px;
+        }
+
+        .gift-box-opt {
+            display: flex;
+            align-items: center;
+        }
+
+        .gift-wrap {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d1d1d1;
+            padding: 15px 0;
+            background: #ffffff;
+            border-radius: 7px;
+            box-shadow: 0px 1px 2px #9d9b9b;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .gift-wrap-props {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .gift-wrap-props h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .gift-wrap-props p {
+            padding: 0px;
+        }
+
+        .gift-wrap:hover {
+            background: #dbd9d9;
+        }
+
+        .gift-card {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d1d1d1;
+            padding: 15px 0;
+            background: #ffffff;
+            border-radius: 7px;
+            box-shadow: 0px 1px 2px #9d9b9b;
+            margin-top: 10px;
+        }
+
+        .gift-card-props {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .gift-card-props h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .gift-card-props p {
+            padding: 0px;
+        }
+
+        .gift-card:hover {
+            background: #dbd9d9;
+        }
+
+        .gift-card-img {
+            height: 80px;
+            width: 80px;
+            margin-right: 15px;
+        }
+
+        .gift-card-opt {
+            display: flex;
+            align-items: center;
+        }
+
+        .gift-box-notifier {
+            margin-top: 5px;
+        }
     </style>
     <!-- Single Checkout Page Styling Engs -->
-  </head>
+</head>
 
-  <body>
+<body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-BZTQ6ZT"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
-      ></iframe
-    ></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-BZTQ6ZT" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- End Google Tag Manager (noscript) -->
     {{ skip_to_content_link }}
 
     <header class="banner" data-header role="banner">
-      <div class="wrap">
-        {{ content_for_logo }}
-      </div>
+        <div class="wrap">
+            {{ content_for_logo }}
+        </div>
     </header>
     {{ order_summary_toggle }}
-    <p id="customer_id" style="display: none">{{ customer.id }}</p>
+    <p id="customer_id" style="display:none;">{{customer.id}}</p>
     <div class="content" data-content>
-      <div class="wrap">
-        <div class="main">
-          <header class="main__header" role="banner">
-            {{ content_for_logo }}
-            {{ breadcrumb }}
-            {{ alternative_payment_methods }}
-          </header>
-          <main class="main__content" role="main">
-            {{ content_for_layout }}
-          </main>
-          <footer class="main__footer" role="contentinfo">
-            {{ content_for_footer }}
-          </footer>
+        <div class="wrap">
+            <div class="main">
+                <header class="main__header" role="banner">
+                    {{ content_for_logo }}
+                    {{ breadcrumb }}
+                    {{ alternative_payment_methods }}
+                </header>
+                <main class="main__content" role="main">
+                    {{ content_for_layout }}
+                </main>
+                <footer class="main__footer" role="contentinfo">
+                    {{ content_for_footer }}
+                </footer>
+            </div>
+            <aside class="sidebar" role="complementary">
+                <div class="sidebar__header">
+                    {{ content_for_logo }}
+                </div>
+                <div class="sidebar__content">
+                    {{ content_for_order_summary }}
+                </div>
+            </aside>
         </div>
-        <aside class="sidebar" role="complementary">
-          <div class="sidebar__header">
-            {{ content_for_logo }}
-          </div>
-          <div class="sidebar__content">
-            {{ content_for_order_summary }}
-          </div>
-        </aside>
-      </div>
     </div>
     {{ tracking_code }}
     <script type="text/javascript">
-      var clevertap = {
-        event: [],
-        profile: [],
-        account: [],
-        onUserLogin: [],
-        notifications: [],
-        privacy: [],
-      };
-      clevertap.account.push({ id: "8W4-9WW-Z85Z" });
-      clevertap.privacy.push({ optOut: false });
-      clevertap.privacy.push({ useIP: false });
-      (function () {
-        var wzrk = document.createElement("script");
-        wzrk.type = "text/javascript";
-        wzrk.async = true;
-        wzrk.src =
-          ("https:" == document.location.protocol
-            ? "https://d2r1yp2w7bby2u.cloudfront.net"
-            : "http://static.clevertap.com") + "/js/a.js?v=0";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(wzrk, s);
-      })();
+        var clevertap = { event: [], profile: [], account: [], onUserLogin: [], notifications: [], privacy: [] };
+        clevertap.account.push({ "id": "8W4-9WW-Z85Z" });
+        clevertap.privacy.push({ optOut: false });
+        clevertap.privacy.push({ useIP: false });
+        (function () {
+            var wzrk = document.createElement('script');
+            wzrk.type = 'text/javascript';
+            wzrk.async = true;
+            wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/a.js?v=0';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wzrk, s);
+        })();
     </script>
     <script>
-              {% assign foo = "bar" %}
-              var title = "";
-              {% for line_item in checkout.line_items %}
-              if (title != "") {
-                  title = title + "," + "{{ line_item.title | split: " / " | first   }}"
-              }
-              else if (title == "") {
-                  title = "{{ line_item.title | split: " / " | first   }}"
-              }
+        {% assign foo = "bar" %}
+        var title = "";
+        {% for line_item in checkout.line_items %}
+        if (title != "") {
+            title = title + "," + "{{ line_item.title | split: " / " | first   }}"
+        }
+        else if (title == "") {
+            title = "{{ line_item.title | split: " / " | first   }}"
+        }
 
-              {% assign foo = "title" %}
-              {% endfor %}
+        {% assign foo = "title" %}
+        {% endfor %}
+      
+      $('li.breadcrumb__item:first-child > a').attr('href', 'https://www.boat-lifestyle.com/#cart');
+        if (window.location.href.indexOf("checkouts") !== -1) {
+            $('.section--payment-methodt').before(`<img class="cred" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/boAt-x-walnut.jpg?v=1629268820">`);
+            $('.main__header .logo--left').after(`<p class="alert--msg" style="background:#f1f1f1;color:#000;padding:10px 12px;margin-top:10px;margin-bottom:12px;line-height: normal;border-radius: 5px;font-size: 13px;display: inline-block;border: 1px dashed #ff0000;">Get extra 20% cashback using pay with rewards.</p>`)
+        }
 
-            $('li.breadcrumb__item:first-child > a').attr('href', 'https://www.boat-lifestyle.com/#cart');
-              if (window.location.href.indexOf("checkouts") !== -1) {
-                  $('.section--payment-methodt').before(`<img class="cred" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/boAt-x-walnut.jpg?v=1629268820">`);
-                  $('.main__header .logo--left').after(`<p class="alert--msg" style="background:#f1f1f1;color:#000;padding:10px 12px;margin-top:10px;margin-bottom:12px;line-height: normal;border-radius: 5px;font-size: 13px;display: inline-block;border: 1px dashed #ff0000;">Get extra 20% cashback using pay with rewards.</p>`)
-              }
-
-              if (window.location.href.indexOf("orders") !== -1) {
-                  $(".cred").hide();
-                  $(".product__description").each(function () {
-                      var variant_title = $(this).find(".product__description__variant").text().split("/");
-                      var variant_option1 = variant_title[0];
-                      $(this).find(".product__description__variant").text(variant_option1);
-                  })
-              }
-              if (window.location.href.indexOf("thank_you") !== -1) {
-                  $(".cred, .alert--msg").hide();
-                  $(".product__description").each(function () {
-                      var variant_title = $(this).find(".product__description__variant").text().split("/");
-                      var variant_option1 = variant_title[0];
-                      $(this).find(".product__description__variant").text(variant_option1);
-                  })
-              }
-              var checkout_url = window.location.href + '?utm_source=clevertap&utm_medium=whatsapp&utm_campaign=ab_cart';
-              $(document).on(`page:load page:change`, function () {
-      //             $('#checkout_shipping_address_phone').on('change focusout', function () {
-      //                 $(this).val($(this).val().replace(' ', ''));
-      //             });
-                  $('#checkout_shipping_address_phone').attr('maxlength', "11");
-                  const URL = window.location.href;
-                  if (!URL.includes('step=shipping_method')) {
-                      $('.order-summary-toggle').trigger('click');
-                  }
-                  $(window).keydown(function (event) {
-                      if (event.keyCode == 13) {
-                          event.preventDefault();
-                          return false;
-                      }
-                  });
-              {% for line_item in checkout.line_items %}
-              var qty = {{ line_item.quantity }}
-              var price = {{ line_item.product.compare_at_price | money | split: ' ' | last | remove: ','}}
-              var finalprice = price * qty;
-              $('.product__price').append(`<span class='original__price' data-product-id='{{line_item.product.id }}'>&nbsp;<span class="original-price--text">₹${finalprice.toLocaleString()}.00</span></br>
-              <span class='discount' data-product-id='{{line_item.product.id }}'>
-              {{ line_item.product.compare_at_price |minus: line_item.product.price | times: 100.0 | divided_by: line_item.product.compare_at_price| floor | money_without_currency | times: 100 | remove: ".0"}}% off
-              </span>
-              </span>`)
-              {% endfor %}
-
-              $('.product__price .original__price').each(function () {
-                  var innerPdId = $(this).data('product-id');
-                  var pdId = $(this).closest('.product').data('product-id');
-                  if (innerPdId !== pdId) {
-                      $(this).addClass('unmatched');
-                      $('.unmatched').remove();
-                      return;
-                  } else {
-                      $(this).show();
-                      if ($(`.original__price[data-product-id=${innerPdId}]`).length > 1) {
-                          $(`.original__price[data-product-id=${innerPdId}]:last-child`).css('display', 'none');
-                      }
-                  }
-              })
-              $('.section--payment-method').before(`<img class="cred" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/boAt-x-walnut-1.jpg?v=1629269695">`);
-              {% comment %}
-              if (window.location.href.indexOf("orders") !== -1) {
-                  $(".cred, .alert--msg").hide();
-                  $(".product__description").each(function () {
-                      var variant_title = $(this).find(".product__description__variant").text().split("/");
-                      var variant_option1 = variant_title[0];
-                      $(this).find(".product__description__variant").text(variant_option1);
-                  })
-              }
-              if (window.location.href.indexOf("thank_you") !== -1) {
-                  $(".cred, .alert--msg").hide();
-                  $(".product__description").each(function () {
-                      var variant_title = $(this).find(".product__description__variant").text().split("/");
-                      var variant_option1 = variant_title[0];
-                      $(this).find(".product__description__variant").text(variant_option1);
-                  })
-              }
-              {% endcomment %}
-              $(".product__description").each(function () {
-                  var variant_title = $(this).find(".product__description__variant").text().split("/");
-                  var variant_option1 = variant_title[0];
-                  $(this).find(".product__description__variant").text(variant_option1);
-              })
-              $('#checkout_remember_me').prop('checked', true);
-              var form = document.getElementById('continue_button');
-              form.addEventListener("click", function (e) {
-                  var email = document.getElementById("checkout_email").value;
-                  function validateEmail($email) {
-                      var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-                      return emailReg.test($email);
-                  }
-                  var city = document.getElementById('checkout_shipping_address_city').value;
-                  var fName = document.getElementById('checkout_shipping_address_first_name').value;
-                  var lName = document.getElementById('checkout_shipping_address_last_name').value;
-                  var state = document.getElementById('checkout_shipping_address_province').value;
-                  var cityregex = /^[a-zA-Z_ ]*$/;
-                  var phone = document.getElementById("checkout_shipping_address_phone").value;
-                  phone = phone.replace(/\s+/g, '');
-      //           	phone = $.trim(phone);
-                  var address1 = document.getElementById('checkout_shipping_address_address1').value;
-                  var address2 = document.getElementById('checkout_shipping_address_address2').value;
-                  var addressregex = /^[ A-Za-z0-9@.,/&+-]*[A-Za-z0-9][A-Za-z0-9 ]*$/;
-                  var phoneNum = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
-                  var userSource = '';
-                  if (navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
-                  else if (navigator.userAgent.includes('iPad')) userSource = 'Tablet';
-                  else userSource = 'Desktop';
-                  if (email !== "" && validateEmail(email)) {
-                      clevertap.onUserLogin.push({
-                          "Site": {
-                              "First Name": fName,
-                              "Last Name": lName,
-                              "Email": email,
-                              "User Email": email,
-                              "Phone": "+91" + phone,
-                              "Address1": address1,
-                              "Address2": address2,
-                              "User City": city,
-                              "Charged_PhoneNo": phone,
-                              "State": state,
-                              "Checkout URL": checkout_url
-                          }
-                      });
-                      if ($('#checkout_buyer_accepts_marketing').is(":checked")) {
-                          clevertap.onUserLogin.push({
-                              "Site": {
-                                  "Accepts Marketing": "TRUE",
-                                  "MSG-whatsapp": "TRUE"
-                              }
-                          });
-                      }
-                      clevertap.event.push("Shipping button clicked", {
-                          "Amount": {{ checkout.total_price | divided_by: 100}},
-                      	"Product Name": {{ foo }},
-                      	"Checkout URL": checkout_url,
-                          "userSource": userSource
-              });
-
-              if ((fName.match(cityregex)) && (lName.match(cityregex))) {
-                  if ((address1.length < 81) && (address1.match(addressregex)) && (!address1.includes('@'))) {
-                      if (address2.length <= 0) {
-                          if (city.match(cityregex)) {
-                              if (phone.match(phoneNum)) {
-                                  if (phone.length !== 10) {
-                                      alert("Please enter a valid 10 digit phone number!");
-                                      e.preventDefault();
-                                      return false;
-                                  }
-                                  else {
-                                      return true;
-                                  }
-                              }
-                              else {
-                                  alert("Please enter a valid 10 digit phone number!");
-                                  e.preventDefault();
-                                  return false;
-                              }
-                          }
-                          else {
-                              alert("Please enter a valid city!");
-                              e.preventDefault();
-                              return false;
-                          }
-                      }
-                      else {
-                          if ((address2.length <= 80) && (address2.match(addressregex)) && (!address2.includes('@'))) {
-
-                          }
-                          else {
-                              alert("Apartment field should contain less than 80 characters and must not contain any special character except hypehn(-) and comma(,)!");
-                              e.preventDefault();
-                              return false;
-                          }
-                      }
-
-                  }
-                  else {
-                      alert("Address field can't be empty and should contain less than 80 characters and must not contain any special character except hypehn(-) and comma(,)!");
-                      e.preventDefault();
-                      return false;
-                  }
-              }
-              else {
-                  alert("Please enter a valid First Name and last Name!");
-                  e.preventDefault();
-                  return false;
-              }
-              }
-                else {
-                  alert("Please enter a valid email Id!");
-                  e.preventDefault();
-                  return false;
-              }
+        if (window.location.href.indexOf("orders") !== -1) {
+            $(".cred").hide();
+            $(".product__description").each(function () {
+                var variant_title = $(this).find(".product__description__variant").text().split("/");
+                var variant_option1 = variant_title[0];
+                $(this).find(".product__description__variant").text(variant_option1);
+            })
+        }
+        if (window.location.href.indexOf("thank_you") !== -1) {
+            $(".cred, .alert--msg").hide();
+            $(".product__description").each(function () {
+                var variant_title = $(this).find(".product__description__variant").text().split("/");
+                var variant_option1 = variant_title[0];
+                $(this).find(".product__description__variant").text(variant_option1);
+            })
+        }
+        var checkout_url = window.location.href + '?utm_source=clevertap&utm_medium=whatsapp&utm_campaign=ab_cart';
+        $(document).on(`page:load page:change`, function () {
+//             $('#checkout_shipping_address_phone').on('change focusout', function () {
+//                 $(this).val($(this).val().replace(' ', ''));
+//             });
+            $('#checkout_shipping_address_phone').attr('maxlength', "11");
+            const URL = window.location.href;
+            if (!URL.includes('step=shipping_method')) {
+                $('.order-summary-toggle').trigger('click');
+            }
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
             });
-              if (navigator.userAgent.indexOf('phonepe-webview') != -1) {
-                  //     	$(".payment-method-wrapper h3").text("Complete Your Payment Now")
-                  $(".section--payment-method").hide();
-              }
-              let text = 'Partnership/Affiliates coupon codes will be invalid during the sales period. However, they will be redeemable and functional as the sale ends.';
-              $('.order-summary__section--total-lines').append('<div class="freebie-text" style="margin: 20px 0;"></div>');
-              $('.freebie-text').html(text)
-              //     if($('.product').data('product-id') == 6591986958434) $('.freebie-text').hide();
-              let productIds = [];
-              $('.product-table .product').each(function () {
-                  let id = $(this).data('product-id');
-                  productIds.push(id);
+        {% for line_item in checkout.line_items %}
+        var qty = {{ line_item.quantity }}
+        var price = {{ line_item.product.compare_at_price | money | split: ' ' | last | remove: ','}}
+        var finalprice = price * qty;
+        $('.product__price').append(`<span class='original__price' data-product-id='{{line_item.product.id }}'>&nbsp;<span class="original-price--text">₹${finalprice.toLocaleString()}.00</span></br>
+        <span class='discount' data-product-id='{{line_item.product.id }}'>
+        {{ line_item.product.compare_at_price |minus: line_item.product.price | times: 100.0 | divided_by: line_item.product.compare_at_price| floor | money_without_currency | times: 100 | remove: ".0"}}% off
+        </span>
+        </span>`)
+        {% endfor %}
 
-              })
-              productIds.forEach(el => {
-                  if (el == 6591986958434) $('.freebie-text').hide();
-              })
-              $(".section--contact-information").find(".checkbox__label").text("Keep me updated on my order status over email and WhatsApp").css("font-size", "12px")
-              $("div[data-step='shipping_method'] button#continue_button").addClass("payment-button");
-              var userSource = '';
-              if (navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
-              else if (navigator.userAgent.includes('iPad')) userSource = 'Tablet';
-              else userSource = 'Desktop';
-              $(".payment-button").click(function () {
-                  clevertap.event.push("Continue Payment clicked", {
-                      "Amount": {{ checkout.total_price | divided_by: 100}},
-                  "Product Name": {{ foo }},
-                  "Checkout URL": checkout_url,
-                  "userSource": userSource
-                  });
+        $('.product__price .original__price').each(function () {
+            var innerPdId = $(this).data('product-id');
+            var pdId = $(this).closest('.product').data('product-id');
+            if (innerPdId !== pdId) {
+                $(this).addClass('unmatched');
+                $('.unmatched').remove();
+                return;
+            } else {
+                $(this).show();
+                if ($(`.original__price[data-product-id=${innerPdId}]`).length > 1) {
+                    $(`.original__price[data-product-id=${innerPdId}]:last-child`).css('display', 'none');
+                }
+            }
+        })
+        $('.section--payment-method').before(`<img class="cred" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/boAt-x-walnut-1.jpg?v=1629269695">`);
+        {% comment %}
+        if (window.location.href.indexOf("orders") !== -1) {
+            $(".cred, .alert--msg").hide();
+            $(".product__description").each(function () {
+                var variant_title = $(this).find(".product__description__variant").text().split("/");
+                var variant_option1 = variant_title[0];
+                $(this).find(".product__description__variant").text(variant_option1);
             })
-              $("div[data-step='payment_method'] button#continue_button").addClass("order-button");
-              $(".order-button").click(function () {
-                  clevertap.event.push("Complete Order clicked", {
-                      "Amount": {{ checkout.total_price | divided_by: 100}},
-                  "Product Name": {{ foo }},
-                  "Checkout URL": checkout_url,
-                  "userSource": userSource
-                  });
+        }
+        if (window.location.href.indexOf("thank_you") !== -1) {
+            $(".cred, .alert--msg").hide();
+            $(".product__description").each(function () {
+                var variant_title = $(this).find(".product__description__variant").text().split("/");
+                var variant_option1 = variant_title[0];
+                $(this).find(".product__description__variant").text(variant_option1);
             })
-              if ($('.tags-list .tag').length) {
-                  $('input#checkout_reduction_code').attr('disabled', 'true');
-              }
-              let discount_code = null;
-              let discount_amount = 0;
-              $('.edit_checkout ').submit(function () {
-                  setTimeout(function () {
-                      if ($('.tags-list .tag').length) {
-                          discount_code = $('.order-summary__section--discount .tags-list .reduction-code__text').text();
-                          if ($('.product__description .reduction-code__text').length) {
-                              discount_amount = $('.product__description .reduction-code__text').text().split('Rs.')[1].split(')')[0];
-                          } else {
-                              discount_amount = $('.total-line--reduction  .total-line__price .order-summary__emphasis ').text();
-                          }
-                          clevertap.event.push("Discount Code Applied", {
-                              "Discounted Amount": discount_amount,
-                              "Discount Code": discount_code,
-                              "userSource": userSource,
-                              "source": 'Checkout Page'
-                          });
-                      }
-                  }, 3000)
+        }
+        {% endcomment %}
+        $(".product__description").each(function () {
+            var variant_title = $(this).find(".product__description__variant").text().split("/");
+            var variant_option1 = variant_title[0];
+            $(this).find(".product__description__variant").text(variant_option1);
+        })
+        $('#checkout_remember_me').prop('checked', true);
+        var form = document.getElementById('continue_button');
+        form.addEventListener("click", function (e) {
+            var email = document.getElementById("checkout_email").value;
+            function validateEmail($email) {
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                return emailReg.test($email);
+            }
+            var city = document.getElementById('checkout_shipping_address_city').value;
+            var fName = document.getElementById('checkout_shipping_address_first_name').value;
+            var lName = document.getElementById('checkout_shipping_address_last_name').value;
+            var state = document.getElementById('checkout_shipping_address_province').value;
+            var cityregex = /^[a-zA-Z_ ]*$/;
+            var phone = document.getElementById("checkout_shipping_address_phone").value;
+            phone = phone.replace(/\s+/g, '');
+//           	phone = $.trim(phone);
+            var address1 = document.getElementById('checkout_shipping_address_address1').value;
+            var address2 = document.getElementById('checkout_shipping_address_address2').value;
+            var addressregex = /^[ A-Za-z0-9@.,/&+-]*[A-Za-z0-9][A-Za-z0-9 ]*$/;
+            var phoneNum = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+            var userSource = '';
+            if (navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+            else if (navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+            else userSource = 'Desktop';
+            if (email !== "" && validateEmail(email)) {
+                clevertap.onUserLogin.push({
+                    "Site": {
+                        "First Name": fName,
+                        "Last Name": lName,
+                        "Email": email,
+                        "User Email": email,
+                        "Phone": "+91" + phone,
+                        "Address1": address1,
+                        "Address2": address2,
+                        "User City": city,
+                        "Charged_PhoneNo": phone,
+                        "State": state,
+                        "Checkout URL": checkout_url
+                    }
+                });
+                if ($('#checkout_buyer_accepts_marketing').is(":checked")) {
+                    clevertap.onUserLogin.push({
+                        "Site": {
+                            "Accepts Marketing": "TRUE",
+                            "MSG-whatsapp": "TRUE"
+                        }
+                    });
+                }
+                clevertap.event.push("Shipping button clicked", {
+                    "Amount": {{ checkout.total_price | divided_by: 100}},
+                	"Product Name": {{ foo }},
+                	"Checkout URL": checkout_url,
+                    "userSource": userSource
+        });
 
-              })
-          });
+        if ((fName.match(cityregex)) && (lName.match(cityregex))) {
+            if ((address1.length < 81) && (address1.match(addressregex)) && (!address1.includes('@'))) {
+                if (address2.length <= 0) {
+                    if (city.match(cityregex)) {
+                        if (phone.match(phoneNum)) {
+                            if (phone.length !== 10) {
+                                alert("Please enter a valid 10 digit phone number!");
+                                e.preventDefault();
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                        else {
+                            alert("Please enter a valid 10 digit phone number!");
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
+                    else {
+                        alert("Please enter a valid city!");
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                else {
+                    if ((address2.length <= 80) && (address2.match(addressregex)) && (!address2.includes('@'))) {
+
+                    }
+                    else {
+                        alert("Apartment field should contain less than 80 characters and must not contain any special character except hypehn(-) and comma(,)!");
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+            }
+            else {
+                alert("Address field can't be empty and should contain less than 80 characters and must not contain any special character except hypehn(-) and comma(,)!");
+                e.preventDefault();
+                return false;
+            }
+        }
+        else {
+            alert("Please enter a valid First Name and last Name!");
+            e.preventDefault();
+            return false;
+        }
+        }
+          else {
+            alert("Please enter a valid email Id!");
+            e.preventDefault();
+            return false;
+        }
+      });
+        if (navigator.userAgent.indexOf('phonepe-webview') != -1) {
+            //     	$(".payment-method-wrapper h3").text("Complete Your Payment Now")
+            $(".section--payment-method").hide();
+        }
+        let text = 'Partnership/Affiliates coupon codes will be invalid during the sales period. However, they will be redeemable and functional as the sale ends.';
+        $('.order-summary__section--total-lines').append('<div class="freebie-text" style="margin: 20px 0;"></div>');
+        $('.freebie-text').html(text)
+        //     if($('.product').data('product-id') == 6591986958434) $('.freebie-text').hide();
+        let productIds = [];
+        $('.product-table .product').each(function () {
+            let id = $(this).data('product-id');
+            productIds.push(id);
+
+        })
+        productIds.forEach(el => {
+            if (el == 6591986958434) $('.freebie-text').hide();
+        })
+        $(".section--contact-information").find(".checkbox__label").text("Keep me updated on my order status over email and WhatsApp").css("font-size", "12px")
+        $("div[data-step='shipping_method'] button#continue_button").addClass("payment-button");
+        var userSource = '';
+        if (navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+        else if (navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+        else userSource = 'Desktop';
+        $(".payment-button").click(function () {
+            clevertap.event.push("Continue Payment clicked", {
+                "Amount": {{ checkout.total_price | divided_by: 100}},
+            "Product Name": {{ foo }},
+            "Checkout URL": checkout_url,
+            "userSource": userSource
+            });
+      })
+        $("div[data-step='payment_method'] button#continue_button").addClass("order-button");
+        $(".order-button").click(function () {
+            clevertap.event.push("Complete Order clicked", {
+                "Amount": {{ checkout.total_price | divided_by: 100}},
+            "Product Name": {{ foo }},
+            "Checkout URL": checkout_url,
+            "userSource": userSource
+            });
+      })
+        if ($('.tags-list .tag').length) {
+            $('input#checkout_reduction_code').attr('disabled', 'true');
+        }
+        let discount_code = null;
+        let discount_amount = 0;
+        $('.edit_checkout ').submit(function () {
+            setTimeout(function () {
+                if ($('.tags-list .tag').length) {
+                    discount_code = $('.order-summary__section--discount .tags-list .reduction-code__text').text();
+                    if ($('.product__description .reduction-code__text').length) {
+                        discount_amount = $('.product__description .reduction-code__text').text().split('Rs.')[1].split(')')[0];
+                    } else {
+                        discount_amount = $('.total-line--reduction  .total-line__price .order-summary__emphasis ').text();
+                    }
+                    clevertap.event.push("Discount Code Applied", {
+                        "Discounted Amount": discount_amount,
+                        "Discount Code": discount_code,
+                        "userSource": userSource,
+                        "source": 'Checkout Page'
+                    });
+                }
+            }, 3000)
+
+        })
+    });
+
     </script>
-    <div id="invtrflfloatbtn"></div>
+    <div id='invtrflfloatbtn'></div>
     <script>
-      var ir =
-        ir ||
-        function () {
-          (window.ir.q = window.ir.q || []).push(arguments);
-        };
-      var invite_referrals = window.invite_referrals || {};
-      (function () {
-        invite_referrals.auth = {
-          bid_e: "CB87921F5B593A3A43B94758A6B88978",
-          bid: "32781",
-          t: "420",
-          userParams: { fname: "" },
-        };
-        invite_referrals.async = false;
-        var script = document.createElement("script");
-        script.src = "//cdn.invitereferrals.com/js/invite-referrals-1.0.js";
-        var entry = document.getElementsByTagName("script")[0];
-        entry.parentNode.insertBefore(script, entry);
-      })();
+        var ir = ir || function () { (window.ir.q = window.ir.q || []).push(arguments) };
+        var invite_referrals = window.invite_referrals || {}; (function () {
+            invite_referrals.auth = {
+                bid_e: 'CB87921F5B593A3A43B94758A6B88978',
+                bid: '32781',
+                t: '420',
+                userParams: { 'fname': '' }
+            };
+            invite_referrals.async = false;
+            var script = document.createElement('script');
+            script.src = "//cdn.invitereferrals.com/js/invite-referrals-1.0.js";
+            var entry = document.getElementsByTagName('script')[0]; entry.parentNode.insertBefore(script, entry);
+        })();
     </script>
     <!-- Single Checkout Page Styling-2 Begins -->
     <style>
-      p.layout-flex__item {
-        display: none;
-      }
+        p.layout-flex__item {
+            display: none;
+        }
 
-      #section-delivery-title {
-        font-weight: bold;
-      }
+        #section-delivery-title {
+            font-weight: bold;
+        }
 
-      #checkout_email {
-        border-style: none none solid none;
-      }
+        #checkout_email {
+            border-style: none none solid none;
+        }
 
-      /*      #checkout_buyer_accepts_marketing {
+        /*      #checkout_buyer_accepts_marketing {
        display:none;
      }
      label[for="checkout_buyer_accepts_marketing"] {
        display: none;
      }  */
-      #checkout_shipping_address_first_name,
-      #checkout_shipping_address_last_name,
-      #checkout_shipping_address_address1,
-      #checkout_shipping_address_address2,
-      #checkout_shipping_address_city,
-      #checkout_shipping_address_country,
-      #checkout_shipping_address_province,
-      #checkout_shipping_address_zip,
-      #checkout_shipping_address_phone {
-        border-style: none none solid none;
-      }
+        #checkout_shipping_address_first_name,
+        #checkout_shipping_address_last_name,
+        #checkout_shipping_address_address1,
+        #checkout_shipping_address_address2,
+        #checkout_shipping_address_city,
+        #checkout_shipping_address_country,
+        #checkout_shipping_address_province,
+        #checkout_shipping_address_zip,
+        #checkout_shipping_address_phone {
+            border-style: none none solid none;
+        }
 
-      .radio-group__row.content-box__row.content-box__row--secondary {
-        background-color: white;
-      }
+        .radio-group__row.content-box__row.content-box__row--secondary {
+            background-color: white;
+        }
 
-      #checkout_billing_address_first_name,
-      #checkout_billing_address_last_name,
-      #checkout_billing_address_address1,
-      #checkout_billing_address_address2,
-      #checkout_billing_address_city,
-      #checkout_billing_address_country,
-      #checkout_billing_address_province,
-      #checkout_billing_address_zip,
-      #checkout_billing_address_phone {
-        border-style: none none solid none;
-        border-color: #d9d9d9;
-      }
+        #checkout_billing_address_first_name,
+        #checkout_billing_address_last_name,
+        #checkout_billing_address_address1,
+        #checkout_billing_address_address2,
+        #checkout_billing_address_city,
+        #checkout_billing_address_country,
+        #checkout_billing_address_province,
+        #checkout_billing_address_zip,
+        #checkout_billing_address_phone {
+            border-style: none none solid none;
+            border-color: #d9d9d9;
 
-      #checkout_billing_address_first_name:focus,
-      #checkout_billing_address_last_name:focus,
-      #checkout_billing_address_address1:focus,
-      #checkout_billing_address_address2:focus,
-      #checkout_billing_address_city:focus,
-      #checkout_billing_address_country:focus,
-      #checkout_billing_address_province:focus,
-      #checkout_billing_address_zip:focus,
-      #checkout_billing_address_phone:focus,
-      #checkout_email:focus {
-        outline: none;
-        box-shadow: none;
-        border-color: #000000;
-      }
+        }
 
-      #payment-gateway-subfields-38721781858,
-      #payment-gateway-subfields-38721781858,
-      #payment-gateway-subfields-38721781858 {
-        display: none !important;
-      }
+        #checkout_billing_address_first_name:focus,
+        #checkout_billing_address_last_name:focus,
+        #checkout_billing_address_address1:focus,
+        #checkout_billing_address_address2:focus,
+        #checkout_billing_address_city:focus,
+        #checkout_billing_address_country:focus,
+        #checkout_billing_address_province:focus,
+        #checkout_billing_address_zip:focus,
+        #checkout_billing_address_phone:focus,
+        #checkout_email:focus {
+            outline: none;
+            box-shadow: none;
+            border-color: #000000;
+        }
 
-      .fieldset-description {
-        margin-bottom: 1.928571em;
-        padding: 0px 10px;
-      }
+        #payment-gateway-subfields-38721781858,
+        #payment-gateway-subfields-38721781858,
+        #payment-gateway-subfields-38721781858 {
+            display: none !important;
+        }
 
-      /*     .checkbox__label {
+        .fieldset-description {
+            margin-bottom: 1.928571em;
+            padding: 0px 10px;
+        }
+
+        /*     .checkbox__label {
         display:none !important;
      }  */
 
-      .content-box {
-        border: 0 !important;
-      }
-
-      .cred {
-        display: none !important;
-      }
-
-      #main-header {
-        font-weight: 400;
-        color: black;
-        font-size: 17px;
-      }
-
-      #shipping-overlay {
-        background: #ffffff;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        z-index: 115000;
-        top: 0;
-        left: 0;
-        text-align: center;
-        padding-top: 25%;
-        opacity: 70%;
-      }
-
-      .shipping-spinner {
-        margin: 0 auto;
-        height: 50px;
-        width: 50px;
-        animation: rotate 0.8s infinite linear;
-        border: 5px solid red;
-        border-right-color: transparent;
-        border-radius: 50%;
-      }
-
-      #remove_coupon_overlay {
-        background: #ffffff;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        z-index: 115000;
-        top: 0;
-        left: 0;
-        text-align: center;
-        padding-top: 25%;
-      }
-
-      .remove_coupon_spinner {
-        margin: 0 auto;
-        height: 50px;
-        width: 50px;
-        animation: rotate 0.8s infinite linear;
-        border: 5px solid red;
-        border-right-color: transparent;
-        border-radius: 50%;
-      }
-
-      .gifting-sec {
-        padding-bottom: 15px;
-        display: none;
-      }
-
-      .gifting-sec1 {
-        display: none;
-      }
-
-      @keyframes rotate {
-        0% {
-          transform: rotate(0deg);
+        .content-box {
+            border: 0 !important;
         }
 
-        100% {
-          transform: rotate(360deg);
+        .cred {
+            display: none !important;
         }
+
+
+        #main-header {
+            font-weight: 400;
+            color: black;
+            font-size: 17px;
+        }
+
+
+        #shipping-overlay {
+            background: #ffffff;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 115000;
+            top: 0;
+            left: 0;
+            text-align: center;
+            padding-top: 25%;
+            opacity: 70%;
+        }
+
+        .shipping-spinner {
+            margin: 0 auto;
+            height: 50px;
+            width: 50px;
+            animation: rotate 0.8s infinite linear;
+            border: 5px solid red;
+            border-right-color: transparent;
+            border-radius: 50%;
+        }
+
+        #remove_coupon_overlay {
+            background: #ffffff;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 115000;
+            top: 0;
+            left: 0;
+            text-align: center;
+            padding-top: 25%;
+        }
+
+        .remove_coupon_spinner {
+            margin: 0 auto;
+            height: 50px;
+            width: 50px;
+            animation: rotate 0.8s infinite linear;
+            border: 5px solid red;
+            border-right-color: transparent;
+            border-radius: 50%;
+        }
+
+        .gifting-sec {
+            padding-bottom: 15px;
+          display:none;
+        }
+      
+      .gifting-sec1{
+        display:none;
       }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
     <!-- Single Checkout Page Styling-2 Begins -->
 
     <!-- Single Checkout Page Script Begins -->
     <script>
-      $(".step").prepend(`<div id="shipping-overlay" style="display:none;">
+      
+      setTimeout(()=>{
+                $('#checkout_shipping_address_phone').val($('#checkout_shipping_address_phone').val().replaceAll(" ","")) 
+                 
+                 }, 300)
+      
+//       $('#checkout_billing_address_phone').val($('#checkout_billing_address_phone').val().replaceAll(" ",""))
+           
+      function phoneWithoutSpace(event){
+      	const element = $(event.target)
+        const phoneNumber  = element.val().replaceAll(" ","")
+        element.val(phoneNumber)
+        
+      }
+      
+      $(document).on('blur', '#checkout_shipping_address_phone', function(event){
+      	phoneWithoutSpace(event)
+      })
+      
+      $(document).on('blur', '#checkout_billing_address_phone', function(event){
+      	phoneWithoutSpace(event)
+      })
+      
+      $('#checkout_shipping_address_id').change(function(event){
+        setTimeout(()=>{
+                   const shipPhone = $('#checkout_shipping_address_phone').val().replaceAll(" ","")
+                    $('#checkout_shipping_address_phone').val(shipPhone)
+                   }, 300)
+      })
+      
+      $('#checkout_billing_address_id').change(function(event){
+        setTimeout(()=>{
+                   const billPhone = $('#checkout_billing_address_phone').val().replaceAll(" ","")
+                    $('#checkout_billing_address_phone').val(billPhone)
+                   }, 300)
+      })
+      
+      
+            
+//       $(document).on('change', '#checkout_shipping_address_phone',function(event){
+//         console.log('Changed shipping')
+//       	phoneWithoutSpace(event)
+//       })
+      
+      
+//       if($('#checkout_shipping_address_phone').val() || $('#checkout_billing_address_phone').val()){
+//         console.log('ship###############################################################!')
+//         const shippingPhoneNumber = $('#checkout_shipping_address_phone').val()
+//         $('#checkout_shipping_address_phone').val(shippingPhoneNumber.replaceAll(" ",""))
+//       }
+      
+//       if($('#checkout_billing_address_phone').val()){
+//       	const billingPhoneNumber = $('#checkout_billing_address_phone').val()
+//         $('#checkout_billing_address_phone').val(billingPhoneNumber.replaceAll(" ",""))
+//         console.log('bill###############################################################!')
+//       }
+      
+      
+     
+      
+        $(".step").prepend(`<div id="shipping-overlay" style="display:none;">
                 <div class="shipping-spinner"></div>
             </div>`);
-      $("#shipping-overlay").fadeIn();
-      //   $('.layout-flex.layout-flex--tight-vertical.layout-flex--loose-horizontal.layout-flex--wrap').replaceWith("DELIVERY ADDRESS")
-      $("#section-header").replaceWith("CHOOSE PAYMENT METHOD");
-      //   $('.section.section--reductions.hidden-on-desktop').hide()
-      //   $('.section.section--billing-address').hide()
-      //   $('.section.section--billing-address').hide()
-      //   $('.section.section--shipping-method').hide()
+        $("#shipping-overlay").fadeIn();
+        //   $('.layout-flex.layout-flex--tight-vertical.layout-flex--loose-horizontal.layout-flex--wrap').replaceWith("DELIVERY ADDRESS")
+        $('#section-header').replaceWith("CHOOSE PAYMENT METHOD")
+        //   $('.section.section--reductions.hidden-on-desktop').hide()
+        //   $('.section.section--billing-address').hide()
+        //   $('.section.section--billing-address').hide()
+        //   $('.section.section--shipping-method').hide()
 
-      $("input").focus(function () {
-        $(this).parents(".form-group").addClass("focused");
-      });
+        $('input').focus(function () {
+            $(this).parents('.form-group').addClass('focused');
+        });
 
-      $("input").blur(function () {
-        var inputValue = $(this).val();
-        if (inputValue == "") {
-          $(this).removeClass("filled");
-          $(this).parents(".form-group").removeClass("focused");
-        } else {
-          $(this).addClass("filled");
-        }
-      });
+        $('input').blur(function () {
+            var inputValue = $(this).val();
+            if (inputValue == "") {
+                $(this).removeClass('filled');
+                $(this).parents('.form-group').removeClass('focused');
+            } else {
+                $(this).addClass('filled');
+            }
+        })
 
-      //    $('.section.section--payment-method').replaceWith('<p style="font-weight: 400; color:black; font-size:17px; padding: 52px 20px 30px;">CHOOSE PAYMENT METHOD</p><form action="#" style="padding-bottom: 50px;"><div class="pay-cont"><div class="opt"><input type="radio" id="payu" name="radio-group" checked><label for="payu" style="flex:90%;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/payu1.png?v=1633523127" class="payuimg" style="height:50px; width:100px; margin:8px 0 8px 20px;"></label><div class="card-opts" style="display:flex; align-self:flex-end; flex-wrap:wrap;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515" style="width:30%; height:30%; margin:0px 0 0px 40px; padding:7px 0;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623" style="width:28%; height:28%; margin:0px 0 0px 10px; padding:7px 0;"><div class="break"></div><h3 style="width:90%; margin:0 0 0 48px; padding:5px 0; font-size:10px; color:#7a7a7a">and many more...</h3></div></div> <div class="opt"><input type="radio" id="razor" name="radio-group" checked><label for="razor" style="flex:90%;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/razorpay1.png?v=1633523849" style="height:27px; width:127px; margin:20px 0 20px 20px;"></label><div class="card-opts" style="display:flex; align-self:flex-end; flex-wrap:wrap;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515" style="width:30%; height:30%; margin:0px 0 0px 40px; padding:7px 0;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623" style="width:28%; height:28%; margin:0px 0 0px 10px; padding:7px 0;"><div class="break"></div><h3 style="width:90%; margin:0 0 0 48px; padding:5px 0; font-size:10px; color:#7a7a7a">and many more...</h3></div></div><div class="opt"><input type="radio" id="paytm" name="radio-group" checked><label for="paytm" style="flex:90%;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm1.png?v=1633523849" style="height:32px; width:100px; margin:20px 0 20px 20px;"></label><div class="card-opts" style="display:flex; align-self:flex-end; flex-wrap:wrap;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515" style="width:30%; height:30%; margin:0px 0 0px 40px; padding:7px 0;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623" style="width:28%; height:28%; margin:0px 0 0px 10px; padding:7px 0;"><div class="break"></div><h3 style="width:90%; margin:0 0 0 48px; padding:5px 0; font-size:10px; color:#7a7a7a">and many more...</h3></div></div><div class="opt" style="border-style: none; "><input type="radio" id="cod" name="radio-group" /><label for="cod" style="padding-top:19px"> Cash On Delivery</label><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/wallett.png?v=1633525271" style="height: 30px; width:30px; margin-top:15px; margin-left: 9px;"></div></div></form>');
 
-      $(document).on(`page:load page:change`, function () {
-        //       ($("div[data-address-field='phone']").clone()).insertAfter($("div[data-address-field='city']"))
-        //       $("div[data-address-field='phone']:last-child").remove()
-        //       $("div[data-address-field='address1']").addClass("field--half")
-        $("div[data-address-field='address2']").addClass("field--half");
-        $("div[data-address-field='city']").addClass("field--half");
-        //       $("div[data-address-field='phone']").addClass("field--half")
-      });
+        //    $('.section.section--payment-method').replaceWith('<p style="font-weight: 400; color:black; font-size:17px; padding: 52px 20px 30px;">CHOOSE PAYMENT METHOD</p><form action="#" style="padding-bottom: 50px;"><div class="pay-cont"><div class="opt"><input type="radio" id="payu" name="radio-group" checked><label for="payu" style="flex:90%;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/payu1.png?v=1633523127" class="payuimg" style="height:50px; width:100px; margin:8px 0 8px 20px;"></label><div class="card-opts" style="display:flex; align-self:flex-end; flex-wrap:wrap;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515" style="width:30%; height:30%; margin:0px 0 0px 40px; padding:7px 0;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623" style="width:28%; height:28%; margin:0px 0 0px 10px; padding:7px 0;"><div class="break"></div><h3 style="width:90%; margin:0 0 0 48px; padding:5px 0; font-size:10px; color:#7a7a7a">and many more...</h3></div></div> <div class="opt"><input type="radio" id="razor" name="radio-group" checked><label for="razor" style="flex:90%;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/razorpay1.png?v=1633523849" style="height:27px; width:127px; margin:20px 0 20px 20px;"></label><div class="card-opts" style="display:flex; align-self:flex-end; flex-wrap:wrap;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515" style="width:30%; height:30%; margin:0px 0 0px 40px; padding:7px 0;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623" style="width:28%; height:28%; margin:0px 0 0px 10px; padding:7px 0;"><div class="break"></div><h3 style="width:90%; margin:0 0 0 48px; padding:5px 0; font-size:10px; color:#7a7a7a">and many more...</h3></div></div><div class="opt"><input type="radio" id="paytm" name="radio-group" checked><label for="paytm" style="flex:90%;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm1.png?v=1633523849" style="height:32px; width:100px; margin:20px 0 20px 20px;"></label><div class="card-opts" style="display:flex; align-self:flex-end; flex-wrap:wrap;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515" style="width:30%; height:30%; margin:0px 0 0px 40px; padding:7px 0;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623" style="width:28%; height:28%; margin:0px 0 0px 10px; padding:7px 0;"><div class="break"></div><h3 style="width:90%; margin:0 0 0 48px; padding:5px 0; font-size:10px; color:#7a7a7a">and many more...</h3></div></div><div class="opt" style="border-style: none; "><input type="radio" id="cod" name="radio-group" /><label for="cod" style="padding-top:19px"> Cash On Delivery</label><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/wallett.png?v=1633525271" style="height: 30px; width:30px; margin-top:15px; margin-left: 9px;"></div></div></form>');
 
-      $(document).on(`page:load page:change`, function () {
-        $("ol li").last().prev().hide();
+        $(document).on(`page:load page:change`, function () {
+            //       ($("div[data-address-field='phone']").clone()).insertAfter($("div[data-address-field='city']"))
+            //       $("div[data-address-field='phone']:last-child").remove()
+            //       $("div[data-address-field='address1']").addClass("field--half")
+            $("div[data-address-field='address2']").addClass("field--half")
+            $("div[data-address-field='city']").addClass("field--half")
+            //       $("div[data-address-field='phone']").addClass("field--half")
 
-        if (Shopify.Checkout.step == "contact_information") {
-          var payment_div = `<div class="new_checkout_step2" style="position: relative;padding-top: 15px;margin-top: 20px;">
+        })
+
+        $(document).on(`page:load page:change`, function () {
+            $("ol li").last().prev().hide();
+
+            if (Shopify.Checkout.step == "contact_information") {
+                var payment_div = `<div class="new_checkout_step2" style="position: relative;padding-top: 15px;margin-top: 20px;">
     <h1 style="font-weight: 500; color:#545454; font-size:20px; margin-top:17px; margin-left:0;margin-bottom: 20px;">CHOOSE PAYMENT METHOD
     </h1>
     <form action="#">
@@ -1307,324 +1340,263 @@
     </form>
     <button style="width: 100%; height: 3em; margin-top:15px; background-color: #f44336; border-radius: 25px; padding:14px 20px; font-size: 15px; color:white; font-weight:bold;">PLACE ORDER</button>
     <div class="new_checkout_step2_wrapper"></div>
-</div>`;
-          $(payment_div).insertAfter($(".step__footer"));
-          $(".new_checkout_step2_wrapper").css({
-            "z-index": 10,
-            position: "absolute",
-            top: "0",
-            left: "-5%",
-            height: "105%",
-            width: "110%",
-            "background-color": "rgba(225, 225, 225, 0.5)",
-            "border-radius": "5px",
-          });
+</div>`
+                $(payment_div).insertAfter($(".step__footer"))
+                $(".new_checkout_step2_wrapper").css({
+                    "z-index": 10,
+                    "position": "absolute",
+                    "top": "0",
+                    "left": "-5%",
+                    "height": "105%",
+                    "width": "110%",
+                    "background-color": "rgba(225, 225, 225, 0.5)",
+                    "border-radius": "5px"
+                })
 
-          $(".section__header .section__title#main-header").text(
-            "DELIVERY ADDRESS"
-          );
+                $(".section__header .section__title#main-header").text("DELIVERY ADDRESS")
 
-          if ($("#customer_id").text().length == 0) {
-            var login_div = `<div class="login" style="display: flex;margin-bottom:20px">
+                if ($("#customer_id").text().length == 0) {
+                    var login_div = `<div class="login" style="display: flex;margin-bottom:20px">
                                                                                         <div class="login-col" style="display: flex;justify-content: flex-start;align-items: center;">
                                                                                             <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/user_f6f5a882-bddc-4d06-af42-4f3470f9a4d7.png?v=1633594125" style="width:6%">
                                                                                             <p style="font-weight: 600; color:black; font-size:15px; margin-left:15px; padding:0;">
                                                                                                 Already have an account?</p>
                                                                                         </div>
                                                                                         <button style="float:right; font-weight: 400;width: 40%; background-color: #f44336; border-radius: 25px; padding:8px 20px; font-size: 15px; color:white;"><a style="text-decoration:none; color: white">LOGIN/SIGNUP</a></button>
-                                                                                    </div>`;
-            $(".section--contact-information .section__header").prepend(
-              login_div
-            );
-            $(".login button a").attr(
-              "href",
-              $(".section__header p.layout-flex__item a").attr("href")
-            );
-          }
-          // if ($("#customer_id").text().length != 0 ){
-          //     $("#checkout_billing_address_id").on("change", function(){
-          //         $("div[data-address-field='address1']").addClass("field--half")
-          //         $("div[data-address-field='address2']").addClass("field--half")
-          //         $("div[data-address-field='city']").addClass("field--half")
-          //         $("div[data-address-field='phone']").addClass("field--half")
-          //     })
-          // }
+                                                                                    </div>`
+                    $(".section--contact-information .section__header").prepend(login_div)
+                    $(".login button a").attr("href", $(".section__header p.layout-flex__item a").attr("href"))
 
-          $("#continue_button").on("click", function () {
-            window.localStorage.setItem("email", $("#checkout_email").val());
-
-            if ($("#checkout_billing_address_first_name").val() != undefined) {
-              window.localStorage.setItem(
-                "first_name",
-                $("#checkout_billing_address_first_name").val()
-              );
-            }
-            if ($("#checkout_billing_address_last_name").val() != undefined) {
-              window.localStorage.setItem(
-                "last_name",
-                $("#checkout_billing_address_last_name").val()
-              );
-            }
-            if ($("#checkout_billing_address_address1").val() != undefined) {
-              window.localStorage.setItem(
-                "address1",
-                $("#checkout_billing_address_address1").val()
-              );
-            }
-            if ($("#checkout_billing_address_address2").val() != undefined) {
-              window.localStorage.setItem(
-                "address2",
-                $("#checkout_billing_address_address2").val()
-              );
-            }
-            if ($("#checkout_billing_address_city").val() != undefined) {
-              window.localStorage.setItem(
-                "city",
-                $("#checkout_billing_address_city").val()
-              );
-            }
-            if ($("#checkout_billing_address_zip").val() != undefined) {
-              window.localStorage.setItem(
-                "zip",
-                $("#checkout_billing_address_zip").val()
-              );
-            }
-            if ($("#checkout_billing_address_province").val() != undefined) {
-              window.localStorage.setItem(
-                "province",
-                $("#checkout_billing_address_province").val()
-              );
-            }
-            if ($("#checkout_billing_address_country").val() != undefined) {
-              window.localStorage.setItem(
-                "country",
-                $("#checkout_billing_address_country").val()
-              );
-            }
-            if ($("#checkout_billing_address_phone").val() != undefined) {
-              window.localStorage.setItem(
-                "phone",
-                $("#checkout_billing_address_phone").val()
-              );
-            }
-
-            if ($("#checkout_shipping_address_first_name").val() != undefined) {
-              window.localStorage.setItem(
-                "first_name",
-                $("#checkout_shipping_address_first_name").val()
-              );
-            }
-            if ($("#checkout_shipping_address_last_name").val() != undefined) {
-              window.localStorage.setItem(
-                "last_name",
-                $("#checkout_shipping_address_last_name").val()
-              );
-            }
-            if ($("#checkout_shipping_address_address1").val() != undefined) {
-              window.localStorage.setItem(
-                "address1",
-                $("#checkout_shipping_address_address1").val()
-              );
-            }
-            if ($("#checkout_shipping_address_address2").val() != undefined) {
-              window.localStorage.setItem(
-                "address2",
-                $("#checkout_shipping_address_address2").val()
-              );
-            }
-            if ($("#checkout_shipping_address_city").val() != undefined) {
-              window.localStorage.setItem(
-                "city",
-                $("#checkout_shipping_address_city").val()
-              );
-            }
-            if ($("#checkout_shipping_address_zip").val() != undefined) {
-              window.localStorage.setItem(
-                "zip",
-                $("#checkout_shipping_address_zip").val()
-              );
-            }
-            if ($("#checkout_shipping_address_province").val() != undefined) {
-              window.localStorage.setItem(
-                "province",
-                $("#checkout_shipping_address_province").val()
-              );
-            }
-            if ($("#checkout_shipping_address_country").val() != undefined) {
-              window.localStorage.setItem(
-                "country",
-                $("#checkout_shipping_address_country").val()
-              );
-            }
-            if ($("#checkout_shipping_address_phone").val() != undefined) {
-              window.localStorage.setItem(
-                "phone",
-                $("#checkout_shipping_address_phone").val()
-              );
-            }
-          });
-          $("#continue_button").css({
-            width: "100%",
-            height: "3em",
-            "margin-top": "10px",
-            "background-color": "#f44336",
-            "border-radius": "25px",
-            padding: "14px 20px !important",
-            "font-size": "15px",
-            color: "white",
-            "font-weight": "bold",
-          });
-          $("#continue_button .btn__content").eq(0).text("Continue to payment");
-          $("#continue_button .btn__content").eq(0).css({
-            "font-size": "15px",
-            "font-weight": "bold",
-          });
-
-          $(".step__footer .step__footer__previous-link").hide();
-          $(".section__header").css({
-            "font-size": "20px",
-            "font-weight": "500",
-          });
-          $(".section--billing-address .section__header").hide();
-          $(".section--billing-address").css("padding-top", "0px");
-          $(".section--shipping-address .section__header").hide();
-          $(".section--shipping-address").css("padding-top", "0px");
-
-          setTimeout(function () {
-            //                     if ($('#checkout_shipping_address_zip').val()) {
-            //                         var inputPincode = parseInt($('#checkout_shipping_address_zip').val());
-            //                         if ($.inArray(inputPincode, pincodes) === -1) {
-            //                             $('.address-fields :nth-child(17)').eq(1).addClass('field--error');
-            //                             if ($('.address-fields :nth-child(17) p').length == 0) {
-            //                                 $('.address-fields :nth-child(17) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
-            //                             }
-            //                             $('#continue_button').attr('disabled', true);
-            //                             $('#continue_button').css('background-color', '#bdbdbd');
-            //                         }
-            //                         else {
-            //                             $('.address-fields :nth-child(17) ').removeClass('field--error');
-            //                           if($('.wrong_number').length < 1){
-            //                             $('#continue_button').removeAttr('disabled');
-            //                             $('#continue_button').css('background-color', 'red');
-            //                           }
-            //                         }
-            //                         if (!inputPincode) {
-            //                             $('.address-fields :nth-child(17) ').removeClass('field--error');
-            //                           if($('.wrong_number').length < 1){
-            //                             $('#continue_button').removeAttr('disabled');
-            //                             $('#continue_button').css('background-color', 'red');
-            //                           }
-            //                         }
-            //                     }
-            //                     $('#checkout_shipping_address_zip').on('change', function () {
-            //                         var inputPincode = parseInt($('#checkout_shipping_address_zip').val());
-            // //                         if ($.inArray(inputPincode, pincodes) === -1) {
-            // //                             $('.address-fields :nth-child(17)').eq(1).addClass('field--error');
-            // //                             if ($('.address-fields :nth-child(17) p').length == 0) {
-            // //                                 $('.address-fields :nth-child(17) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
-            // //                             }
-            // //                             $('#continue_button').attr('disabled', true);
-            // //                             $('#continue_button').css('background-color', '#bdbdbd');
-            // //                         }
-            // //                         else {
-            // //                             $('.address-fields :nth-child(17) ').removeClass('field--error');
-            // //                           if($('.wrong_number').length < 1){
-            // //                             $('#continue_button').removeAttr('disabled');
-            // //                           }
-            // //                             $('#continue_button').css('background-color', 'red');
-            // //                         }
-            //                         if (!inputPincode) {
-            //                             $('.address-fields :nth-child(17) ').removeClass('field--error');
-            //                           if($('.wrong_number').length < 1){
-            //                             $('#continue_button').removeAttr('disabled');
-            //                           }
-            //                             $('#continue_button').css('background-color', 'red');
-            //                         }
-            //                     });
-          }, 1);
-
-          if ($("#checkout_shipping_address_phone").val()) {
-            var phoneno = /^\d{10}$/;
-            if (
-              $("#checkout_shipping_address_phone")
-                .val()
-                .replace(" ", "")
-                .match(/^\d{10}$/)
-            ) {
-              $("#checkout_shipping_address_phone").val(
-                $("#checkout_shipping_address_phone").val().replace(" ", "")
-              );
-              $("#continue_button").removeAttr("disabled");
-              $("#continue_button").css("background-color", "red");
-              $(".wrong_number").hide();
-            } else {
-              $("#continue_button").attr("disabled", true);
-              $("#continue_button").css("background-color", "#bdbdbd");
-              if ($(".wrong_number").length < 1) {
-                $("#checkout_shipping_address_phone").after(
-                  `<p class="wrong_number" style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`
-                );
-              }
-              $(".wrong_number").show();
-            }
-          }
-          $("#checkout_shipping_address_phone").on(
-            "change, mouseleave",
-            function () {
-              if ($("#checkout_shipping_address_phone").val()) {
-                var phoneno = /^\d{10}$/;
-                if (
-                  $("#checkout_shipping_address_phone")
-                    .val()
-                    .replace(" ", "")
-                    .match(/^\d{10}$/)
-                ) {
-                  $("#checkout_shipping_address_phone").val(
-                    $("#checkout_shipping_address_phone").val().replace(" ", "")
-                  );
-                  if ($(".wrong_pincode").length == 0) {
-                    $("#continue_button").removeAttr("disabled");
-                    $("#continue_button").css("background-color", "red");
-                  }
-                  $(".wrong_number").hide();
-                } else {
-                  $("#continue_button").attr("disabled", true);
-                  $("#continue_button").css("background-color", "#bdbdbd");
-                  if ($(".wrong_number").length < 1) {
-                    $("#checkout_shipping_address_phone").after(
-                      `<p class="wrong_number" style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`
-                    );
-                  }
-                  $(".wrong_number").show();
                 }
-              } else {
-                $("#continue_button").attr("disabled", true);
-                $("#continue_button").css("background-color", "#bdbdbd");
-                if ($(".wrong_number").length < 1) {
-                  $("#checkout_shipping_address_phone").after(
-                    `<p class="wrong_number" style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`
-                  );
-                }
-                $(".address-fields :nth-child(19) p").show();
-              }
-            }
-          );
-        }
+                // if ($("#customer_id").text().length != 0 ){
+                //     $("#checkout_billing_address_id").on("change", function(){
+                //         $("div[data-address-field='address1']").addClass("field--half")
+                //         $("div[data-address-field='address2']").addClass("field--half")
+                //         $("div[data-address-field='city']").addClass("field--half")
+                //         $("div[data-address-field='phone']").addClass("field--half")
+                //     })
+                // }
 
-        if (Shopify.Checkout.step == "shipping_method") {
-          $(".step").css("position", "relative");
-          $(".step").prepend(`<div id="shipping-overlay" style="display:none;">
+                $("#continue_button").on("click", function () {
+                    window.localStorage.setItem('email', $("#checkout_email").val());
+
+                    if ($("#checkout_billing_address_first_name").val() != undefined) {
+                        window.localStorage.setItem('first_name', $("#checkout_billing_address_first_name").val());
+                    }
+                    if ($("#checkout_billing_address_last_name").val() != undefined) {
+                        window.localStorage.setItem('last_name', $("#checkout_billing_address_last_name").val());
+                    }
+                    if ($("#checkout_billing_address_address1").val() != undefined) {
+                        window.localStorage.setItem('address1', $("#checkout_billing_address_address1").val());
+                    }
+                    if ($("#checkout_billing_address_address2").val() != undefined) {
+                        window.localStorage.setItem('address2', $("#checkout_billing_address_address2").val());
+                    }
+                    if ($("#checkout_billing_address_city").val() != undefined) {
+                        window.localStorage.setItem('city', $("#checkout_billing_address_city").val());
+                    }
+                    if ($("#checkout_billing_address_zip").val() != undefined) {
+                        window.localStorage.setItem('zip', $("#checkout_billing_address_zip").val());
+                    }
+                    if ($("#checkout_billing_address_province").val() != undefined) {
+                        window.localStorage.setItem('province', $("#checkout_billing_address_province").val());
+                    }
+                    if ($("#checkout_billing_address_country").val() != undefined) {
+                        window.localStorage.setItem('country', $("#checkout_billing_address_country").val());
+                    }
+                    if ($("#checkout_billing_address_phone").val() != undefined) {
+                        window.localStorage.setItem('phone', $("#checkout_billing_address_phone").val());
+                    }
+
+                    if ($("#checkout_shipping_address_first_name").val() != undefined) {
+                        window.localStorage.setItem('first_name', $("#checkout_shipping_address_first_name").val());
+                    }
+                    if ($("#checkout_shipping_address_last_name").val() != undefined) {
+                        window.localStorage.setItem('last_name', $("#checkout_shipping_address_last_name").val());
+                    }
+                    if ($("#checkout_shipping_address_address1").val() != undefined) {
+                        window.localStorage.setItem('address1', $("#checkout_shipping_address_address1").val());
+                    }
+                    if ($("#checkout_shipping_address_address2").val() != undefined) {
+                        window.localStorage.setItem('address2', $("#checkout_shipping_address_address2").val());
+                    }
+                    if ($("#checkout_shipping_address_city").val() != undefined) {
+                        window.localStorage.setItem('city', $("#checkout_shipping_address_city").val());
+                    }
+                    if ($("#checkout_shipping_address_zip").val() != undefined) {
+                        window.localStorage.setItem('zip', $("#checkout_shipping_address_zip").val());
+                    }
+                    if ($("#checkout_shipping_address_province").val() != undefined) {
+                        window.localStorage.setItem('province', $("#checkout_shipping_address_province").val());
+                    }
+                    if ($("#checkout_shipping_address_country").val() != undefined) {
+                        window.localStorage.setItem('country', $("#checkout_shipping_address_country").val());
+                    }
+                    if ($("#checkout_shipping_address_phone").val() != undefined) {
+                        window.localStorage.setItem('phone', $("#checkout_shipping_address_phone").val());
+                    }
+
+                })
+                $("#continue_button").css({
+                    "width": "100%",
+                    "height": "3em",
+                    "margin-top": "10px",
+                    "background-color": "#f44336",
+                    "border-radius": "25px",
+                    "padding": "14px 20px !important",
+                    "font-size": "15px",
+                    "color": "white",
+                    "font-weight": "bold"
+                })
+                $("#continue_button .btn__content").eq(0).text("Continue to payment")
+                $("#continue_button .btn__content").eq(0).css({
+                    "font-size": "15px",
+                    "font-weight": "bold"
+                })
+
+                $(".step__footer .step__footer__previous-link").hide()
+                $(".section__header").css({
+                    "font-size": "20px",
+                    "font-weight": "500"
+                })
+                $(".section--billing-address .section__header").hide()
+                $(".section--billing-address").css("padding-top", "0px")
+                $(".section--shipping-address .section__header").hide()
+                $(".section--shipping-address").css("padding-top", "0px")
+
+                setTimeout(function () {
+//                     if ($('#checkout_shipping_address_zip').val()) {
+//                         var inputPincode = parseInt($('#checkout_shipping_address_zip').val());
+//                         if ($.inArray(inputPincode, pincodes) === -1) {
+//                             $('.address-fields :nth-child(17)').eq(1).addClass('field--error');
+//                             if ($('.address-fields :nth-child(17) p').length == 0) {
+//                                 $('.address-fields :nth-child(17) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
+//                             }
+                          
+//                             $('#continue_button').attr('disabled', true);
+//                             $('#continue_button').css('background-color', '#bdbdbd');
+                          
+//                         }
+//                         else {
+//                             $('.address-fields :nth-child(17) ').removeClass('field--error');
+//                           if($('.wrong_number').length < 1){
+//                             $('#continue_button').removeAttr('disabled');
+//                             $('#continue_button').css('background-color', 'red');
+//                           }
+//                         }
+//                         if (!inputPincode) {
+//                             $('.address-fields :nth-child(17) ').removeClass('field--error');
+//                           if($('.wrong_number').length < 1){
+//                             $('#continue_button').removeAttr('disabled');
+//                             $('#continue_button').css('background-color', 'red');
+//                           }
+//                         }
+//                     }
+//                     $('#checkout_shipping_address_zip').on('change', function () {
+//                         var inputPincode = parseInt($('#checkout_shipping_address_zip').val());
+// //                         if ($.inArray(inputPincode, pincodes) === -1) {
+// //                             $('.address-fields :nth-child(17)').eq(1).addClass('field--error');
+// //                             if ($('.address-fields :nth-child(17) p').length == 0) {
+// //                                 $('.address-fields :nth-child(17) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
+// //                             }
+// //                             $('#continue_button').attr('disabled', true);
+// //                             $('#continue_button').css('background-color', '#bdbdbd');
+// //                         }
+// //                         else {
+// //                             $('.address-fields :nth-child(17) ').removeClass('field--error');
+// //                           if($('.wrong_number').length < 1){
+// //                             $('#continue_button').removeAttr('disabled');
+// //                           }
+// //                             $('#continue_button').css('background-color', 'red');
+// //                         }
+//                         if (!inputPincode) {
+//                             $('.address-fields :nth-child(17) ').removeClass('field--error');
+//                           if($('.wrong_number').length < 1){
+//                             $('#continue_button').removeAttr('disabled');
+//                           }
+//                             $('#continue_button').css('background-color', 'red');
+//                         }
+//                     });
+                }, 1)
+                
+                $('#checkout_shipping_address_phone').removeAttr('data-phone-formatter')
+//                 $(document).on('click','.radio-wrapper.content-box__row', function(){
+//                   console.log('clicked')
+                  setTimeout(function(){
+                    console.log('billing phone change####################################')
+                  	$('#checkout_billing_address_phone').val($('#checkout_billing_address_phone').val().replaceAll(" ",""))
+                  }, 300)
+//                 })
+                	
+                 
+      		      
+
+                if ($('#checkout_shipping_address_phone').val()) {
+                    var phoneno = /^\d{10}$/;
+                    if ( $('#checkout_shipping_address_phone').val().replace(' ','').match(/^\d{10}$/)) {
+
+                        $('#continue_button').removeAttr('disabled');
+                        $('#continue_button').css('background-color', 'red');
+                        $('.wrong_number').hide()
+                    }
+                    else {
+                        $('#continue_button').attr('disabled', true);
+                        $('#continue_button').css('background-color', '#bdbdbd');
+                        if ($('.wrong_number').length < 1) {
+                              $('#checkout_shipping_address_phone').after(`<p class="wrong_number" style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`);
+
+                            }
+                        $('.wrong_number').show()
+                    }
+                }
+              
+                $('#checkout_shipping_address_phone').on('change, mouseleave', function () {
+                    if ($('#checkout_shipping_address_phone').val()) {
+                        var phoneno = /^\d{10}$/;
+                        if ( $('#checkout_shipping_address_phone').val().replace(' ','').match(/^\d{10}$/)) {
+                          	 if ($('.wrong_pincode').length == 0) {
+                            $('#continue_button').removeAttr('disabled');
+                            $('#continue_button').css('background-color', 'red');
+                             }
+                            $('.wrong_number').hide();
+                               
+                          	
+                        }
+                        else {
+                            $('#continue_button').attr('disabled', true);
+                            $('#continue_button').css('background-color', '#bdbdbd');
+                            if ($('.wrong_number').length < 1) {
+                              $('#checkout_shipping_address_phone').after(`<p class="wrong_number" style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`);
+
+                            }
+                            $('.wrong_number').show()
+                        }
+                    }
+                    else {
+                        $('#continue_button').attr('disabled', true);
+                        $('#continue_button').css('background-color', '#bdbdbd');
+                        if ($('.wrong_number').length < 1) {
+                              $('#checkout_shipping_address_phone').after(`<p class="wrong_number" style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`);
+
+                            }
+                        $('.address-fields :nth-child(19) p').show()
+
+                    }
+                })
+            }
+
+            if (Shopify.Checkout.step == "shipping_method") {
+                $(".step").css("position", "relative")
+                $(".step").prepend(`<div id="shipping-overlay" style="display:none;">
             <div class="shipping-spinner"></div>
-          </div>`);
-          $("#shipping-overlay").fadeIn();
-          $("#continue_button").click();
-          setTimeout(function () {
-            $("#shipping-overlay").fadeOut();
-          }, 3000);
-        }
+          </div>`)
+                $("#shipping-overlay").fadeIn()
+                $("#continue_button").click()
+                setTimeout(function () { $("#shipping-overlay").fadeOut(); }, 3000);
+            }
 
-        if (Shopify.Checkout.step == "payment_method") {
-          var delivery_address_div = `
+            if (Shopify.Checkout.step == "payment_method") {
+                var delivery_address_div = `
                                                                 <div style="display: flex;align-items: center;justify-content: space-between;background-color: rgba(225, 225, 225, 0.5);padding: 20px 10px 10px 10px;">
                                                                         <h1 style="font-weight: 500; color:#545454; font-size:20px;">DELIVERY ADDRESS</h1>
                                                                         <a class="link--small change-address-link" href="#">
@@ -1724,582 +1696,548 @@
                                                                     </div>
                                                                     <div class="new_checkout_step1_wrapper"></div>
                                                                 </div>
-                                                                `;
+                                                                `
 
-          $(".step").prepend(delivery_address_div);
-          $(".new_checkout_step1_wrapper").css({
-            "z-index": 10,
-            position: "absolute",
-            top: "0",
-            left: "0",
-            height: "100%",
-            width: "100%",
-            "background-color": "rgba(225, 225, 225, 0.5)",
-            "border-radius": "5px",
-          });
+                $(".step").prepend(delivery_address_div)
+                $(".new_checkout_step1_wrapper").css({
+                    "z-index": 10,
+                    "position": "absolute",
+                    "top": "0",
+                    "left": "0",
+                    "height": "100%",
+                    "width": "100%",
+                    "background-color": "rgba(225, 225, 225, 0.5)",
+                    "border-radius": "5px"
+                })
 
-          $("#checkout-email").val(window.localStorage.getItem("email"));
-          $("#checkout-firstname").val(
-            window.localStorage.getItem("first_name")
-          );
-          $("#checkout-lastname").val(window.localStorage.getItem("last_name"));
-          $("#checkout-address1").val(window.localStorage.getItem("address1"));
-          $("#checkout-address2").val(window.localStorage.getItem("address2"));
-          $("#checkout-city").val(window.localStorage.getItem("city"));
-          $("#checkout-zip").val(window.localStorage.getItem("zip"));
-          $("#checkout-state option").attr(
-            "value",
-            window.localStorage.getItem("province")
-          );
-          $("#checkout-state option").text(
-            window.localStorage.getItem("province")
-          );
-          $("#checkout-country").val(window.localStorage.getItem("country"));
-          $("#checkout-phone").val(window.localStorage.getItem("phone"));
 
-          $(".step").css({
-            display: "flex",
-            "flex-direction": "column",
-          });
-          $(".change-address-link").attr(
-            "href",
-            $(".review-block__link .link--small").eq(0).attr("href")
-          );
-          $(
-            ".content-box__row.content-box__row--tight-spacing-vertical"
-          ).hide();
-          $(".section--payment-method .section__title").hide();
-          $(".section--payment-method .section__text").hide();
-          $(".section--payment-method").prepend(
-            `<h1 style="font-weight: 500;color: #545454;font-size: 20px;margin-top:17px;margin-left:0;">CHOOSE PAYMENT METHOD</h1>`
-          );
-          $(".payment-method-wrapper label")
-            .eq(0)
-            .html(
-              `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/payu1.png?v=1633523127" style="margin:8px 0 8px 0px;max-width: 50px;">`
-            );
-          $(".payment-method-wrapper label")
-            .eq(1)
-            .html(
-              `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/razorpay1.png?v=1633523849" style="margin:15px 0 5px 0px;max-width: 84px;">`
-            );
-          $(".payment-method-wrapper label")
-            .eq(2)
-            .html(
-              `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm1.png?v=1633523849" style="margin:15px 0 10px 0px;max-width: 50px;">`
-            );
+                $("#checkout-email").val(window.localStorage.getItem('email'))
+                $("#checkout-firstname").val(window.localStorage.getItem('first_name'))
+                $("#checkout-lastname").val(window.localStorage.getItem('last_name'))
+                $("#checkout-address1").val(window.localStorage.getItem('address1'))
+                $("#checkout-address2").val(window.localStorage.getItem('address2'))
+                $("#checkout-city").val(window.localStorage.getItem('city'))
+                $("#checkout-zip").val(window.localStorage.getItem('zip'))
+                $("#checkout-state option").attr("value", window.localStorage.getItem('province'))
+                $("#checkout-state option").text(window.localStorage.getItem('province'))
+                $("#checkout-country").val(window.localStorage.getItem('country'))
+                $("#checkout-phone").val(window.localStorage.getItem('phone'))
 
-          var card_opts = `<div class="card-opts" style="display:flex; align-items:center; justify-content:flex-end;margin-bottom: 10px;">
-                                <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515"
+                $(".step").css({
+                    "display": "flex",
+                    "flex-direction": "column"
+                })
+                $(".change-address-link").attr("href", $(".review-block__link .link--small").eq(0).attr("href"))
+                $(".content-box__row.content-box__row--tight-spacing-vertical").hide()
+                $(".section--payment-method .section__title").hide()
+                $(".section--payment-method .section__text").hide()
+                $(".section--payment-method").prepend(`<h1 style="font-weight: 500;color: #545454;font-size: 20px;margin-top:17px;margin-left:0;">CHOOSE PAYMENT METHOD</h1>`)
+                $(".payment-method-wrapper label").eq(0).html(`<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/payu1.png?v=1633523127" style="margin:8px 0 8px 0px;max-width: 50px;">`)
+                $(".payment-method-wrapper label").eq(1).html(`<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/razorpay1.png?v=1633523849" style="margin:15px 0 5px 0px;max-width: 84px;">`)
+                $(".payment-method-wrapper label").eq(2).html(`<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm1.png?v=1633523849" style="margin:15px 0 10px 0px;max-width: 50px;">`)
+
+                var card_opts = `<div class="card-opts" style="display:flex; align-items:center; justify-content:flex-end;margin-bottom: 10px;">
+                                                                                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/master.png?v=1633523515"
                                                                                         style="max-width:10%; margin:0px 0 0px 10px; padding:7px 0;">
-                                <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623"
+                                                                                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amex.png?v=1633523623"
                                                                                         style="max-width:10%; margin:0px 0 0px 10px; padding:7px 0;">
-                                <h3 style=" padding:5px 5px; font-size:10px; color:#c4c4c4">and many
+                                                                                    <h3 style=" padding:5px 5px; font-size:10px; color:#c4c4c4">and many
                                                                                         more...
-                                </h3>
-                            </div>`;
-          // $(".radio__label__accessory").eq(0).html(card_opts)
-          // $(".radio__label__accessory").eq(1).html(card_opts)
-          // $(".radio__label__accessory").eq(2).html(card_opts)
-          $(".content-box__row.content-box__row--secondary").hide();
-          $(".step__footer .step__footer__previous-link").hide();
-          //     $(".section.section--billing-address").hide()
+                                                                                    </h3>
+                                                                                </div>`
+                // $(".radio__label__accessory").eq(0).html(card_opts)
+                // $(".radio__label__accessory").eq(1).html(card_opts)
+                // $(".radio__label__accessory").eq(2).html(card_opts)
+                $(".content-box__row.content-box__row--secondary").hide()
+                $(".step__footer .step__footer__previous-link").hide()
+                //     $(".section.section--billing-address").hide()
 
-          $("input[type=radio]").change(function () {
-            //         $(".section.section--billing-address").hide()
-            // 		$(".section.section--billing-address").addClass("hide-div")
-            $("#continue_button").removeAttr("disabled");
-            $("#continue_button").css("background-color", "red");
-            //         $("#continue_button").text("PLACE ORDER")
-          });
-          $(".section--billing-address input[type=radio]").change(function () {
-            if (
-              $(".section--billing-address input[type=radio]:checked").attr(
-                "value"
-              ) == "true"
-            ) {
-              $("#section--billing-address__different").show();
-            } else {
-              $("#section--billing-address__different").show();
-            }
-          });
-          $(".step__footer .shown-if-js").css({
-            width: "100%",
-          });
+                $('input[type=radio]').change(function () {
+                    //         $(".section.section--billing-address").hide()
+                    // 		$(".section.section--billing-address").addClass("hide-div")
+                    $("#continue_button").removeAttr("disabled")
+                    $("#continue_button").css("background-color", "red")
+                    //         $("#continue_button").text("PLACE ORDER")
+                });
+                $('.section--billing-address input[type=radio]').change(function () {
+                    if ($('.section--billing-address input[type=radio]:checked').attr('value') == 'true') {
+                        $("#section--billing-address__different").show()
+                    }
+                    else {
+                        $("#section--billing-address__different").show()
+                    }
+                });
+                $(".step__footer .shown-if-js").css({
+                    "width": "100%",
+                })
 
-          $("#continue_button").eq(0).text("PLACE ORDER");
-          var interval;
-          function start() {
-            console.log("start");
-            interval = setInterval(function () {
-              $("#continue_button").removeAttr("disabled");
-              $("#continue_button").css("background-color", "red");
-            }, 300);
-          }
-          function stop() {
-            console.log("stop");
-            clearInterval(interval);
-          }
-          start();
-          $("#continue_button").css({
-            width: "100%",
-            height: "3em",
-            "margin-top": "10px",
-            "background-color": "#f44336",
-            "border-radius": "25px",
-            padding: "14px 20px !important",
-            "font-size": "15px",
-            color: "white",
-            "font-weight": "bold",
-          });
-          $("#continue_button .btn__content").eq(0).css({
-            "font-size": "15px",
-            "font-weight": "bold",
-          });
-          $(".section.section--reductions").hide();
-          $(".section.section--payment-method")[0].scrollIntoView();
-
-          //     setTimeout(function () {
-          //                 if ($('#checkout_billing_address_zip').val()) {
-          //                     var inputPincode = parseInt($('#checkout_billing_address_zip').val());
-          //                     if ($.inArray(inputPincode, pincodes) === -1) {
-          //                         $('.address-fields :nth-child(18)').eq(2).addClass('field--error');
-          //                         if ($('.address-fields :nth-child(18) p').length == 0) {
-          //                             $('.address-fields :nth-child(18) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
-          //                         }
-          //                         stop()
-          //                         $('#continue_button').attr('disabled', true);
-
-          //                         $('#continue_button').css('background-color', '#bdbdbd');
-          //                     }
-          //                     else {
-          //                         $('.address-fields :nth-child(18) ').removeClass('field--error');
-          //                         $('#continue_button').removeAttr('disabled');
-          //                         start()
-          //                         $('#continue_button').css('background-color', 'red');
-          //                     }
-          //                     if (!inputPincode) {
-          //                         $('.address-fields :nth-child(18) ').removeClass('field--error');
-          //                         $('#continue_button').removeAttr('disabled');
-          //                         start()
-          //                         $('#continue_button').css('background-color', 'red');
-          //                     }
-          //                 }
-          //                 $('#checkout_billing_address_zip').on('change', function () {
-          //                     var inputPincode = parseInt($('#checkout_billing_address_zip').val());
-          //                     if ($.inArray(inputPincode, pincodes) === -1) {
-          //                         $('.address-fields :nth-child(17)').eq(2).addClass('field--error');
-          //                         if ($('.address-fields :nth-child(17) p').length == 0) {
-          //                             $('.address-fields :nth-child(17) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
-          //                         }
-          //                         stop()
-          //                         $('#continue_button').attr('disabled', true);
-
-          //                         $('#continue_button').css('background-color', '#bdbdbd');
-          //                     }
-          //                     else {
-          //                         $('.address-fields :nth-child(17) ').removeClass('field--error');
-          //                         start()
-          //                         $('#continue_button').removeAttr('disabled');
-          //                         $('#continue_button').css('background-color', 'red');
-          //                     }
-          //                     if (!inputPincode) {
-          //                         $('.address-fields :nth-child(17) ').removeClass('field--error');
-          //                         start()
-          //                         $('#continue_button').removeAttr('disabled');
-          //                         $('#continue_button').css('background-color', 'red');
-          //                     }
-          //                 });
-
-          if ($("#checkout_billing_address_phone").val()) {
-            var phoneno = /^\d{10}$/;
-            if ($("#checkout_billing_address_phone").val().match(phoneno)) {
-              start();
-              $("#continue_button").removeAttr("disabled");
-              $("#continue_button").css("background-color", "red");
-              $(".address-fields :nth-child(19) p").hide();
-            } else {
-              stop();
-              $("#continue_button").attr("disabled", true);
-              $("#continue_button").css("background-color", "#bdbdbd");
-              if ($(".address-fields :nth-child(19) p").length < 1) {
-                $(".address-fields :nth-child(19) .field__input-wrapper").after(
-                  `<p style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`
-                );
-              }
-              $(".address-fields :nth-child(19) p").show();
-            }
-          }
-          $("#checkout_billing_address_phone").on("change", function () {
-            if ($("#checkout_billing_address_phone").val()) {
-              var phoneno = /^\d{10}$/;
-              if ($("#checkout_billing_address_phone").val().match(phoneno)) {
-                start();
-                $("#continue_button").removeAttr("disabled");
-                $("#continue_button").css("background-color", "red");
-                $(".address-fields :nth-child(19) p").hide();
-              } else {
-                stop();
-                $("#continue_button").attr("disabled", true);
-                $("#continue_button").css("background-color", "#bdbdbd");
-                if ($(".address-fields :nth-child(19) p").length < 1) {
-                  $(
-                    ".address-fields :nth-child(19) .field__input-wrapper"
-                  ).after(
-                    `<p style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`
-                  );
+                $("#continue_button").eq(0).text("PLACE ORDER")
+                var interval;
+                function start() {
+                    console.log("start")
+                    interval = setInterval(function () {
+                        $("#continue_button").removeAttr("disabled")
+                        $("#continue_button").css("background-color", "red")
+                    }, 300);
                 }
-                $(".address-fields :nth-child(19) p").show();
-              }
-            } else {
-              stop();
-              $("#continue_button").attr("disabled", true);
-              $("#continue_button").css("background-color", "#bdbdbd");
-              if ($(".address-fields :nth-child(19) p").length < 1) {
-                $(".address-fields :nth-child(19) .field__input-wrapper").after(
-                  `<p style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`
-                );
-              }
-              $(".address-fields :nth-child(19) p").show();
+                function stop() {
+                    console.log("stop")
+                    clearInterval(interval)
+                }
+                start()
+                $("#continue_button").css({
+                    "width": "100%",
+                    "height": "3em",
+                    "margin-top": "10px",
+                    "background-color": "#f44336",
+                    "border-radius": "25px",
+                    "padding": "14px 20px !important",
+                    "font-size": "15px",
+                    "color": "white",
+                    "font-weight": "bold"
+                })
+                $("#continue_button .btn__content").eq(0).css({
+                    "font-size": "15px",
+                    "font-weight": "bold"
+                })
+                $(".section.section--reductions").hide()
+                $(".section.section--payment-method")[0].scrollIntoView()
+
+                //     setTimeout(function () {
+//                 if ($('#checkout_billing_address_zip').val()) {
+//                     var inputPincode = parseInt($('#checkout_billing_address_zip').val());
+//                     if ($.inArray(inputPincode, pincodes) === -1) {
+//                         $('.address-fields :nth-child(18)').eq(2).addClass('field--error');
+//                         if ($('.address-fields :nth-child(18) p').length == 0) {
+//                             $('.address-fields :nth-child(18) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
+//                         }
+//                         stop()
+//                         $('#continue_button').attr('disabled', true);
+
+//                         $('#continue_button').css('background-color', '#bdbdbd');
+//                     }
+//                     else {
+//                         $('.address-fields :nth-child(18) ').removeClass('field--error');
+//                         $('#continue_button').removeAttr('disabled');
+//                         start()
+//                         $('#continue_button').css('background-color', 'red');
+//                     }
+//                     if (!inputPincode) {
+//                         $('.address-fields :nth-child(18) ').removeClass('field--error');
+//                         $('#continue_button').removeAttr('disabled');
+//                         start()
+//                         $('#continue_button').css('background-color', 'red');
+//                     }
+//                 }
+//                 $('#checkout_billing_address_zip').on('change', function () {
+//                     var inputPincode = parseInt($('#checkout_billing_address_zip').val());
+//                     if ($.inArray(inputPincode, pincodes) === -1) {
+//                         $('.address-fields :nth-child(17)').eq(2).addClass('field--error');
+//                         if ($('.address-fields :nth-child(17) p').length == 0) {
+//                             $('.address-fields :nth-child(17) div').after(`<p class="field__message field__message--error" id="error-for-zip" style="padding:0px">Sorry, we don't deliver to this pincode.</p>`);
+//                         }
+//                         stop()
+//                         $('#continue_button').attr('disabled', true);
+
+//                         $('#continue_button').css('background-color', '#bdbdbd');
+//                     }
+//                     else {
+//                         $('.address-fields :nth-child(17) ').removeClass('field--error');
+//                         start()
+//                         $('#continue_button').removeAttr('disabled');
+//                         $('#continue_button').css('background-color', 'red');
+//                     }
+//                     if (!inputPincode) {
+//                         $('.address-fields :nth-child(17) ').removeClass('field--error');
+//                         start()
+//                         $('#continue_button').removeAttr('disabled');
+//                         $('#continue_button').css('background-color', 'red');
+//                     }
+//                 });
+
+
+
+                $('#checkout_billing_address_phone').removeAttr('data-phone-formatter')
+
+                if ($('#checkout_billing_address_phone').val()) {
+                    var phoneno = /^\d{10}$/;
+                    if ($("#checkout_billing_address_phone").val().match(phoneno)) {
+                        start()
+                        $('#continue_button').removeAttr('disabled');
+                        $('#continue_button').css('background-color', 'red');
+                        $('.address-fields :nth-child(19) p').hide()
+                    }
+                    else {
+                        stop()
+                        $('#continue_button').attr('disabled', true);
+                        $('#continue_button').css('background-color', '#bdbdbd');
+                        if ($('.address-fields :nth-child(19) p').length < 1) {
+                            $('.address-fields :nth-child(19) .field__input-wrapper').after(`<p style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`);
+                        }
+                        $('.address-fields :nth-child(19) p').show()
+                    }
+                }
+                $('#checkout_billing_address_phone').on('change', function () {
+                    if ($('#checkout_billing_address_phone').val()) {
+                        var phoneno = /^\d{10}$/;
+                        if ($("#checkout_billing_address_phone").val().match(phoneno)) {
+                            start()
+                            $('#continue_button').removeAttr('disabled');
+                            $('#continue_button').css('background-color', 'red');
+                            $('.address-fields :nth-child(19) p').hide()
+                        }
+                        else {
+                            stop()
+                            $('#continue_button').attr('disabled', true);
+                            $('#continue_button').css('background-color', '#bdbdbd');
+                            if ($('.address-fields :nth-child(19) p').length < 1) {
+                                $('.address-fields :nth-child(19) .field__input-wrapper').after(`<p style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`);
+                            }
+                            $('.address-fields :nth-child(19) p').show()
+                        }
+                    }
+                    else {
+                        stop()
+                        $('#continue_button').attr('disabled', true);
+                        $('#continue_button').css('background-color', '#bdbdbd');
+                        if ($('.address-fields :nth-child(19) p').length < 1) {
+                            $('.address-fields :nth-child(19) .field__input-wrapper').after(`<p style="color:#e32c2b;padding:0px;padding-left: 6px;">Please enter correct phone number</p>`);
+                        }
+                        $('.address-fields :nth-child(19) p').show()
+
+                    }
+                })
+                //     }, 3000);
             }
-          });
-          //     }, 3000);
-        }
-      });
 
-      function ism() {
-        var isMobile = false;
-        try {
-          if (window.webkit && window.webkit.messageHandlers) {
-            isMobile = true;
-          }
-        } catch (e) {
-          console.log("ios error isMobile");
-          console.log(e);
-        }
-        try {
-          if (window && window.AndroidBridge) {
-            isMobile = true;
-          }
-        } catch (e) {
-          console.log("android error isMobile");
-          console.log(e);
-        }
-        console.log("isMobile ");
-        return isMobile;
-      }
 
-      //         if(!ism()){
-      // 			$('.order-summary__section--discount').hide();
-      // 		}
+
+
+
+
+        })
+
+        function ism() {
+            var isMobile = false;
+            try {
+                if (window.webkit && window.webkit.messageHandlers) {
+                    isMobile = true;
+                }
+            } catch (e) {
+                console.log("ios error isMobile");
+                console.log(e);
+            }
+            try {
+                if (window && window.AndroidBridge) {
+                    isMobile = true;
+                }
+            } catch (e) {
+                console.log("android error isMobile");
+                console.log(e);
+            }
+            console.log('isMobile ');
+            return isMobile;
+        }
+
+//         if(!ism()){
+// 			$('.order-summary__section--discount').hide();
+// 		}
     </script>
     <!-- Single Checkout Page Script Begins -->
     <!-- FarziPromotions Begins -->
     <script src="https://boatfc-media.farziengineer.co/pincode/checkout1.js"></script>
     <!-- FarziPromotions Ends -->
     <script type="text/javascript">
-      createEditableSelect(document.forms[0].country);
+        createEditableSelect(document.forms[0].country);
     </script>
 
     <script>
-      if (sessionStorage.getItem("coupon-remove") == "true") {
-        sessionStorage.setItem("coupon-remove", "false");
-        $("body")
-          .prepend(`<div id="remove_coupon_overlay" style="display:none;">
+        if (sessionStorage.getItem('coupon-remove') == 'true') {
+            sessionStorage.setItem('coupon-remove', 'false');
+            $('body').prepend(`<div id="remove_coupon_overlay" style="display:none;">
                 <div class="remove_coupon_spinner"></div>
-            </div>`);
+            </div>`)
 
-        if ($(".tag__button").length > 0) {
-          $("#remove_coupon_overlay").fadeIn();
-          $(".tag__button")[0].click();
+            if ($('.tag__button').length > 0) {
+                $("#remove_coupon_overlay").fadeIn()
+                $('.tag__button')[0].click();
+            }
+            setTimeout(function () { $("#remove_coupon_overlay").fadeOut(); $('.order-summary__section--discount').hide();$('#gift-card-redemption')[0].checked = false; sessionStorage.setItem('checked','false'); }, 3000);
         }
-        setTimeout(function () {
-          $("#remove_coupon_overlay").fadeOut();
-          $(".order-summary__section--discount").hide();
-          $("#gift-card-redemption")[0].checked = false;
-          sessionStorage.setItem("checked", "false");
-        }, 3000);
-      }
-      $(".order-summary__section.order-summary__section--product-list")
-        .after(`<style>.gift-box-opt{margin-top: 5px;}input{appearance:auto;} #gift-wrap{margin-right: 10px;}</style><div class="gifting-sec1"><h1 style="font-size: 16px;
+        $('.order-summary__section.order-summary__section--product-list').after(`<style>.gift-box-opt{margin-top: 5px;}input{appearance:auto;} #gift-wrap{margin-right: 10px;}</style><div class="gifting-sec1"><h1 style="font-size: 16px;
 margin-top: 10px;
 font-weight: 500;">Gifting | Step 2: Opt for Gift Box?</h1><div class="gift-wrap" style="display: flex; align-items: center;     border-top: 1px solid #d1d1d1; padding: 0px 0;"><div class="gift-box-img"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Gif-box_2.jpg?v=1640612392"></div><div class="gift-wrap-props"><h1>Gift Box</h1><p>Rs 299.00</p><div class="gift-box-opt">
                     <input type="checkbox" id="gift-wrap" name="gift-wrap" value="Add">
                     <label for="gift-wrap"><img class="gift-icon" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_10.png?v=1639995192"> Add Gift Box</label><br></div></div></div>
-      <p class="gift-box-notifier" style="display:none; font-size: 10px !important; padding-right: 0px;color: #ff2c26;">Gift Box is applicable only on '<a href="https://www.boat-lifestyle.com/collections/gifting" style="color:red;"><u><b>Gifting Collection</b></u></a>' for a maximum of 3 products.</p></div>`);
-      var gift_applicable = true;
-      var gift_cards = [];
-      var applicable_products = [];
-      var count_prods = 0;
-      var applicable_flag = true;
-      var gift_box_already_added = false;
-      var gift_card_added = false;
-      var gift_card = false;
-      var hide_gifting = true;
+      <p class="gift-box-notifier" style="display:none; font-size: 10px !important; padding-right: 0px;color: #ff2c26;">Gift Box is applicable only on '<a href="https://www.boat-lifestyle.com/collections/gifting" style="color:red;"><u><b>Gifting Collection</b></u></a>' for a maximum of 3 products.</p></div>`)
+        var gift_applicable = true;
+        var gift_cards = [];
+        var applicable_products = [];
+        var count_prods = 0;
+        var applicable_flag = true;
+        var gift_box_already_added = false;
+        var gift_card_added = false;
+        var gift_card = false;
+        var hide_gifting = true;
 
-      $(".gift-box-notifier")
-        .after(`<div class="gifting-sec"><h1 style="font-size: 16px;
+        $('.gift-box-notifier').after(`<div class="gifting-sec"><h1 style="font-size: 16px;
 margin-top: 10px;
 font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-card" style="display: flex; align-items: center;     border-top: 1px solid #d1d1d1; padding: 0px 0;"><div class="gift-card-img"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/products/Happy-Anniversary_1728x.jpg?v=1640607905"></div><div class="gift-card-props"><h1>Gift Message Card</h1><p>Rs 49.00</p><select id="gift-cards">
         <option value="none">Select Option / None Selected</option>
           <option value="39513914736738">Birthday Card - Rs 49.00</option>
           <option value="39513924599906">Anniversary Card - Rs 49.00</option>
-        </select></div></div></div>`);
-      $.getJSON(
-        "/collections/gift-message-cards/products.json",
-        function (response) {
-          response.products.forEach(function (prod, i) {
-            gift_cards.push(prod.id);
-          });
-        }
-      );
-      $.getJSON("/collections/gifting/products.json", function (response) {
-        response.products.forEach(function (prod, i) {
-          applicable_products.push(prod.id);
+        </select></div></div></div>`)
+        $.getJSON('/collections/gift-message-cards/products.json', function (response) {
+            response.products.forEach(function (prod, i) {
+                gift_cards.push(prod.id);
+            })
         });
+        $.getJSON('/collections/gifting/products.json', function (response) {
+            response.products.forEach(function (prod, i) {
+                applicable_products.push(prod.id);
+            })
 
-        fetch("/cart.js")
-          .then((resp) => resp.json())
-          .then((data) => {
-            data.items.forEach(function (product, index) {
-              if (gift_cards.includes(product.product_id)) {
-                gift_card_added = product.id;
-                $("#gift-cards")[0].value = product.id;
-                $("#gift-cards option")[0].innerText =
-                  "Select Option / None Selected";
-              } else {
-                if (product.id == "39535548956770") {
-                  gift_applicable = false;
-                  gift_box_already_added = true;
-                } else {
-                  count_prods = count_prods + product.quantity;
-                  if (count_prods > 3) {
-                    gift_applicable = false;
-                    applicable_flag = false;
-                  }
-                }
-              }
-              if (applicable_products.includes(product.product_id)) {
-                hide_gifting = false;
-              } else {
-                if (
-                  product.id != "39535548956770" &&
-                  !gift_cards.includes(product.product_id)
-                ) {
-                  applicable_flag = false;
-                }
-              }
-            });
-            if (applicable_flag == false && gift_box_already_added) {
-              remove_gift_wrap();
-            }
-            if (gift_box_already_added && applicable_flag) {
-              $("#gift-wrap")[0].checked = true;
-            }
+            fetch('/cart.js')
+                .then((resp) => resp.json())
+                .then((data) => {
+                    data.items.forEach(function (product, index) {
+                        if (gift_cards.includes(product.product_id)) {
+                            gift_card_added = product.id;
+                            $('#gift-cards')[0].value = product.id
+                            $("#gift-cards option")[0].innerText = "Select Option / None Selected";
+                        }
+                        else {
+                            if (product.id == '39535548956770') {
+                                gift_applicable = false;
+                                gift_box_already_added = true;
+                            } else {
+                                count_prods = count_prods + product.quantity;
+                                if (count_prods > 3) {
+                                    gift_applicable = false;
+                                    applicable_flag = false;
+                                }
+                            }
+                        }
+                        if (applicable_products.includes(product.product_id)) {
+                            hide_gifting = false;
+                          
+                        }
+                        else {
+                            if (product.id != '39535548956770' && !gift_cards.includes(product.product_id)) {
+                                applicable_flag = false;
+                            }
+                        }
+                    })
+                    if (applicable_flag == false && gift_box_already_added) {
+                        remove_gift_wrap();
+                    }
+                    if (gift_box_already_added && applicable_flag) {
+                        $('#gift-wrap')[0].checked = true;
+                    }
 
-            if (hide_gifting) {
-              $(".gifting-sec1").hide();
-            } else {
-              $(".gifting-sec1").show();
-              $(".order-summary-toggle--show").trigger("click");
-            }
-            $("#shipping-overlay").fadeOut();
-          });
-      }).catch(function () {
-        $("#shipping-overlay").fadeOut();
-      });
-
-      function add_gift_wrap() {
-        //         	fetch('/cart.js')
-        //                   .then((resp) => resp.json())
-        //             		.then((data) => {
-        //               data.items.forEach(function (product, index){
-        //                 if(product.id == '39445390000226'){
-        //                   gift_applicable = false;
-        //                   $('#gift-wrap')[0].checked = true;
-        // 				}
-        //               }
-        //             )
-        if (gift_applicable && applicable_flag) {
-          $(".gift-wrap label")[0].innerText = "Adding Gift Box...";
-          $.ajax({
-            type: "POST",
-            url: "/cart/add.js",
-            data: {
-              quantity: 1,
-              id: "39535548956770",
-            },
-            success: function (response) {
-              console.log("response");
-              window.location.reload();
-            },
-            error: function (res) {
-              console.log("res", res);
-              alert("Gift box out of stock");
-              window.location.reload();
-            },
-          });
-        }
-        if (!applicable_flag) {
-          $(".gift-box-notifier").show();
-          $(".gift-wrap").css("padding-bottom", "0px");
-          $("#gift-wrap")[0].checked = false;
-        } else {
-          $(".gift-box-notifier").hide();
-        }
-        //    				})
-      }
-
-      function remove_gift_wrap() {
-        $(".gift-wrap label")[0].innerText = "Removing Gift Box...";
-        $.ajax({
-          type: "POST",
-          url: "/cart/change.js",
-          data: {
-            quantity: 0,
-            id: "39535548956770",
-          },
-          success: function (response) {
-            window.location.reload();
-          },
-        });
-      }
-
-      $("#gift-wrap").on("click", function () {
-        if ($("#gift-wrap")[0].checked) {
-          add_gift_wrap();
-        } else {
-          remove_gift_wrap();
-        }
-      });
-
-      function add_gift_card() {
-        if (gift_card_added) {
-          $.ajax({
-            type: "POST",
-            url: "/cart/change.js",
-            data: {
-              quantity: 0,
-              id: gift_card_added,
-            },
-            success: function (response) {
-              if (gift_card != "none" && gift_card) {
-                $.ajax({
-                  type: "POST",
-                  url: "/cart/add.js",
-                  data: {
-                    quantity: 1,
-                    id: gift_card,
-                  },
-                  success: function (response) {
-                    window.location.reload();
-                  },
-                  error: function (request, status, error) {
-                    alert("product out of stock");
-                    window.location.reload();
-                  },
+                    if (hide_gifting) {
+                        $('.gifting-sec1').hide();
+                    }
+                    else {
+                        $('.gifting-sec1').show();
+						$('.order-summary-toggle--show').trigger('click')
+                    }
+                    $("#shipping-overlay").fadeOut();
                 });
-              } else {
-                window.location.reload();
-              }
-            },
-            error: function (request, status, error) {
-              window.location.reload();
-            },
-          });
-        } else {
-          if (gift_card != "none" && gift_card) {
+
+        }).catch(function () { $("#shipping-overlay").fadeOut(); })
+
+        function add_gift_wrap() {
+            //         	fetch('/cart.js')
+            //                   .then((resp) => resp.json())
+            //             		.then((data) => {
+            //               data.items.forEach(function (product, index){
+            //                 if(product.id == '39445390000226'){
+            //                   gift_applicable = false;
+            //                   $('#gift-wrap')[0].checked = true;
+            // 				}
+            //               }
+            //             )
+            if (gift_applicable && applicable_flag) {
+                $('.gift-wrap label')[0].innerText = "Adding Gift Box..."
+                $.ajax({
+                    type: "POST",
+                    url: '/cart/add.js',
+                    data: {
+                        quantity: 1,
+                        id: '39535548956770',
+                    },
+                    success: function (response) {
+                      console.log('response')
+                        window.location.reload();
+                    },
+                  error: function(res){
+                    console.log("res", res)
+       					alert('Gift box out of stock');
+                    	window.location.reload();
+    				}
+                });
+            }
+            if (!applicable_flag) {
+                $('.gift-box-notifier').show();
+                $('.gift-wrap').css('padding-bottom', '0px');
+                $('#gift-wrap')[0].checked = false;
+            }
+            else {
+                $('.gift-box-notifier').hide();
+            }
+            //    				})
+        }
+
+        function remove_gift_wrap() {
+            $('.gift-wrap label')[0].innerText = "Removing Gift Box..."
             $.ajax({
-              type: "POST",
-              url: "/cart/add.js",
-              data: {
-                quantity: 1,
-                id: gift_card,
-              },
-              success: function (response) {
-                window.location.reload();
-              },
-              error: function (request, status, error) {
-                window.location.reload();
-              },
+                type: "POST",
+                url: '/cart/change.js',
+                data: {
+                    quantity: 0,
+                    id: '39535548956770',
+                },
+                success: function (response) {
+                    window.location.reload();
+                }
             });
-          }
         }
-      }
 
-      $("#gift-cards").on("change", function () {
-        $("#gift-cards option")[0].innerText = "Select Option / None Selected";
-        gift_card = this.value;
-        $("#shipping-overlay").fadeIn();
-        add_gift_card();
-      });
+        $('#gift-wrap').on('click', function () {
+            if ($('#gift-wrap')[0].checked) {
+                add_gift_wrap();
+            }
+            else {
+                remove_gift_wrap();
+            }
+        })
 
-      setTimeout(function () {
-        $("#shipping-overlay").fadeOut();
-      }, 1500);
-    </script>
-    <script>
-      function isMobile() {
-        if (navigator.userAgent.indexOf("NativeMobileApp") != -1) {
-          return true;
+        function add_gift_card() {
+            if (gift_card_added) {
+                $.ajax({
+                    type: "POST",
+                    url: '/cart/change.js',
+                    data: {
+                        quantity: 0,
+                        id: gift_card_added,
+                    },
+                    success: function (response) {
+                        if (gift_card != "none" && gift_card) {
+                            $.ajax({
+                                type: "POST",
+                                url: '/cart/add.js',
+                                data: {
+                                    quantity: 1,
+                                    id: gift_card,
+                                },
+                                success: function (response) {
+                                    window.location.reload();
+                                },
+                                error: function (request, status, error) {
+                                    alert('product out of stock')
+                                    window.location.reload();
+                                }
+                            });
+                        }
+                        else {
+                            window.location.reload();
+                        }
+                    },
+                    error: function (request, status, error) {
+                        window.location.reload();
+                    }
+                });
+            }
+            else {
+                if (gift_card != "none" && gift_card) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/cart/add.js',
+                        data: {
+                            quantity: 1,
+                            id: gift_card,
+                        },
+                        success: function (response) {
+                            window.location.reload();
+                        },
+                        error: function (request, status, error) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            }
         }
-        return false;
-      }
-      if (isMobile()) {
-        //code here for plobal mobile handling webview
-        console.log("opened in plobal mobile app");
-        $(".login").hide();
-      } else {
-        console.log("not opened in plobal mobile app");
-        $(".order-summary__section--discount").hide();
-        $("#checkout_reduction_code").attr("placeholder", "Gift Card");
-        $(".tag__button").on("click", function (event) {
-          var codeapplied = $(event.target)
-            .parents(".tag__button")
-            .siblings("span.tag__text")[0].innerText;
-          if (!codeapplied.includes("•")) {
-            sessionStorage.setItem("coupon-code", "");
-            sessionStorage.setItem("discount_code", "");
-            sessionStorage.setItem("coupon-remove", true);
-            $("#checkout_reduction_code").attr("placeholder", "Gift Card");
-          }
+
+        $("#gift-cards").on("change", function () {
+            $("#gift-cards option")[0].innerText = "Select Option / None Selected";
+            gift_card = this.value;
+            $("#shipping-overlay").fadeIn()
+            add_gift_card();
         });
-        //
-
-        $(".order-summary__section.order-summary__section--discount")
-          .before(`<label style="    border-top: 1px solid rgba(175,175,175,0.34);
+      
+      setTimeout(function(){
+		$("#shipping-overlay").fadeOut();
+      },1500)
+    </script>
+  		<script>
+                  
+               function isMobile() {
+            if (navigator.userAgent.indexOf('NativeMobileApp') != -1) {
+                return true;
+            }
+            return false;
+        }
+        if(isMobile()){
+        //code here for plobal mobile handling webview
+        	console.log("opened in plobal mobile app");
+         	$('.login').hide();
+        }else{
+        	console.log("not opened in plobal mobile app");
+		$('.order-summary__section--discount').hide();
+		$('#checkout_reduction_code').attr('placeholder','Gift Card' );
+          $('.tag__button').on('click', function(event){
+            var codeapplied = $(event.target).parents('.tag__button').siblings('span.tag__text')[0].innerText;
+            if(!codeapplied.includes('•')){
+                sessionStorage.setItem('coupon-code', '');
+                sessionStorage.setItem('discount_code', '');
+                sessionStorage.setItem('coupon-remove', true);
+				$('#checkout_reduction_code').attr('placeholder','Gift Card' )
+            }
+        })
+//                    
+                    
+			$('.order-summary__section.order-summary__section--discount').before(`<label style="    border-top: 1px solid rgba(175,175,175,0.34);
     padding: 10px 0; display:flex; align-items:center;">
 <input style="-webkit-appearance:checkbox;"type="checkbox" id="gift-card-redemption">
     <p style="font-size:18px;font-weight:600;padding-left: 10px;">Redeem Gift card?</p>
-  </label>`);
-        $("#gift-card-redemption").on("change", function () {
-          var checked_val = $("#gift-card-redemption")[0].checked;
-          if (checked_val) {
-            sessionStorage.setItem("checked", "true");
-            $(
-              ".order-summary__section.order-summary__section--discount"
-            ).show();
-            $(
-              ".order-summary__section.order-summary__section--discount"
-            )[0].style.borderTop = "none";
-          } else {
-            sessionStorage.setItem("checked", "false");
-            $(
-              ".order-summary__section.order-summary__section--discount"
-            ).hide();
+  </label>`)
+              $('#gift-card-redemption').on('change', function(){
+        var checked_val = $('#gift-card-redemption')[0].checked
+        if(checked_val){
+        sessionStorage.setItem('checked','true')
+            $('.order-summary__section.order-summary__section--discount').show();
+			$('.order-summary__section.order-summary__section--discount')[0].style.borderTop = 'none';
+        }
+        else{
+        sessionStorage.setItem('checked','false')
+        $('.order-summary__section.order-summary__section--discount').hide();
+        }
+      })
+          	
+        }
+          if(sessionStorage.getItem('checked') == 'true'){
+			 $('#gift-card-redemption')[0].click();
           }
-        });
-      }
-      if (sessionStorage.getItem("checked") == "true") {
-        $("#gift-card-redemption")[0].click();
-      }
-    </script>
-    <script>
-      $("#checkout_shipping_address_zip").on("change", async function () {
-        var pin_c = $("#checkout_shipping_address_zip")[0].value;
+		
+	    </script>
+  		<script>
+                    $('#checkout_shipping_address_zip').on('change',async function(){
+            var pin_c = $('#checkout_shipping_address_zip')[0].value;
 
-        const data = JSON.stringify({
-          query: `	query {pincode(
+
+                const data = JSON.stringify({
+                  query: `	query {pincode(
               pin: "${pin_c}"
             ){
               city
@@ -2307,102 +2245,80 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
 					state
             }
             }`,
-        });
+                });
 
-        const response = await fetch(
-          "https://boatfcstageapi.farziengineer.co/graphql/",
-          {
-            method: "post",
-            body: data,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+                const response = await fetch(
+                  'https://boatfcstageapi.farziengineer.co/graphql/',
+                  {
+                    method: 'post',
+                    body: data,
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                  }
+                );
 
-        const json = await response.json();
-        if (json.data.pincode != null) {
-          if (json.data.pincode.serviceable) {
-            $("#checkout_shipping_address_city")[0].value =
-              json.data.pincode.city;
-            if ($(".wrong_pincode").length > 0) {
-              $(".wrong_pincode").remove();
-            }
-            if ($(".wrong_number").length > 0) {
-              if ($(".wrong_number")[0].style.display == "none") {
-                $("#continue_button").removeAttr("disabled");
-                $("#continue_button").css("background-color", "red");
-              }
-            } else {
-              $("#continue_button").removeAttr("disabled");
-              $("#continue_button").css("background-color", "red");
-            }
-          }
-        } else {
-          if ($(".wrong_pincode").length == 0) {
-            $("#checkout_shipping_address_zip").after(
-              `<p class="wrong_pincode" class="field__message field__message--error" id="error-for-zip" style="color:red; padding:0px">Sorry, we don't deliver to this pincode.</p>`
-            );
-            $("#continue_button").attr("disabled", true);
-            $("#continue_button").css("background-color", "#bdbdbd");
-          }
-        }
-        if (response.status != 200) {
-          $("#checkout_shipping_address_city").removeAttr("readonly");
-          $("#continue_button").removeAttr("disabled");
-          $("#continue_button").css("background-color", "red");
-        }
-      });
-      $("#checkout_shipping_address_city").attr("readonly", "");
-    </script>
-    <script>
-      $("#checkout_shipping_address_phone").attr(
-        "autocomplete",
-        "new-password"
-      );
-      setInterval(function () {
-        if (
-          $("#checkout_shipping_address_phone")
-            .val()
-            .replace(" ", "")
-            .match(/^\d{10}$/)
-        ) {
-          if ($(".wrong_pincode").length == 0) {
-            $("#continue_button").removeAttr("disabled");
-            $("#continue_button").css("background-color", "red");
-          }
-          if (
-            $("#checkout_shipping_address_zip")
-              .parents()
-              .eq(1)
-              .hasClass("field--error")
-          ) {
-            if (
-              !$("#checkout_shipping_address_province")
-                .parents()
-                .eq(0)
-                .hasClass("field--error")
-            ) {
-              $("#checkout_shipping_address_province")
-                .parents()
-                .eq(0)
-                .addClass("field--error");
-            }
-          }
-        }
-      }, 100);
-      setTimeout(() => {
-        $("#checkout_shipping_address_province").on("change", function () {
-          $("#checkout_shipping_address_zip")
-            .parents()
-            .eq(1)
-            .removeClass("field--error");
-          $("#checkout_shipping_address_province")
-            .parents()
-            .eq(0)
-            .removeClass("field--error");
-        });
-      }, 3000);
-    </script>
-  </body>
+                const json = await response.json();
+                if(json.data.pincode != null ){
+                  if(json.data.pincode.serviceable){
+                    $('#checkout_shipping_address_city')[0].value = json.data.pincode.city;
+                    if ($('.wrong_pincode').length > 0){
+                      $('.wrong_pincode').remove();
+                    }
+                    if($('.wrong_number').length > 0){
+					 if($('.wrong_number')[0].style.display == 'none'){
+                       $('#continue_button').removeAttr('disabled');
+                       $('#continue_button').css('background-color', 'red');
+                     }
+                    }
+                    else{
+                       $('#continue_button').removeAttr('disabled');
+                       $('#continue_button').css('background-color', 'red');
+                    }
+                }
+                 
+                }
+                      else{
+                        if ($('.wrong_pincode').length == 0) {
+                          $('#checkout_shipping_address_zip').after(`<p class="wrong_pincode" class="field__message field__message--error" id="error-for-zip" style="color:red; padding:0px">Sorry, we don't deliver to this pincode.</p>`);
+                          $('#continue_button').attr('disabled', true);
+                            $('#continue_button').css('background-color', '#bdbdbd');
+                        }
+                      }
+                if(response.status != 200){
+                  $('#checkout_shipping_address_city').removeAttr('readonly');
+					$('#continue_button').removeAttr('disabled');
+                       $('#continue_button').css('background-color', 'red');
+                }
+              });
+                 $('#checkout_shipping_address_city').attr('readonly','');
+                </script>
+				<script>
+                  $('#checkout_shipping_address_phone').attr('autocomplete','new-password');
+                  
+//                   if(Shopify.Checkout.step === "contact_information" ){
+                    setInterval(function(){
+                      if ($('#checkout_shipping_address_phone').val().replace(' ','').match(/^\d{10}$/) ){
+                        if ($('.wrong_pincode').length == 0) {
+                          $('#continue_button').removeAttr('disabled');
+                          $('#continue_button').css('background-color', 'red');
+                        }
+                        if($('#checkout_shipping_address_zip').parents().eq(1).hasClass('field--error')){
+                          if(!$('#checkout_shipping_address_province').parents().eq(0).hasClass('field--error')){
+                              $('#checkout_shipping_address_province').parents().eq(0).addClass('field--error')
+                          }
+                        }
+                      }
+                    },100)
+//                   }
+                  
+                  setTimeout(()=>{
+                    $('#checkout_shipping_address_province').on('change',function(){
+                      $('#checkout_shipping_address_zip').parents().eq(1).removeClass('field--error')
+                      $('#checkout_shipping_address_province').parents().eq(0).removeClass('field--error')
+                    })
+                  },3000)
+  				</script>
+</body>
+
 </html>
