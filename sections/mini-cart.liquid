@@ -501,13 +501,17 @@
       <div id="zestmoney-widget-control-cart"></div>
     
       {%- if section.settings.show_checkout_button -%}
-        <div class="row justify-content-around">
+     {% if cart.total_price <= 4700000   %} 
+      <div class="row justify-content-around">
       	{% render 'gokwik-checkout' %}
         <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
         Pay Via Card 
-          
         </button>
       </div>
+                {% else %}
+                <p>Cart total should be less than Rs 47000 </p>
+                
+              {% endif %} 
       {%- else -%}
         <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
       {%- endif -%}
