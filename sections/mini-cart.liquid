@@ -1,5 +1,5 @@
 <style>
-
+  
   button.checkout-button.button.button--primary.button--full {
     background: #ff000000;
     color: red;
@@ -218,11 +218,6 @@
         <input type="hidden" name="checkout">
 
         {%- for line_item in cart.items -%}
-          {%- if line_item.product.url contains '?' -%}
-            {%- assign product_url_contains_query = true -%}
-          {%- else -%}
-            {%- assign product_url_contains_query = false -%}
-          {%- endif -%}
           <line-item class="line-item">
             <div class="line-item__content-wrapper">
               <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
@@ -493,13 +488,14 @@
         </div>
       {%- endif -%}
       {%- endcomment -%}
- <div class="d-flex justify-content-between">
-   <span class="cart-total pb-2"> <b>Total:</b></span>
-      <input class="cart-total" value="{{cart.total_price | money_with_currency}}" type="hidden">
-   <b> {{- cart.total_price | money_with_currency -}}</b>
-                 </div>
+ 	  <div class="d-flex justify-content-between">
+   		<span class="cart-total pb-2"> <b>Total:</b></span>
+      	<input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
+        <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency -}}</b></span>
+      </div>
       <div id="zestmoney-widget-control-cart"></div>
-    
+      <p class="cart-val-error"></p>
+      <p class="cart-qty-error"></p>
       {%- if section.settings.show_checkout_button -%}
         <div class="row justify-content-around">
       	{% render 'gokwik-checkout' %}
@@ -524,28 +520,9 @@
   {%- endif -%}
 </cart-drawer>
 <script>
-  $('.edit-cart').change(function() {
-  	let selected_id = $(this).val();
-    let formData = {
-     'items': [{
-      'id': selected_id,
-      'quantity': 1
-      }]
-    };
-    fetch(window.Shopify.routes.root + 'cart/add.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => {
-      return response.json();
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-	});
-  })
+      
+  
+  
 </script>
 
 {% schema %}
