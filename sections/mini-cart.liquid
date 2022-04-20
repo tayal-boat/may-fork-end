@@ -504,6 +504,7 @@
       </div>
       <div id="zestmoney-widget-control-cart"></div>
       <p class="cart-val-error"></p>
+      <p class="cart-qty-error"></p>
       {%- if section.settings.show_checkout_button -%}
         <div class="row justify-content-around">
       	{% render 'gokwik-checkout' %}
@@ -538,6 +539,20 @@
         $('.mini-cart__drawer-footer .checkout-button, .mini-cart__drawer-footer .gokwik-checkout').show()
         $('.mini-cart__drawer-footer .cart-val-error').hide()
       }
+    }, 1000 )
+    
+    setInterval(function () {
+      location.reload;
+      {% for line_item in cart.items %}
+      {% if line_item.quantity > 7 %}
+        $('.mini-cart__drawer-footer .checkout-button, .mini-cart__drawer-footer .gokwik-checkout').hide()
+        $('.mini-cart__drawer-footer .cart-qty-error').html(`You cannot add more than <strong>7 units!</strong> Reduce qyantity to proceed.`).show();
+      {% else %}
+        $('.mini-cart__drawer-footer .checkout-button, .mini-cart__drawer-footer .gokwik-checkout').show()
+        $('.mini-cart__drawer-footer .cart-qty-error').hide()
+      }
+      {% endif %}
+      {% endfor %}
     }, 1000 )
   
   
