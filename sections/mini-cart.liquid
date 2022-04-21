@@ -916,13 +916,22 @@ background: #ff000000;
       <div id="zestmoney-widget-control-cart"></div>
       <p class="cart-val-error"></p>
       {%- if section.settings.show_checkout_button -%}
-        <div class="row justify-content-around checkout-buttons-div">
-      	{% render 'gokwik-checkout' %}
-        <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-        Pay Via Card 
-          
-        </button>
-      </div>
+      	{% if cart.total_price <= 4700000   %}
+   			{%- for line_item in cart.items -%} 
+      			{% assign increment itemQty = line_item.quantity %}  
+      		{%- endfor -%}
+       		{% if itemQty < 8   %}
+              <div class="row justify-content-around checkout-buttons-div">
+                {% render 'gokwik-checkout' %}
+                <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
+                Pay Via Card 
+
+                </button>
+              </div>
+      		{% else %}
+      			<p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-</strong> and must not contain more than <strong>7 units!</strong> Modify your cart to proceed.</p>
+      		{% endif %}
+      	{% endif %}
       {%- else -%}
         <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
       {%- endif -%}
