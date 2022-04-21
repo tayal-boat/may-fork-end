@@ -14,15 +14,11 @@
     text-align: center;
     height: 50px;
 }
-    .line-item__remove-button {
-  position: absolute;
-    }
-  @media (max-width:768px){
-  .line-item__remove-button {
-  right: 4vw;
-  top: 3.8rem;
-}  
+  .table td, .rte table td {
+  	padding-bottom: var(--table-spacing);
   }
+  .line-item__quantity .quantity-selector {color: white;}
+  .line-item__image-wrapper {background: #c4c4c4;}
 </style>
 <section>
   <div class="container container--medium">
@@ -239,10 +235,10 @@
                                 {% render 'icon' with 'minus' %}
                               </a>
 
-                              <input is="input-number" class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
+                              <input is="input-number" max="7" class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
 
                               {%- if allow_more -%}
-                                <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                                <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                                   {%- render 'icon' with 'plus' -%}
                                 </a>
                               {%- else -%}
@@ -272,7 +268,7 @@
                         <span class="product-item-meta__vendor heading heading--xxsmall" style="visibility: hidden">x</span>
                       {%- endif -%}
 
-                      <line-item-quantity style="display: block; margin-top: -4px">
+                      <line-item-quantity style="display: block; margin-top: -4px;position: relative;">
                         {{ quantity_selector_inner }}
                       </line-item-quantity>
                     </td>
@@ -345,7 +341,9 @@
                       <div class="cart__recap-block" {{ block.shopify_attributes }}>
                         <div class="cart__total-container">
                           <span class="heading h6">{{ 'cart.general.total' | t }}</span>
+                          <input class="cart-total" value="{{ cart.total_price | divided_by: 100 }}" hidden>
                           <span class="heading h6">{{ cart.total_price | money_with_currency }}</span>
+                          <p class="cart-val-error"></p>
                         </div>
 
                         {%- if cart.cart_level_discount_applications != blank -%}
@@ -429,6 +427,21 @@
     {%- endif -%}
   </div>
 </section>
+
+<script>
+	var cartVal = $('.cart-total').val();
+    $('.line-item').each(function() {
+    let currQty = $(this).find('.quantity-selector__input').val();
+     if(currQty > 7 || cartVal > 49000) {
+      $('.cart__recap .checkout-button, .cart__recap .gokwik-checkout').hide()
+      $('.cart__recap .cart-val-error').html(`Your cart value should be less than <strong>Rs.49000/-</strong> and must not contains more than <strong>7 units!</strong> Modify your cart to proceed.`).show();
+     }
+     else {
+      $('.cart__recap .checkout-button, .cart__recap .gokwik-checkout').show()
+      $('.cart__recap .cart-val-error').hide()
+     }
+   })
+</script>
 
 {% schema %}
 {
