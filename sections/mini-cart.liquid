@@ -750,7 +750,6 @@ background: #ff000000;
 
 
             </div>
-            	{% assign increment itemQty = line_item.quantity %}  
             {% if line_item.quantity > 6 %}
               <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
             {% endif %}
@@ -766,7 +765,7 @@ background: #ff000000;
           </line-item>
         {%- endfor -%}
       </form>
-{{line_item.quantity}}
+
       {%- if section.settings.show_recommendations -%}
         <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
           {%- assign acceptable_recommendations_count = 0 -%}
@@ -918,6 +917,9 @@ background: #ff000000;
 <!--       <p class="cart-val-error"></p> -->
       {%- if section.settings.show_checkout_button -%}
       	{% if cart.total_price <= 4700000   %}
+   			{%- for line_item in cart.items -%} 
+      			{% assign increment itemQty = line_item.quantity %}  
+      		{%- endfor -%}
        		{% if itemQty < 8   %}
               <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
