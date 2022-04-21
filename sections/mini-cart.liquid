@@ -387,6 +387,13 @@
 
 
             </div>
+              
+           {% assign [items_counts-{increament-counter}] = [line_item.quantity]%}
+              <p>{ items_counts-{increment-counter} }</p>
+              {% capture items_counts-{increment-counter} %}
+           
+        {% endcapture %}
+           
             {% if line_item.quantity > 6 %}
               <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
             {% endif %}
@@ -402,7 +409,7 @@
           </line-item>
         {%- endfor -%}
       </form>
-
+      
       {%- if section.settings.show_recommendations -%}
         <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
           {%- assign acceptable_recommendations_count = 0 -%}
@@ -494,16 +501,33 @@
         <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency -}}</b></span>
       </div>
       <div id="zestmoney-widget-control-cart"></div>
+
       <p class="cart-val-error"></p>
       <p class="cart-qty-error"></p>
+
       {%- if section.settings.show_checkout_button -%}
-        <div class="row justify-content-around">
+     {% if cart.total_price <= 4700000   %} 
+       {% if cart.item_count < 8   %}
+      <div class="row justify-content-around">
       	{% render 'gokwik-checkout' %}
         <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
         Pay Via Card 
-          
         </button>
       </div>
+                {% else %}
+      <div class="w-100 gokwik-checkout">
+              <button  class="text-white">
+                <b>Your cart value should be less than <strong>Rs.47000/-</strong> and must not contain more than <strong>7 units!</strong> Modify your cart to proceed. </b>
+        </button>
+      </div>   
+       {% endif %} 
+      {%- else -%}
+       <div class="w-100 gokwik-checkout">
+              <button  class="text-white">
+                <b>Your cart value should be less than <strong>Rs.47000/-</strong> and must not contain more than <strong>7 units!</strong> Modify your cart to proceed. </b>
+        </button>
+      </div>   
+              {% endif %} 
       {%- else -%}
         <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
       {%- endif -%}
