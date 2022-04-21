@@ -6033,7 +6033,7 @@
               <div class="cart-notification__text-wrapper">
                 <span class="cart-notification__heading heading hidden-phone">${window.themeVariables.strings.cartItemAdded}</span>
                 <span class="cart-notification__heading heading hidden-tablet-and-up">${window.themeVariables.strings.cartItemAddedShort}</span>
-				<a href="javascriot:void(0)" class="noti-view">View Cart</a>
+				<a href="" class="noti-view">View Cart</a>
               </div>
               
               ${closeButtonHtml}
