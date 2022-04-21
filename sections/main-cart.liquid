@@ -396,11 +396,22 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-				{% render 'gokwik-checkout' %}
-                <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
-                  <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
-                  {{- 'cart.general.checkout' | t -}}
-                </button>
+                {% if cart.total_price <= 4700000   %}
+                  {%- for line_item in cart.items -%} 
+                      {% assign increment itemQty = line_item.quantity %}  
+                  {%- endfor -%}
+                  {% if itemQty < 8   %}
+                    {% render 'gokwik-checkout' %}
+                    <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
+                      <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
+                      {{- 'cart.general.checkout' | t -}}
+                    </button>
+                  {% else %}
+                      <p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
+                  {% endif %}
+                {%- else -%}
+                        <p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
+                {% endif %}
               </div>
 
               {%- if section.settings.show_payment_methods and shop.enabled_payment_types.size > 0 -%}
@@ -422,7 +433,7 @@
   </div>
 </section>
 
-<script>
+<!-- <script>
 	var cartVal = $('.cart-total').val();
     $('.line-item').each(function() {
     let currQty = $(this).find('.quantity-selector__input').val();
@@ -436,7 +447,7 @@
      }
    })
 </script>
-
+ -->
 {% schema %}
 {
   "name": "Cart",
