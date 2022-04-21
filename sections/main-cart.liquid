@@ -396,16 +396,30 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-             {% if cart.total_price <= 4700000   %} 
-				{% render 'gokwik-checkout' %}
-                <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
-                  <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
-                  {{- 'cart.general.checkout' | t -}}
-                </button>
+  {% if cart.total_price <= 4700000   %}
+   {%- for line_item in cart.items -%} {% assign increment itemQty = line_item.quantity %}  {%- endfor -%}
+       {% if itemQty < 8   %}
+      
+      <div class="row justify-content-around">
+      	{% render 'gokwik-checkout' %}
+        <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
+        Pay Via Card 
+        </button>
+      </div>
                 {% else %}
-                <h2>Total should be less than Rs 47000 for checkout </h2>
-                
-              {% endif %}  
+      <div class="w-100 gokwik-checkout">
+      <button  class="text-white">
+       <p>Cart must not contain more than <strong>7 units! of any product</strong> Modify your cart to proceed.</p>
+        </button>
+      </div>   
+       {% endif %} 
+      {%- else -%}
+       <div class="w-100 gokwik-checkout">
+      <button  class="text-white">
+      <p> Your cart value should be less than <strong>Rs.47000/-</strong> Modify your cart to proceed.</p>
+        </button>
+      </div>   
+              {% endif %} 
                 
               </div>
 
