@@ -6033,7 +6033,7 @@
               <div class="cart-notification__text-wrapper">
                 <span class="cart-notification__heading heading hidden-phone">${window.themeVariables.strings.cartItemAdded}</span>
                 <span class="cart-notification__heading heading hidden-tablet-and-up">${window.themeVariables.strings.cartItemAddedShort}</span>
-				<span class="noti-view">View Cart</a>
+				<span is="toggle-link" aria-controls="mini-cart" aria-expanded="false" class="header__icon-wrapper tap-area header__cart noti-view" aria-label="Cart" data-no-instant="">View Cart</span>
               </div>
               
               ${closeButtonHtml}
