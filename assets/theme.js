@@ -6033,7 +6033,7 @@
               <div class="cart-notification__text-wrapper">
                 <span class="cart-notification__heading heading hidden-phone">${window.themeVariables.strings.cartItemAdded}</span>
                 <span class="cart-notification__heading heading hidden-tablet-and-up">${window.themeVariables.strings.cartItemAddedShort}</span>
-                <a href="${window.themeVariables.routes.cartUrl}" class="cart-notification__view-cart link">${window.themeVariables.strings.cartViewCart}</a>
+				<a href="" class="noti-view">View Cart</a>
               </div>
               
               ${closeButtonHtml}
@@ -6041,6 +6041,11 @@
           </div>
         </div>
       `;
+        $('.noti-view').click(function(event) {
+          	event.preventDefault();
+            $('.drawer--quick-buy').attr('open', false);
+            $('.header__cart').attr('aria-expanded', true)
+        })
       } else {
         this.classList.add("cart-notification--error");
         this.innerHTML = `

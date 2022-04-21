@@ -343,7 +343,7 @@
                           <span class="heading h6">{{ 'cart.general.total' | t }}</span>
                           <input class="cart-total" value="{{ cart.total_price | divided_by: 100 }}" hidden>
                           <span class="heading h6">{{ cart.total_price | money_with_currency }}</span>
-                          <p class="cart-val-error"></p>
+<!--                           <p class="cart-val-error"></p> -->
                         </div>
 
                         {%- if cart.cart_level_discount_applications != blank -%}
@@ -396,31 +396,22 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-   {% if cart.total_price <= 4700000   %}
-   {%- for line_item in cart.items -%} {% assign increment itemQty = line_item.quantity %}  {%- endfor -%}
-       {% if itemQty < 8   %}
-      
-      <div class="row justify-content-around">
-      	{% render 'gokwik-checkout' %}
-        <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-        Pay Via Card 
-        </button>
-      </div>
-                {% else %}
-      <div class="w-100 gokwik-checkout">
-      <button  class="text-white">
-       <p style="font-size:12px;">Cart must not contain more than <strong>7 units! of any product</strong> Modify your cart to proceed.</p>
-        </button>
-      </div>   
-       {% endif %} 
-      {%- else -%}
-       <div class="w-100 gokwik-checkout">
-      <button  class="text-white">
-      <p style="font-size:12px;" > Your cart value should be less than <strong>Rs.47000/-</strong> Modify your cart to proceed.</p>
-        </button>
-      </div>   
-              {% endif %} 
-                
+                {% if cart.total_price <= 4700000   %}
+                  {%- for line_item in cart.items -%} 
+                      {% assign increment itemQty = line_item.quantity %}  
+                  {%- endfor -%}
+                  {% if itemQty < 8   %}
+                    {% render 'gokwik-checkout' %}
+                    <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
+                      <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
+                      {{- 'cart.general.checkout' | t -}}
+                    </button>
+                  {% else %}
+                      <p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
+                  {% endif %}
+                {%- else -%}
+                        <p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
+                {% endif %}
               </div>
 
               {%- if section.settings.show_payment_methods and shop.enabled_payment_types.size > 0 -%}
@@ -442,7 +433,21 @@
   </div>
 </section>
 
-
+<!-- <script>
+	var cartVal = $('.cart-total').val();
+    $('.line-item').each(function() {
+    let currQty = $(this).find('.quantity-selector__input').val();
+     if(currQty > 7 || cartVal > 47000) {
+      $('.cart__recap .checkout-button, .cart__recap .gokwik-checkout').hide()
+      $('.cart__recap .cart-val-error').html(`Your cart value should be less than <strong>Rs.47000/-</strong> and must not contains more than <strong>7 units!</strong> Modify your cart to proceed.`).show();
+     }
+     else {
+      $('.cart__recap .checkout-button, .cart__recap .gokwik-checkout').show()
+      $('.cart__recap .cart-val-error').hide()
+     }
+   })
+</script>
+ -->
 {% schema %}
 {
   "name": "Cart",
