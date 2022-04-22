@@ -396,11 +396,20 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-                {% if cart.total_price <= 4700000   %}
-                  {%- for line_item in cart.items -%} 
-                      {% assign increment itemQty = line_item.quantity %}  
-                  {%- endfor -%}
-                  {% if itemQty < 8   %}
+             	{% if cart.total_price <= 4700000   %}
+      {% capture itemQtylist %}
+   			{%- for line_item in cart.items -%} 
+      			{{ line_item.quantity | times: 1 }}  
+      		{%- endfor -%}
+       {% endcapture %}
+      {% assign lists  = itemQtylist | split: ''%}
+        {% assign listss = true %}
+      {% for list in lists %} 
+      {% if list >= '8' %}
+     {% assign listss = false %}
+      {% endif %}
+       {% endfor %}
+      {% if listss == true %}
                     {% render 'gokwik-checkout' %}
                     <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
                       <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
@@ -433,21 +442,6 @@
   </div>
 </section>
 
-<!-- <script>
-	var cartVal = $('.cart-total').val();
-    $('.line-item').each(function() {
-    let currQty = $(this).find('.quantity-selector__input').val();
-     if(currQty > 7 || cartVal > 47000) {
-      $('.cart__recap .checkout-button, .cart__recap .gokwik-checkout').hide()
-      $('.cart__recap .cart-val-error').html(`Your cart value should be less than <strong>Rs.47000/-</strong> and must not contains more than <strong>7 units!</strong> Modify your cart to proceed.`).show();
-     }
-     else {
-      $('.cart__recap .checkout-button, .cart__recap .gokwik-checkout').show()
-      $('.cart__recap .cart-val-error').hide()
-     }
-   })
-</script>
- -->
 {% schema %}
 {
   "name": "Cart",
