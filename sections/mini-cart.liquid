@@ -917,21 +917,10 @@ background: #ff000000;
 <!--       <p class="cart-val-error"></p> -->
       {%- if section.settings.show_checkout_button -%}
       	{% if cart.total_price <= 4700000   %}
-      {% capture itemQtylist %}
    			{%- for line_item in cart.items -%} 
-      			{{ line_item.quantity | times: 1 }}  
+      			{% assign increment itemQty = line_item.quantity %}  
       		{%- endfor -%}
-       {% endcapture %}
-      {% assign lists  = itemQtylist | split: ''%}
-      {{ lists   }}
-        {% assign listss = true %}
-      {% for list in lists %} 
-      {% if list >= 8 %}
-     {% assign listss = false %}
-      {% endif %}
-       {% endfor %}
-      {{listss }}
-      {% if listss == true %}
+       		{% if itemQty < 8 %}
               <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
                 <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
@@ -942,7 +931,6 @@ background: #ff000000;
       		{% else %}
       			<p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
       		{% endif %}
-     
       	{%- else -%}
       			<p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
       	{% endif %}
