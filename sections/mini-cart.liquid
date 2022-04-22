@@ -745,14 +745,15 @@ background: #ff000000;
                   </div>
 				  <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
                 </line-item-quantity>
+                {% if line_item.quantity > 6 %}
+                  <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% endif %}
               </div>
 
 
 
             </div>
-            {% if line_item.quantity > 6 %}
-              <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
-            {% endif %}
+            
             {% if line_item.product.variants.size > 1 %}
             	<p class="margin visually-hidden">More than one variants.</p>
             {% endif %}
@@ -916,20 +917,14 @@ background: #ff000000;
       <div id="zestmoney-widget-control-cart"></div>
 <!--       <p class="cart-val-error"></p> -->
       {%- if section.settings.show_checkout_button -%}
-      	{% if cart.total_price <= 4700000   %}
-      		{% capture itemQtylist %}
-      			{%- for line_item in cart.items -%} 
-      				{{ line_item.quantity | times: 1 }}  
-      			{%- endfor -%}
-       		{% endcapture %}
-      		{% assign lists  = itemQtylist | split: ''%}
-        	{% assign listss = true %}
-      		{% for list in lists %} 
-      			{% if list >= '8' %}
-     				{% assign listss = false %}
+      	{% if cart.total_price <= 4700000 %}
+      		{%- assign is_validation_ok = true -%}
+      		{% for line_item in cart.items %}
+      			{% if line_item.quantity > 7 %}
+      				{%- assign is_validation_ok = false -%}
       			{% endif %}
-       		{% endfor %}
-      		{% if listss == true %}
+      		{% endfor %}
+      		{% if is_validation_ok == true %}
               <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
                 <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
