@@ -1,0 +1,311 @@
+{% assign blog = blogs[section.settings.blog] %}
+{% capture chevron_right %}<span class="icon-small icon-natcol">{% include 'svg-chevron-right' %}</span>{% endcapture %}
+
+<div class="container padded-row blog-row" data-section-type="featured-blog">
+  {% unless blog.empty? %}
+
+    <h2 class="hometitle h4-style align-center"><a href="{{ blog.url }}">{{ section.settings.title | escape }}</a></h2>
+
+    {% if blog.articles.size == 0 %}
+      <p class="align-center">{{ 'onboarding.blog.empty' | t }}</p>
+    {% else %}
+      {% if section.settings.crop_image %}
+        {% assign aspect_ratio_split = section.settings.crop_style | split: '-' %}
+        {% assign aspect_ratio = 1.0 | times: aspect_ratio_split[0] | divided_by: aspect_ratio_split[1] %}
+      {% else %}
+        {% assign aspect_ratio = false %}
+      {% endif %}
+      <div class="article-list article-layout--columns article-layout--one-row">
+        <div class="article">
+          <div class="article__inner">
+              <div class="article-image">
+                <a href="{{ section.settings.pillar_url }}">
+                  {% include 'responsive-image', image: section.settings.pillar_image, aspect_ratio: aspect_ratio %}
+                </a>
+              </div>
+            <h3><a href="{{ section.settings.pillar_url }}">{{ section.settings.pillar_title }}</a></h3>
+            <div class="meta">
+              <span class="read-more">
+              	<a href="{{ section.settings.pillar_url }}">Read more</a>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="article">
+          <div class="article__inner">
+              <div class="article-image">
+                <a href="{{ section.settings.pillar_url_2 }}">
+                  {% include 'responsive-image', image: section.settings.pillar_image_2, aspect_ratio: aspect_ratio %}
+                </a>
+              </div>
+            <h3><a href="{{ section.settings.pillar_url_2 }}">{{ section.settings.pillar_title_2 }}</a></h3>
+            <div class="meta">
+              <span class="read-more">
+              	<a href="{{ section.settings.pillar_url_2 }}">Read more</a>
+              </span>
+            </div>
+          </div>
+        </div>
+        {% for article in blog.articles limit: 1 %}
+        <div class="article">
+          <div class="article__inner">
+            {% if article.image and section.settings.show_featured_image %}
+              <div class="article-image">
+                <a href="{{ article.url }}">
+                  {% include 'responsive-image', image: article.image, aspect_ratio: aspect_ratio %}
+                </a>
+              </div>
+            {% endif %}
+            <h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
+            <div class="user-content hide">
+              {{ article.excerpt_or_content }}
+            </div>
+            <div class="meta">
+              <span class="iconmeta time">
+                {% if section.settings.show_date %}
+                  {{ article.published_at | date: format: 'month_date_year' }}
+                {% endif %}
+                {% if section.settings.show_author %}
+                  {% if section.settings.show_date %}&mdash;{% endif %}
+                  <span class="author">{{ article.author }}</span>
+                {% endif %}
+              </span>
+              <span class="read-more">
+              	<a href="{{ article.url }}">Read more</a>
+              </span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% else %}
+    <h2 class="hometitle h4-style align-center">{{ section.settings.title | escape }}</h2>
+    <div class="article-list article-layout--columns article-layout--one-row">
+      {% for i in (1..3) %}
+      <div class="article">
+        <div class="article__inner">
+          {% if section.settings.show_featured_image %}
+          <div class="article-image">
+            <div class="placeholder-image">{{ 'image' | placeholder_svg_tag }}</div>
+          </div>
+          {% endif %}
+          <h3>{{ 'onboarding.article.title' | t }}</h3>
+          <div class="user-content hide">
+            {{ 'onboarding.article.excerpt' | t }}
+          </div>
+          <div class="meta">
+            <span class="iconmeta time">
+              {% if section.settings.show_date %}
+                {{ 'now' | date: format: 'month_date_year' }}
+              {% endif %}
+              {% if section.settings.show_author %}
+                {% if section.settings.show_date %}&mdash;{% endif %}
+                <span class="author">{{ 'onboarding.article.author' | t }}</span>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endunless %}
+</div>
+<style>
+  .article-list .article {border:0!important;padding: 0 20px!important;color: #fff;margin-bottom: 0!important;}
+  .article-list .article h3 {color: #fff;font-size: 20px;line-height: normal;min-height:74px;}
+  .article-list .article h3 a:hover {color: #ff0000;text-decoration: none;}
+  .article-list .slick-list {margin: 0px -5px 0px -5px;}
+  .article-list .slick-track {display: flex;}
+  .article .user-content {
+    font-size: 13px;
+    line-height: normal;
+    min-height: 35px;
+    margin-bottom: 0!important;
+  }
+  .hometitle {color: #fff;font-size:50px!important;}
+  .hometitle a:hover, .read-more a:hover {color: #fff;text-decoration: none;}
+  .read-more a{
+  	color: #fff;
+    font-style: normal;
+    border: 1px solid #ff0000;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 5px;
+    font-size: 13px;
+    margin: 10px 0;
+  }
+  .article img {filter: grayscale(100%);transition: all .4s ease-in-out;}
+  .article img:hover {filter: grayscale(0);}
+  @media screen and (max-width: 600px) {
+    .article.slick-slide {width: 300px!important;}
+    .article-list .slick-list {padding-left: 0!important;}
+    .article-list .article h3 {font-size: 15px;}
+    .article .user-content, .article-list .article h3{min-height: 1px}
+    .hometitle {font-size:45px!important;}
+    .article-list {display: flex;overflow-x: auto;}
+    .article-list .article {flex: 1;min-width: 300px;padding: 0 10px!important;}
+  }
+</style>
+<script type="text/javascript">
+$(document).ready(function($) {
+  	var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+    $('.article-list').on('click', function(){
+      clevertap.event.push("Homepage Blog section clicked", {"userSource": userSource});
+    });
+});
+</script>
+{% comment %}
+<script type="text/javascript">
+	$(document).ready(function($) {
+      $('.article-list').slick({
+        dots: false,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        autoplay: false,
+        autoplaySpeed: 2000,
+        arrows: true,
+        responsive: [
+          {
+          breakpoint: 3000,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+          
+          {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+           breakpoint: 767,
+           settings: {
+              arrows: false,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              centerMode: true,
+			  centerPadding: '20%'
+           }
+        }]
+    });
+    $('.article-list').on('click', function(){
+      	clevertap.event.push("Homepage Blog section clicked");
+    });
+});
+</script>
+{% endcomment %}
+{% schema %}
+  {
+    "name": "Blog posts",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Blog posts"
+      },
+      {
+        "type": "blog",
+        "id": "blog",
+        "label": "Blog"
+      },
+	  {
+        "type": "image_picker",
+        "id": "pillar_image",
+        "label": "Pillar Blog Image"
+      },
+	  {
+        "type": "text",
+        "id": "pillar_title",
+        "label": "Pillar Blog Title",
+        "default": "Pillar Blog Title"
+      },
+	  {
+        "type": "url",
+        "id": "pillar_url",
+        "label": "Pillar Blog URL"
+      },
+	  {
+        "type": "image_picker",
+        "id": "pillar_image_2",
+        "label": "Pillar Blog Image 2"
+      },
+	  {
+        "type": "text",
+        "id": "pillar_title_2",
+        "label": "Pillar Blog Title 2",
+        "default": "Pillar Blog Title 2"
+      },
+	  {
+        "type": "url",
+        "id": "pillar_url_2",
+        "label": "Pillar Blog URL 2"
+      },
+	    {
+        "type": "checkbox",
+        "id": "show_date",
+        "label": "Show date",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_author",
+        "label": "Show author",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Featured image"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_featured_image",
+        "label": "Show",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "crop_image",
+        "label": "Crop",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "crop_style",
+        "label": "Crop style",
+        "options": [
+          {
+            "value": "1-1",
+            "label": "Square"
+          },
+          {
+            "value": "3-4",
+            "label": "Portrait"
+          },
+          {
+            "value": "16-9",
+            "label": "Landscape"
+          }
+        ],
+        "default": "16-9"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Blog posts",
+        "category": "Blog",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}
