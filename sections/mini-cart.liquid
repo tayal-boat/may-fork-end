@@ -919,22 +919,11 @@ background: #ff000000;
       	{% if cart.total_price <= 4700000   %}
       		{% assign is_validation_ok = true%}
       		{% for line_item in cart.items %}
-      			
-      		{% endfor %}
-      		{% capture itemQtylist %}
-      			{%- for line_item in cart.items -%} 
-      				{{ line_item.quantity | times: 1 }}  
-      			{%- endfor -%}
-       		{% endcapture %}
-      		{% assign lists  = itemQtylist | split: '' %}
-      <p>=={{lists}}==</p>
-        	{% assign listss = true %}
-      		{% for list in lists %} 
-      			{% if list >= '8' %}
-     				{% assign listss = false %}
+      			{% if line_item.quantity > 7 %}
+      				{% assign is_validation_ok = false %}
       			{% endif %}
-       		{% endfor %}
-      		{% if listss == true %}
+      		{% endfor %}
+      		{% if is_validation_ok == true %}
               <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
                 <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
