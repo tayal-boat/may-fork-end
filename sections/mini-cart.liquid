@@ -916,20 +916,20 @@ background: #ff000000;
       <div id="zestmoney-widget-control-cart"></div>
 <!--       <p class="cart-val-error"></p> -->
       {%- if section.settings.show_checkout_button -%}
-      	{% if cart.total_price <= 4700000   %}
-      		{% capture itemQtylist %}
-      			{%- for line_item in cart.items -%} 
-      				{{ line_item.quantity | times: 1 }}  
-      			{%- endfor -%}
-       		{% endcapture %}
-      		{% assign lists  = itemQtylist | split: ''%}
-        	{% assign listss = true %}
-      		{% for list in lists %} 
-      			{% if list >= '8' %}
-     				{% assign listss = false %}
-      			{% endif %}
-       		{% endfor %}
-      		{% if listss == true %}
+     	{% if cart.total_price <= 4700000 or cart.item_count >= '16'  %}
+      {% capture itemQtylist %}
+   			{%- for line_item in cart.items -%} 
+      			{{ line_item.quantity | times: 1 }}  
+      		{%- endfor -%}
+       {% endcapture %}
+      {% assign lists  = itemQtylist | split: ''%}
+        {% assign listss = true %}
+      {% for list in lists %} 
+      {% if list >= '8' %}
+     {% assign listss = false %}
+      {% endif %}
+       {% endfor %}
+      {% if listss == true %}
               <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
                 <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
