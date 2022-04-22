@@ -5,7 +5,137 @@
     <button class="button" id="subscribe-btn" type="submit">SUBSCRIBE</button>
   </span>
 </div>
-
+{% if template == "index" or template == "blog" %} 
+ <div class="pop-overlay"></div>
+    <div class="boathead-pop">
+      <div class="content-pop">
+        <span class="close-pop">&times;</span>
+        <div class="subscribe-form">
+          <div class="header_image_popup">
+            <p class="text-uppercase text-white"><strong>Join the tribe</strong></p>
+            {% include 'responsive-image', image: section.settings.popup_image, manual_image_load: false %}
+          </div>
+          <p class="text-white opening-line">Be the first to know about new products, huge savings and other crazy things we're upto</p>
+          <div class="form-group">
+          	<input type="email" name="email" id="pop_email" placeholder="Email Address" autocomplete="new-email">
+            <button class="button" type="submit" id="subscribe_pop">SUBSCRIBE</button>
+            <p class="thankyou-msg-pop" style="color:#fff;font-size:12px;display:none">Thank You for subscribing. Please check your inbox!</p>
+            <p class="error-msg-pop" style="color:#fff;font-size:12px;display:none">Please enter a valid email Id!</p>
+          </div>
+        </div>
+      </div>
+  </div>
+<style>
+.pop-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffffa6;
+  z-index: 9999;
+  display: none;
+}
+.boathead-pop {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #000;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: none;
+  max-width: 600px;
+  width: 95%;
+  height: auto;
+  z-index: 9999999;
+  box-shadow: 0 0 10px #000;
+/*   padding: 29px 15px; */
+}
+.content-pop {
+/*   padding: 20px 15px;
+  border-top: 2px solid #ea2127;
+  border-bottom: 2px solid #ea2127; */
+  max-width: 100%;
+  margin: auto;
+}
+.close-pop {
+  cursor: pointer;
+  font-size: 35px;
+  display: block;
+  text-align: right;
+  padding-right: 6px;
+  position: absolute;
+  top: 2px;
+  right: 1px;
+  z-index: 9;
+}
+.header_image_popup {
+  position: relative;
+    margin-bottom: 20px;
+}
+.header_image_popup img {
+  display: block;
+/*     height: 100%; */
+}
+.header_image_popup p {
+  position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 25px;
+    width: 100%;
+    text-align: left;
+    max-width: 500px;
+    z-index: 9;
+}
+.opening-line {
+  max-width: 500px;
+    margin: 0 auto;
+    text-align: -webkit-auto;
+    font-size: 15px;
+    line-height: normal;
+}
+#subscribe_pop {
+  color: #fff;
+  margin-left: -4px;
+  border-radius: 2em;
+  background: transparent;
+  font-size: 14px;
+  width: 100px;
+  padding: 12px;
+}
+#pop_email {
+  font-size: 13px;
+  border: 0;
+  max-width: 320px;
+  width: 56%;
+  background: transparent;
+  border-bottom: 1px solid #fff;
+  float: left;
+  color: #fff !important;
+}
+.subscribe-form .form-group {
+  padding: 12px 12px 30px 12px;
+  position: relative;
+  max-width: 500px;
+  margin: auto;
+}
+.thankyou-msg-pop, .error-msg-pop {
+  position: absolute;
+    left: 50%;
+    right: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+}
+#pop_email::-webkit-input-placeholder {font-size: 13px;color: #fff;}
+#pop_email:focus::-webkit-input-placeholder {color: transparent;}
+#pop_email:focus, #subscribe_pop:focus {
+  outline: 0;
+  box-shadow: none;
+}
+</style>
+  {% endif %}
 <script>
    {%- if customer -%}
      var myEmail = '{{customer.email}}'
