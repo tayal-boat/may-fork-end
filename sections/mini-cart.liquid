@@ -720,9 +720,13 @@ background: #ff000000;
                       {%- render 'icon' with 'minus' -%}
                     </a>
 
- <input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
-					{%- if line_item.product.id == 6591986958434 -%}
+ 					<input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
+					{%- if line_item.product.id == 6591986958434 or line_item.product.id == 6682362052706 or line_item.product.id == 6682362085474 or line_item.product.id == 6548602847330 -%}
                       <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 0 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                        {%- render 'icon' with 'plus' -%}
+                      </a>
+                    {%- elsif line_item.product.id == 6628949229666 -%}
+                      <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 1 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                         {%- render 'icon' with 'plus' -%}
                       </a>
                     {% else %}
@@ -745,8 +749,20 @@ background: #ff000000;
                   </div>
 				  <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
                 </line-item-quantity>
-                {% if line_item.quantity > 6 %}
-                  <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% if line_item.product.id == 6682362052706 and line_item.quantity > 1 %}
+                	<small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% elsif line_item.product.id == 6682362085474 and line_item.quantity > 1 %}
+                	<small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% elsif line_item.product.id == 6548602847330 and line_item.quantity > 1 %}
+                	<small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% elsif line_item.product.id == 6591986958434 and line_item.quantity > 1 %}
+                	<small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% elsif line_item.product.id == 6628949229666 and line_item.quantity > 2 %}
+                	<small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                {% else %}
+                  {% if line_item.quantity > 6 %}
+                    <small class="qty-error-msg text-red">You have added max allowed units for this item.</small>
+                  {% endif %}
                 {% endif %}
               </div>
 
@@ -915,28 +931,47 @@ background: #ff000000;
         <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency -}}</b></span>
       </div>
       <div id="zestmoney-widget-control-cart"></div>
-<!--       <p class="cart-val-error"></p> -->
       {%- if section.settings.show_checkout_button -%}
-      	{% if cart.total_price <= 4700000 %}
+		{% if cart.total_price <= 4700000 %}
       		{%- assign is_validation_ok = true -%}
+      		{%- assign qty_error_msg = 'Item quantity should be less than 8 units! Modify your cart to proceed.' -%}
+      		{%- assign product_limit_ok = true -%}
       		{% for line_item in cart.items %}
+      			{% if line_item.product.id == 6682362052706 and line_item.quantity > 1 %}
+      				{%- assign product_limit_ok = false -%}
+      				{%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
+      			{% endif %}
+      			{% if line_item.product.id == 6682362085474 and line_item.quantity > 1 %}
+      				{%- assign product_limit_ok = false -%}
+      				{%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
+      			{% endif %}
+      			{% if line_item.product.id == 6548602847330 and line_item.quantity > 1 %}
+      				{%- assign product_limit_ok = false -%}
+      				{%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
+      			{% endif %}
+      			{% if line_item.product.id == 6591986958434 and line_item.quantity > 1 %}
+      				{%- assign product_limit_ok = false -%}
+      				{%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
+      			{% endif %}
+      			{%- if line_item.product.id == 6628949229666 and line_item.quantity > 2 -%}
+      				{%- assign product_limit_ok = false -%}
+      				{%- assign qty_error_msg = 'Item quantity should be less than 3 units! Modify your cart to proceed.' -%}
+      			{% endif %}
       			{% if line_item.quantity > 7 %}
       				{%- assign is_validation_ok = false -%}
       			{% endif %}
       		{% endfor %}
-      		{% if is_validation_ok == true %}
-              <div class="row justify-content-around checkout-buttons-div">
+      		{% if is_validation_ok == true and product_limit_ok == true %}
+    		  <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
-                <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-                Pay Via Card 
-
-                </button>
+  				<button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
+                Pay Via Card  </button>
               </div>
       		{% else %}
-      			<p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
+      			<p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
       		{% endif %}
       	{%- else -%}
-      			<p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
+      			<p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
       	{% endif %}
       {%- else -%}
         <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
