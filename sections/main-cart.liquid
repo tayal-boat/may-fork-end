@@ -236,24 +236,15 @@
                               </a>
 
                               <input is="input-number" max="7" class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
-							  {%- if line_item.product.id == 6591986958434 or line_item.product.id == 6682362052706 or line_item.product.id == 6682362085474 or line_item.product.id == 6548602847330 -%}
-                                <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 0 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+
+                              {%- if allow_more -%}
+                                <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                                   {%- render 'icon' with 'plus' -%}
                                 </a>
-                              {%- elsif line_item.product.id == 6628949229666 -%}
-                                <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 1 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                              {%- else -%}
+                                <span class="quantity-selector__button" aria-label="{{ 'cart.general.no_more_stock' | t | escape }}" data-tooltip="{{ 'cart.general.no_more_stock' | t | escape }}">
                                   {%- render 'icon' with 'plus' -%}
-                                </a>
-                              {% else %}
-                                {%- if allow_more -%}
-                                  <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
-                                    {%- render 'icon' with 'plus' -%}
-                                  </a>
-                                {%- else -%}
-                                  <span class="quantity-selector__button" aria-label="{{ 'cart.general.no_more_stock' | t | escape }}" data-tooltip="{{ 'cart.general.no_more_stock' | t | escape }}">
-                                    {%- render 'icon' with 'plus' -%}
-                                  </span>
-                                {%- endif -%}
+                                </span>
                               {%- endif -%}
                             </div>
 
@@ -405,47 +396,27 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-                {% if cart.total_price <= 4700000 %}
-                  {%- assign is_validation_ok = true -%}
-                  {%- assign qty_error_msg = 'Item quantity should be less than 8 units! Modify your cart to proceed.' -%}
-                  {%- assign product_limit_ok = true -%}
-                  {% for line_item in cart.items %}
-                      {% if line_item.product.id == 6682362052706 and line_item.quantity > 1 %}
-                          {%- assign product_limit_ok = false -%}
-                          {%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
-                      {% endif %}
-                      {% if line_item.product.id == 6682362085474 and line_item.quantity > 1 %}
-                          {%- assign product_limit_ok = false -%}
-                          {%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
-                      {% endif %}
-                      {% if line_item.product.id == 6548602847330 and line_item.quantity > 1 %}
-                          {%- assign product_limit_ok = false -%}
-                          {%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
-                      {% endif %}
-                      {% if line_item.product.id == 6591986958434 and line_item.quantity > 1 %}
-                          {%- assign product_limit_ok = false -%}
-                          {%- assign qty_error_msg = 'Item quantity should be less than 2 units! Modify your cart to proceed.' -%}
-                      {% endif %}
-                      {%- if line_item.product.id == 6628949229666 and line_item.quantity > 2 -%}
-                          {%- assign product_limit_ok = false -%}
-                          {%- assign qty_error_msg = 'Item quantity should be less than 3 units! Modify your cart to proceed.' -%}
-                      {% endif %}
-                      {% if line_item.quantity > 7 %}
-                          {%- assign is_validation_ok = false -%}
-                      {% endif %}
-                  {% endfor %}
-                  {% if is_validation_ok == true and product_limit_ok == true %}
-                    <div class="row justify-content-around checkout-buttons-div">
-                      {% render 'gokwik-checkout' %}
-                      <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-                      Pay Via Card  </button>
-                    </div>
-                  {% else %}
-                      <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
-                  {% endif %}
-              {%- else -%}
-                      <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
-              {% endif %}
+     	{% if cart.total_price <= 4700000 %}
+      		{%- assign is_validation_ok = true -%}
+      		{% for line_item in cart.items %}
+      			{% if line_item.quantity > 7 %}
+      				{%- assign is_validation_ok = false -%}
+      			{% endif %}
+      		{% endfor %}
+      		{% if is_validation_ok == true %}
+              <div class="row justify-content-around checkout-buttons-div">
+                {% render 'gokwik-checkout' %}
+                <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
+                Pay Via Card 
+
+                </button>
+              </div>
+      		{% else %}
+      			<p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
+      		{% endif %}
+      	{%- else -%}
+      			<p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
+      	{% endif %}
               </div>
 
               {%- if section.settings.show_payment_methods and shop.enabled_payment_types.size > 0 -%}
