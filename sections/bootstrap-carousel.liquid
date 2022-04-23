@@ -1,8 +1,14 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css" integrity="sha512-OTcub78R3msOCtY3Tc6FzeDJ8N9qvQn1Ph49ou13xgA9VsH9+LRxoFU6EqLhW4+PKRfU+/HReXmSZXHEkpYoOA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <div id="homepage-carousel">
   <!-- The slideshow -->
+  {% for block in section.blocks limit: 1 %}
+    	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide">
+          <picture>
+            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
+            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
+            <img class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
+          </picture>
+        </a>
+    {% endfor %}
   <div class="carousel-inner owl-carousel">
     {% for block in section.blocks %}
       <div class="carousel--item">
