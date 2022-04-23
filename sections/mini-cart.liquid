@@ -920,11 +920,14 @@ background: #ff000000;
       		{%- assign is_validation_ok = true -%}
       		{%- assign product_limit_ok = true -%}
       		{% for line_item in cart.items %}
+      			{% if line_item.product.id == 4460669370466 and line_item.quantity > 3 %}
+      				{%- assign product_limit_ok = false -%}
+      			{% endif %}
       			{% if line_item.quantity > 7 %}
       				{%- assign is_validation_ok = false -%}
       			{% endif %}
       		{% endfor %}
-      		{% if is_validation_ok == true %}
+      		{% if is_validation_ok == true and product_limit_ok == true %}
     <div class="row justify-content-around checkout-buttons-div">
                 {% render 'gokwik-checkout' %}
   <button is="loader-button" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
