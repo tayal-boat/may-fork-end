@@ -802,7 +802,11 @@ display: flex;
 
         <div class="new-launch-atc {{variant.id}}_new_launch_atc">
           {% if variant.available == true %}
-          <button type="submit" name="add" aria-label="Add to cart" class="btn product-form__cart-submit btn--secondary-accent ad_to_cart" id="ad_to_cart" aria-haspopup="dialog" data-add-to-cart="" var_id="{{variant.id}}">Add to cart</button>
+          <form method="post" action="/cart/add" class="collectioncart" id="myid39494840516796">
+    <input type="hidden" name="id" value="{{variant.id}}">
+    <input type="hidden" min="1" id="quantity" name="quantity" value="1">
+    <button type="button" value="" class="btn btncls39494840516796" onclick="addItem('myid39494840516796','btncls39494840516796');"><span class="button__text">Add To Box</span></button>
+  </form>
           {% else %}
           <div class="inner-atc-sold" var-id="{{variant.id}}">Sold Out</div>
           {% endif %}
@@ -906,23 +910,26 @@ $(window).on('load', function() {
 
 {% javascript %}
   $(document).ready(function($) {
-	$(document).on('click','.ad_to_cart',function(){ 
-var ID = $(this).attr("var_id"); 
-$.ajax({
-type: 'POST',
-url: '/cart/add.js',
-data: {
-  quantity: 1,
-  id: ID
-},
-  dataType: 'json', 
- success: function (data) { 
-  $('.header__cart').attr('aria-expanded', true)
-  console.log(data.quantity);
- 
- } 
- });
-}) 
+	function addItem(form_id,btnclass){
+      var cls = '.'+btnclass;
+      console.log(cls);
+      $(cls).addClass('btnloading');
+      $.ajax({
+        type: 'POST', 
+        url: '/cart/add.js',
+        dataType: 'json', 
+        data: $('#'+form_id).serialize(),
+        async:false,
+        success: function(result){
+          $('.header__cart').attr('aria-expanded', true)
+			alert('Success')
+          
+          },
+        error:function(result){
+          alert('Error')
+        }
+      });
+    } 
   	$('.right-click').on('click',()=>{
   $('.nl-click').removeClass('non-active-click')
   $('.outer-container>.slick-next').click();  
