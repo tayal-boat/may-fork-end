@@ -1092,15 +1092,20 @@ $(window).on('load', function() {
     let varImage = $(this).parents('.product-info-div').siblings('.outer-div').find('.slick-active img').prop('src');
     let prodCategory = $(this).parents('.product-info-div').attr('data-cat');
 	$.ajax({
-      type: "POST",
-      url: '/cart/add.js',
-      data: {
-      quantity: 1,
-      id:varId
-      },
-      success: function(response){
-		$('.header__cart').attr('aria-expanded', true)
-	  }
+                                                                    type: "POST",
+                                                                    url: '/cart/add.js',
+                                                                    data: {
+                                                                        quantity: 1,
+                                                                        id: varId
+                                                                    },
+                                                                    success: function (response) {
+
+                                                                        var json_response = JSON.parse(response)
+                                                                        var token_p = json_response.token;
+                                                                        fetchCart()
+
+                                                                    }
+                                                                });
 	  
     clevertap.event.push("Added to Cart", {
               "Product Name": prodTitle + ' - ' + activeVar,
