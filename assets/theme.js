@@ -6045,7 +6045,7 @@
           	event.preventDefault();
             $('.drawer--quick-buy').attr('open', false);
             $('.header__cart').attr('aria-expanded', true)
-        })
+        });
       } else {
         this.classList.add("cart-notification--error");
         this.innerHTML = `
