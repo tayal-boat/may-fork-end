@@ -1,0 +1,367 @@
+<style>
+  .modal-dialog {
+    z-index: 99;
+    max-width: 700px;
+  }
+  .modal-content {
+    color: black;
+  }
+  .modal-backdrop.show {
+    background: #000;
+    z-index: 9;
+  }
+  .mobile-only {
+    display: none;
+  }
+  .offers-zone .offer-image img,
+  .page-banner {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+  }
+  .offers-cards {
+    background-color: #f2f0f1;
+    padding: 2rem;
+    max-width: 2000px;
+    margin: auto;
+  }
+  .row-offer {
+    display: flex;
+    flex-wrap: nowrap;
+    flex: 1;
+    overflow-y: auto;
+    justify-content: center;
+  }
+  .offer {
+    background-color: #ffffff;
+    border-radius: 2em;
+    margin: 1.5rem 1rem;
+    padding: 1.5rem;
+    flex: 1;
+    /*         min-width: 30%; */
+    box-shadow: 0px 3px 4px #ccc;
+  }
+  .offer-details {
+    clear: both;
+    overflow: hidden;
+    color: black;
+  }
+  .tnc-btn {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: inline-block;
+    float: right;
+    width: auto;
+    font-size: 12px;
+  }
+  .tnc-btn.active {
+    background-color: #ff0000;
+    color: #ffffff;
+  }
+  .main-text {
+    margin-top: 10px;
+    font-size: 17px;
+    min-height: 52px;
+  }
+  .label-valid {
+    color: #c4c4c4;
+  }
+  .offer-tnc {
+    clear: both;
+    margin-top: 20px;
+    border-top: 2px solid #c4c4c4;
+    padding-top: 12px;
+    display: none;
+    color: black;
+  }
+  .offer-tnc ul {
+    padding-left: 18px;
+  }
+  .modal-open {
+    padding: 0 !important;
+  }
+  #shopify-section-collection-offers .modal {
+    background: #1a1111a6;
+    z-index: 99999;
+  }
+  #shopify-section-collection-offers .modal-dialog {
+    max-width: 700px;
+  }
+  .white svg {
+    stroke: #fff;
+  }
+  .row-offer .slick-prev,
+  .row-offer .slick-next {
+    font-size: 0;
+    position: absolute;
+    bottom: 20px;
+    color: #ea2127;
+    border: 0;
+    background: none;
+    z-index: 1;
+  }
+  .row-offer .slick-prev {
+    left: -56px;
+  }
+  .row-offer .slick-prev:after {
+    content: "\f104";
+    font: 40px/1 "FontAwesome";
+    font-weight: bold;
+    color: #ff0000;
+  }
+  .row-offer .slick-next {
+    right: -25px;
+    text-align: right;
+  }
+  .row-offer .slick-next:after {
+    content: "\f105";
+    font: 40px/1 "FontAwesome";
+    font-weight: bold;
+    color: #ff0000;
+  }
+  .row-offer .slick-slide {
+    margin: 0 5px;
+  }
+  .row-offer .slick-list {
+    margin: 0px -5px 0px -5px;
+  }
+  .know-more a {
+    display: block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #8c8a8a;
+    text-align: right;
+  }
+  .know-more a:hover {
+    text-decoration: none;
+    color: #ff0000;
+  }
+  @media screen and (max-width: 767px) {
+    .mobile-only {
+      display: block;
+    }
+    .only-desktop {
+      display: none;
+    }
+    .offer {
+      margin-left: 0;
+      margin-right: 0;
+      padding: 1rem;
+    }
+    .tnc-btn.active {
+      border-color: #fff;
+    }
+    #content .container {
+      padding: 0;
+    }
+    .offer-tnc ul {
+      margin: 0;
+    }
+    .offer-tnc ul li {
+      font-size: 12px;
+      line-height: normal;
+      margin-bottom: 3px;
+    }
+    .offer {
+      min-width: 280px;
+      margin: 0 10px 40px;
+    }
+    .row-offer {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-y: auto;
+      justify-content: unset;
+    }
+    /*     	.row-offer .slick-track {display: flex;} */
+    .main-text {
+      font-size: 16px;
+      min-height: 57px;
+      line-height: normal;
+    }
+  }
+  @media screen and (min-width: 768px) {
+    .offer {
+      min-width: 20vw;
+      max-width: 24vw;
+    }
+    .row-offer .slick-list,
+    .row-offer .slick-track {
+      width: 100% !important;
+    }
+  }
+
+  /* width */
+  .offers-zone ::-webkit-scrollbar {
+    height: 5px;
+    width: 100%;
+  }
+
+  /* Track */
+  .offers-zone ::-webkit-scrollbar-track {
+    background: #e4e4e4;
+  }
+
+  /* Handle */
+  .offers-zone ::-webkit-scrollbar-thumb {
+    border-radius: 40px;
+    background: #a9a9a9;
+  }
+
+  /* Handle on hover */
+  .offers-zone ::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
+</style>
+<div class="offers-zone mb-4">
+  <div class="offers-cards">
+    <div class="row-offer">
+      {%- for block in section.blocks -%}
+      	<div class="offer">
+        <div class="offer-container">
+          <div class="offer-image">
+            <img
+              src="{{block.settings.offer_image | img_url: 'master' }}"
+              alt="offer"
+            />
+          </div>
+          <div class="offer-details">
+            <p class="main-text">{{block.settings.offer-text}}</p>
+            <div class="validity">
+              <p class="label-valid m-0">Validity</p>
+              <p class="valid-date">{{block.settings.offer-validity}}</p>
+            </div>
+            <div class="tnc mobile-only">
+              <span class="btn tnc-btn"
+                >Terms & Conditions<span class="arrow-down">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#c4c4c4"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-chevron-down"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg> </span
+              ></span>
+            </div>
+            <div class="tnc only-desktop">
+              <span
+                class="btn tnc-btn"
+                data-toggle="modal"
+                data-target="#{{block.settings.offer_id}}"
+                >Terms & Conditions<span class="arrow-down">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#c4c4c4"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-chevron-down"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg> </span
+              ></span>
+            </div>
+          </div>
+          <div class="offer-tnc rewards_">{{block.settings.terms}}</div>
+        </div>
+      </div>
+      <div class="modal fade" id="{{block.settings.offer_id}}" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body lazy">{{block.settings.terms}}</div>
+            <div class="modal-footer"></div>
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+      
+
+<script>
+  $(document).ready(function () {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      $(".tnc-btn").click(function () {
+        $(this).toggleClass("active");
+        $(this).find(".arrow-down").toggleClass("white");
+        $(this)
+          .closest(".tnc")
+          .closest(".offer-details")
+          .siblings(".offer-tnc")
+          .slideToggle();
+      });
+    }
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Collection Offers",
+	"class": "collection-offers",
+    "settings": [],
+	"blocks": [
+		{
+          "name": "Offers",
+          "type": "offers",
+          "settings": [
+			{
+			  "type": "image_picker",
+			  "id": "offer_image",
+			  "label": "Offer Image"
+			},
+			{
+			  "type": "text",
+			  "id": "offer_id",
+			  "label": "Offer Block ID"
+			},
+			{
+			  "type": "text",
+			  "id": "offer-text",
+			  "label": "Offer Details"
+			},
+			{
+			  "type": "text",
+			  "id": "offer-validity",
+			  "label": "Offer Validity"
+			},
+			{
+              "type": "html",
+              "id": "terms",
+              "label": "Enter TnCs Here"
+            }
+		  ]
+		}
+	],
+	"presets": [
+		{
+          "name": "Collection Offers",
+          "category": "image",
+          "settings": {
+          }
+        }
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
