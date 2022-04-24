@@ -241,6 +241,81 @@
   </div>
   <div class="offers-cards">
     <div class="row-offer">
+      {%- for block in section.blocks -%}
+      	<div class="offer">
+        <div class="offer-container">
+          <div class="offer-image">
+            <img
+              src="{{block.settings.offer_image}}"
+              alt="offer"
+            />
+          </div>
+          <div class="offer-details">
+            <p class="main-text">{{block.settings.offer-text}}</p>
+            <div class="validity">
+              <p class="label-valid m-0">Validity</p>
+              <p class="valid-date">{{block.settings.offer-validity}}</p>
+            </div>
+            <div class="tnc mobile-only">
+              <span class="btn tnc-btn"
+                >Terms & Conditions<span class="arrow-down">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#c4c4c4"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-chevron-down"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg> </span
+              ></span>
+            </div>
+            <div class="tnc only-desktop">
+              <span
+                class="btn tnc-btn"
+                data-toggle="modal"
+                data-target="#{{block.settings.offer_id}}"
+                >Terms & Conditions<span class="arrow-down">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#c4c4c4"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-chevron-down"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg> </span
+              ></span>
+            </div>
+          </div>
+          <div class="offer-tnc rewards_">{{block.settings.content}}</div>
+        </div>
+      </div>
+      <div class="modal fade" id="{{block.settings.offer_id}}" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <div class="modal-body lazy">{{block.settings.content}}</div>
+            <div class="modal-footer"></div>
+          </div>
+        </div>
+      </div>
+      {%- endfor -%}
       <div class="offer">
         <div class="offer-container">
           <div class="offer-image">
@@ -683,9 +758,14 @@
           "type": "offers",
           "settings": [
 			{
-			  "type": "image_picker",
+			  "type": "url",
 			  "id": "offer_image",
-			  "label": "Offer Image"
+			  "label": "Offer Image URL"
+			},
+			{
+			  "type": "text",
+			  "id": "offer_id",
+			  "label": "Offer Block ID"
 			},
 			{
 			  "type": "text",
