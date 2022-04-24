@@ -396,25 +396,24 @@
                       </div>
                   {%- endcase -%}
                 {%- endfor -%}
-     	{% if cart.total_price <= 4700000 %}
-      		{%- assign is_validation_ok = true -%}
-      		{% for line_item in cart.items %}
-      			{% if line_item.quantity > 7 %}
-      				{%- assign is_validation_ok = false -%}
-      			{% endif %}
-      		{% endfor %}
-      		{% if is_validation_ok == true %}
-                {% render 'gokwik-checkout' %}
-                <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
-                  <span class="checkout-button__lock">{%- render 'icon' with 'lock' -%}</span>
-                  {{- 'cart.general.checkout' | t -}}
-                </button>
-      		{% else %}
-      			<p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
-      		{% endif %}
-      	{%- else -%}
-      			<p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
-      	{% endif %}
+                {% if cart.total_price <= 4700000 %}
+                    {%- assign is_validation_ok = true -%}
+                    {% for line_item in cart.items %}
+                        {% if line_item.quantity > 7 %}
+                            {%- assign is_validation_ok = false -%}
+                        {% endif %}
+                    {% endfor %}
+                    {% if is_validation_ok == true %}
+                        {% render 'gokwik-checkout' %}
+                        <button type="submit" is="loader-button" class="cart__checkout-button checkout-button button button--primary button--full" name="checkout">
+                          PAY VIA CARD
+                        </button>
+                    {% else %}
+                        <p class="cart-val-error">Item quantity should be less than <strong>8 units!</strong> Modify your cart to proceed.</p>
+                    {% endif %}
+                {%- else -%}
+                        <p class="cart-val-error">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
+                {% endif %}
               </div>
 
               {%- if section.settings.show_payment_methods and shop.enabled_payment_types.size > 0 -%}
