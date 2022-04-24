@@ -6045,6 +6045,10 @@
           	event.preventDefault();
             $('.drawer--quick-buy').attr('open', false);
             $('.header__cart').attr('aria-expanded', true)
+        });
+        $('.drawer--quick-buy .shopify-product-form').submit(function() {
+        	$('.drawer--quick-buy').attr('open', false);
+            $('.header__cart').attr('aria-expanded', true)
         })
       } else {
         this.classList.add("cart-notification--error");
