@@ -112,8 +112,13 @@
     {%- if template contains 'product' -%}
     {% render 'product-payment-partner' %}
     {%- endif -%}
-    {%- if product.tags contains 'sale-timer' -%}
-    {% render 'countdown-timer', title: "Special Offer Ends In", end_date: section.settings.end_date %}
+    {%- if section.settings.show_timer_on_all -%}
+    	{% render 'countdown-timer', title: "Special Offer Ends In", end_date: section.settings.end_date %}
+    {%- endif -%}
+    {%- if section.settings.show_timer_on_selected -%}
+      {%- if product.tags contains 'timer' -%}
+      	{% render 'countdown-timer', title: "Special Offer Ends In", end_date: section.settings.end_date %}
+      {%- endif -%}
     {%- endif -%}
     
     {% if product.tags contains "Coming-Soon" %}
