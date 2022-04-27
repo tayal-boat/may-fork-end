@@ -12,6 +12,9 @@
   <div class="carousel-inner owl-carousel">
     {% for block in section.blocks %}
       <div class="carousel--item">
+        {% if block.settings.show_timer %}
+          {% render 'countdown-timer', title: "Special Offer Ends In", end_date: block.settings.end_date %}
+        {% endif %}
         <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
         <a href="{{block.settings.slide_url}}" class="slide-url">
           <picture>
@@ -27,6 +30,15 @@
 
 </div>
 <style>
+  #homepage-carousel {position: relative;}
+  .timer {
+  	position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+    width: 100%;
+  }
   #homepage-carousel .owl-next, #homepage-carousel .owl-prev {
   	position: absolute;
     top: 45%;
@@ -142,7 +154,18 @@
 			  "type": "url",
 			  "id": "slide_url",
 			  "label": "Slide URL"
-			}
+			},
+			{
+              "type": "checkbox",
+              "id": "show_timer",
+              "label": "Show Timer on Banner",
+              "default": false
+            },
+            {
+              "type": "text",
+              "id": "end_date",
+              "label": "End Date (Ex: Apr 30, 2022)"
+            }
 		  ]
 		}
 	],
