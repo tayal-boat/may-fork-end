@@ -9,9 +9,11 @@
           </picture>
         </a>
     {% endfor %}
-  {% render 'countdown-timer', title: "Special Offer Ends In", end_date: section.settings.end_date %}
   <div class="carousel-inner owl-carousel">
     {% for block in section.blocks %}
+      {% if block.settings.show_timer %}
+        {% render 'countdown-timer', title: "Special Offer Ends In", end_date: block.settings.end_date %}
+      {% endif %}
       <div class="carousel--item">
         <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
         <a href="{{block.settings.slide_url}}" class="slide-url">
