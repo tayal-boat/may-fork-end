@@ -45,6 +45,7 @@
 
     --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
     --section-products-per-row: 2;
+       margin: {{ section.settings.padding }};
   }
     
   .tabs-nav__item-list button {
@@ -66,13 +67,14 @@
   @media screen and (min-width: 1200px) {
     #shopify-section-{{ section.id }} {
       --section-products-per-row: {{ section.settings.products_per_row }};
+   margin: {{ section.settings.padding_desktop }};
     }
   }
 </style>
 
 <section class="section {% unless blends_with_background %}section--flush{% endunless %}">
   <div class="section__color-wrapper">
-    <div class="container {% unless blends_with_background %}vertical-breather{% endunless %}">
+    <div class="container ">
       {%- if section.settings.title != blank or section.settings.subheading != blank or section.settings.content != blank -%}
         <header class="section__header {% if section.settings.content != blank %}section__header--tight{% endif %}">
           <div class="text-container">
@@ -208,6 +210,18 @@
     }
   ],
   "settings": [
+    {
+      "type": "text",
+      "id": "padding",
+      "label": "margin",
+      "default": "0"
+    },
+    {
+      "type": "text",
+      "id": "padding_desktop",
+      "label": "margin-desktop",
+      "default": "input"
+    },
     {
       "type": "text",
       "id": "subheading",
