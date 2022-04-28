@@ -653,7 +653,11 @@
                         {%- endif -%}
 
                         <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">{{ line_item.product.title }}</a>
-
+       {%- if line_item_properties != blank -%}
+                          <div class="product-item-meta__property-list">
+                            {{- line_item_properties -}}
+                          </div>
+                        {%- endif -%}
                         {%- capture line_item_properties -%}
                           {%- unless line_item.product.has_only_default_variant -%}
                             <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.variant.option1 | camelcase  }}</span>
@@ -706,11 +710,7 @@
                           {%- endfor -%}
                         </ul>
                       {%- endif -%}
-       {%- if line_item_properties != blank -%}
-                          <div class="product-item-meta__property-list">
-                            {{- line_item_properties -}}
-                          </div>
-                        {%- endif -%}
+
                       {%- assign max_allowed_quantity = '' -%}
                       {%- assign allow_more = true -%}
 
