@@ -722,15 +722,31 @@
                           </a>
 
                           <input is="input-number" readonly class="quantity-selector__input text--xsmall" autocomplete="off" type="text" inputmode="numeric" name="updates[]" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" {% if max_allowed_quantity != '' %}max="{{ max_allowed_quantity }}"{% else %}max="7"{% endif %} size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" aria-label="{{ 'cart.general.change_quantity' | t | escape }}">
-                          {%- if line_item.product.id == 6591986958434 or line_item.product.id == 6682362052706 or line_item.product.id == 6682362085474 or line_item.product.id == 6548602847330 -%}
+                          {%- if line_item.product.metafields.set.quantity_limit == 1 -%}
                             <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 0 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                               {%- render 'icon' with 'plus' -%}
                             </a>
-                          {%- elsif line_item.product.id == 6628949229666 -%}
+                          {%- elsif line_item.product.metafields.set.quantity_limit == 2 -%}
                             <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 1 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                               {%- render 'icon' with 'plus' -%}
                             </a>
-                          {% else %}
+                          {%- elsif line_item.product.metafields.set.quantity_limit == 3 -%}
+                            <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 2 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                              {%- render 'icon' with 'plus' -%}
+                            </a>
+                          {%- elsif line_item.product.metafields.set.quantity_limit == 4 -%}
+                            <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 3 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                              {%- render 'icon' with 'plus' -%}
+                            </a>
+                          {%- elsif line_item.product.metafields.set.quantity_limit == 5 -%}
+                            <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 4 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                              {%- render 'icon' with 'plus' -%}
+                            </a>
+                          {%- elsif line_item.product.metafields.set.quantity_limit == 6 -%}
+                            <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 5 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                              {%- render 'icon' with 'plus' -%}
+                            </a>
+                    	  {% else %}
                             {%- if allow_more -%}
                               <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                                 {%- render 'icon' with 'plus' -%}
