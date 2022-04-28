@@ -653,7 +653,7 @@
                         {%- endif -%}
 
                         <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">{{ line_item.product.title }}</a>
-  
+
                         {%- capture line_item_properties -%}
                           {%- unless line_item.product.has_only_default_variant -%}
                             <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.variant.option1 | camelcase  }}</span>
@@ -742,7 +742,11 @@
                               </span>
                             {%- endif -%}
                           {%- endif -%}
-                 
+                        {%- if line_item_properties != blank -%}
+                          <div class="product-item-meta__property-list">
+                            {{- line_item_properties -}}
+                          </div>
+                        {%- endif -%}
                         </div>
                         <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
                       </line-item-quantity>
@@ -762,11 +766,7 @@
                         {% endif %}
                       {% endif %}
                     </div>
-     {%- if line_item_properties != blank -%}
-                          <div class="product-item-meta__property-list">
-                            {{- line_item_properties -}}
-                          </div>
-                        {%- endif -%}
+
 
 
                   </div>
