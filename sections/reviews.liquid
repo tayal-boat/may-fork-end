@@ -102,7 +102,16 @@
   </div>
   
   <div class="flexible-layout valign-{{ section.settings.alignment }} testimonials trending">
+    {% for block in section.blocks %}
 
+    {% if block.type == 'image' %}
+    {% assign text_scale_mult = '1' %}
+    {% if block.settings.width == 'quarter' %}{% assign text_scale_mult = '4' %}
+    {% elsif block.settings.width == 'third' %}{% assign text_scale_mult = '3' %}
+    {% elsif block.settings.width == 'half' %}{% assign text_scale_mult = '2' %}
+    {% elsif block.settings.width == 'two-thirds' %}{% assign text_scale_mult = '1.5' %}
+    {% elsif block.settings.width == 'three-quarters' %}{% assign text_scale_mult = '1.333' %}
+    {% endif %}
 
     <div class="column-third {{ block.settings.width }} block-id-{{ block.id }} top-trending" {{ block.shopify_attributes }}>
       <div class="image-block slide">
@@ -131,6 +140,33 @@
         {% if block.settings.link_url != blank %}</a>{% endif %}
       </div>
     </div>
+
+    {% else %}
+
+    <div class="column-{{ block.settings.width }}" {{ block.shopify_attributes }}>
+      {% if block.type == 'text' %}
+      {% if block.settings.title != blank %}
+      <h1 class="majortitle in-content">{{ block.settings.title | escape }}</h1>
+      {% endif %}
+
+      <div class="user-content">{{ block.settings.text }}</div>
+
+      {% elsif block.type == 'video' %}
+      <div class="video-container"
+        data-video-id="{{ block.settings.video_url.id }}"
+        data-video-url="{{ block.settings.video_url }}"
+        data-video-type="{{ block.settings.video_url.type }}">
+      </div>
+
+      {% elsif block.type == 'html' %}
+      <div class="custom-html">
+        {{ block.settings.code }}
+      </div>
+
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
   </div>
 </div>
 <script type="text/javascript">
