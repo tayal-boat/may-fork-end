@@ -74,6 +74,39 @@
   </div>
 </section>
 
+<script>
+  $("#create_customer").submit(function(){
+    var userEmail = document.getElementById("email").value;
+    var firstName = document.getElementById("first_name").value;
+    var lastName = document.getElementById("last_name").value;
+    clevertap.onUserLogin.push({
+     "Site": {
+      "Email": userEmail ,
+      "First Name": firstName,
+      "Last Name": lastName        // Email address of the user
+     }
+    });
+    clevertap.event.push("Sign Up", {
+      "Email": userEmail,
+      "First Name": firstName,
+      "Last Name": lastName
+    });
+    
+    smartech('contact', '5', {
+        'pk^email': userEmail ,
+        'FIRST_NAME': firstName ,
+        'LAST_NAME': lastName
+        }, function() {
+        smartech('identify', userEmail );
+        smartech('dispatch', 'Website_Registered', {
+        'email': userEmail ,
+        'first_name': firstName ,
+        'last_name': lastName
+        });
+      })
+  })
+</script>
+
 {% schema %}
 {
   "name": "Customer register",
