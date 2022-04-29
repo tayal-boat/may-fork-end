@@ -678,3 +678,435 @@ End automatically added Judge.me widget{% endcomment %}
   ]
 }
 {% endschema %}
+<script>
+   (function(){
+     window.PlobalBridge = {
+         openURL:function(url,title,open_links_in){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openURL){
+                     window.webkit.messageHandlers.openURL.postMessage({'type':open_links_in,'url':url,'title':title});
+                 }
+             } catch(e) {
+                 console.log("ios error openURL");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.openURL){
+                     window.AndroidBridge.openURL(open_links_in,url,title);
+                 }
+             } catch(e) {
+                 console.log("android error openURL");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 window.location.assign(url);
+             }
+         },
+         openURLNew:function(data){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openURLNew){
+                     window.webkit.messageHandlers.openURLNew.postMessage(data);
+                 }
+             } catch(e) {
+                 console.log("ios error openURLNew");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.openURLNew){
+                     window.AndroidBridge.openURLNew(JSON.stringify(data));
+                 }
+             } catch(e) {
+                 console.log("android error openURLNew");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 window.location.assign(data.url);
+             }
+             this.openURL(data.url,data.title,data.type);
+         },
+         openURLNewIOS:function(data){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openURLNew){
+                     window.webkit.messageHandlers.openURLNew.postMessage(data);
+                 }
+             } catch(e) {
+                 console.log("ios error openURLNew");
+                 console.log(e);
+             }
+             
+             if(!window.webkit){
+                 window.location.assign(data.url);
+             }
+             this.openURL(data.url,data.title,data.type);
+         },
+         redirectTo:function(app_feature_id){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.redirectTo){
+                     window.webkit.messageHandlers.redirectTo.postMessage({'app_feature_id':app_feature_id});
+                 }
+             } catch(e) {
+                 console.log("ios error redirectTo");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.redirectTo){
+                     window.AndroidBridge.redirectTo(JSON.stringify({'app_feature_id':app_feature_id}));
+                 }
+             } catch(e) {
+                 console.log("android error redirectTo");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 alert(app_feature_id);
+             }
+         },
+         adjustWebViewHeight:function(container){
+             if(!container){
+                 var height = document.body.clientHeight;
+             }else if(container == 0){
+                 var height = 0;
+             }
+             else if(container == -25){
+                 var height = -25;
+             }else{
+                 var height = document.getElementById(container).clientHeight;
+             }
+           if(height==0) {height = 500;}
+             height +=55;
+           console.log("adjustWebViewHeight:", height);
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.adjustWebViewHeight){
+                     window.webkit.messageHandlers.adjustWebViewHeight.postMessage(height);
+                 }
+             } catch(e) {
+                 console.log("ios error adjustWebViewHeight");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('adjustWebViewHeight  '+height);
+             }
+         },
+         addLineItemProperty:function(obj){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.addLineItemProperty){
+                     window.webkit.messageHandlers.addLineItemProperty.postMessage(obj);
+                 }
+             } catch(e) {
+                 console.log("ios error addLineItemProperty");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.addLineItemProperty){
+                     window.AndroidBridge.addLineItemProperty(JSON.stringify(obj));
+                 }
+             } catch(e) {
+                 console.log("android error addLineItemProperty");
+                 console.log(e);
+             }
+             // if(!window.webkit && !window.AndroidBridge){
+             //     console.log('addLineItemProperty  '+JSON.stringify(obj));
+             // }
+             console.log('addLineItemProperty  '+JSON.stringify(obj));
+         },
+         removeLineItemProperty:function(key){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.removeLineItemProperty){
+                     window.webkit.messageHandlers.removeLineItemProperty.postMessage(key);
+                 }
+             } catch(e) {
+                 console.log("ios error addLineItemProperty");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.removeLineItemProperty){
+                     window.AndroidBridge.removeLineItemProperty(key);
+                 }
+             } catch(e) {
+                 console.log("android error removeLineItemProperty");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('removeLineItemProperty  '+key);
+             }
+         },
+         setAddToCartBehaviour:function(obj){
+             console.log("setAddToCartBehaviour");
+             console.log(obj);
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.setAddToCartBehaviour){
+                     window.webkit.messageHandlers.setAddToCartBehaviour.postMessage(obj);
+                 }
+             } catch(e) {
+                 console.log("ios error setAddToCartBehaviour");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.setAddToCartBehaviour){
+                     window.AndroidBridge.setAddToCartBehaviour(JSON.stringify(obj));
+                 }
+             } catch(e) {
+                 console.log("android error setAddToCartBehaviour");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('setAddToCartBehaviour  '+JSON.stringify(obj));
+             }
+         },
+         setBuyNowBehaviour:function(obj){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.setBuyNowBehaviour){
+                     window.webkit.messageHandlers.setBuyNowBehaviour.postMessage(obj);
+                 }
+             } catch(e) {
+                 console.log("ios error setBuyNowBehaviour");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.setBuyNowBehaviour){
+                     window.AndroidBridge.setBuyNowBehaviour(JSON.stringify(obj));
+                 }
+             } catch(e) {
+                 console.log("android error setBuyNowBehaviour");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('setBuyNowBehaviour  '+JSON.stringify(obj));
+             }
+         },
+         changeDisplayInfo:function(data){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.changeDisplayInfo){
+                     window.webkit.messageHandlers.changeDisplayInfo.postMessage(data);
+                 }
+             } catch(e) {
+                 console.log("ios error changeDisplayInfo");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.changeDisplayInfo){
+                     window.AndroidBridge.changeDisplayInfo(JSON.stringify(data));
+                 }
+             } catch(e) {
+                 console.log("android error changeDisplayInfo");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('changeDisplayInfo '+JSON.stringify(data));
+             }
+         },
+         addCustomerProperty:function(key,value){
+             console.log(key,value);
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.addCustomerProperty){
+                     window.webkit.messageHandlers.addCustomerProperty.postMessage({'key':key,'value':value});
+                 }
+             } catch(e) {
+                 console.log("ios error addCustomerProperty");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.addCustomerProperty){
+                     window.AndroidBridge.addCustomerProperty(key,value);
+                 }
+             } catch(e) {
+                 console.log("android error addCustomerProperty");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('addCustomerProperty '+key+' '+ value);
+             }
+         },
+         addToCart:function(variant){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.addToCart){
+                     window.webkit.messageHandlers.addToCart.postMessage(variant);
+                 }
+             } catch(e) {
+                 console.log("ios error addToCart");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.addToCart){
+                     window.AndroidBridge.addToCart(JSON.stringify(variant));
+                 }
+             } catch(e) {
+                 console.log("android error addToCart");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('addToCart '+JSON.stringify(variant));
+             }
+         },
+         changeAddToCartBehaviour:function(rules){
+ 
+         },
+         dataReceiver:function(data){
+             console.log('dataReceiver');
+         },
+         requestData:function(data){
+             console.log('requestData');
+         },
+         shareData:function(data){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.shareData){
+                     window.webkit.messageHandlers.shareData.postMessage({'data':data});
+                 }
+             } catch(e) {
+                 console.log("ios error shareData");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.shareData){
+                     window.AndroidBridge.shareData(data);
+                 }
+             } catch(e) {
+                 console.log("android error shareData");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('shareData '+data);
+             }
+         },
+         openFileChooser:function(){
+             console.log('openFileChooser');
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openFileChooser){
+                     window.webkit.messageHandlers.openFileChooser.postMessage("");
+                 }
+             } catch(e) {
+                 console.log("ios error openFileChooser");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.openFileChooser){
+                     window.AndroidBridge.openFileChooser();
+                 }
+             } catch(e) {
+                 console.log("android error openFileChooser");
+                 console.log(e);
+             }
+             if(!window.webkit && !window.AndroidBridge){
+                 console.log('openFileChooser');
+             }
+         },
+         callBridgeFunction:function(functionName, paramsIos, paramAndroid){
+             try {
+                 if(window && window.AndroidBridge){
+                     if(paramAndroid){
+                         window.AndroidBridge[functionName](paramAndroid);
+                     }
+                     else{
+                         window.AndroidBridge[functionName]();
+                     }
+ 
+                 }
+             } catch(e) {
+                 console.log("I got clicked android error");
+                 console.log(e);
+             }
+ 
+             try{
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers[functionName]){
+                     if(paramsIos){
+                         window.webkit.messageHandlers[functionName].postMessage(paramsIos);
+                     }
+                     else{
+                         window.webkit.messageHandlers[functionName].postMessage();
+                     }
+                 }
+             }
+             catch(e){
+                 console.log("I got clicked ios error");
+                 console.log(e);
+             }
+         },
+         openProductDetail:function(product_id, title) {
+             var jsonToSend ={
+                 product_id: product_id.toString(),
+                 title: title
+             };
+ 
+             this.callBridgeFunction('openProductDetails', jsonToSend, JSON.stringify(jsonToSend));
+         },
+         openCollection: function (collection_id, title) {
+             var jsonToSend ={
+                 collection_id: collection_id.toString(),
+                 title: title
+             };
+ 
+             this.callBridgeFunction('openCollection', jsonToSend, JSON.stringify(jsonToSend));
+         },
+         addToCart:function(variantID){
+             event.stopPropagation();
+             this.callBridgeFunction('addToCart', variantID.toString(), variantID.toString());
+         },
+         openCart:function(event) {
+             event.stopPropagation();
+             this.callBridgeFunction('openCart');
+         },
+         operate:{
+             '+': function(a, b) { return a + b },
+             '<': function(a, b) { return a < b },
+             '=': function(a, b) { return a < b },
+             'equal': function(a, b) { return a == b; },
+             'not_equal': function(a, b) { return a != b; }
+         },
+         isJson:function(str) {
+             try {
+                 JSON.parse(str);
+             } catch (e) {
+                 return false;
+             }
+             return true;
+         },
+         validateData:function(obj){
+             try {
+                 if(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.validateData){
+                     window.webkit.messageHandlers.validateData.postMessage(obj);
+                 }
+             } catch(e) {
+                 console.log("ios error validateData");
+                 console.log(e);
+             }
+             try {
+                 if(window && window.AndroidBridge && window.AndroidBridge.validateData){
+                     window.AndroidBridge.validateData(JSON.stringify(obj));
+                 }
+             } catch(e) {
+                 console.log("android error validateData");
+                 console.log(e);
+             }
+             // if(!window.webkit && !window.AndroidBridge){
+             //
+             // }
+             console.log('validateData '+JSON.stringify(obj));
+         },
+         triggerEvent:function(el, event) {
+             if ("createEvent" in document) {
+                 var evt = document.createEvent("HTMLEvents");
+                 evt.initEvent(event, false, true);
+                 el.dispatchEvent(evt);
+             }
+             else
+                 el.fireEvent(event);
+         }
+     };
+ })();
+ </script>
+
+<script>
+
+  const resize_ob = new ResizeObserver(function(entries) {
+                // since we are observing only a single element, so we access the first element in entries array
+                let rect = entries[0].contentRect;
+                // current width & height
+                let width = rect.width;
+                let height = rect.height;
+                console.log('Current Width : ' + width);
+                console.log('Current Height : ' + height);
+    window.PlobalBridge.adjustWebViewHeight("main");
+            });
+            // start observing for resize
+            resize_ob.observe(document.querySelector("#main"));
+                                                     
+</script>
