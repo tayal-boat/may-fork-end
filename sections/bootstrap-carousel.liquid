@@ -3,8 +3,8 @@
   {% for block in section.blocks limit: 1 %}
     	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide">
           <picture>
-            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
-            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
+            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
+            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}>
             <img class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
           </picture>
         </a>
@@ -12,11 +12,14 @@
   <div class="carousel-inner owl-carousel">
     {% for block in section.blocks %}
       <div class="carousel--item">
+        {% if block.settings.show_timer %}
+          {% render 'countdown-timer', title: "Special Offer Ends In", end_date: block.settings.end_date %}
+        {% endif %}
         <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
         <a href="{{block.settings.slide_url}}" class="slide-url">
           <picture>
-            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
-            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
+            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
+            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}>
             <img class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
           </picture>
         </a>
@@ -27,19 +30,29 @@
 
 </div>
 <style>
+  #homepage-carousel {position: relative;}
+  .timer {
+  	position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+    width: 100%;
+  }
   #homepage-carousel .owl-next, #homepage-carousel .owl-prev {
   	position: absolute;
     top: 45%;
     transform: translateY(-50%);
     color: white !important;
     line-height: 40px !important;
-    background-color: #ff0000 !important;
+    background-color: transparent !important;
     width: 40px;
     height: 40px;
     border-radius: 50%;
     text-align: center;
     opacity: .4;
     transition: all .4s ease-in-out;
+    border: 2px solid #ff0000 !important;
   }
   #homepage-carousel .owl-next:hover, #homepage-carousel .owl-prev:hover {opacity: 1;}
   #homepage-carousel .owl-next {right: 10px;}
@@ -48,7 +61,7 @@
   	line-height: 30px;
     font-size: 50px;
     position: relative;
-    color: white;
+    color: #ff0000;
     width: 30px;
     height: 30px;
   }
@@ -64,9 +77,9 @@
     height: max-content;
   }
   #homepage-carousel button.owl-dot {
-    width: 12px;
-    height: 12px;
-    background: #444!important;
+    width: 10px;
+    height: 10px;
+    background: #44444478!important;
     margin: 0 3px;
     border-radius: 50%;
  }
@@ -122,6 +135,7 @@
   {
     "name": "Bootstrap Slideshow",
 	"class": "bootstrap-carousel",
+	"max_blocks": 28,
     "settings": [],
 	"blocks": [
 		{
@@ -142,7 +156,18 @@
 			  "type": "url",
 			  "id": "slide_url",
 			  "label": "Slide URL"
-			}
+			},
+			{
+              "type": "checkbox",
+              "id": "show_timer",
+              "label": "Show Timer on Banner",
+              "default": false
+            },
+            {
+              "type": "text",
+              "id": "end_date",
+              "label": "End Date (Ex: Apr 30, 2022)"
+            }
 		  ]
 		}
 	],

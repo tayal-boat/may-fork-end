@@ -1,7 +1,9 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
 <style>
-  
+   #shopify-section-{{ section.id }} {
+   margin: {{ section.settings.padding }};
+  }
   .shopify-section--newlaunches {
     overflow-x: hidden;
     display: none;
@@ -106,7 +108,7 @@
     border-radius: 0 30px 30px 0;
   }
   .product-subtitle{
-    color: #7c7c7c;
+    color: #9e9e9e;
     font-weight: 700;
     position: relative;
     text-transform: capitalize;
@@ -346,7 +348,7 @@ display: flex;
     }
     .explore-product, .new-launch-atc {width: 45%;}
     .product-info-div{
-    padding: 2% 2% 4%;
+    padding: 4% 2%;
     }
     .outer-container .slick-dots li button:hover::before{
     background: #202020;
@@ -366,9 +368,7 @@ display: flex;
       border-radius: 20px 20px 0 0;
 /*       min-height: 78vw; */
     }
-    .product-subtitle {
-      font-size: 3vw;
-    }
+
     .product-title{
       font-size: 4vw;
       text-align: center;
@@ -659,7 +659,11 @@ display: flex;
         object-fit: cover;
     }
   }
-  
+   @media screen and (min-width: 1200px) { 
+     #shopify-section-{{ section.id }} {
+   margin: {{ section.settings.padding_desktop }};
+    }    
+   }  
   .apply_coupon_spinner-1 {
   	margin: 0 auto;
     height: 20px;
@@ -683,18 +687,22 @@ display: flex;
                 transform: rotate(360deg);
             }
         }
-  
 </style>
-<div class="row">
+
   <div class="col-12">
-     <h3 class="heading h2 text-center py-5">
-      New Launches
-    </h3>
+      <header class="section__header">
+          <div class="text-container">
+            {%- if section.settings.title != blank -%}
+              <h3 class="heading h2">{{ section.settings.title }}</h3>
+            {%- endif -%}
+          </div>
+        </header>
+
   </div>
-</div>
+
 <img loading="lazy" alt="arrow" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1.png?v=1642498138" class="left-click nl-click non-active-click" />
 <img loading="lazy" alt="arrow" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow_1.png?v=1642498059" class="right-click nl-click" />
-<div class="outer-container new--launch" reveal-on-scroll data-aos="zoom-in">
+<div class="outer-container new--launch" reveal-on-scroll >
   {% for block in section.blocks %}
   {% assign product = block.settings.product_new_launches %}
   {% assign p_id = product.id %}
@@ -833,7 +841,25 @@ $(window).on('load', function() {
 {
   "name": "New Launches",
   "class": "shopify-section--newlaunches",
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "padding",
+      "label": "margin",
+      "default": "0"
+    },
+    {
+      "type": "text",
+      "id": "padding_desktop",
+      "label": "margin-desktop",
+      "default": "0"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    }
+],
   "blocks": [
     {
     "name": "new-launches-home",
