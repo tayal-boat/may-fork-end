@@ -9624,7 +9624,7 @@
                                                                     parseInt(e.reviews_average) > 0
                                                                         ? n("div", [
                                                                               n("div", { domProps: { innerHTML: t._s(e.judgeme_html) } }),
-                                                                              e.reviews_count ? n("span", { staticClass: "st-review-count" }, [t._v(" (" + t._s(e.reviews_count) + ") ")]) : t._e(),
+                                                                              e.reviews_count ? n("span", { staticClass: "st-review-count" }, [t._v(e.reviews_average " (" + t._s(e.reviews_count) + ") ")]) : t._e(),
                                                                           ])
                                                                         : t._e(),
                                                                 ]),
