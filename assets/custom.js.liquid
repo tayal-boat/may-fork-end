@@ -270,32 +270,22 @@ $('.mobile-nav  .mobile-nav__item').each(function() {
 
 
 
-{%- assign product__price = product.price | plus: 0 | divided_by: 100 -%}
   function myFunction() {
-  	var isPreOrder;
-        {% if product.tags contains "preorder" %}
-        	isPreOrder = true;
-        {% else %}
-        	isPreOrder = false;
-        {% endif %}
-      	var variant_title = $(".color-swatch__radio:checked").val();
+    let _prodTitle = $(this).parents('.quick-buy-product').find('.product-item-meta__title').text();
+    let _prodPrice = $(this).parents('.quick-buy-product').find('.price--highlight').text();
+    var _variantTitle = $(".color-swatch__radio:checked").val();
           clevertap.event.push("Added to Cart", {
-            "Product Name": '{{product.title}}' + ' - ' + variant_title,
-            "Product Id": {{product.id}},
-            "Product Category": '{{product.type}}',
-            "Amount": {{product__price}},
+            "Product Name": _prodTitle + ' - ' + _variantTitle,
+            "Amount": _prodPrice,
             "Quantity": 1,
-            "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
             "source": 'Quick View Drawer',
-            "isPreOrdered": isPreOrder,
             "userSource": userSource
           });
           clevertap.profile.push({
             "Site": {
-                "A2C Product Name": '{{product.title}}' + ' - ' + variant_title,
-                "A2C Amount": {{product__price}},
-                "A2C Quantity": 1,
-                "A2C Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+                "A2C Product Name": _prodTitle + ' - ' + _variantTitle,
+                "A2C Amount": _prodPrice,
+                "A2C Quantity": 1
             }
           });
   }
