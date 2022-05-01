@@ -56,7 +56,69 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
   #shopify-section-{{ section.id }} .header__logo-image {
     max-width: {{ section.settings.mobile_logo_max_width }}px;
   }
-
+  .hreder__cart {top: -4px;}
+  .myDropdown {
+    position: relative;
+    bottom: 0;
+    line-height: normal;
+  }
+  .close-popup {
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    font-size: 30px;
+    cursor: pointer;
+    line-height: normal;
+    color: white;
+  }
+  .myDropdown .toggle-link {
+    cursor: pointer;
+  }
+  .myDropdown .toggle-link img {
+    max-width: 20px;
+    width: 100%;
+    display: inline-block;
+   vertical-align: middle;
+  }
+  .myDropdown .dropdown-menu {
+    display: block;
+    color: #000;
+    min-width: 219px;
+    padding: 10px;
+    top: 2.8rem;
+    right: -50%;
+    left: unset;
+    transform: translateX(43%);
+    background: #000;
+  }
+  .myDropdown .dropdown-menu a {
+    color: #fff !important;
+    font-size: 14px!important;
+    line-height: 32px;
+    margin: 6px 0 0; 
+    display: block;
+  }
+  .myDropdown .dropdown-menu a:hover {
+        text-decoration: none!important;
+    }
+  .myDropdown .dropdown-menu a.trackorder {
+    display: block;
+    padding: 0;
+  }
+  .myDropdown .dropdown-menu .account-links-inline {
+    display: block;
+    width: 100%;
+  } 
+  .myDropdown .dropdown-menu .login, .myDropdown .dropdown-menu .logout {
+    display: block;
+    background: #ea2127;
+    text-align: center;
+    margin: 15px 0 0;
+  }
+  .myDropdown .dropdown-menu .login a, .myDropdown .dropdown-menu .logout a {
+    color: #fff!important;
+    font-weight: bold;
+  }
   @media screen and (min-width: 741px) {
     #shopify-section-{{ section.id }} .header__logo-image {
       max-width: {{ section.settings.logo_max_width }}px;
@@ -282,13 +344,40 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
 		  
           {%comment%}Desktop Searchbox Added By SearchTap team{%endcomment%}
           {% render 'st-searchbox-desktop' %}
-          
+          <div class="myDropdown tooltip2 hidden-phone">
+             <span class="toggle-link">
+               {%- render 'icon' with 'header-customer' -%}
+             </span>
+             <div class="dropdown-menu visually-hidden">
+                 <span class="close-popup">&times;</span>
+                 {%- if customer -%}
+                 <p class="mb-0"><span class="text-red" style="color: #ff0000;font-size: 14px;"><strong>Hi {{customer.first_name}}!</strong></span></p>
+                 {%- else -%}
+                 <p class="mb-0"><span class="text-red" style="color: #ff0000;font-size: 14px;"><strong>Hi boAthead!</strong></span></p>
+                 {%- endif -%}
+                 {% if customer %}
+                 <a class="trackorder" href="https://boat-lifestyle.com/apps/ret">Manage Your Order</a>
+                 {% endif %}
+                 {%- if shop.customer_accounts_enabled -%}
+                   <div class="account-links-inline contains-dropdown">
+                     {%- if customer -%}
+                       <div class="your-acct"><a href="{{ routes.account_url }}">Account</a></div>
+                      <div class="logout"><a href="{{ routes.account_logou_url }}">Logout</a></div>
+                     {%- else -%}
+                       <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
+                     {%- endif -%}
+                   </div>
+                 {%- endif -%}
+             </div>
+          </div>
+          {%- comment -%}
           {%- if shop.customer_accounts_enabled -%}
             <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{% if customer %}{{ 'header.general.account' | t | escape }}{% else %}{{ 'header.general.login' | t | escape }}{% endif %}">
               {%- render 'icon' with 'header-customer' -%}
             </a>
           {%- endif -%}
-                  <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
+          {%- endcomment -%}
+            <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
             {%- render 'icon' with 'header-search' -%}
           </a>
           <div class="gift-card-icon" style="height: 22px;">
