@@ -275,6 +275,7 @@ $('.mobile-nav  .mobile-nav__item').each(function() {
 * ------------------------------------------------------------------------------------------------------------
 * 
 */
+<<<<<<< HEAD
 
 function quickATC() {
     let _prodTitle = $('.quick-buy-product').find('.product-item-meta__title').text();
@@ -301,36 +302,34 @@ function quickATC() {
 }
 
 
+=======
+>>>>>>> 18ea450199612a4dd6f75540534bd6b31000b5e5
 
-{%- assign product__price = product.price | plus: 0 | divided_by: 100 -%}
-  function myFunction() {
-  	var isPreOrder;
-        {% if product.tags contains "preorder" %}
-        	isPreOrder = true;
-        {% else %}
-        	isPreOrder = false;
-        {% endif %}
-      	var variant_title = $(".color-swatch__radio:checked").val();
+function quickATC() {
+    let _prodTitle = $('.quick-buy-product').find('.product-item-meta__title').text();
+    let _prodPrice = $('.quick-buy-product').find('.price--highlight').text().split('price')[1];
+    var _variantTitle = $(".color-swatch__radio:checked").val();
           clevertap.event.push("Added to Cart", {
-            "Product Name": '{{product.title}}' + ' - ' + variant_title,
-            "Product Id": {{product.id}},
-            "Product Category": '{{product.type}}',
-            "Amount": {{product__price}},
+            "Product Name": _prodTitle + ' - ' + _variantTitle,
+            "Amount": _prodPrice,
             "Quantity": 1,
-            "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
             "source": 'Quick View Drawer',
-            "isPreOrdered": isPreOrder,
             "userSource": userSource
           });
           clevertap.profile.push({
             "Site": {
-                "A2C Product Name": '{{product.title}}' + ' - ' + variant_title,
-                "A2C Amount": {{product__price}},
-                "A2C Quantity": 1,
-                "A2C Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+                "A2C Product Name": _prodTitle + ' - ' + _variantTitle,
+                "A2C Amount": _prodPrice,
+                "A2C Quantity": 1
             }
           });
-  }
+    setTimeout(function() {
+	  $('.drawer--quick-buy').attr('open', false);
+      $('.header__cart').attr('aria-expanded', true);
+    }, 1500);
+  			
+}
+
 
 /*
 * ------------------------------------------------------------------------------------------------------------
