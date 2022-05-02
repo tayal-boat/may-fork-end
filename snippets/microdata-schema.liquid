@@ -51,9 +51,6 @@ or change the format of some info
     {%- elsif is_barcode_available %}
       "mpn": {{ product.selected_or_first_available_variant.barcode | json }},
       "productId": {{ product.selected_or_first_available_variant.barcode | json }},
-	{%- else -%}
-	  "mpn": "{{ product.handle }}",
-  	  "productId": "{{ product.id }}"
     {%- endif %}
     "brand": {
       "@type": "Brand",
@@ -71,7 +68,9 @@ or change the format of some info
       "name": {{ page_image.alt | json }},
       "width": "1024",
       "height": "1024"
-    }
+    },
+	"mpn": "{{ product.handle }}",
+  	"productId": "{{ product.id }}"
   {%- endcapture -%}
 {%- elsif request.page_type == 'article' -%}
   {%- capture main_entity_microdata -%}
