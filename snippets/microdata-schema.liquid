@@ -197,3 +197,26 @@ or change the format of some info
   }
   </script>
 {% endif %}
+{%- if template.name == 'collection' -%}
+<script type="application/ld+json">
+	{
+      "@context" : "https://schema.org",
+      "@type" : "ItemList",
+      "itemListElement": 
+      [
+        {%- for product in collection.products -%}
+			{
+              "@type":"ListItem",
+              "position": {{forloop.index}},
+              "url":"{{shop.url}}{{ product.url }}",
+              "name":"{{ product.title }}"
+            {% unless forloop.last %}
+            },
+            {% else %}
+                }
+            {%- endunless -%}
+        {%- endfor -%}
+	  ]
+	}
+</script>
+{%- endif -%}
