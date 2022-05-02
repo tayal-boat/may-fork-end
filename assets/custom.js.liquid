@@ -321,34 +321,13 @@ function quickATC() {
   }, 1200);
 }
 
-function quickATC() {
-  let _prodTitle = $(".quick-buy-product")
-    .find(".product-item-meta__title")
-    .text();
-  let _prodPrice = $(".quick-buy-product")
-    .find(".price--highlight")
-    .text()
-    .split("price")[1];
-  var _variantTitle = $(".color-swatch__radio:checked").val();
-  clevertap.event.push("Added to Cart", {
-    "Product Name": _prodTitle + " - " + _variantTitle,
-    Amount: _prodPrice,
-    Quantity: 1,
-    source: "Quick View Drawer",
-    userSource: userSource,
-  });
-  clevertap.profile.push({
-    Site: {
-      "A2C Product Name": _prodTitle + " - " + _variantTitle,
-      "A2C Amount": _prodPrice,
-      "A2C Quantity": 1,
-    },
-  });
-  setTimeout(function () {
-    $(".drawer--quick-buy").attr("open", false);
-    $(".header__cart").attr("aria-expanded", true);
-  }, 1500);
-}
+$("#AddToCart[disabled="disabled"]").after(`
+	<a href="#" class="BIS_trigger" data-product-data="{{ product | json | escape }}">
+                NOTIFY ME
+              </a>
+`)
+
+
 
 /*
  * ------------------------------------------------------------------------------------------------------------
