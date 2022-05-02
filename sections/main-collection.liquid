@@ -307,48 +307,7 @@
     </product-facet>
   </div>
 </section>
-<script>
-// Shortcircuit variable
-let triggered = false;
 
-function ScrollExecute() {
-  // Locate loadmore button
-  let moreButon = $('#more').last();
-  
-  // Get URL from the loadmore button
-  let nextUrl = $(moreButon).find('a').attr("href");
-  console.log(nextUrl)
-  
-  // Button position when AJAX call should be made one time
-  if ((($(moreButon).offset().top - $(window).scrollTop()) < 800) && (triggered == false)) {
-  
-    // Trigger shortcircuit to ensure AJAX only fires once
-    triggered = true;
-
-    // Make ajax call to next page for load more data
-    $.ajax({
-      url: nextUrl,
-      type: 'GET',
-      beforeSend: function() {
-        moreButon.remove();
-      }
-    })
-    .done(function(data) {
-      // Append data
-      $('.product-list__inner').append($(data).find('.product-list__inner').html());
-
-      // On success, reset shortcircuit
-      triggered = false
-    });
-  }
-}
-
-$(document).ready(function () {
-  $(window).scroll(function(){
-    ScrollExecute();
-  });
-});
-</script>
 {% schema %}
 {
   "name": "Collection page",
