@@ -309,6 +309,17 @@
   </div>
 </section>
 <script>
+var products_on_page = $('.product-list__inner');
+var next_url = products_on_page.attr('data-next-url');
+$.ajax({
+      url: next_url,
+      type: 'GET',
+  	  dataType: 'html'
+    })
+    .done(function(next_page) {
+      var new_products = next_page.find('.product-list__inner');
+  	  products_on_page.append(new_products.html());
+    });
 // Shortcircuit variable
 let triggered = false;
 
