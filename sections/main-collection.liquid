@@ -311,48 +311,22 @@
 <script>
 var products_on_page = $('.product-list__inner');
 var next_url = products_on_page.attr('data-next-url');
-$.ajax({
+
+// Shortcircuit variable
+let triggered = false;
+
+function ScrollExecute() {
+  $.ajax({
       url: next_url,
       type: 'GET',
   	  dataType: 'html'
     })
     .done(function(next_page) {
       var new_products = next_page.find('.product-list__inner');
+  	  var new_url = new_products.data('next-url');
+  	  next_url = new_url;
   	  products_on_page.append(new_products.html());
     });
-// Shortcircuit variable
-let triggered = false;
-
-function ScrollExecute() {
-  // Locate loadmore button
-  let moreButon = $('#more').last();
-  
-  // Get URL from the loadmore button
-  let nextUrl = $(moreButon).find('a').attr("href");
-  console.log(nextUrl)
-  
-  // Button position when AJAX call should be made one time
-  if ((($(moreButon).offset().top - $(window).scrollTop()) < 800) && (triggered == false)) {
-  
-    // Trigger shortcircuit to ensure AJAX only fires once
-    triggered = true;
-
-    // Make ajax call to next page for load more data
-    $.ajax({
-      url: nextUrl,
-      type: 'GET',
-      beforeSend: function() {
-//         moreButon.hide();
-      }
-    })
-    .done(function(data) {
-      // Append data
-      $('.product-list__inner').append($(data).find('.product-list__inner').html());
-
-      // On success, reset shortcircuit
-//       triggered = false
-    });
-  }
 }
 
   $(window).on('scroll', function(){
