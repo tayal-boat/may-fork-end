@@ -327,18 +327,20 @@
   	scrollExecute();
   })
   
-  $(document).ready(function() {
-    $(window).scroll(function() {
-      var top_of_element = $("#product-list-foot").offset().top;
-      var bottom_of_element = $("#product-list-foot").offset().top + $("#product-list-foot").outerHeight();
-      var bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
-      var top_of_screen = $(window).scrollTop();
+  $.fn.isInViewport = function() {
+    var elementTop = $(this).offset().top;
+    var elementBottom = elementTop + $(this).outerHeight();
 
-      if ((bottom_of_screen > top_of_element) && (top_of_screen < bottom_of_element)){
-          alert('element in view')
-      }
-    })
-  })
+    var viewportTop = $(window).scrollTop();
+    var viewportBottom = viewportTop + $(window).height();
+
+    return elementBottom > viewportTop && elementTop < viewportBottom;
+};
+  $(window).on('resize scroll', function() {
+    if ($('#product-list-foot').isInViewport()) {
+        alert('in view')
+    }
+});
 </script>
 {% schema %}
 {
