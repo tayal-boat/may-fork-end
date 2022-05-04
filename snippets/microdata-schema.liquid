@@ -47,10 +47,6 @@ or change the format of some info
     {%- endif -%}
     {%- if is_barcode_available and is_valid_gtin_length %}
       "{{gtin_option}}": {{ product.selected_or_first_available_variant.barcode | json }},
-      "productId": {{ product.selected_or_first_available_variant.barcode | json }},
-    {%- elsif is_barcode_available %}
-      "mpn": {{ product.selected_or_first_available_variant.barcode | json }},
-      "productId": {{ product.selected_or_first_available_variant.barcode | json }},
     {%- endif %}
     "brand": {
       "@type": "Brand",
@@ -68,7 +64,9 @@ or change the format of some info
       "name": {{ page_image.alt | json }},
       "width": "1024",
       "height": "1024"
-    }
+    },
+	"mpn": "{{ product.handle }}",
+  	"productId": "{{ product.id }}"
   {%- endcapture -%}
 {%- elsif request.page_type == 'article' -%}
   {%- capture main_entity_microdata -%}
@@ -197,3 +195,26 @@ or change the format of some info
   }
   </script>
 {% endif %}
+{%- if template.name == 'collection' -%}
+<script type="application/ld+json">
+	{
+      "@context" : "https://schema.org",
+      "@type" : "ItemList",
+      "itemListElement": 
+      [
+        {%- for product in collection.products -%}
+			{
+              "@type":"ListItem",
+              "position": {{forloop.index}},
+              "url":"{{shop.url}}{{ product.url }}",
+              "name":"{{ product.title }}"
+            {% unless forloop.last %}
+            },
+            {% else %}
+                }
+            {%- endunless -%}
+        {%- endfor -%}
+	  ]
+	}
+</script>
+{%- endif -%}
