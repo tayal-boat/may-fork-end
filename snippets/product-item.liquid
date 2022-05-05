@@ -9,6 +9,13 @@
 {%- endif -%}
 
 <product-item class="product-item {% unless product.available %}product-item--sold-out{% endunless %}" {% if reveal %}reveal{% endif %}>
+  {%- if product.available == false -%}
+    {%- for tag in product.tags -%}
+        {%- if tag contains 'meta-label-' -%}
+          <span class="productlabel general q {{ tag | remove: 'meta-label-sold' }}"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+        {%- endif -%}
+      {%- endfor -%}
+  {%- endif -%}
   {%- capture product_labels -%}
     {%- for tag in product.tags -%}
       {%- if tag contains '__label' -%}
