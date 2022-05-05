@@ -1,3 +1,14 @@
+<style>
+{% if product.available == true %}
+.label.label--highlight.-out-click-to-notify.r {display: none;}
+{% else %}
+  .label.label--highlight.meta-label-lowest-price {display: none;}
+{% endif %}
+{% if product.tags contains 'meta-label-new-arrival' %}
+ .label.label--highlight.meta-label-lowest-price {display: none;}
+{% endif %}
+</style>
+
 {%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
@@ -7,14 +18,6 @@
 {%- else -%}
   {%- assign product_url_contains_query = false -%}
 {%- endif -%}
-
-<style>
-{% if product.available == true %}
-.label.label--highlight.-out-click-to-notify.r {display: none;}
-{% else %}
-  .label.label--highlight.lowest-price {display: none;}
-{% endif %}
-</style>
 
 <product-item class="product-item {% unless product.available %}product-item--sold-out{% endunless %}" {% if reveal %}reveal{% endif %}>
   {%- if product.available == false -%}
@@ -262,7 +265,7 @@
         {%- endif -%}
       {%- endif -%}
       {% unless product.available %}
-        <a href="#" class="BIS_trigger" data-product-data="{{ product | json | escape }}">
+        <a href="#" class="BIS_trigger item_BIS" data-product-data="{{ product | json | escape }}">
           Notify Me
         </a>
       {% endunless %}
