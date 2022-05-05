@@ -1,0 +1,137 @@
+<div class="container-fluid cf section-id-{{ section.id }} top-collections top-2 hidden-tablet-and-up" data-section-type="custom-row">
+  <div class="top-collections-row">
+    <div class="inner-collections-row row">
+    	{% for block in section.blocks %}
+          <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
+            <a href="{{ block.settings.imageUrl }}" class="collection-block">
+              <span class="collection-image">
+                <img loading="eager" src="{{block.settings.image | img_url: '150x'}}" alt="{{ block.settings.collection_Title }}" />
+              </span>
+              <span class="collection-text text-center text-white">
+                <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
+             </span>
+           </a>
+          </div>
+       {% endfor %}
+    </div>
+  </div>
+</div>
+<style>
+  .top-2.top-collections {
+    margin-bottom: .5rem;
+    padding: 0 10px;
+  }
+  .top-2 .inner-collections-row {
+  	display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: center;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+  .top-2.top-collections .collection {
+  	min-width: 90px;
+    background: #E2E0DF;
+    padding: 5px 0;
+    border-radius: 5px;
+    margin: 0 5px;
+  }
+  .top-2 .collection-image {
+  	display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: auto;
+  }
+  .top-2 .collection-image img {
+  	max-width: 60px;
+    display: block;
+    margin: auto;
+  }
+  .top-2 .collection-title {
+    font-size: 11px;
+    display: block;
+    font-weight: bold;
+    line-height: normal;
+    color: #000;
+  }
+  @media screen and (max-width: 360px) {
+    .top-2.top-collections .collection {max-width: 90px;min-width: 90px;}
+    .top-2.top-collections .collection {
+        margin: 0 5px;
+    }
+    .top-2 .collection-title {font-size: 11px;}
+  }
+  @media screen and (max-width: 380px) {
+    .top-2.top-collections .collection {
+        margin: 0 5px;
+    }
+    .top-2 .inner-collections-row {
+      justify-content: unset;
+    }
+  }
+</style>
+<script>
+    $('.top-collections.top-2 .collection').each(function() {
+      $(this).click(function() {
+      	let item = $(this).data('item');
+        clevertap.event.push('Top Collections Clicked', {
+          "Item": item
+        });
+      });
+    });
+  	const h = $("#pageheader").height();
+  	const hpx = h + 17 + 'px';
+//   	$('.top-collections.top-2').css('margin-top', hpx);
+</script>
+{% schema %}
+  {
+    "name": "Top Collections Box",
+	"max_blocks": 5,
+    "settings": [],
+	"blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image",
+                  "info": "300px wide minimum"
+              },
+			  {
+                  "type": "url",
+                  "id": "imageUrl",
+                  "label": "Image URL"
+              },
+			  {
+                  "type": "text",
+                  "id": "collection_Title",
+                  "label": "Collection Title"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Top Collections Box",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
