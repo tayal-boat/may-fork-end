@@ -17,9 +17,7 @@
       {%- endfor -%}
   {% else %}
   	{%- for tag in product.tags -%}
-        {%- if tag contains 'meta-label-' -%}
-          
-        {%- endif -%}
+        
 		{%- if tag contains 'meta-label-lowest-price' -%}
 		  <span class="label label--highlight lowest-price">
 			{%-if product.price < product.compare_at_price -%}
@@ -27,7 +25,9 @@
       	  	{%- endif -%}
 		  </span>
   		{% else %}
-  			<span class="label label--highlight  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+  			{%- if tag contains 'meta-label-' -%}
+              <span class="label label--highlight  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+            {%- endif -%}
 		{%- endif -%}
       {%- endfor -%}
   {%- endif -%}
