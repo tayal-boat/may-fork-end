@@ -12,8 +12,21 @@
   {%- if product.available == false -%}
     {%- for tag in product.tags -%}
         {%- if tag contains 'meta-label-' -%}
-          <span class="productlabel general q {{ tag | remove: 'meta-label-sold' }}"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+          <span class="label label--highlight q {{ tag | remove: 'meta-label-sold' }}"><span>{{ tag | remove: 'meta-label-' }}</span></span>
         {%- endif -%}
+      {%- endfor -%}
+  {% else %}
+  	{%- for tag in product.tags -%}
+        {%- if tag contains 'meta-label-' -%}
+          <span class="label label--highlight  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+        {%- endif -%}
+		{%- if tag contains 'meta-label-lowest-price' -%}
+		  <span class="label label--highlight lowest-price">
+			{%-if bold_compare_at_price_max > bold_price -%}
+          			<span class="text-uppercase discount-saved-{{variant.option1 | split: " " | join: "-"}}" data-title="{{ variant.option1 | split: " " | join: "-" }}"><span style="color:#ff0000;font-weight: bold;">You Save {{ bold_compare_at_price_max |minus: bold_price | times: 100.0 | divided_by: bold_compare_at_price_max | floor | money_without_currency | times: 100 | remove: ".0"}}%</span></span>
+      	  	{%- endif -%}
+		  </span>
+		{%- endif -%}
       {%- endfor -%}
   {%- endif -%}
   {%- capture product_labels -%}
