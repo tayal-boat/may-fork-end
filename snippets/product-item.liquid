@@ -18,26 +18,26 @@
 {%- endif -%}
 
 <product-item class="product-item {% unless product.available %}product-item--sold-out{% endunless %}" {% if reveal %}reveal{% endif %}>
-  {%- comment -%}
+  {% if template contains 'collection' or template contains 'index' %}
   {%- if product.available == false -%}
-     <span class="label label--highlight q -out-click-to-notify"><span>SOLD OUT</span></span>
+     <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
   {% endif %}
   {%- if product.available == true -%}
   	{%- for tag in product.tags -%}
 		{%- if tag contains 'meta-label-lowest-price' -%}
   			{%-if product.price < product.compare_at_price -%}
-		  <span class="label label--highlight lowest-price">
+		  <span class="label label--highlight custom-label lowest-price">
           	You Save {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
 		  </span>
   			{%- endif -%}
   		{% else %}
   			{%- if tag contains 'meta-label-' -%}
-              <span class="label label--highlight  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+              <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
             {%- endif -%}
 		{%- endif -%}
       {%- endfor -%}
   {%- endif -%}
-  {%- endcomment -%}
+  {%- else -%}
   {%- capture product_labels -%}
     {%- for tag in product.tags -%}
       {%- if tag contains '__label' -%}
@@ -69,6 +69,7 @@
       <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
     {%- endif -%}
   {%- endcapture -%}
+  {%- endif -%}
   <div class="product-item__image-wrapper {% if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true %}product-item__image-wrapper--multiple{% endif %}">
     {%- if product_labels != blank and reduced_content != true -%}
       <div class="product-item__label-list label-list">
