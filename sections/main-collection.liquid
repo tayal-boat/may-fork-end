@@ -281,11 +281,11 @@
                 {% if paginate.next %}
                 <a href="{{ paginate.next.url }}">Loading More</a>
                 {% endif %}  
-              </div>
-            </product-list>
-        	
+            </div>
+              
+<!--         	<div id="product-list-foot">Load More</div> -->
 
-            {% comment %}{%- render 'pagination', paginate: paginate, use_ajax: true -%}{% endcomment %}
+            {%- comment -%}{%- render 'pagination', paginate: paginate, use_ajax: true -%}{%- endcomment -%}
           {%- endpaginate -%}
 
           {%- if section.settings.promotion_position == 'bottom' -%}
@@ -314,7 +314,30 @@
     </product-facet>
   </div>
 </section>
+{% comment %}
+<script>
+  var products_on_page = $('.product-list__inner');
+  var next_url = products_on_page.data('next-url');
 
+  function scrollExecute() {
+  	$.ajax({
+      url: next_url,
+      type: 'GET',
+  	  dataType: 'html'
+    })
+    .done(function(next_page) {
+      var new_products = $(next_page).find('.product-list__inner');
+  	  var new_url = new_products.data('next-url');
+  	  next_url = new_url;
+  	  products_on_page.append(new_products.html());
+    });
+  }
+  
+  $('#product-list-foot').click(function() {
+  	scrollExecute();
+  });
+</script>
+{% endcomment %}
 {% schema %}
 {
   "name": "Collection page",
