@@ -506,7 +506,27 @@
         }
       }
       </style>
-
+	  <script>
+        function setCookie(name,value,days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+      </script>
 
       <cart-drawer section="{{ section.id }}" id="mini-cart" class="mini-cart drawer drawer--large">
         <span class="drawer__overlay"></span>
@@ -1007,8 +1027,9 @@
 		function remove_function() {
             sessionStorage.setItem('coupon-remove', true);
             sessionStorage.setItem('coupon-code', '');
-            sessionStorage.setItem('discount_code', '');
-          	Cookies.set('discount_code', '');
+//             sessionStorage.setItem('discount_code', '');
+//           	Cookies.set('discount_code', '');
+          	setCookie("discount_code","",30); 
             console.log('clicked remove')
             $('.tag-slider-cart').remove();
             $('.total-am').hide();
@@ -1073,8 +1094,9 @@
                       if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase() || i.innerText.trim().includes('•')) {
                         sessionStorage.setItem('coupon-remove', true);
                         sessionStorage.setItem('coupon-code', '');
-                        sessionStorage.setItem('discount_code', ''); 
-                        Cookies.set('discount_code', '');
+//                         sessionStorage.setItem('discount_code', ''); 
+//                         Cookies.set('discount_code', '');
+                           setCookie("discount_code","",30);
                         $('.tag-slider-cart').remove();
                         if(!i.innerText.trim().includes('•')){
                           $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
@@ -1122,8 +1144,9 @@
                       $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
                       $('.total-am')[0].style.display = "flex";
                       sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0]}`)
-                      sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
-                      Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                       sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                       Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+                      setCookie("discount_code",`${i.innerText.trim().split(' ')[0]}`,30); 
                       if ($('#coupon-code-text')[0].value != '') {
                         $('#coupon-code-text')[0].value = '';
                       }
@@ -1143,8 +1166,9 @@
                       if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
                         sessionStorage.setItem('coupon-remove', true);
                         sessionStorage.setItem('coupon-code', '');
-                        sessionStorage.setItem('discount_code', '');
-                        Cookies.set('discount_code', '');
+//                         sessionStorage.setItem('discount_code', '');
+//                         Cookies.set('discount_code', '');
+                        setCookie("discount_code","",30);
                         $('.tag-slider-cart').remove();
                         $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
                         $('.total-am').hide();
@@ -1189,8 +1213,9 @@
                       $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
                       $('.total-am')[0].style.display = "flex";
                       sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0].toLowerCase()}`)
-                      sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
-                      Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                       sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                       Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+                      setCookie("discount_code",`${i.innerText.trim().split(' ')[0]}`,30); 
                       if ($('#coupon-code-text')[0].value != '') {
                         $('#coupon-code-text')[0].value = '';
                       }
@@ -1302,8 +1327,9 @@
                   if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
                     sessionStorage.setItem('coupon-remove', true);
                     sessionStorage.setItem('coupon-code', '');
-                    sessionStorage.setItem('discount_code', '');
-                    Cookies.set('discount_code', '');
+//                     sessionStorage.setItem('discount_code', '');
+//                     Cookies.set('discount_code', '');
+                    setCookie("discount_code","",30); 
                     $('.tag-slider-cart').remove();
                     $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
                     $('.total-am').hide();
@@ -1350,8 +1376,9 @@
                   $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
                   $('.total-am')[0].style.display = "flex";
                   sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0]}`)
-                  sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
-                  Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                   sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                   Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+                  setCookie("discount_code",`${i.innerText.trim().split(' ')[0]}`,30); 
                   if ($('#coupon-code-text')[0].value != '') {
                     $('#coupon-code-text')[0].value = '';
                   }
@@ -1371,8 +1398,9 @@
                   if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
                     sessionStorage.setItem('coupon-remove', true);
                     sessionStorage.setItem('coupon-code', '');
-                    sessionStorage.setItem('discount_code', '');
-                    Cookies.set('discount_code', '');
+//                     sessionStorage.setItem('discount_code', '');
+//                     Cookies.set('discount_code', '');
+                    setCookie("discount_code","",30); 
                     $('.tag-slider-cart').remove();
                     $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
                     $('.total-am').hide();
@@ -1417,8 +1445,9 @@
                   $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
                   $('.total-am')[0].style.display = "flex";
                   sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0].toLowerCase()}`)
-                  sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
-                  Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                   sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+//                   Cookies.set('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+                  setCookie("discount_code",`${i.innerText.trim().split(' ')[0]}`,30); 
                   if ($('#coupon-code-text')[0].value != '') {
                     $('#coupon-code-text')[0].value = '';
                   }
@@ -1494,8 +1523,9 @@
 
           if (sessionStorage.getItem('coupon-code') && sessionStorage.getItem('coupon-code') != '' && sessionStorage.getItem('coupon-remove') != 'true' && disable_coupons != 1) {
             sessionStorage.setItem('coupon-remove', true);
-            sessionStorage.setItem('discount_code', '');
-            Cookies.set('discount_code', '');
+//             sessionStorage.setItem('discount_code', '');
+//             Cookies.set('discount_code', '');
+            setCookie("discount_code","",30); 
             window.isaddingtocart = true
             $.ajax({
               type: "POST",
@@ -1587,8 +1617,9 @@
                 $('.d-flex.justify-content-between').show()
                 sessionStorage.setItem('coupon-remove', true);
                 sessionStorage.setItem('coupon-code', '');
-                sessionStorage.setItem('discount_code', ''); 
-                Cookies.set('discount_code', '');
+//                 sessionStorage.setItem('discount_code', ''); 
+//                 Cookies.set('discount_code', '');
+                setCookie("discount_code","",30); 
                 if ($('#coupon-code-text').length > 0) {
                   if ($('#coupon-code-text')[0].value != '') {
                     $('#coupon-code-text')[0].value = '';
