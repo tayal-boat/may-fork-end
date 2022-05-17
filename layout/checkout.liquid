@@ -2481,5 +2481,40 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
         });
       }, 3000);
     </script>
+<!--     gta enhanced -->
+    <script>
+  var enhanced_conversion_data = {
+    "first_name": "{{ checkout.billing_address.first_name }}",
+    "last_name": "{{ checkout.billing_address.last_name }}",
+    "home_address": {
+      "street": "{{ checkout.billing_address.street }}",
+      "city": "{{ checkout.billing_address.city }}",
+      "region": "{{ checkout.billing_address.province }}",
+      "postal_code": "{{ checkout.billing_address.zip }}",
+      "country": "{{ checkout.billing_address.country_code }}"
+    }
+  }
+if("{{ checkout.email }}"){
+   enhanced_conversion_data.email = "{{ checkout.email }}";
+}
+if("{{ checkout.billing_address.phone }}"){
+   enhanced_conversion_data.phone_number = "{{ checkout.billing_address.phone }}";
+}
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-816285276', {'allow_enhanced_conversions': true});
+</script>
+<script>
+  gtag('event', 'conversion', {
+    'send_to': 'AW-816285276/m5wpCNOY1P8CENyMnoUD',
+    'value': {{ checkout.total_price | divided_by: 100.0 }},
+       'currency': '{{ currency }}',
+       'transaction_id': '{{ order_number }}',
+       });
+</script>
   </body>
 </html>
