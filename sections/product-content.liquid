@@ -15,10 +15,10 @@
             {%- endif -%}
 
           {%- when 'reviews' -%}
-            <button type="button" id="product-{{ product.id }}-reviews-desktop" class="tabs-nav__item heading heading--small anchor" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}" {{ block.shopify_attributes }}>
+            <a type="button" href="#btnshopify-product-reviews"  class="tabs-nav__item heading heading--small anchor" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}" {{ block.shopify_attributes }}>
               {%- assign rating_count = product.metafields.reviews.rating_count.value | default: 0 -%}
               {{- 'product.general.reviews' | t: rating_count: rating_count }}
-            </button>
+            </a>
 
             {%- assign processed_blocks = processed_blocks | plus: 1 -%}
 
@@ -207,16 +207,16 @@
 
             {%- when 'reviews' -%}
               <div {% unless processed_blocks == 0 %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="product-tabs__tab-item-wrapper" {{ block.shopify_attributes }}>
-{% comment %}             
-                <button is="toggle-button" id="product-{{ product.id }}-reviews-pocket" class="collapsible-toggle heading heading--small hidden-lap-and-up anchor" aria-controls="block-{{ section.id }}-{{ block.id }}-content" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}">
+            
+                <button is="toggle-button" id="btnshopify-product-reviews" class="collapsible-toggle heading heading--small anchor" aria-controls="block-{{ section.id }}-{{ block.id }}-content" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}">
                   {%- assign rating_count = product.metafields.reviews.rating_count.value | default: 0 -%}
                   {{- 'product.general.reviews' | t: rating_count: rating_count }} {%- render 'icon' with 'chevron' -%}
                 </button>
-{% endcomment %} 
+
                 <collapsible-content {% if processed_blocks == 0 %}open{% endif %} id="block-{{ section.id }}-{{ block.id }}-content" class="collapsible">
                   <div class="product-tabs__tab-item-content">
                     <div id="shopify-product-reviews" class="spr-reviews" data-id="{{ product.id }}">
-                      {{- product.metafields.spr.reviews -}}
+                    {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
                     </div>
                   </div>
                 </collapsible-content>
@@ -260,12 +260,12 @@
           {%- when 'liquid' -%}
             {%- if block.settings.title != blank and block.settings.liquid != blank -%}
               <div {% unless processed_blocks == 0 %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="product-tabs__tab-item-wrapper" {{ block.shopify_attributes }}>
-{% comment %} 
+
                 <button is="toggle-button" class="collapsible-toggle heading heading--small hidden-lap-and-up" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}-content">
                   {{- block.settings.title | escape -}}
                   {%- render 'icon' with 'chevron' -%}
                 </button>
-{% endcomment %} 
+
                 <collapsible-content {% if processed_blocks == 0 %}open{% endif %} id="block-{{ section.id }}-{{ block.id }}-content" class="collapsible">
                   <div class="product-tabs__tab-item-content rte">
                     {{- block.settings.liquid -}}
