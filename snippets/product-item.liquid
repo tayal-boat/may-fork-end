@@ -20,7 +20,6 @@
 {%- endif -%}
 
 <product-item class="product-item {% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}" {% if reveal %}reveal{% endif %}>
-  {% if template contains 'collection' or template contains 'index' %}
   {% unless product.tags contains 'Coming-Soon' %}
     {%- if product.available == false -%}
        <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
@@ -44,7 +43,7 @@
 		{%- endif -%}
       {%- endfor -%}
   {%- endif -%}
-  {%- else -%}
+  {%- comment -%}
   {%- capture product_labels -%}
     {%- for tag in product.tags -%}
       {%- if tag contains '__label' -%}
@@ -76,7 +75,7 @@
       <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
     {%- endif -%}
   {%- endcapture -%}
-  {%- endif -%}
+  {%- endcomment -%}
   <div class="product-item__image-wrapper {% if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true %}product-item__image-wrapper--multiple{% endif %}">
     {%- if product_labels != blank and reduced_content != true -%}
       <div class="product-item__label-list label-list">
