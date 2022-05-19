@@ -175,30 +175,28 @@ settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
   
 let  targetNode = document.querySelector('html')
 
-
-const getHideOverlay = function(mutationList){
-       mutationList.forEach((mutation) => {
-           let gokwikiframe = document.querySelector('#gokwik-iframe')
-           let foldieIframe = document.querySelector('#nmg-incentive-1652963687405')
-           mutation.addedNodes.forEach((added_node) => {
-               if(gokwikiframe){
-                   if(screen.width<700){
-                       foldieIframe.style.display="none"
+  window.addEventListener("load", function(){
+  const sideCartCallback = function(mutationList){
+      mutationList.forEach((mutation) => {
+          let gokwikIfram = document.querySelector('#gokwik-iframe')
+          let foldieIfram = document.querySelector('.foldie-container-overlay')
+          mutation.addedNodes.forEach((added_node) => {
+              if(foldieIfram){
+                   if(screen.width<700 && gokwikIfram){
+                       foldieIfram.style.display="none"
                        console.log('icon-removed');
                    }
-               }
-           })
-           mutation.removedNodes.forEach((removed_node) => {
-         if (!gokwikiframe){
-           foldieIframe?foldieIframe.style.display="block":'';
-           }
-         })
-       })
-     }
-	
-	const config = { attributes: true, childList: true, subtree: true };
-    const removeIcon = new MutationObserver(getHideOverlay)
-    removeIcon.observe(targetNode, config)
+              }
+          })
+      })
+    }
+     const config = { attributes: true, childList: true, subtree: true };
+
+  
+      const customBtn = new MutationObserver(sideCartCallback)
+      customBtn.observe(targetNode, config)
+     
+}); 
     
 </script>
 
