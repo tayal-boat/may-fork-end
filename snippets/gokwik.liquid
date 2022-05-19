@@ -172,6 +172,30 @@ settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
     	gokwikSdk.initCheckout(merchantInfo);
       logEvent();
     }
+const getHideOverlay = function(mutationList){
+       mutationList.forEach((mutation) => {
+           let gokwikiframe = document.querySelector('#gokwik-iframe')
+           let smileIframe = document.querySelector('.smile-launcher-frame')
+           mutation.addedNodes.forEach((added_node) => {
+               if(gokwikiframe){
+                   if(screen.width<700 && smileIframe.style.display!="none"){
+                       smileIframe.style.display="none"
+                       console.log('icon-removed');
+                   }
+               }
+ //             else{
+ //              smileIframe.style.display="block";
+ //             }
+           })
+           mutation.removedNodes.forEach((removed_node) => {
+         if (!gokwikiframe){
+           smileIframe?smileIframe.style.display="block":'';
+           }
+         })
+       })
+     }
+    const removeIcon = new MutationObserver(getHideOverlay)
+       removeIcon.observe(targetNode, config)
 </script>
 
 <script>
