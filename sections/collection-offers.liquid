@@ -29,7 +29,7 @@
     display: flex;
     flex-wrap: nowrap;
     flex: 1;
-    overflow-y: auto;
+/*     overflow-y: auto; */
     justify-content: flex-start;
   }
   .offer {
@@ -136,6 +136,24 @@
     text-decoration: none;
     color: #ff0000;
   }
+  .owl-dots {
+  	display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .owl-dot {
+  	margin: 0 4px;
+  }
+  .owl-dot, .owl-dot span {
+  	display: block;
+    width: 10px;
+    height: 10px;
+    background: #ccc;
+    border-radius: 50%;
+  }
+  .owl-dot.active span {
+  	background: #000;
+  } 
   @media screen and (max-width: 767px) {
     .mobile-only {
       display: block;
@@ -169,7 +187,7 @@
     .row-offer {
       display: flex;
       flex-wrap: nowrap;
-      overflow-y: auto;
+/*       overflow-y: auto; */
       justify-content: unset;
     }
     /*     	.row-offer .slick-track {display: flex;} */
@@ -214,7 +232,7 @@
 </style>
 <div class="offers-zone mb-4">
   <div class="offers-cards">
-    <div class="row-offer">
+    <div class="row-offer owl-carousel">
       {%- for block in section.blocks -%}
       	<div class="offer">
         <div class="offer-container">
@@ -275,28 +293,56 @@
           <div class="offer-tnc rewards_">{{block.settings.terms}}</div>
         </div>
       </div>
-      <div class="modal fade" id="{{block.settings.offer_id}}" role="dialog">
-        <div class="modal-dialog">
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">
-                &times;
-              </button>
-            </div>
-            <div class="modal-body lazy">{{block.settings.terms}}</div>
-            <div class="modal-footer"></div>
-          </div>
-        </div>
-      </div>
       {%- endfor -%}
     </div>
   </div>
 </div>
       
+{%- for block in section.blocks -%}
+	<div class="modal fade" id="{{block.settings.offer_id}}" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                &times;
+            </button>
+          </div>
+          <div class="modal-body lazy">{{block.settings.terms}}</div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+{%- endfor -%}
 
 <script>
   $(document).ready(function () {
+    $('.owl-carousel').owlCarousel({
+        loop: false,
+        nav: false,
+        lazyLoad: true,
+        merge: true,
+        startPosition: 0,
+        smartSpeed:500,
+        animateOut: 'fadeOut',
+    	animateIn: 'fadeIn',
+        pullDrag: false,
+        checkVisible: false,
+        responsiveClass:true,
+        stopOnHover: true,
+        autoplayHoverPause: true,
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:3
+            },
+            1200:{
+                items:4
+            }
+        }
+    });
     if (window.matchMedia("(max-width: 767px)").matches) {
       $(".tnc-btn").click(function () {
         $(this).toggleClass("active");
