@@ -96,6 +96,45 @@
   }
 </style>
 
+<script>
+	$(document).ready(function(){
+      var $owl = $( '.owl-carousel' );
+      $owl.on('initialized.owl.carousel', function(event){ 
+         $('.temp-slide').remove();
+      });
+      $(".owl-carousel").owlCarousel({
+        items: 1,
+        loop: true,
+        nav: true,
+        lazyLoad: true,
+        autoplay: true,
+        autoplayTimeout: 7000,
+        merge: true,
+        startPosition: 0,
+        smartSpeed:500,
+        animateOut: 'fadeOut',
+    	animateIn: 'fadeIn',
+        pullDrag: false,
+        checkVisible: false,
+        responsiveClass:true,
+        stopOnHover: true,
+        autoplayHoverPause: true
+      });
+    });
+  	const slides = document.querySelectorAll('.carousel-inner .carousel--item');
+    slides.forEach((slide, i) => {
+      slide.addEventListener('click', function() {
+          let imageTitle = slide.querySelector('.image_alt').innerText;
+          let slideNum = `${i+1}`
+          clevertap.event.push("Homepage Banner clicked", {
+            "Banner Number": 'Banner ' + slideNum,
+            "Banner Title": imageTitle,
+            "userSource": userSource
+          })
+      })
+    });
+</script>
+
 {% schema %}
   {
     "name": "Bootstrap Slideshow",
