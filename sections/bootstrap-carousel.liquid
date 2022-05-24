@@ -118,6 +118,54 @@
     #homepage-carousel .owl-next, .owl-prev {display: none;}
     #homepage-carousel .owl-dots {position: static;margin-top: 10px;}
   }
+  #saleModal {z-index: 9999;background: #0009;padding: 0 !important;}
+  #saleModal .modal-dialog{top: 20%;}
+  #saleModal .close {
+  	position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: #EB1C24;
+    color: #fff;
+    line-height: 30px;
+    font-weight: normal;
+    opacity: 1;
+    text-align: center;
+    font-size: 30px !important;
+  }
+  #saleModal .close:focus {
+  	border: 0;
+    outline: none;
+  }
+  .error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale {
+  	text-align: center;
+    margin: 0;
+    font-size: 12px;
+    color: #fff;
+    opacity: .8;
+  }
+  .sale-btn:focus {outline: none;}
+  #saleModal img {display:block;}
+  #saleModal .modal-content {border:0;}
+  .modal-form {background: #000;}
+  #saleModal input {
+  	border: 1px solid #ccc;
+    background: transparent;
+    color: #ccc;
+    margin-right: 4px;
+    padding: 0 12px;
+    height: 45px;
+  }
+  #saleModal input::-webkit-input-placeholder {color: #ccc;}
+  #saleModal .sale-btn:hover {background: #EB1C24!important;}
+  
+  @media screen and (max-width: 600px) {
+  	#saleModal .modal-dialog{top: 25%;}
+  }
+  @media screen and (min-width: 1100px) {
+    #shopify-section-1478795901388 {margin-bottom: 20px}
+  }
 </style>
 
 <script>
@@ -157,6 +205,30 @@
           })
       })
     });
+  {% if section.settings.show_popup %}
+    var slide_num = '{{ section.settings.banner_number}}';
+    $(`.slide_${slide_num} a`).click(function(e){
+        e.preventDefault();
+        $("#saleModal").modal("show");
+      });
+      {% if customer %}
+          document.getElementById("sale_email").value = '{{customer.email}}'
+      {% endif %}
+      $(".sale-btn").click(function () {
+      var e = document.getElementById("sale_email").value;
+      "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+          ? localStorage.getItem("userEmailIdSale") === e
+              ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+              : (localStorage.setItem("userEmailIdSale", e),
+                clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                clevertap.event.push("Notify Me AD175", { Email: e, Source: "HomePage Banner Popup" }),
+                $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+          : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+      setTimeout(function () {
+          $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+      }, 5e3);
+  });
+ {% endif %}
 </script>
 
 {% schema %}
@@ -164,7 +236,24 @@
     "name": "Bootstrap Slideshow",
 	"class": "bootstrap-carousel",
 	"max_blocks": 28,
-    "settings": [],
+    "settings": [
+		{
+          "type": "checkbox",
+          "id": "show_popup",
+          "label": "Enable popup on banner",
+          "default": false
+        },
+		{
+		  "type": "image_picker",
+		  "id": "popup_image",
+		  "label": "Popup Image"
+		},
+		{
+          "type": "text",
+          "id": "banner_number",
+          "label": "Enter banner number on which you want to show popup"
+        }
+	],
 	"blocks": [
 		{
           "name": "slideshow",
