@@ -121,19 +121,24 @@
        }
     },200)
 
-   
+   console.log('1----------');
   var cart_change_observer_selector = document.querySelector("#cart__total_price");    
     document.body.addEventListener("click", function (evt) {
+      console.log('2----------');
       	cart_change_observer_selector = document.querySelector("#cart__total_price");  
     	if(cart_change_observer_selector != null){
+          console.log('3----------');
           const priceChangeObserver = new MutationObserver(function() {
             priceChangeObserver.disconnect();
+            console.log('4----------');
             var cart_price_selector = document.getElementsByClassName("cart-total-val")[0].value;
             //var cart_price_selector = document.querySelector("#cart__total_price")[0].innerHTML.replace(/\D/g, "");
             document.getElementById("zestmoney-amount-cart").innerHTML = Math.round(cart_price_selector/3);
+            console.log('5----------');
             priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});
             var href = new URL(document.getElementById('zestmoney-widget-iframe-cart').src);
             href.searchParams.set('basketAmount', Math.round(cart_price_selector));
+            console.log('6----------');
             document.getElementById('zestmoney-widget-iframe-cart').src = href.toString();
           });
           priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});       
