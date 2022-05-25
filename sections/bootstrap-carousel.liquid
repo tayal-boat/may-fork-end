@@ -25,10 +25,34 @@
         </a>
       </div>
     {% endfor %}
-    
   </div>
-
 </div>
+{% if section.settings.show_popup %}
+<div id="saleModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-body-content">
+          <div class="modal-image">
+            <img loading="lazy" class="image-overlay__image_" {% render 'image-attributes', image: section.settings.popup_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="Popup Image" />
+          </div>
+          <div class="modal-form p-3">
+          	<div class="sale-pop-form">
+            <div class="form-group" style="margin: 0;">
+              <div class="myform" style="display: flex;margin: 0;justify-content: center;">
+              	<input style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;" type="email" name="email" id="sale_email" placeholder="Email Address">
+              <button style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;" class="button sale-btn" type="submit">YES</button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 <style>
   .owl-nav {
     display: none;
@@ -94,6 +118,54 @@
     #homepage-carousel .owl-next, .owl-prev {display: none;}
     #homepage-carousel .owl-dots {position: static;margin-top: 10px;}
   }
+  #saleModal {z-index: 9999;background: #0009;padding: 0 !important;}
+  #saleModal .modal-dialog{top: 20%;}
+  #saleModal .close {
+  	position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: #EB1C24;
+    color: #fff;
+    line-height: 30px;
+    font-weight: normal;
+    opacity: 1;
+    text-align: center;
+    font-size: 30px !important;
+  }
+  #saleModal .close:focus {
+  	border: 0;
+    outline: none;
+  }
+  .error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale {
+  	text-align: center;
+    margin: 0;
+    font-size: 12px;
+    color: #fff;
+    opacity: .8;
+  }
+  .sale-btn:focus {outline: none;}
+  #saleModal img {display:block;}
+  #saleModal .modal-content {border:0;}
+  .modal-form {background: #000;}
+  #saleModal input {
+  	border: 1px solid #ccc;
+    background: transparent;
+    color: #ccc;
+    margin-right: 4px;
+    padding: 0 12px;
+    height: 45px;
+  }
+  #saleModal input::-webkit-input-placeholder {color: #ccc;}
+  #saleModal .sale-btn:hover {background: #EB1C24!important;}
+  
+  @media screen and (max-width: 600px) {
+  	#saleModal .modal-dialog{top: 25%;}
+  }
+  @media screen and (min-width: 1100px) {
+    #shopify-section-1478795901388 {margin-bottom: 20px}
+  }
 </style>
 
 <script>
@@ -108,7 +180,7 @@
         nav: true,
         lazyLoad: true,
         autoplay: true,
-        autoplayTimeout: 7000,
+        autoplayTimeout: 5000,
         merge: true,
         startPosition: 0,
         smartSpeed:500,
@@ -133,6 +205,30 @@
           })
       })
     });
+  {% if section.settings.show_popup %}
+    var slide_num = '{{ section.settings.banner_number}}';
+    $(`.slide_${slide_num} a`).click(function(e){
+        e.preventDefault();
+        $("#saleModal").modal("show");
+      });
+      {% if customer %}
+          document.getElementById("sale_email").value = '{{customer.email}}'
+      {% endif %}
+      $(".sale-btn").click(function () {
+      var e = document.getElementById("sale_email").value;
+      "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+          ? localStorage.getItem("userEmailIdSale") === e
+              ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+              : (localStorage.setItem("userEmailIdSale", e),
+                clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                clevertap.event.push("Notify Me AD175", { Email: e, Source: "HomePage Banner Popup" }),
+                $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+          : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+      setTimeout(function () {
+          $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+      }, 5e3);
+  });
+ {% endif %}
 </script>
 
 {% schema %}
@@ -140,7 +236,24 @@
     "name": "Bootstrap Slideshow",
 	"class": "bootstrap-carousel",
 	"max_blocks": 28,
-    "settings": [],
+    "settings": [
+		{
+          "type": "checkbox",
+          "id": "show_popup",
+          "label": "Enable popup on banner",
+          "default": false
+        },
+		{
+		  "type": "image_picker",
+		  "id": "popup_image",
+		  "label": "Popup Image"
+		},
+		{
+          "type": "text",
+          "id": "banner_number",
+          "label": "Enter banner number on which you want to show popup"
+        }
+	],
 	"blocks": [
 		{
           "name": "slideshow",
