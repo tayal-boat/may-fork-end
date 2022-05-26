@@ -232,7 +232,14 @@
             </div>
           {%- endif -%}
         </div>
-        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
+        
+          <p class="product-item-meta__color-count text--small text--subdued">{{- 'collection.product.available_colors_count' | t: count: product_option.values.size -}}</p>
+
+      </div>
+      
+      <div>
+        
+                {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
         {%- if product.variants.size == 0 -%}
           {%- capture form_id -%}product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}{%- endcapture -%}
           {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
@@ -271,6 +278,7 @@
           Notify Me
         </a>
       {% endunless %}
+        
       </div>
 
       {%- if settings.product_color_display != 'hide' and reduced_content != true -%}
@@ -280,7 +288,7 @@
 
             {%- case settings.product_color_display -%}
               {%- when 'count' -%}
-                <p class="product-item-meta__color-count text--small text--subdued">{{- 'collection.product.available_colors_count' | t: count: product_option.values.size -}}</p>
+              
 
               {%- when 'swatch' -%}
                 <div class="product-item-meta__swatch-list color-swatch-list color-swatch-list--mini">
