@@ -67,3 +67,84 @@
         
 </script>
 {% endif %}
+{% if cart %}
+<link href="https://s3.ap-south-1.amazonaws.com/prod-merchants-assets/merchant-assets/zestmoney.widget.v3.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="https://s3.ap-south-1.amazonaws.com/prod-merchants-assets/merchant-assets/zestmoney.widget.v3.js"></script>
+
+<div id="zestmoney-overlay"></div>  
+<div id="zestmoney-widget-container" class="zestmoney-widget-wrapper hide-zestmoney-widget"></div>  
+
+<div id="zestmoney-overlay-cart"></div>  
+<div id="zestmoney-widget-container-cart" class="zestmoney-widget-wrapper hide-zestmoney-widget"></div> 
+
+<script type="text/javascript">
+ 
+  setTimeout(async() => {
+    var zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
+    if(!zestmoneyWidgetControl){
+            // Get the target placeholder for adding the ZestMoneyWidget
+            const placement_selector = ''
+            if(placement_selector){
+            const pricing_containers = document.querySelectorAll(placement_selector);
+            if(pricing_containers.length == 0){
+                return;
+            }
+            zestmoneyWidgetControl = document.createElement("div");
+            zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
+            pricing_containers[0].appendChild(zestmoneyWidgetControl);
+            }
+       }
+       if(!zestmoneyWidgetControl){
+           return;
+       }
+       
+       var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
+       const zest_price = parseFloat("{{ cart.total_price }}") / 100;
+       var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
+           merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
+           environment: "production",
+           basketAmount: zest_price || 0,
+           downpaymentAmount: null,
+           paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
+           widgetType: 'product',
+       });
+       let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
+ 
+       if (displayHtml) {
+           zestmoneyWidgetControl.innerHTML = displayHtml;
+           var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
+           if (zestmoneyWidgetTrigger) {
+               zestmoneyWidgetTrigger.addEventListener("click", function () {
+                   zestMoneyWidget.open();
+               });
+           }
+       }
+    },200)
+
+   console.log('1----------');
+  var cart_change_observer_selector = document.querySelector(".cart-total-text");    
+    document.body.addEventListener("click", function (evt) {
+      console.log('2----------');
+      	cart_change_observer_selector = document.querySelector(".cart-total-text");  
+    	if(cart_change_observer_selector != null){
+          console.log('3----------');
+          const priceChangeObserver = new MutationObserver(function() {
+            priceChangeObserver.disconnect();
+            console.log('4----------');
+            var cart_price_selector = document.getElementsByClassName("cart-total-text")[0].value;
+            //var cart_price_selector = document.querySelector("#cart__total_price")[0].innerHTML.replace(/\D/g, "");
+            document.getElementById("zestmoney-amount-cart").innerHTML = Math.round(cart_price_selector/3);
+            console.log('5----------');
+            priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});
+            var href = new URL(document.getElementById('zestmoney-widget-iframe-cart').src);
+            href.searchParams.set('basketAmount', Math.round(cart_price_selector));
+            console.log('6----------');
+            document.getElementById('zestmoney-widget-iframe-cart').src = href.toString();
+          });
+          priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});       
+        }
+	});
+  
+  </script>
+
+{% endif %}
