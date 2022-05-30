@@ -299,11 +299,24 @@
                     {%- assign color_value_downcase = value | downcase -%}
                     {%- assign variant_for_value = product.variants | where: variant_option, value | first -%}
 
-                    <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}">
-                      <input class="color-swatch__radio visually-hidden" type="radio" name="{{ color_name }}" id="{{ color_id }}" value="{{ value | escape }}" {% if product_option.selected_value == value %}checked="checked"{% endif %} data-variant-id="{{ variant_for_value.id }}" {% if variant_for_value.featured_media %}data-variant-featured-media="{{ variant_for_value.featured_media.id }}"{% endif %}>
-                      <label class="color-swatch__item" for="{{ color_id }}" style="{% render 'color-swatch-style', color_swatch_config: color_swatch_config, value: value %}">
-                        <span class="visually-hidden">{{ value }}</span>
-                      </label>
+                           <div class="variant-swatch-list">
+                      {%- assign option_position0 = option.position | minus: 1 -%}
+
+                      {%- for value in option.values -%}
+                        {%- comment -%}We search for the first variant that has an image for this color{%- endcomment -%}
+                        {%- for variant in product.variants -%}
+                          {%- if variant.options[option_position0] == value -%}
+                            <div class="variant-swatch">
+                              <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}" form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" data-bind-value="{{ option_id }}-value" {% if value == option.selected_value %}checked="checked"{% endif %} aria-label="{{ value | escape }}">
+                              <label class="variant-swatch__item" for="{{ option_id }}-{{ forloop.index }}">
+                                <span class="visually-hidden">{{ value }}</span>
+                                <img class="variant-swatch__image" loading="lazy" sizes="(max-width: 740px) 64px, 72px" {% render 'image-attributes', image: variant.featured_media, sizes: '64,72,128,144,192,216' %}>
+                              </label>
+                            </div>
+                            {%- break -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endfor -%}
                     </div>
                   {%- endfor -%}
                 </div>
