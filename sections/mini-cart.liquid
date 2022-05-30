@@ -781,7 +781,52 @@ background: #ED1C24;
                 </div>
               </div>
               
-              <div class="price-cover"></div>
+              <div class="price-cover">
+                <div class="cart-coupon">
+                    <h3 class="coupon-heading">PROMO CODE</h3>
+                    <div class="coupon-text">
+                        <input type="text" id="coupon-code-text" placeholder="Enter Coupon Code">
+                        <input type="submit" value="Apply" id="coupon-apply">
+                    </div>
+                    {%comment%}
+                    {% for block in section.blocks %}
+                    {% case block.type %}
+                    {% when 'available-offers' %}
+                    <h4 class="avai-coupons">AVAILABLE COUPONS</h4>
+
+                    {%break%}
+                    {% endcase %}
+                    {%endfor%}
+                    {%endcomment%}
+                    <div class="available-offers">
+                        <form name="offer-coupons" id="offer-coupons">
+                            {% for block in section.blocks %}
+                            {% case block.type %}
+                            {% when 'available-offers' %}
+                            <style>
+                                .available-offers {
+                                    display: block
+                                }
+                            </style>
+                            <div class="select-coupon">
+                                <input type="radio" name="available-offers" id="{{block.settings.offer}}"
+                                    value="{{block.settings.offer}}">
+                                <label for="{{block.settings.offer}}">
+                                    <div class="offer-body" {{ block.shopify_attributes }}>
+                                        <div class="code-details">
+                                            <div class="code_cou">{{block.settings.offer}}</div>
+                                            <div class="code_usp">{{block.settings.offer-usp}}</div>
+                                        </div>
+                                        <p class="code-desc">{{block.settings.offer-details}}</p>
+                                    </div>
+                                </label><br>
+                            </div>
+                            {% endcase %}
+                            {%endfor%}
+                        </form>
+                    </div>
+                </div>
+              </div>
             </form>
 
             {%- if section.settings.show_recommendations -%}
