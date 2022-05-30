@@ -195,12 +195,8 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
             </button>
           {%- endif -%}
 		  {% comment %} Commented by SearchTap team
-          <a href="#" class="cart-count " data-drawer-trigger="" aria-controls="drawer-name" aria-expanded="false">
-            <img class="cart--img" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/cart.png?v=1606314839" alt="cart">
-
-            <span class="cart-count__text">3</span>
-
-
+          <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
+            {%- render 'icon' with 'header-search' -%}
           </a>
           {% endcomment %}
  
@@ -339,13 +335,9 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
           {% comment %} Commented by SearchTap team
 
           {%- if section.settings.header_layout != 'logo_center_search_open' -%}
-          <a href="#" class="cart-count " data-drawer-trigger="" aria-controls="drawer-name" aria-expanded="false">
-            <img class="cart--img" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/cart.png?v=1606314839" alt="cart">
-
-            <span class="cart-count__text">3</span>
-
-
-          </a>
+            <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area hidden-pocket hidden-lap {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'search.general.title' | t | escape }}" aria-controls="search-drawer" aria-expanded="false">
+              {%- render 'icon' with 'header-search' -%}
+            </a>
           {%- endif -%}
           
           {% endcomment %}
@@ -393,14 +385,20 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                  <img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gift.png?v=1606314809" alt="gift card"style="max-width:22px;" />
               </a>
             </div>
-          <a href="#" class="cart-count" data-drawer-trigger aria-controls="drawer-name" aria-expanded="false">
-              {% if cart.items.size %}
-              <span class="beside-svg">{{ cart.items.size }}</span>
-              {% else %}
-              <span class="beside-svg">0</span>
-              {% endif %}
-              <img class="cart--img" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/cart.png?v=1606314839" alt="cart" />
-            </a>
+          <a href="#" {% unless settings.cart_type == 'page' or request.page_type == 'cart' %}is="toggle-link" aria-controls="mini-cart" aria-expanded="false"{% endunless %} class="header__icon-wrapper tap-area header__cart {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'header.general.cart' | t | escape }}" data-no-instant>
+            {%- case settings.cart_icon -%}
+              {%- when 'shopping_bag' -%}
+                {%- render 'icon' with 'header-cart' -%}
+
+              {%- when 'shopping_cart' -%}
+                {%- render 'icon' with 'header-shopping-cart' -%}
+
+              {%- when 'tote_bag' -%}
+                {%- render 'icon' with 'header-tote-bag' -%}
+            {%- endcase -%}
+
+            <cart-count class="header__cart-count header__cart-count--floating bubble-count">{{ cart.item_count }}</cart-count>
+          </a>
  
         </div>
 
