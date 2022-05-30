@@ -1077,21 +1077,49 @@ border: none;
                   </div>
                   <div id="zestmoney-widget-control-cart"></div> 
                   
-                  <div class="checkout-col">
-                    <p class="cart-val-error" style="display: none;"></p>
-                    <div class="d-flex flex-row-reverse mb-lg-2">
-                      <div class="checkout-buttons new-check btn---cont">
-                        <a href="/checkout" class="button button--large but-fe cta--btn active" id="update-cart">
-                          Pay Via Card</a>
-
-                        {% if additional_checkout_buttons and section.settings.cart_terms_page == blank %}
-                        <div class="additional-checkout-buttons">
-                          {{ content_for_additional_checkout_buttons }}
-                        </div>
-                        {% endif %}
-                      </div>
+                  {%- if section.settings.show_checkout_button -%}
+              {% if cart.total_price <= 4700000 %}
+                  {%- assign is_validation_ok = true -%}
+                  {%- assign qty_error_msg = 'Please Modify your cart to proceed.' -%}
+                  {%- assign product_limit_ok = true -%}
+                  {% for line_item in cart.items %}
+                      {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
+                          {%- assign product_limit_ok = false -%}
+                      {% endif %}
+                      {%- if line_item.product.metafields.set.quantity_limit == 2 and line_item.quantity > 2 -%}
+                          {%- assign product_limit_ok = false -%}
+                      {% endif %}
+                      {%- if line_item.product.metafields.set.quantity_limit == 3 and line_item.quantity > 3 -%}
+                          {%- assign product_limit_ok = false -%}
+                      {% endif %}
+                      {%- if line_item.product.metafields.set.quantity_limit == 4 and line_item.quantity > 4 -%}
+                          {%- assign product_limit_ok = false -%}
+                      {% endif %}
+                      {%- if line_item.product.metafields.set.quantity_limit == 5 and line_item.quantity > 5 -%}
+                          {%- assign product_limit_ok = false -%}
+                      {% endif %}
+                      {%- if line_item.product.metafields.set.quantity_limit == 6 and line_item.quantity > 6 -%}
+                          {%- assign product_limit_ok = false -%}
+                      {% endif %}
+                      {% if line_item.quantity > 7 %}
+                          {%- assign is_validation_ok = false -%}
+                      {% endif %}
+                  {% endfor %}
+                  {% if is_validation_ok == true and product_limit_ok == true %}
+                    <div class="row justify-content-around checkout-buttons-div">
+                      {% render 'gokwik-checkout' %}
+                      <button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
+                      Pay Via Card  </button>
                     </div>
-                  </div>
+                  {% else %}
+                      <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
+                  {% endif %}
+              {%- else -%}
+                      <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
+              {% endif %}
+            {%- else -%}
+              <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
+            {%- endif -%}
 
                   </div>
               </div>
