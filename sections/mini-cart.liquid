@@ -627,7 +627,11 @@ background: #ED1C24;
 
             <form id="mini-cart-form" action="{{ routes.cart_url }}" novalidate method="post">
               <input type="hidden" name="checkout">
-				<div>
+				<div class="drawer__content" id="cart__drawer">
+            <div id="drawer-overlay" style="display:none;">
+                <div class="drawer-spinner"></div>
+            </div>
+            <div>
                 <div id="cart__drawer_items">
                 </div>
                 <div id="cart__drawer_items_2">
@@ -674,6 +678,156 @@ background: #ED1C24;
 
 
             </div>
+
+            <div class="shopp">
+                <img class="empty-img lazyload"
+                    data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/bag_925d9ab5-b7d8-4b86-bfc5-2cb9b4df471e.png?v=1633452372" />
+                <p class="empty-text">Your Shopping Bag Is Empty.</p>
+
+            </div>
+            {% if section.settings.show_cart_offer %}
+            {% for block in section.blocks %}
+            {% case block.type %}
+            {% when 'cart-offers' %}
+            <div class="cart-offer" style="padding: 10px;font-size:12px">
+                <img class="offer-img lazyload"
+                    data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/black-shop-tag_1.png?v=1634062115" />
+
+
+                <div class="one-off">
+                    <p>{{block.settings.offer1title}}</p>
+                    <p>{{block.settings.offer1description}}</p>
+                </div>
+
+
+                <div class="line"
+                    style="height: 0.5px;border-top: 0.5px solid #C4C4C4; border-style: dotted; margin: 2px 0;">
+                </div>
+            </div>
+            {% endcase %}
+            {%endfor%}
+            {% endif %}
+
+            <a href="/collections" class="coll"><button style="padding:5px;font-size:14px;">GO TO OUR
+                    COLLECTION</button></a>
+            <div class="price-cover" >
+                <div class="cart-coupon">
+                    <h3 class="coupon-heading">PROMO CODE</h3>
+                    <div class="coupon-text">
+                        <input type="text" id="coupon-code-text" placeholder="Enter Coupon Code">
+                        <input type="submit" value="Apply" id="coupon-apply">
+                    </div>
+                    {%comment%}
+                    {% for block in section.blocks %}
+                    {% case block.type %}
+                    {% when 'available-offers' %}
+                    <h4 class="avai-coupons">AVAILABLE COUPONS</h4>
+
+                    {%break%}
+                    {% endcase %}
+                    {%endfor%}
+                    {%endcomment%}
+                    <div class="available-offers">
+                        <form name="offer-coupons" id="offer-coupons">
+                            {% for block in section.blocks %}
+                            {% case block.type %}
+                            {% when 'available-offers' %}
+                            <style>
+                                .available-offers {
+                                    display: block
+                                }
+                            </style>
+                            <div class="select-coupon">
+                                <input type="radio" name="available-offers" id="{{block.settings.offer}}"
+                                    value="{{block.settings.offer}}">
+                                <label for="{{block.settings.offer}}">
+                                    <div class="offer-body" {{ block.shopify_attributes }}>
+                                        <div class="code-details">
+                                            <div class="code_cou">{{block.settings.offer}}</div>
+                                            <div class="code_usp">{{block.settings.offer-usp}}</div>
+                                        </div>
+                                        <p class="code-desc">{{block.settings.offer-details}}</p>
+                                    </div>
+                                </label><br>
+                            </div>
+                            {% endcase %}
+                            {%endfor%}
+                        </form>
+                    </div>
+                </div>
+                <div class="discount-div">
+                    <input class="discount-input" placeholder="I have a discount code" />
+                    <button class="discount-but">APPLY</button>
+                </div>
+
+                <div class="total-cover">
+                    <h4 class="totamou">Subtotal: </h4>
+                    <h4 id="cart__total_price" style="margin: 0;font-size: 16px;"></h4>
+                    <input type="hidden" value="" class="cart-total-val" />
+                </div>
+                <div class="discount-price">
+                    <p class="coupon-d">Coupon Discount</p>
+                    <p class="coupon-p">Rs 0</p>
+                </div>
+                <div class="total-shipping">
+                    <h4 class="shipping-title">Shipping: </h4>
+                    <h4 class="shipping-price" style="margin: 0;font-size: 16px;">FREE</h4>
+                </div>
+                <div class="total-am">
+                    <h4 class="tam">Total Amount: </h4>
+                    <h4 class="tam_p" style="margin: 0;font-size: 16px;"></h4>
+                </div>
+              	<div id="zestmoney-widget-control-cart"></div> 
+                <div class="checkout-col">
+                    <p class="cart-val-error"></p>
+{% comment %}                    <div class="continue-shopping text-center" style="margin-top: 0px;margin-bottom: 10px;">
+                        <a class="side_cart_btn_home" href="/">Continue Shopping<span class="arrow-down"
+                                style="text-align: left;display: inline-block;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="#ff0000" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather-chevron-down"
+                                    style="transform: rotate(-90deg);fill: transparent;width: 20px;height: 20px;">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
+                        </a>
+
+                    </div>
+                  {% endcomment %} 
+                  <div class="d-flex flex-row-reverse mb-lg-2">
+                    <div class="checkout-buttons new-check btn---cont">
+                        <a href="/checkout" class="button button--large but-fe cta--btn active" id="update-cart">
+                            Pay Via Card</a>
+
+                        {% if additional_checkout_buttons and section.settings.cart_terms_page == blank %}
+                        <div class="additional-checkout-buttons">
+                            {{ content_for_additional_checkout_buttons }}
+                        </div>
+                        {% endif %}
+                    </div>
+                  {% render 'gokwik-checkout' %}
+                  {% comment%}
+                    <div class="gokwik-container btn-right btn---cont">
+                        <button class="gokwikpay go-fe cta--btn" data-type="cod"
+                            style="margin-top: 0; background-color: #ff0000;" data-theme='{"primaryClr":"#000 "}'>
+                            <span>
+                                <span class="btn-text">
+                                    <span class="cash-btn text-black">Pay Via UPI/COD</span>
+                                    <!--                                           <span class="cod-new-text">Get extra Rs.50 Off on UPI</span> -->
+                                </span>
+                            </span>
+                            <span>
+                                <img class="pay-opt-icon lazyload"
+                                    data-src="https://cdn.gokwik.co/v4/images/upi-icons.svg">
+                                <img class="lazyload" data-src="https://cdn.gokwik.co/v4/images/right-arrow.svg">
+                            </span>
+                        </button>
+                    </div>
+ </div>
+                 {%endcomment%}
+                </div>
+            </div>
+        </div>
             </form>
 
             {%- if section.settings.show_recommendations -%}
