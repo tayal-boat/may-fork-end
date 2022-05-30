@@ -627,10 +627,53 @@ background: #ED1C24;
 
             <form id="mini-cart-form" action="{{ routes.cart_url }}" novalidate method="post">
               <input type="hidden" name="checkout">
+				<div>
+                <div id="cart__drawer_items">
+                </div>
+                <div id="cart__drawer_items_2">
+                    {% comment %}
+                    {% for product in collections.cart-draw-product.products limit:1%}
+                    <div class="cart__item gg1 featured_product"
+                        style="width: 100% !important;background-color:#F7F9FA;">
+                        <img class="lazyload"
+                            data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_938.png?v=1634121579"
+                            style="position: absolute;top: 0px;left: 0px;">
+                        <a class="anchor" href="{{product.url}}">
+                            <img class="lazyload" data-src="{{ product.featured_image | img_url: '200x200' }}"
+                                alt="{{product.featured_image.alt}}" />
+                        </a>
+                        <div class="outer-fl">
+                            <div class="content-flex">
+                                <h5 class="prod-title" style='font-family: "Poppins"'>{{ product.title }}</h5>
+                              
 
-              {%- for line_item in cart.items -%}
-                
-              {%- endfor -%}
+                                <p class="cash"><span class="t-price">Rs {{product.price | divided_by: 100}}</span><span
+                                        class="compare_price">Rs
+                                        {{product.compare_at_price | divided_by: 100}}</span><span
+                                        class="percent_discount">{{
+                                        product.compare_at_price |minus: product.price | times: 100.0 | divided_by:
+                                        product.compare_at_price|
+                                        floor | money_without_currency | times: 100 | remove: ".0"}}% OFF</span></p>
+
+                            </div>
+                            <div class="featured_product_id" style="display: none;">{{product.id}}</div>
+                            <div class="featured_variant_id" style="display: none;">
+                                {{product.first_available_variant.id}}
+                            </div>
+                            <div class="imp2">
+                                <div style="color:red; font-weight: 700; font-size: 14px;"
+                                    class="featured_product_add_to_cart">+ Add to
+                                    Cart</div>
+                            </div>
+                            <p class="color">color:{{product.first_available_variant.option1}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endcomment %}
+                </div>
+
+
+            </div>
             </form>
 
             {%- if section.settings.show_recommendations -%}
