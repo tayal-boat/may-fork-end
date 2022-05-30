@@ -294,7 +294,13 @@
 
                   {%- capture color_name -%}{{ section.id }}-{{ block.id }}-{{ product.id }}{%- endcapture -%}
 
-                  {%- for value in product_option.values -%}
+               {%- for option in product.options_with_values -%}
+                                    {%- for variant in product.variants -%}
+                    {%- unless variant.featured_media -%}
+                      {%- assign selector_type = 'color' -%}
+                      {%- break -%}
+                    {%- endunless -%}
+                  {%- endfor -%}
                     {%- capture color_id -%}{{ color_name }}-{{ forloop.index }}{%- endcapture -%}
                     {%- assign color_value_downcase = value | downcase -%}
                     {%- assign variant_for_value = product.variants | where: variant_option, value | first -%}
