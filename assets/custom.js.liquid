@@ -173,3 +173,924 @@ $(window).scroll(function (event) {
       $('#mobile-facet-toolbar ').removeClass('sticky-toolbar')
     }
 });
+
+// Zestmonry JS
+//version 1.6.8
+//CMS PDP Text
+var win = window;
+var doc = document;
+var docEl = doc.documentElement;
+var win = window;
+var merchantId;
+var env;
+var pdpPrice, cartPrice;
+var defaults = {
+  offsetX: "0px",
+  offsetY: "0px",
+  zIndex: 999,
+  closeBtnClass: "zestmoney-widget-close",
+};
+
+var defaultsCart = {
+  offsetX: "0px",
+  offsetY: "0px",
+  zIndex: 999,
+  closeBtnClassCart: "zestmoney-widget-close-cart",
+};
+
+var newOffer = 0;
+
+var extend = function (to, from) {
+  for (var p in from) {
+    if (from.hasOwnProperty(p)) {
+      to[p] = from[p];
+    }
+  }
+  return to;
+};
+var winW = function () {
+  return win.innerWidth || docEl.clientWidth;
+};
+var winH = function () {
+  return win.innerHeight || docEl.clientHeight;
+};
+var scrollX = function () {
+  return win.pageXOffset || docEl.scrollLeft;
+};
+var scrollY = function () {
+  return win.pageYOffset || docEl.scrollTop;
+};
+var byClass = function (cls, el) {
+  el = el || doc;
+  if (el.getElementsByClassName) {
+    return el.getElementsByClassName(cls);
+  } else {
+    var ret = [];
+    var re = new RegExp("^|\\s+" + cls + "\\s+|$");
+    var tags = el.getElementsByTagName("*");
+    for (var i = 0, len = tags.length; i < len; i++) {
+      if (re.test(tags[i].className)) {
+        ret.push(tags[i]);
+      }
+    }
+    return ret;
+  }
+};
+var zestBind = function (el, type, listener) {
+  if (el.addEventListener) {
+    el.addEventListener(type, listener, false);
+  } else {
+    el.attachEvent("on" + type, listener);
+  }
+};
+
+var baseUrl;
+var iframeUrl;
+var pdpbaseUrl;
+
+var onboardingWid = 0;
+var onboardingWidUrl;
+var pdpbaseUrl;
+var onboardingWidBaseUrl = "https://app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid=";
+
+function ZestMoneyWidget(el, opts) {
+  if(window.location.origin.includes("safaribags.com")
+    || window.location.origin.includes("auto-inject-6.myshopify.com")){
+      return "";
+  }
+  if (!(this instanceof ZestMoneyWidget)) {
+    return new ZestMoneyWidget(el, opts);
+  }
+  this.opts = extend({}, extend(defaults, opts));
+  this.el = el;
+  this.init();
+}
+ZestMoneyWidget.prototype.init = function () {  
+  var opts = this.opts;
+  var env = opts.environment;
+  var domainPrefix = "-";
+  extend(this.el.style, {
+    position: "absolute",
+    width: opts.width,
+    height: opts.height,
+    zIndex: opts.zIndex,
+  });
+  this.zestMoneyWidgetConfig = {
+    merchantId: this.opts.merchantId,
+    environment: this.opts.environment,
+    basketAmount: this.opts.basketAmount,
+    downpaymentAmount: this.opts.downpaymentAmount,
+    widgetType: this.opts.widgetType,
+    paymentGatewayId: this.opts.paymentGatewayId,
+    merchantCustomerId:
+      this.opts.merchantCustomerId && this.opts.merchantCustomerId.length > 0
+        ? this.opts.merchantCustomerId
+        : "",
+    returnUrl:
+      this.opts.returnUrl && this.opts.returnUrl.length > 0
+        ? this.opts.returnUrl
+        : "",
+    email: this.opts.email && this.opts.email.length > 0 ? this.opts.email : "",
+    mobile:
+      this.opts.mobile && this.opts.mobile.length > 0 ? this.opts.mobile : "",
+  };
+  
+  merchantId = this.opts.merchantId;
+  env = this.opts.environment;
+  pdpPrice = Math.round(this.opts.basketAmount);
+
+  baseUrl = "https://app.zestmoney.in";
+  iframeUrl = "https://partner.zestmoney.in/";
+
+  if (env === "test") {
+    baseUrl = "https://" + env + "-app.zestmoney.in";
+    iframeUrl = "https://" + env + "-partner.zestmoney.in/";
+
+  } else if (env === "staging") {
+    baseUrl = "https://" + env + "-app.zestmoney.in";
+    iframeUrl = "https://" + env + "-partner.zestmoney.in/";
+  }
+
+  var bombayShirtText = 0;
+  if (window.location.origin.includes("https://www.bombayshirts.com") || 
+  window.location.origin.includes("https://partner-widget.myshopify.com") ) {
+    bombayShirtText=1;
+  }
+
+  var minMonth = 3;
+  if(window.location.origin.includes("https://www.boat-lifestyle.com")){
+    minMonth = 1;
+  } else if(window.location.origin.includes("https://www.qua.clothing")){
+    minMonth = 1;
+  } else if(window.location.origin.includes("https://partner-widget.myshopify.com")){
+    minMonth = 1;
+  } else if (window.location.origin.includes("https://demo-auto-inject.myshopify.com")) {
+    minMonth = 1;
+  } else if (this.opts.paymentGatewayId === "df430858-087f-4cbe-aabd-9a92d9c6ba3a") {
+    minMonth = 1;
+  }
+
+  if(merchantId === "dcb957d7-8f14-4245-8552-ece90a189ff7"){
+    if(env === "test"){
+      onboardingWidUrl = "https://test-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;
+    } else if(env === "staging"){
+      onboardingWidUrl = "https://staging-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;
+    }
+    onboardingWid = 1;
+  } else if(merchantId === "3432c9de-e6c2-47b1-9d00-0b41e5021a08"){
+    if(env === "test"){
+      onboardingWidUrl = "https://test-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;
+    } else if(env === "staging"){
+      onboardingWidUrl = "https://staging-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;
+    }
+    onboardingWid = 1;
+  } else if(window.location.origin.includes("file://")){
+    onboardingWidUrl = "https://staging-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;;
+    onboardingWid = 1; 
+  } else if(window.location.origin.includes("demo-auto-inject.myshopify.com")){
+    if(env === "test"){
+      onboardingWidUrl = "https://staging-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;
+    } else if(env === "staging"){
+      onboardingWidUrl = "https://staging-app.zestmoney.in/preapprove/merchantCustomer/redirect?mcid=&ru=&em=&mn=&mid="+merchantId;
+    }
+    onboardingWid = 1;
+  } else if(window.location.origin.includes("onboarding-staging-zest.myshopify.com")){    
+    //onboardingWidUrl = "https://staging-app.zestmoney.in/redirect?merchant=9CCwSmdWAhx4N3VaIaeodsFaCLyI7P8EtDUU0q7C64Wc101WtwotdF3MOrnhxNsw&flowChannelId=7333810f-d600-46f7-959b-47328611ee01";
+    //onboardingWid = 0;    
+  }
+
+  
+  var closeBtn =
+    '<button type="button" class="zestmoney-widget-close"></button>';
+  var container = doc.getElementById("zestmoney-widget-container");
+  container.innerHTML = closeBtn;
+  var iframe = document.createElement("iframe");
+  iframe.height = "100%";
+  iframe.width = "100%";
+  iframe.scrolling = "yes";
+  iframe.frameborder = "0";
+  iframe.style.border = "none";
+  iframe.allow = "camera";
+  iframe.className = "zestmoney-widget-iframe";
+  iframe.id = "zestmoney-widget-iframe";
+  
+  iframe.src = iframeUrl + 'widget/?' + this.zestMoneyWidgetConfig.widgetType
+    + '?&merchantId=' + this.zestMoneyWidgetConfig.merchantId
+    + '&basketAmount=' + this.zestMoneyWidgetConfig.basketAmount
+    + '&downpaymentAmount=' + this.zestMoneyWidgetConfig.downpaymentAmount
+    + '&paymentGatewayId=' + this.zestMoneyWidgetConfig.paymentGatewayId
+    + '&merchantCustomerId=' + this.zestMoneyWidgetConfig.merchantCustomerId
+    + '&returnUrl=' + this.zestMoneyWidgetConfig.returnUrl
+    + '&email=' + this.zestMoneyWidgetConfig.email
+    + '&mobile=' + this.zestMoneyWidgetConfig.mobile
+    + '&environment=' + env
+    + '&minMonth=' + minMonth
+    + '&newOffer=' + newOffer
+    + '&gtmStatus=' + 1
+    + '&widgetURL=' + window.location.origin;
+
+  if(merchantId === "094a1dba-b7e2-4ad3-a802-ae9043998724" 
+      || merchantId === "2f3b75d9-9719-49af-9cb5-201894136f92"
+      || merchantId === "899d54a8-ef08-4ff1-a03a-f85b18c8c060"
+      || merchantId === "f21f3c8b-9f84-422e-8274-ad826d6195ee"){
+    iframe.src = iframe.src + "&cms=true";
+  }
+
+  if(onboardingWid == 1){
+    iframe.src = onboardingWidUrl;
+    if (window.matchMedia("(max-width: 700px)").matches) {
+      document.getElementById("zestmoney-widget-container").style.width = "688px !important";
+      document.getElementsByClassName("zestmoney-widget-close")[0].style.right = "14px";
+      document.getElementsByClassName("zestmoney-widget-close")[0].style.left = "auto";
+    }
+    if (window.matchMedia("(min-width: 993px)").matches) {
+      document.getElementById("zestmoney-widget-container").style.width = "688px";
+      document.getElementsByClassName("zestmoney-widget-close")[0].style.right = "14px";
+      document.getElementsByClassName("zestmoney-widget-close")[0].style.left = "auto";
+    }
+  }
+
+  container.appendChild(iframe);
+  this.bindEvent();
+  const sortEmiOptionsByNumberOfMonths = (a, b) => {
+    if (a && b) {
+      if (a.NumberOfMonths < b.NumberOfMonths) {
+        return -1;
+      }
+      if (a.NumberOfMonths > b.NumberOfMonths) {
+        return 1;
+      }
+    }
+    return 0;
+  };
+  let minBasketAmount = {};
+  
+  /*
+   get pdp function - cms
+   */
+  //---------------------------------
+
+  //------------------------------------------------------------------------------
+  this.getPdpText = async () => {
+    var new_env = opts.environment
+
+    var pdpbaseUrl = "https://partner.zestmoney.in/partner-widget-cms"
+
+    if (new_env == "test") {
+      pdpbaseUrl = "https://d3ntydetnfm6ep.cloudfront.net/partner-widget-cms"
+    } else if (new_env == "staging") {
+      // new_env="test"
+      pdpbaseUrl = "https://d3k0m7s5j8ppmv.cloudfront.net/partner-widget-cms"
+    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    const response = await fetch(`${pdpbaseUrl}/api/${minMonth === 1 ? 'bolt-partner-display-texts' : 'partner-display-texts'}?mid=${this.opts.merchantId}`, requestOptions)
+      .then(response => response.json())
+      .then(result => result)
+      .catch(error => console.log('error', error));
+    return response;
+  }
+
+
+  //---------------------------------
+  /*
+   get pdp function
+   */
+  //---------------------------------
+
+  this.getEmiPlans = async () => {
+    await fetch(
+      `${baseUrl}/pricing-engine/api/v1/emiOptions?merchantId=${opts.merchantId}&basketAmount=${opts.basketAmount}&paymentGatewayId=${opts.paymentGatewayId}`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.error) return;
+        const masterTerm = [1, 3, 6, 9, 12, 18, 24, 36];
+        let pricingOptions = (
+          data.OtherEmiOptions
+            ? data.RecommendedEmiOptions.concat(data.OtherEmiOptions)
+            : data.RecommendedEmiOptions
+        ).sort(sortEmiOptionsByNumberOfMonths);
+        pricingOptions = pricingOptions
+          .filter(
+            (emiOption) => masterTerm.indexOf(emiOption.NumberOfMonths) > -1
+          )
+          .slice(0, 4);
+        let min = (a, f) => a.reduce((m, x) => (m[f] < x[f] ? m : x));
+        minBasketAmount = min(pricingOptions, "TotalMonthlyAmount");
+      });
+  };
+
+  this.getDisplayHTML = async () => {
+    if(window.location.origin.includes("safaribags.com")
+      || window.location.origin.includes("auto-inject-6.myshopify.com")){
+        return "";
+    }
+    await this.getEmiPlans();
+    let res = await this.getPdpText();
+    
+    if(merchantId === "094a1dba-b7e2-4ad3-a802-ae9043998724" 
+      || merchantId === "2f3b75d9-9719-49af-9cb5-201894136f92"
+      || merchantId === "899d54a8-ef08-4ff1-a03a-f85b18c8c060"
+      || merchantId === "f21f3c8b-9f84-422e-8274-ad826d6195ee"){
+
+        if (minMonth === 1) {
+          return minBasketAmount.TotalMonthlyAmount
+            ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info" id="zestmoney-amount-info"> ${res.pdp_text}<span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)} </span> with &nbsp;</span>
+        <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`
+            : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info" id="zestmoney-amount-info"> ${res.pdp_text}<span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(opts.basketAmount / 3)} </span> with &nbsp;</span>
+        <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`;
+        }
+        else {
+          return minBasketAmount.TotalMonthlyAmount
+            ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info" id="zestmoney-amount-info"> ${res.pdp_text}<span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)} </span> with &nbsp;</span>
+        <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`
+            : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info" id="zestmoney-amount-info"> ${res.pdp_text}<span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(opts.basketAmount / 3)} </span> with &nbsp;</span>
+        <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`;
+        }
+
+    } else{
+
+          if(onboardingWid == 1){
+            return 0
+            ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+            <span class="zestmoney-amount-info" id="zestmoney-amount-info">Get credit limit
+              <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">0</span> 
+            for &nbsp;</span>
+            <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+          </div></a>`
+            : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+            <span class="zestmoney-amount-info" id="zestmoney-amount-info">Get credit limit
+              <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">0</span> 
+            for &nbsp;</span>
+            <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+          </div></a>`;
+        }
+        if(bombayShirtText ===  1){
+          return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info" id="zestmoney-amount-info">Get 3 interest-free payments of &#8377;
+          <span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)}</span> 
+        with &nbsp;</span>
+        <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`
+          : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+          <span class="zestmoney-amount-info" id="zestmoney-amount-info">Get 3 interest-free payments of &#8377;
+            <span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(opts.basketAmount / 3)}</span> 
+          with &nbsp;</span>
+          <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+        </div></a>`;                  
+        }
+
+
+
+        if(newOffer === 0){
+                return minBasketAmount.TotalMonthlyAmount
+                ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+              <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or 3 interest-free payments of &#8377;
+                <span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)}</span> 
+              with &nbsp;</span>
+              <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+            </div></a>`
+                : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+                <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or 3 interest-free payments of &#8377;
+                  <span class='zestmoney-amount' id="zestmoney-amount" style="display: contents;">${Math.round(opts.basketAmount / 3)}</span> 
+                with &nbsp;</span>
+                <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+              </div></a>`;                  
+          }
+          else if (newOffer === 2)
+          {
+            return minBasketAmount.TotalMonthlyAmount
+              ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+              <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 parts and get Rs.200 cashback* 
+                <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">${Math.round(opts.basketAmount / 3)}</span> 
+              with &nbsp;</span>
+              <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+            </div></a>`
+              : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+                <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay later & get Rs.200 cashback* 
+                  <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">${Math.round(opts.basketAmount / 3)}</span> 
+                with &nbsp;</span>
+                <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+              </div></a>`;  
+          } else if (newOffer === 3) {
+            return minBasketAmount.TotalMonthlyAmount
+              ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+              <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay later & get upto &#8377;2000 cashback 
+                <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">${Math.round(opts.basketAmount / 3)}</span> 
+              with &nbsp;</span>
+              <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+            </div></a>`
+              : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+                <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay later & get upto &#8377;2000 cashback 
+                  <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">${Math.round(opts.basketAmount / 3)}</span> 
+                with &nbsp;</span>
+                <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+              </div></a>`;
+          }
+
+
+  
+      if (minMonth === 1) {
+        return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp; <span class='zestmoney-amount' id="zestmoney-amount">${Math.round(minBasketAmount.LoanAmount / 3)}</span></span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`
+          : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp;</span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`;
+      }
+      else {
+        return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp; <span class='zestmoney-amount' id="zestmoney-amount">${Math.round(minBasketAmount.LoanAmount / 3)}</span></span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`
+          : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp;</span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`;
+      }
+
+
+    }
+
+
+    
+    };
+};
+
+ZestMoneyWidget.prototype.bindEvent = function () {
+  var closeBtn = byClass(this.opts.closeBtnClass)[0];
+  var self = this;
+  var eventType = "ontouchstart" in window ? "touchstart" : "click";
+  zestBind(closeBtn, eventType, function () {
+  self.close();
+  });
+  zestBind(doc, "keydown", function (e) {
+    e = e || window.event;
+    var keyCode = e.which || e.keyCode;
+    if (keyCode === 27) {
+      self.close();
+    }
+  });
+  zestBind(win, "resize", function () {
+    self.setPosition();
+  });
+
+  zestBind(win, "message", function (e) {
+    if (e.origin !== baseUrl) {
+      return;
+    }
+    if (e.data === "close-widget-container") {
+      self.close();
+    }
+  });
+
+};
+ZestMoneyWidget.prototype.open = function () {
+  document.getElementById("zestmoney-overlay").style.display = "block";
+  this.el.style.display = "block";
+  this.setPosition();
+  gaEventHandler();
+};
+ZestMoneyWidget.prototype.close = function () {
+  document.getElementById("zestmoney-overlay").style.display = "none";
+  this.el.style.display = "none";
+};
+ZestMoneyWidget.prototype.setPosition = function () {
+  var opts = this.opts;
+  var top = scrollY() + Math.max(0, (winH() - opts.height) / 2);
+  var left = scrollX() + Math.max(0, (winW() - opts.width) / 2);
+  extend(this.el.style, {
+    top: top + opts.offsetY,
+    left: left + opts.offsetX,
+  });
+};
+
+var cartDrawerTrigger = 0;
+
+if (window.location.origin.includes("https://www.boat-lifestyle.com")) {
+  cartDrawerTrigger = 1;
+}
+
+var override_onload = 0;
+if (window.location.origin.includes("https://www.bombayshirts.com")) {
+  override_onload = 1;
+}
+
+
+function ZestMoneyWidgetCart(el, opts) {
+  if (!(this instanceof ZestMoneyWidgetCart)) {
+    return new ZestMoneyWidgetCart(el, opts);
+  }
+  this.opts = extend({}, extend(defaultsCart, opts));
+  this.el = el;
+  this.init();
+}
+ZestMoneyWidgetCart.prototype.init = function () {  
+  var opts = this.opts;
+  var env = opts.environment;
+  var domainPrefix = "-";
+  extend(this.el.style, {
+    position: "absolute",
+    width: opts.width,
+    height: opts.height,
+    zIndex: opts.zIndex,
+  });
+  this.ZestMoneyWidgetCartConfig = {
+    merchantId: this.opts.merchantId,
+    environment: this.opts.environment,
+    basketAmount: this.opts.basketAmount,
+    downpaymentAmount: this.opts.downpaymentAmount,
+    widgetType: this.opts.widgetType,
+    paymentGatewayId: this.opts.paymentGatewayId,
+    merchantCustomerId:
+      this.opts.merchantCustomerId && this.opts.merchantCustomerId.length > 0
+        ? this.opts.merchantCustomerId
+        : "",
+    returnUrl:
+      this.opts.returnUrl && this.opts.returnUrl.length > 0
+        ? this.opts.returnUrl
+        : "",
+    email: this.opts.email && this.opts.email.length > 0 ? this.opts.email : "",
+    mobile:
+      this.opts.mobile && this.opts.mobile.length > 0 ? this.opts.mobile : "",
+  };
+
+  baseUrl = "https://app.zestmoney.in";
+  iframeUrl = "https://partner.zestmoney.in/";
+  pdpbaseUrl = "https://partner.zestmoney.in/partner-widget-cms"
+
+  if(env === "test"){
+    baseUrl = "https://" + env + "-app.zestmoney.in";
+    iframeUrl = "https://" + env + "-partner.zestmoney.in/";
+    pdpbaseUrl = "https://" + env + "partner.zestmoney.in/partner-widget-cms";
+  } else if (env === "staging") {
+    baseUrl = "https://" + env + "-app.zestmoney.in";
+    iframeUrl = "https://" + env + "-partner.zestmoney.in/";
+    pdpbaseUrl = "https://" + env + "partner.zestmoney.in/partner-widget-cms";
+  }
+
+  merchantId = this.opts.merchantId;
+  env = this.opts.environment;
+
+  var minMonth = 3;
+  if (window.location.origin.includes("https://www.boat-lifestyle.com")) {
+    minMonth = 1;
+  } else if (window.location.origin.includes("https://www.qua.clothing")) {
+    minMonth = 1;
+  } else if (window.location.origin.includes("https://partner-widget.myshopify.com")) {
+    minMonth = 1;
+  } else if (window.location.origin.includes("https://demo-auto-inject.myshopify.com")) {
+    minMonth = 1;
+  } else if (this.opts.paymentGatewayId === "df430858-087f-4cbe-aabd-9a92d9c6ba3a") {
+    minMonth = 1;
+  }
+
+  var closeBtn =
+    '<button type="button" class="zestmoney-widget-close-cart"></button>';
+  var container = doc.getElementById("zestmoney-widget-container-cart");
+  container.innerHTML = closeBtn;
+  var iframe = document.createElement("iframe");
+  iframe.height = "100%";
+  iframe.width = "100%";
+  iframe.scrolling = "yes";
+  iframe.frameborder = "0";
+  iframe.style.border = "none";
+  iframe.allow = "camera";
+  iframe.className = "zestmoney-widget-iframe-cart";
+  iframe.id = "zestmoney-widget-iframe-cart"
+
+  // iframeUrl = "https://test-partner.zestmoney.in/";
+  iframe.src = iframeUrl + 'widget/?' + this.ZestMoneyWidgetCartConfig.widgetType
+    + '?&merchantId=' + this.ZestMoneyWidgetCartConfig.merchantId
+    + '&basketAmount=' + this.ZestMoneyWidgetCartConfig.basketAmount
+    + '&downpaymentAmount=' + this.ZestMoneyWidgetCartConfig.downpaymentAmount
+    + '&paymentGatewayId=' + this.ZestMoneyWidgetCartConfig.paymentGatewayId
+    + '&merchantCustomerId=' + this.ZestMoneyWidgetCartConfig.merchantCustomerId
+    + '&returnUrl=' + this.ZestMoneyWidgetCartConfig.returnUrl
+    + '&email=' + this.ZestMoneyWidgetCartConfig.email
+    + '&mobile=' + this.ZestMoneyWidgetCartConfig.mobile
+    + '&environment=' + env
+    + '&minMonth=' + minMonth
+    + '&newOffer=' + newOffer
+    + '&gtmStatus=' + 2
+    + '&widgetURL=' + window.location.origin;
+
+  container.appendChild(iframe);
+  this.bindEvent();
+  const sortEmiOptionsByNumberOfMonths = (a, b) => {
+    if (a && b) {
+      if (a.NumberOfMonths < b.NumberOfMonths) {
+        return -1;
+      }
+      if (a.NumberOfMonths > b.NumberOfMonths) {
+        return 1;
+      }
+    }
+    return 0;
+  };
+  let minBasketAmount = {};
+  
+
+  /*
+   get pdp function
+   */
+  //---------------------------------
+
+  //------------------------------------------------------------------------------
+  this.getPdpText = async () => {
+    var new_env = opts.environment
+
+
+    var pdpbaseUrl = "https://partner.zestmoney.in/partner-widget-cms"
+
+    if (new_env == "test") {
+      pdpbaseUrl = "https://d3ntydetnfm6ep.cloudfront.net/partner-widget-cms"
+    } else if (new_env == "staging") {
+      // new_env="test"
+      pdpbaseUrl = "https://d3k0m7s5j8ppmv.cloudfront.net/partner-widget-cms"
+    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    const response = await fetch(`${pdpbaseUrl}/api/${minMonth === 1 ? 'bolt-partner-display-texts' : 'partner-display-texts'}?mid=${this.opts.merchantId}`, requestOptions)
+      .then(response => response.json())
+      .then(result => result)
+      .catch(error => console.log('error', error));
+    return response;
+  }
+
+  //---------------------------------
+  /*
+   get pdp function
+   */
+  //---------------------------------
+
+  this.getEmiPlans = async () => {
+    await fetch(
+      `${baseUrl}/pricing-engine/api/v1/emiOptions?merchantId=${opts.merchantId}&basketAmount=${opts.basketAmount}&paymentGatewayId=${opts.paymentGatewayId}`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.error) return;
+        const masterTerm = [1, 3, 6, 9, 12, 18, 24, 36];
+        let pricingOptions = (
+          data.OtherEmiOptions
+            ? data.RecommendedEmiOptions.concat(data.OtherEmiOptions)
+            : data.RecommendedEmiOptions
+        ).sort(sortEmiOptionsByNumberOfMonths);
+        pricingOptions = pricingOptions
+          .filter(
+            (emiOption) => masterTerm.indexOf(emiOption.NumberOfMonths) > -1
+          )
+          .slice(0, 4);
+        let min = (a, f) => a.reduce((m, x) => (m[f] < x[f] ? m : x));
+        minBasketAmount = min(pricingOptions, "TotalMonthlyAmount");
+        minBasketAmount = data.BasketAmount;
+      });
+  };
+  this.getDisplayHTMLCart = async () => {
+    if(window.location.origin.includes("safaribags.com")
+      || window.location.origin.includes("auto-inject-6.myshopify.com")){
+      return "";
+  }
+    await this.getEmiPlans();
+    const res = await this.getPdpText();
+    if (merchantId === "094a1dba-b7e2-4ad3-a802-ae9043998724"
+      || merchantId === "2f3b75d9-9719-49af-9cb5-201894136f92"
+      || merchantId === "899d54a8-ef08-4ff1-a03a-f85b18c8c060"
+      || merchantId === "f21f3c8b-9f84-422e-8274-ad826d6195ee"){
+
+        if (minMonth === 1) {
+          return minBasketAmount.TotalMonthlyAmount
+            ? `<a id='zestmoney-widget-trigger-cart'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info-cart" id="zestmoney-amount-info-cart">${res.pdp_text}<span class='zestmoney-amount-cart' id="zestmoney-amount-cart" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)}</span> with &nbsp;</span>
+        <img class='zestmoney-logo-cart' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`
+            : `<a id='zestmoney-widget-trigger-cart'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info-cart" id="zestmoney-amount-info-cart">${res.pdp_text}<span class='zestmoney-amount-cart' id="zestmoney-amount-cart" style="display: contents;">${Math.round(opts.basketAmount / 3)}</span> with &nbsp;</span>
+        <img class='zestmoney-logo-cart' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`;
+        }
+        else {
+          return minBasketAmount.TotalMonthlyAmount
+            ? `<a id='zestmoney-widget-trigger-cart'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info-cart" id="zestmoney-amount-info-cart">${res.pdp_text}<span class='zestmoney-amount-cart' id="zestmoney-amount-cart" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)}</span> with &nbsp;</span>
+        <img class='zestmoney-logo-cart' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`
+            : `<a id='zestmoney-widget-trigger-cart'> <div class="zestmoney-widget">
+        <span class="zestmoney-amount-info-cart" id="zestmoney-amount-info-cart">${res.pdp_text}<span class='zestmoney-amount-cart' id="zestmoney-amount-cart" style="display: contents;">${Math.round(opts.basketAmount / 3)}</span> with &nbsp;</span>
+        <img class='zestmoney-logo-cart' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`;
+        }
+
+    } else{
+
+      if (newOffer === 0) {
+        return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger-cart'> <div class="zestmoney-widget-cart">
+        <span class="zestmoney-amount-info-cart" id="zestmoney-amount-info-cart">Or 3 interest-free payments of &#8377;
+          <span class='zestmoney-amount-cart' id="zestmoney-amount-cart" style="display: contents;">${Math.round(minBasketAmount.LoanAmount / 3)}</span> 
+        with &nbsp;</span>
+        <img class='zestmoney-logo-cart' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`
+          : `<a id='zestmoney-widget-trigger-cart'> <div class="zestmoney-widget-cart">
+        <span class="zestmoney-amount-info-cart" id="zestmoney-amount-info-cart">Or 3 interest-free payments of &#8377;
+          <span class='zestmoney-amount-cart' id="zestmoney-amount-cart" style="display: contents;">${Math.round(opts.basketAmount / 3)}</span> 
+        with &nbsp;</span>
+        <img class='zestmoney-logo-cart' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+      </div></a>`;
+      }
+      if (newOffer === 1) {
+        return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+            <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback*
+              <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">${Math.round(minBasketAmount.LoanAmount / 3)}</span> 
+            with &nbsp;</span>
+            <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+          </div></a>`
+          : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+            <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback*
+              <span class='zestmoney-amount' id="zestmoney-amount" style="display: none;">${Math.round(opts.basketAmount / 3)}</span> 
+            with &nbsp;</span>
+            <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+          </div></a>`;
+      }
+  
+  
+  
+      if (minMonth === 1) {
+        return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp; <span class='zestmoney-amount' id="zestmoney-amount">${Math.round(minBasketAmount.LoanAmount / 3)}</span></span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`
+          : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp;</span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`;
+      }
+      else {
+        return minBasketAmount.TotalMonthlyAmount
+          ? `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp; <span class='zestmoney-amount' id="zestmoney-amount">${Math.round(minBasketAmount.LoanAmount / 3)}</span></span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`
+          : `<a id='zestmoney-widget-trigger'> <div class="zestmoney-widget">
+      <span class="zestmoney-amount-info" id="zestmoney-amount-info">Or pay in 3 and get upto Rs.1500 cashback* &nbsp;</span>
+      <img class='zestmoney-logo' src='https://assets.zestmoney.in/assets/widget/zest-logo-name-info.svg'/>
+    </div></a>`;
+      }
+
+
+    }
+  };
+};
+
+ZestMoneyWidgetCart.prototype.bindEvent = function () {
+  var closeBtn = byClass(this.opts.closeBtnClassCart)[0];
+  var self = this;
+  var eventType = "ontouchstart" in window ? "touchstart" : "click";
+  zestBind(closeBtn, eventType, function () {
+    self.close();
+  });
+  zestBind(doc, "keydown", function (e) {
+    e = e || window.event;
+    var keyCode = e.which || e.keyCode;
+    if (keyCode === 27) {
+      self.close();
+    }
+  });
+  zestBind(win, "resize", function () {
+    self.setPosition();
+  });
+
+  zestBind(win, "message", function (e) {
+    if (e.origin !== baseUrl) {
+      return;
+    }
+    if (e.data === "close-widget-container") {
+      self.close();
+    }
+  });
+
+};
+ZestMoneyWidgetCart.prototype.open = function () {
+  document.getElementById("zestmoney-overlay-cart").style.display = "block";
+  this.el.style.display = "block";
+  this.setPosition();
+  gaEventHandlerCart();
+};
+ZestMoneyWidgetCart.prototype.close = function () {
+  document.getElementById("zestmoney-overlay-cart").style.display = "none";
+  this.el.style.display = "none";
+};
+ZestMoneyWidgetCart.prototype.setPosition = function () {
+  var opts = this.opts;
+  var top = scrollY() + Math.max(0, (winH() - opts.height) / 2);
+  var left = scrollX() + Math.max(0, (winW() - opts.width) / 2);
+  extend(this.el.style, {
+    top: top + opts.offsetY,
+    left: left + opts.offsetX,
+  });
+};
+
+
+window.dataLayer = window.dataLayer || [];
+
+(function (w, d, s, l, i) {
+  w[l] = w[l] || []; w[l].push({
+    'gtm.start':
+      new Date().getTime(), event: 'gtm.js'
+  }); var f = d.getElementsByTagName(s)[0],
+    j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+      'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+})(window, document, 'script', 'dataLayer', 'GTM-K3MHDXL');
+
+const gaEventHandler = () => {
+  dataLayer.push({
+      event: "PageLoad",
+      eventAction: "Widget-Load-In-Iframe",
+      eventCategory: "Widget",
+      merchantName: "PreEnrolMerchant",
+      widgeturl: window.location.origin,
+    });
+}
+
+const gaEventHandlerCart = () => {
+  dataLayer.push({
+    event: "PageLoad",
+    eventAction: "Zest-widget-load-in-i-frame-cart",
+    eventCategory: "Widget",
+    merchantName: "PreEnrolMerchant",
+    widgeturl: window.location.origin,
+  });
+}
+
+window.onload = function () {
+  if (document.getElementById("zestmoney-widget-control") != null) {
+    dataLayer.push({
+      event: "PageLoad",
+      eventAction: "Widget-Impressions",
+      eventCategory: "Widget",
+      merchantName: "PreEnrolMerchant",
+      widgeturl: window.location.origin,
+    });
+  }
+  if (cartDrawerTrigger != "1") {
+    if (document.getElementById("zestmoney-widget-control-cart") != null) {
+      dataLayer.push({
+        event: "PageLoad",
+        eventAction: "Zest-widget-text-load-Cart",
+        eventCategory: "Widget",
+        merchantName: "PreEnrolMerchant",
+        widgeturl: window.location.origin,
+      });
+    }
+  }
+}
+if (override_onload == '1') {    
+  $(document).ready(function () {
+    if (document.getElementById("zestmoney-widget-control") != null) {
+      dataLayer.push({
+        event: "PageLoad",
+        eventAction: "Widget-Impressions",
+        eventCategory: "Widget",
+        merchantName: "PreEnrolMerchant",
+        widgeturl: window.location.origin,
+      });
+    }
+  });
+}
