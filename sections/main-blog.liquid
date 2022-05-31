@@ -70,6 +70,7 @@
                 </li>
 
                 {%- for tag in blog.all_tags -%}
+                {% unless tag contains 'meta-' %}
                   <li class="link-bar__link-item {% if current_tags contains tag %}link-bar__link-item--selected{% endif %}">
                     {%- capture link_to_tag_replacement -%}class="link-bar__link link--animated {% if current_tags contains tag %}text--underlined{% endif %}" title={%- endcapture -%}
 
@@ -79,6 +80,7 @@
                       {{- tag | link_to_tag: tag | replace: 'title=', link_to_tag_replacement -}}
                     {%- endif -%}
                   </li>
+                  {% endunless %}
                 {%- endfor -%}
               </ul>
             </div>
