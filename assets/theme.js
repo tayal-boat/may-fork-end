@@ -5018,7 +5018,8 @@
             bubbles: true,
             detail: {
               cart: cartContent,
-              openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawerCart") === null
+              openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawer") === null,
+              openDrawerCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawerCart") === null
             }
           }));
         });
