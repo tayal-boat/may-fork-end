@@ -4982,7 +4982,7 @@
         submitButton.setAttribute("aria-busy", "true");
       });
       const productForm = new FormData(this);
-      productForm.append("sections", ["drawer"]);
+      productForm.append("sections", ["mini-cart"]);
       productForm.delete("option1");
       productForm.delete("option2");
       productForm.delete("option3");
@@ -5018,7 +5018,7 @@
             bubbles: true,
             detail: {
               cart: cartContent,
-              openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawer") === null
+              openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawerCart") === null
             }
           }));
         });
