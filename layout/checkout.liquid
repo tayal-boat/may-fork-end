@@ -828,7 +828,7 @@
                       	"Checkout URL": checkout_url,
                           "userSource": userSource
               });
-
+			  var fraudNumbers = [7021862798, 7738851384];
               if ((fName.match(cityregex)) && (lName.match(cityregex))) {
                   if ((address1.length < 81) && (address1.match(addressregex)) && (!address1.includes('@'))) {
                       if (address2.length <= 0) {
@@ -839,7 +839,13 @@
                                       e.preventDefault();
                                       return false;
                                   }
-                                  else {
+                                  else if ($.inArray(parseInt(phone), fraudNumbers) >= 0) {
+                                      alert(`Sorry! You can't place the order with the entered phone number`);
+                                   	  e.preventDefault();
+                                      $('.step__footer, .new_checkout_step2').remove();
+                                      location.href = 'https://www.boat-lifestyle.com'
+                                      return false;
+                                  } else {
                                       return true;
                                   }
                               }
