@@ -4962,78 +4962,78 @@
   window.customElements.define("product-payment-terms", PaymentTerms);
 
   // js/custom-element/section/product/product-form.js
-  var ProductForm = class extends HTMLFormElement {
-    connectedCallback() {
-      this.id.disabled = false;
-      if (window.themeVariables.settings.cartType === "page" || window.themeVariables.settings.pageType === "cart") {
-        return;
-      }
-      this.addEventListener("submit", this._onSubmit.bind(this));
-    }
-    async _onSubmit(event) {
-      event.preventDefault();
-      if (!this.checkValidity()) {
-        this.reportValidity();
-        return;
-      }
-      const submitButtons = Array.from(this.elements).filter((button) => button.type === "submit");
-      submitButtons.forEach((submitButton) => {
-        submitButton.setAttribute("disabled", "disabled");
-        submitButton.setAttribute("aria-busy", "true");
-      });
-      const productForm = new FormData(this);
-      productForm.append("sections", ["mini-cart"]);
-      productForm.delete("option1");
-      productForm.delete("option2");
-      productForm.delete("option3");
-      const response = await fetch(`${window.themeVariables.routes.cartAddUrl}.js`, {
-        body: productForm,
-        method: "POST",
-        headers: {
-          "X-Requested-With": "XMLHttpRequest"
-        }
-      });
-      submitButtons.forEach((submitButton) => {
-        submitButton.removeAttribute("disabled");
-        submitButton.removeAttribute("aria-busy");
-      });
-      const responseJson = await response.json();
-      if (response.ok) {
-        this.dispatchEvent(new CustomEvent("variant:added", {
-          bubbles: true,
-          detail: {
-            variant: responseJson.hasOwnProperty("items") ? responseJson["items"][0] : responseJson
-          }
-        }));
-        fetch(`${window.themeVariables.routes.cartUrl}.js`).then(async (response2) => {
-          const cartContent = await response2.json();
-          document.documentElement.dispatchEvent(new CustomEvent("cart:updated", {
-            bubbles: true,
-            detail: {
-              cart: cartContent
-            }
-          }));
-          cartContent["sections"] = responseJson["sections"];
-          document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
-            bubbles: true,
-            detail: {
-              cart: cartContent,
-              openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawer") === null
-            }
-          }));
-        });
-      }
-      this.dispatchEvent(new CustomEvent("cart-notification:show", {
-        bubbles: true,
-        cancelable: true,
-        detail: {
-          status: response.ok ? "success" : "error",
-          error: responseJson["description"] || ""
-        }
-      }));
-    }
-  };
-  window.customElements.define("product-form", ProductForm, { extends: "form" });
+//   var ProductForm = class extends HTMLFormElement {
+//     connectedCallback() {
+//       this.id.disabled = false;
+//       if (window.themeVariables.settings.cartType === "page" || window.themeVariables.settings.pageType === "cart") {
+//         return;
+//       }
+//       this.addEventListener("submit", this._onSubmit.bind(this));
+//     }
+//     async _onSubmit(event) {
+//       event.preventDefault();
+//       if (!this.checkValidity()) {
+//         this.reportValidity();
+//         return;
+//       }
+//       const submitButtons = Array.from(this.elements).filter((button) => button.type === "submit");
+//       submitButtons.forEach((submitButton) => {
+//         submitButton.setAttribute("disabled", "disabled");
+//         submitButton.setAttribute("aria-busy", "true");
+//       });
+//       const productForm = new FormData(this);
+//       productForm.append("sections", ["mini-cart"]);
+//       productForm.delete("option1");
+//       productForm.delete("option2");
+//       productForm.delete("option3");
+//       const response = await fetch(`${window.themeVariables.routes.cartAddUrl}.js`, {
+//         body: productForm,
+//         method: "POST",
+//         headers: {
+//           "X-Requested-With": "XMLHttpRequest"
+//         }
+//       });
+//       submitButtons.forEach((submitButton) => {
+//         submitButton.removeAttribute("disabled");
+//         submitButton.removeAttribute("aria-busy");
+//       });
+//       const responseJson = await response.json();
+//       if (response.ok) {
+//         this.dispatchEvent(new CustomEvent("variant:added", {
+//           bubbles: true,
+//           detail: {
+//             variant: responseJson.hasOwnProperty("items") ? responseJson["items"][0] : responseJson
+//           }
+//         }));
+//         fetch(`${window.themeVariables.routes.cartUrl}.js`).then(async (response2) => {
+//           const cartContent = await response2.json();
+//           document.documentElement.dispatchEvent(new CustomEvent("cart:updated", {
+//             bubbles: true,
+//             detail: {
+//               cart: cartContent
+//             }
+//           }));
+//           cartContent["sections"] = responseJson["sections"];
+//           document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+//             bubbles: true,
+//             detail: {
+//               cart: cartContent,
+//               openMiniCart: window.themeVariables.settings.cartType === "drawer" && this.closest(".drawer") === null
+//             }
+//           }));
+//         });
+//       }
+//       this.dispatchEvent(new CustomEvent("cart-notification:show", {
+//         bubbles: true,
+//         cancelable: true,
+//         detail: {
+//           status: response.ok ? "success" : "error",
+//           error: responseJson["description"] || ""
+//         }
+//       }));
+//     }
+//   };
+//   window.customElements.define("product-form", ProductForm, { extends: "form" });
 
   // js/custom-element/section/product/product-media.js
   var ProductMedia = class extends CustomHTMLElement {
