@@ -373,6 +373,19 @@
                                  setTimeout(console.log('hii'),5000);
                                  event.target.removeAttribute('aria-busy');
                                  event.target.removeAttribute('disabled');
+                                 $.ajax({
+                                 	type: "POST",
+      								url: '/cart/add.js',
+                                    data: {
+        								quantity: 1,
+        								id: 39666763006050
+      								},
+                                    success: function (response) {
+                                    	fetchCart(true);
+								        document.getElementById("drawer-name").classList.add("is-active");
+								        document.getElementById("drawer-name").classList.add("is-visible");
+                                    }
+                                 })
                                  console.log('HIIII');
                                  " 
                         type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
