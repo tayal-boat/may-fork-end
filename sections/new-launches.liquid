@@ -819,7 +819,33 @@ display: flex;
           {%- form 'product', product, is: 'product-form', id: form_id -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-            <button type="submit" {% if show_cta %}is="loader-button"{% endif %} class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">Add To Cart
+            <button type="submit"
+                    onclick="
+                                 event.preventDefault();
+    							 document.getElementById('AddToCart').setAttribute('aria-busy', 'true');
+    							 document.getElementById('AddToCart').setAttribute('disabled','disabled');
+     							 setTimeout(function(){},5000);
+    							 document.getElementById('AddToCart').removeAttribute('aria-busy');
+    							 document.getElementById('AddToCart').removeAttribute('disabled');
+   								 var inp_len = event.path[3].length - 2;
+   								 $.ajax({
+                                 	type: 'POST',
+                                 	url: '/cart/add.js',
+      								data: {
+        								quantity: 1,
+        								id: parseInt(event.path[3][String(inp_len)].value)
+      								},
+      								success: function (response) {
+        								var json_response = JSON.parse(response)
+        								fetchCart(true)
+        								document.getElementById('drawer-name').classList.add('is-active');
+      									document.getElementById('drawer-name').classList.add('is-visible');
+                                 		console.log(parseInt(event.path[3][String(inp_len)].value))
+      								}
+    							 })
+
+                				"
+                    {% if show_cta %}is="loader-button"{% endif %} class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">Add To Cart
              <div class="apply_coupon_spinner-1"></div>
             </button>
           {%- endform -%}
