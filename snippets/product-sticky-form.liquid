@@ -126,7 +126,33 @@
               {%- endif -%}
             {%- endcapture -%}
 
-            <button id="StickyAddToCart" is="loader-button" form="{{ product_form_id }}" type="submit" data-product-add-to-cart-button {% unless buy_buttons_block.settings.show_payment_button %}data-use-primary{% endunless %} data-button-content="{{ button_content | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if buy_buttons_block.settings.show_payment_button %}button--secondary{% else %}button--primary{% endif %}{% endunless %}" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+            <button id="StickyAddToCart"
+                    onclick="
+                                 event.preventDefault();
+    							 document.getElementById('AddToCart').setAttribute('aria-busy', 'true');
+    							 document.getElementById('AddToCart').setAttribute('disabled','disabled');
+     							 setTimeout(function(){},5000);
+    							 document.getElementById('AddToCart').removeAttribute('aria-busy');
+    							 document.getElementById('AddToCart').removeAttribute('disabled');
+   								 var inp_len = event.path[3].length - 2;
+   								 $.ajax({
+                                 	type: 'POST',
+                                 	url: '/cart/add.js',
+      								data: {
+        								quantity: 1,
+        								id: parseInt(event.path[3][String(inp_len)].value)
+      								},
+      								success: function (response) {
+        								var json_response = JSON.parse(response)
+        								fetchCart(true)
+        								document.getElementById('drawer-name').classList.add('is-active');
+      									document.getElementById('drawer-name').classList.add('is-visible');
+                                 		console.log(parseInt(event.path[3][String(inp_len)].value))
+      								}
+    							 })
+
+                				"
+                    is="loader-button" form="{{ product_form_id }}" type="submit" data-product-add-to-cart-button {% unless buy_buttons_block.settings.show_payment_button %}data-use-primary{% endunless %} data-button-content="{{ button_content | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if buy_buttons_block.settings.show_payment_button %}button--secondary{% else %}button--primary{% endif %}{% endunless %}" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
               {%- if product.selected_or_first_available_variant.available -%}
                 {{- button_content -}}
               {%- else -%}
