@@ -134,21 +134,20 @@
      							 setTimeout(function(){},5000);
     							 document.getElementById('StickyAddToCart').removeAttribute('aria-busy');
     							 document.getElementById('StickyAddToCart').removeAttribute('disabled');
-   								 var inp_len = event.path[3].length - 2;
+   								 var inp_len = $('.product-form__buy-buttons input')[2].value
                              console.log(inp_len)
    								 $.ajax({
                                  	type: 'POST',
                                  	url: '/cart/add.js',
       								data: {
         								quantity: 1,
-        								id: parseInt(event.path[3][String(inp_len)].value)
+        								id: parseInt(inp_len)
       								},
       								success: function (response) {
         								var json_response = JSON.parse(response)
         								fetchCart(true)
         								document.getElementById('drawer-name').classList.add('is-active');
       									document.getElementById('drawer-name').classList.add('is-visible');
-                                 		console.log(parseInt(event.path[3][String(inp_len)].value))
       								}
     							 })
 
