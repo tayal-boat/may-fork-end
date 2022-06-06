@@ -307,6 +307,7 @@
         <p style="margin: 0.25rem 0 0;color: #03F2A9;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
          {% endif %}
                 <p class=" mt-2 inclusive">Inclusive of all taxes</p>
+        {% if product.available %} {% render 'random-carts' %} {% endif %}
         </div>
      </div>
 </div>
@@ -626,3 +627,14 @@ IMPLEMENTATION NOTE: if during the iteration of the options we have found an opt
     </div>
   </popover-content>
 {%- endif -%}
+<script>
+$('.color-swatch').each(function(ind,el){
+  $(el).on('click',function(e){
+      if ( $( this ).hasClass( "is-disabled" ) ) {
+     document.getElementById("currently-in-cart").style.display = "none";
+    }else{
+     document.getElementById("currently-in-cart").style.display = "block";
+    }
+  });
+           });
+</script>
