@@ -243,6 +243,7 @@
 
     <div class="amazon">
       <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
+
          <div class="price-list" data-product-price-list>
           {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
           <span class="price price--highlight price--large">
@@ -303,15 +304,16 @@
         {%- endif -%}
       </div>
 {% endcomment %}
-        {% if product.compare_at_price > product.price %}     
-        <p style="margin: 0.25rem 0 0;font-weight: 600;font-size: 14px;letter-spacing: -0.045em;color: #00C68C;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
-         {% endif %}
+
 
         <div class="d-flex align-items-baseline justify-content-between">
         <p class="inclusive">Inclusive of all taxes</p>
-          {% if product.available %} {% render 'random-carts' %} {% endif %}
+                  {% if product.compare_at_price > product.price %}     
+        <p style="margin: 0.25rem 0 0;font-weight: 600;font-size: 14px;letter-spacing: -0.045em;color: #00C68C;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
+         {% endif %}
+       
     </div>
-	
+	   {% if product.available %} {% render 'random-carts' %} {% endif %}
 
      </div>
 
