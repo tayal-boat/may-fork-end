@@ -47,6 +47,11 @@
               {%- endif -%}
 
               <div class="product-form__option-selector" data-selector-type="{{ selector_type | replace: '_', '-' | escape }}" data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
+                
+                            <div class="accordion" id="accordionPanelsStayOpenExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
                 <div class="product-form__option-info">
                   <span class="text-capitalize product-form__option-name">{{ option.name | capitilize }} :</span>
 
@@ -60,10 +65,17 @@
                     <button type="button" is="toggle-button" class="product-form__option-link link text--subdued hidden-tablet-and-up" aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-popover" aria-expanded="false">{{ 'product.general.size_chart' | t }}</button>
                   {%- endif -%}
                 </div>
+      </button>
+    </h2>
+
+
+
 
                 {%- case selector_type -%}
                   {%- when 'variant_image' -%}
-                    <div class="variant-swatch-list">
+                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+      <div class="accordion-body">
+              <div class="variant-swatch-list">
                       {%- assign option_position0 = option.position | minus: 1 -%}
 
                       {%- for value in option.values -%}
@@ -85,6 +97,9 @@
                         {%- endfor -%}
                       {%- endfor -%}
                     </div>
+      </div>
+    </div>
+       
 
                   {%- when 'color' -%}
                     <div class="color-swatch-list">
@@ -145,6 +160,10 @@
                     </div>
                 {%- endcase -%}
               </div>
+            
+  </div>
+  </div>
+
             {%- endfor -%}
 
             <noscript>
