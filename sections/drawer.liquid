@@ -1627,42 +1627,33 @@ border: none;
 
 
 <script>
-    var mimic_automatic_discount = 0;
+        var mimic_automatic_discount = 1;
 
-    document.querySelector('.cross').addEventListener('click', () => {
-        fetchCart(true);
-        document.getElementById('drawer-name').classList.remove("is-active");
-  		document.getElementById('drawer-name').classList.remove("is-visible");
-    })
-    
-    document.querySelector('.drawerCart__overlay').addEventListener('click', () => {
-        document.getElementById('drawer-name').classList.remove("is-active");
-  		document.getElementById('drawer-name').classList.remove("is-visible");
-	    fetchCart(true);
-    })
-    
-    // setInterval(function () {
-    //     if (!$('#cart__drawer_items div').length) {
-    //         //$('.cart-offer').hide()
-    //         $('.price-cover').hide()
-    //         $('.shopp').show()
-    // //         $('.cart-offer').hide()
-    //         $('.cart__item.featured_product').hide()
-    //         $('.coll').show()
-    //         $('.head-cont').hide()
-    //     }
-    //     else {
-    //         $('.shopp').hide()
-    //         $('.cart-offer').show()
-    //         $('.cart__item.featured_product').show()
-    //         $('.coll').hide()
-    //         $('.price-cover').show()
-    //         $('.head-cont').show()
-    //     }
-    // }, 300)
+        document.querySelector('.cross').addEventListener('click', () => {
+            document.getElementById('main-cross-but').click();
+        })
+        // setInterval(function () {
+        //     if (!$('#cart__drawer_items div').length) {
+        //         //$('.cart-offer').hide()
+        //         $('.price-cover').hide()
+        //         $('.shopp').show()
+        // //         $('.cart-offer').hide()
+        //         $('.cart__item.featured_product').hide()
+        //         $('.coll').show()
+        //         $('.head-cont').hide()
+        //     }
+        //     else {
+        //         $('.shopp').hide()
+        //         $('.cart-offer').show()
+        //         $('.cart__item.featured_product').show()
+        //         $('.coll').hide()
+        //         $('.price-cover').show()
+        //         $('.head-cont').show()
+        //     }
+        // }, 300)
 
 
-    window.isSubmitting = true
+        window.isSubmitting = true
         window.isaddingtocart = false
         var cart_items_obj;
         var line_item_length; 
@@ -1851,9 +1842,9 @@ border: none;
 
                                 $('#cart__drawer_items').prepend(`<div class="cart__item gg1 ` + product_class + `" style="width: 100% !important">
       <img class="remove_product lazyload" style="cursor: pointer;"
-      src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107">
+      data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107">
       <a class="anchor" href="`+ product_url + `">
-      <img class="lazyload" src="`+ product.featured_image.url + `"
+      <img class="lazyload" data-src="`+ product.featured_image.url + `"
       alt="` + product.featured_image.alt + `">
         </a>
       <div class="outer-fl">
@@ -2200,9 +2191,9 @@ border: none;
                                                         if (_recommend_variant) {
                                                             $("#cart__drawer_items_2").prepend(
                                                                 `<div class="cart__item gg1 featured_product" style="width: 100% !important;background-color:#F7F9FA;">
-      <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/sou.png?v=1635762467" style="position: absolute;top: 0px;left: 0px;max-width:175px">
+      <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/sou.png?v=1635762467" style="position: absolute;top: 0px;left: 0px;max-width:175px">
       <a class="anchor" href="#">
-      <img class="lazyload" src="`+ _recommend_variant.featured_image.src + `" alt="` + _recommend_variant.featured_image.alt + `" />
+      <img class="lazyload" data-src="`+ _recommend_variant.featured_image.src + `" alt="` + _recommend_variant.featured_image.alt + `" />
         </a>
       <div class="outer-fl">
       <div class="content-flex">
@@ -2312,36 +2303,256 @@ border: none;
 
         }
 
-    var disable_coupons = 0;
+        var disable_coupons = 0;
 
-    fetchCart(false)
+        fetchCart(false)
 
-    $('.select-coupon input').on('click', function (e) {
-        $('#coupon-code-text')[0].value = $('input[name="available-offers"]:checked')[0].getAttribute('value')
-    })
+        $('.select-coupon input').on('click', function (e) {
+            $('#coupon-code-text')[0].value = $('input[name="available-offers"]:checked')[0].getAttribute('value')
+        })
 
-    function remove_function() {
-        sessionStorage.setItem('coupon-remove', true);
-        sessionStorage.setItem('coupon-code', '');
-        sessionStorage.setItem('discount_code', '');
-        console.log('clicked remove')
-        $('.tag-slider-cart').remove();
-        $('.total-am').hide();
-        $('.discount-price').hide();
-    }
+        function remove_function() {
+            sessionStorage.setItem('coupon-remove', true);
+            sessionStorage.setItem('coupon-code', '');
+            sessionStorage.setItem('discount_code', '');
+            console.log('clicked remove')
+            $('.tag-slider-cart').remove();
+            $('.total-am').hide();
+            $('.discount-price').hide();
+        }
 
-    function applyCoupon(){
-        if (disable_coupons != 1) {
-            var basecode = $('#coupon-code-text')[0].value;
-            $.ajax({
-                type: "POST",
-                url: "https://boat-api.farziengineer.co/discount",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                data: `{"code":"${basecode}", "cartId":"${sessionStorage.getItem('cartID')}"}`,
-            }).then((response) => {
-                if (response == "true" || response == "True") {
+        function applyCoupon(){
+            if (disable_coupons != 1) {
+                var basecode = $('#coupon-code-text')[0].value;
+                $.ajax({
+                    type: "POST",
+                    url: "https://boat-api.farziengineer.co/discount",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    data: `{"code":"${basecode}", "cartId":"${sessionStorage.getItem('cartID')}"}`,
+                }).then((response) => {
+                    if (response == "true" || response == "True") {
+                        sessionStorage.setItem('coupon-remove', false);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "https://www.boat-lifestyle.com/cart",
+                            headers: { "Content-Type": "application/json" },
+                            data: `{"checkout":"Check out}", "discount":"${$('#coupon-code-text')[0].value}"}`,
+                        }).then((response) => {
+                            console.log(response)
+                            var n = document.createElement("div");
+                            n.innerHTML = response;
+                            var r = "data-checkout-subtotal-price-target"
+                                , o = n.querySelector("[".concat(r, "]"))
+                                , i = n.querySelector(".reduction-code__text")
+                                , a = n.querySelector("[".concat("data-checkout-discount-amount-target", "]"))
+                                , pr = n.querySelector(".payment-due__price")
+                                , tlr = n.querySelector('.total-line--reduction');
+                            console.log(o);
+                            console.log(i);
+                            if (o && i) {
+                                var l = !!o && Number(o.getAttribute(r))
+                                    , tpr = Number(pr.getAttribute('data-checkout-payment-due-target'))
+                                    , s = !!a && Number(a.getAttribute("data-checkout-discount-amount-target"))
+                                    , u = s && s > 0 ? s : l;
+                                console.log("code", {
+                                    name: i.textContent.trim().split(" ")[0],
+                                    amount: u
+                                })
+                            }
+                            console.log("not", i ? {
+                                name: i.textContent,
+                                amount: !1,
+                                deduction: s,
+                                final_pr: tpr
+                            } : {
+                                name: !1,
+                                amount: !1
+                            })
+
+
+                            if ($('.tag-slider-cart').length) {
+                                if (i != undefined) {
+                                    if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase() || i.innerText.trim().includes('•')) {
+                                        sessionStorage.setItem('coupon-remove', true);
+                                        sessionStorage.setItem('coupon-code', '');
+                                        sessionStorage.setItem('discount_code', ''); 
+                                        $('.tag-slider-cart').remove();
+                                        if(!i.innerText.trim().includes('•')){
+                                              $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
+                                        }
+                                        $('.total-am').hide();
+                                        $('.discount-price').hide();
+                                        if ($('#coupon-code-text')[0].value != '') {
+                                            $('#coupon-code-text')[0].value = '';
+                                        }
+                                        return;
+                                    }
+                                }
+                                $('.tag-slider-cart').remove();
+                                if (i != undefined) {
+                                    $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    width: max-content;
+                    max-width: 500px;
+                    background: #d9d9d9;
+                    border-radius: 5px;
+                    margin: 10px 10px 10px 0;
+                    padding: 3px;
+                    ">
+                    <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
+                    height: 20px;
+                    ">
+                    <div class="applied-coupon-text" style="
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    margin: 0 10px;
+                    ">${i.innerText.trim().split(' ')[0]}</div>
+                    <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
+                    height: 16px;
+                    ">
+                        </div>`)
+                                    if (u != 0 && tlr) {
+                                        $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
+                                        $('.discount-price')[0].style.display = 'flex';
+                                    }
+                                    else { $('.discount-price').hide(); }
+
+                                    $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
+                                    $('.total-am')[0].style.display = "flex";
+                                    sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0]}`)
+                                    sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+                                    if ($('#coupon-code-text')[0].value != '') {
+                                        $('#coupon-code-text')[0].value = '';
+                                    }
+                                }
+                                else {
+                                    $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
+                                    $('.discount-price').hide();
+                                    $('.total-am').hide();
+                                    if ($('#coupon-code-text')[0].value != '') {
+                                        $('#coupon-code-text')[0].value = '';
+                                    }
+                                }
+                            }
+                            else {
+                                if (i != undefined) {
+                                    if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
+                                        sessionStorage.setItem('coupon-remove', true);
+                                        sessionStorage.setItem('coupon-code', '');
+                                        sessionStorage.setItem('discount_code', '');
+                                        $('.tag-slider-cart').remove();
+                                        $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
+                                        $('.total-am').hide();
+                                        $('.discount-price').hide();
+                                        if ($('#coupon-code-text')[0].value != '') {
+                                            $('#coupon-code-text')[0].value = '';
+                                        }
+                                        return;
+                                    }
+                                }
+                                if (i != undefined) {
+                                    $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    width: max-content;
+                    max-width: 500px;
+                    background: #d9d9d9;
+                    border-radius: 5px;
+                    margin: 10px 10px 10px 0;
+                    padding: 3px;
+                    ">
+                    <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
+                    height: 20px;
+                    ">
+                    <div class="applied-coupon-text" style="
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    ">${i.innerText.trim().split(' ')[0].toLowerCase()}</div>
+                    <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
+                    height: 16px;
+                    ">
+                        </div>`)
+                                    if (u != 0 && tlr) {
+
+                                        $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
+                                        $('.discount-price')[0].style.display = 'flex';
+                                    }
+                                    else { $('.discount-price').hide(); }
+                                    $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
+                                    $('.total-am')[0].style.display = "flex";
+                                    sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0].toLowerCase()}`)
+                                    sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
+                                    if ($('#coupon-code-text')[0].value != '') {
+                                        $('#coupon-code-text')[0].value = '';
+                                    }
+
+                                }
+                                else {
+                                    $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
+                                    $('.discount-price').hide();
+                                    $('.total-am').hide();
+                                    if ($('#coupon-code-text')[0].value != '') {
+                                        $('#coupon-code-text')[0].value = '';
+                                    }
+                                }
+                            }
+                            // sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0].toLowerCase()}`);
+                        })
+                            .catch((r) => {
+                                console.log(r)
+
+                            });
+                        setTimeout(function () {
+                            var couponlog_postrequest = {
+                                url: "https://boat-api.farziengineer.co/couponlog",
+                                method: "POST",
+                                timeout: 0,
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                            };
+                            var v = setInterval(function () {
+                                if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+                                    couponlog_postrequest.data = JSON.stringify({
+                                        coupon: basecode,
+                                        log: $(".edit_checkout .fieldset:last p").text(),
+                                    });
+                                    $.ajax(couponlog_postrequest).done(function (response) {
+
+                                    });
+                                    clearInterval(v);
+                                } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+                                    couponlog_postrequest.data = JSON.stringify({
+                                        coupon: basecode,
+                                        log: $(".notice.notice--warning .notice__content .notice__text").text(),
+                                    });
+                                    $.ajax(couponlog_postrequest).done(function (response) {
+
+                                    });
+                                    clearInterval(v);
+                                } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+                                    couponlog_postrequest.data = JSON.stringify({
+                                        coupon: basecode,
+                                        log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text(),
+                                    });
+                                    $.ajax(couponlog_postrequest).done(function (response) {
+
+                                    });
+                                    clearInterval(v);
+                                }
+                            }, 1000);
+                        }, 3000);
+                    }
+                }
+                ).fail(() => {
                     sessionStorage.setItem('coupon-remove', false);
 
                     $.ajax({
@@ -2351,6 +2562,7 @@ border: none;
                         data: `{"checkout":"Check out}", "discount":"${$('#coupon-code-text')[0].value}"}`,
                     }).then((response) => {
                         console.log(response)
+
                         var n = document.createElement("div");
                         n.innerHTML = response;
                         var r = "data-checkout-subtotal-price-target"
@@ -2366,6 +2578,7 @@ border: none;
                                 , tpr = Number(pr.getAttribute('data-checkout-payment-due-target'))
                                 , s = !!a && Number(a.getAttribute("data-checkout-discount-amount-target"))
                                 , u = s && s > 0 ? s : l;
+
                             console.log("code", {
                                 name: i.textContent.trim().split(" ")[0],
                                 amount: u
@@ -2384,14 +2597,12 @@ border: none;
 
                         if ($('.tag-slider-cart').length) {
                             if (i != undefined) {
-                                if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase() || i.innerText.trim().includes('•')) {
+                                if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
                                     sessionStorage.setItem('coupon-remove', true);
                                     sessionStorage.setItem('coupon-code', '');
-                                    sessionStorage.setItem('discount_code', ''); 
+                                    sessionStorage.setItem('discount_code', '');
                                     $('.tag-slider-cart').remove();
-                                  	if(!i.innerText.trim().includes('•')){
-                                          $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
-									}
+                                    $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
                                     $('.total-am').hide();
                                     $('.discount-price').hide();
                                     if ($('#coupon-code-text')[0].value != '') {
@@ -2403,29 +2614,29 @@ border: none;
                             $('.tag-slider-cart').remove();
                             if (i != undefined) {
                                 $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-around;
-                width: max-content;
-                max-width: 500px;
-                background: #d9d9d9;
-                border-radius: 5px;
-                margin: 10px 10px 10px 0;
-                padding: 3px;
-                ">
-                <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
-                height: 20px;
-                ">
-                <div class="applied-coupon-text" style="
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 14px;
-                margin: 0 10px;
-                ">${i.innerText.trim().split(' ')[0]}</div>
-                <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
-                height: 16px;
-                ">
-                    </div>`)
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    width: max-content;
+                    max-width: 500px;
+                    background: #d9d9d9;
+                    border-radius: 5px;
+                    margin: 10px 10px 10px 0;
+                    padding: 3px;
+                    ">
+                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
+                    height: 20px;
+                    ">
+                    <div class="applied-coupon-text" style="
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    margin: 0 10px;
+                    ">${i.innerText.trim().split(' ')[0]}</div>
+                    <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
+                    height: 16px;
+                    ">
+                        </div>`)
                                 if (u != 0 && tlr) {
                                     $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
                                     $('.discount-price')[0].style.display = 'flex';
@@ -2467,28 +2678,28 @@ border: none;
                             }
                             if (i != undefined) {
                                 $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-around;
-                width: max-content;
-                max-width: 500px;
-                background: #d9d9d9;
-                border-radius: 5px;
-                margin: 10px 10px 10px 0;
-                padding: 3px;
-                ">
-                <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
-                height: 20px;
-                ">
-                <div class="applied-coupon-text" style="
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 14px;
-                ">${i.innerText.trim().split(' ')[0].toLowerCase()}</div>
-                <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
-                height: 16px;
-                ">
-                    </div>`)
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    width: max-content;
+                    max-width: 500px;
+                    background: #d9d9d9;
+                    border-radius: 5px;
+                    margin: 10px 10px 10px 0;
+                    padding: 3px;
+                    ">
+                    <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
+                    height: 20px;
+                    ">
+                    <div class="applied-coupon-text" style="
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    ">${i.innerText.trim().split(' ')[0].toLowerCase()}</div>
+                    <img class="remove-coupon lazyload" onclick="remove_function()" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
+                    height: 16px;
+                    ">
+                        </div>`)
                                 if (u != 0 && tlr) {
 
                                     $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
@@ -2560,18 +2771,27 @@ border: none;
                         }, 1000);
                     }, 3000);
                 }
-            }
-            ).fail(() => {
-                sessionStorage.setItem('coupon-remove', false);
+                );
 
+
+            }
+        }
+
+        function reapply_coupon() {
+
+            if (sessionStorage.getItem('coupon-code') && sessionStorage.getItem('coupon-code') != '' && sessionStorage.getItem('coupon-remove') != 'true' && disable_coupons != 1) {
+                sessionStorage.setItem('coupon-remove', true);
+                sessionStorage.setItem('discount_code', '');
+                window.isaddingtocart = true
                 $.ajax({
                     type: "POST",
                     url: "https://www.boat-lifestyle.com/cart",
                     headers: { "Content-Type": "application/json" },
-                    data: `{"checkout":"Check out}", "discount":"${$('#coupon-code-text')[0].value}"}`,
+                    data: `{"checkout":"Check out}", "discount":"${sessionStorage.getItem('coupon-code')}"}`,
                 }).then((response) => {
+                    window.isaddingtocart = false;
                     console.log(response)
-
+                    console.log('abcd-1')
                     var n = document.createElement("div");
                     n.innerHTML = response;
                     var r = "data-checkout-subtotal-price-target"
@@ -2580,6 +2800,7 @@ border: none;
                         , a = n.querySelector("[".concat("data-checkout-discount-amount-target", "]"))
                         , pr = n.querySelector(".payment-due__price")
                         , tlr = n.querySelector('.total-line--reduction');
+
                     console.log(o);
                     console.log(i);
                     if (o && i) {
@@ -2587,7 +2808,6 @@ border: none;
                             , tpr = Number(pr.getAttribute('data-checkout-payment-due-target'))
                             , s = !!a && Number(a.getAttribute("data-checkout-discount-amount-target"))
                             , u = s && s > 0 ? s : l;
-
                         console.log("code", {
                             name: i.textContent.trim().split(" ")[0],
                             amount: u
@@ -2602,347 +2822,291 @@ border: none;
                         name: !1,
                         amount: !1
                     })
-
-
-                    if ($('.tag-slider-cart').length) {
-                        if (i != undefined) {
-                            if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
-                                sessionStorage.setItem('coupon-remove', true);
-                                sessionStorage.setItem('coupon-code', '');
-                                sessionStorage.setItem('discount_code', '');
-                                $('.tag-slider-cart').remove();
-                                $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
-                                $('.total-am').hide();
-                                $('.discount-price').hide();
-                                if ($('#coupon-code-text')[0].value != '') {
-                                    $('#coupon-code-text')[0].value = '';
-                                }
-                                return;
-                            }
-                        }
+                    if (i.innerText.trim().includes('•')){
+                        return;
+                    }
+                    if (i != undefined) {
                         $('.tag-slider-cart').remove();
-                        if (i != undefined) {
-                            $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-around;
-                width: max-content;
-                max-width: 500px;
-                background: #d9d9d9;
-                border-radius: 5px;
-                margin: 10px 10px 10px 0;
-                padding: 3px;
-                ">
-                <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
-                height: 20px;
-                ">
-                <div class="applied-coupon-text" style="
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 14px;
-                margin: 0 10px;
-                ">${i.innerText.trim().split(' ')[0]}</div>
-                <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
-                height: 16px;
-                ">
-                    </div>`)
-                            if (u != 0 && tlr) {
-                                $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
-                                $('.discount-price')[0].style.display = 'flex';
-                            }
-                            else { $('.discount-price').hide(); }
+                        sessionStorage.setItem('coupon-remove', false);
+                        $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
+                              display: flex;
+                              align-items: center;
+                              justify-content: space-around;
+                              width: max-content;
+                              max-width: 500px;
+                              background: #d9d9d9;
+                              border-radius: 5px;
+                              margin: 10px 10px 10px 0;
+                              padding: 3px;
+                              ">
+                                        <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
+                                  height: 20px;
+                              ">
+                              <div class="applied-coupon-text" style="
+                                  font-weight: 600;
+                                  text-transform: uppercase;
+                                  font-size: 14px;
+                              ">${sessionStorage.getItem('coupon-code').toUpperCase()}</div>
+                              <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
+                                  height: 16px;
+                              ">
+                              </div>`)
+                        if (u != 0 && tlr) {
 
-                            $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
-                            $('.total-am')[0].style.display = "flex";
-                            sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0]}`)
-                            sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
-                            if ($('#coupon-code-text')[0].value != '') {
-                                $('#coupon-code-text')[0].value = '';
-                            }
+                            $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
+                            $('.discount-price')[0].style.display = 'flex';
                         }
-                        else {
-                            $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
-                            $('.discount-price').hide();
-                            $('.total-am').hide();
+                        else { $('.discount-price').hide(); }
+                        $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
+                        $('.total-am')[0].style.display = "flex";
+                        if ($('#coupon-code-text').length > 0) {
                             if ($('#coupon-code-text')[0].value != '') {
                                 $('#coupon-code-text')[0].value = '';
                             }
                         }
                     }
                     else {
-                        if (i != undefined) {
-                            if (i.innerText.trim().split(' ')[0].toLowerCase() != $('#coupon-code-text')[0].value.toLowerCase()) {
-                                sessionStorage.setItem('coupon-remove', true);
-                                sessionStorage.setItem('coupon-code', '');
-                                sessionStorage.setItem('discount_code', '');
-                                $('.tag-slider-cart').remove();
-                                $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
-                                $('.total-am').hide();
-                                $('.discount-price').hide();
-                                if ($('#coupon-code-text')[0].value != '') {
-                                    $('#coupon-code-text')[0].value = '';
-                                }
-                                return;
-                            }
-                        }
-                        if (i != undefined) {
-                            $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-around;
-                width: max-content;
-                max-width: 500px;
-                background: #d9d9d9;
-                border-radius: 5px;
-                margin: 10px 10px 10px 0;
-                padding: 3px;
-                ">
-                <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
-                height: 20px;
-                ">
-                <div class="applied-coupon-text" style="
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 14px;
-                ">${i.innerText.trim().split(' ')[0].toLowerCase()}</div>
-                <img class="remove-coupon lazyload" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
-                height: 16px;
-                ">
-                    </div>`)
-                            if (u != 0 && tlr) {
-
-                                $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
-                                $('.discount-price')[0].style.display = 'flex';
-                            }
-                            else { $('.discount-price').hide(); }
-                            $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
-                            $('.total-am')[0].style.display = "flex";
-                            sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0].toLowerCase()}`)
-                            sessionStorage.setItem('discount_code', `${i.innerText.trim().split(' ')[0]}`);
-                            if ($('#coupon-code-text')[0].value != '') {
-                                $('#coupon-code-text')[0].value = '';
-                            }
-
-                        }
-                        else {
-                            $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
-                            $('.discount-price').hide();
-                            $('.total-am').hide();
+                        $('.tag-slider-cart').remove();
+                        $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
+                        $('.discount-price').hide();
+                        $('.total-am').hide();
+                        sessionStorage.setItem('coupon-remove', true);
+                        sessionStorage.setItem('coupon-code', '');
+                        sessionStorage.setItem('discount_code', ''); 
+                        if ($('#coupon-code-text').length > 0) {
                             if ($('#coupon-code-text')[0].value != '') {
                                 $('#coupon-code-text')[0].value = '';
                             }
                         }
                     }
-                    // sessionStorage.setItem('coupon-code', `${i.innerText.trim().split(' ')[0].toLowerCase()}`);
                 })
                     .catch((r) => {
                         console.log(r)
 
                     });
-                setTimeout(function () {
-                    var couponlog_postrequest = {
-                        url: "https://boat-api.farziengineer.co/couponlog",
-                        method: "POST",
-                        timeout: 0,
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    };
-                    var v = setInterval(function () {
-                        if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
-                            couponlog_postrequest.data = JSON.stringify({
-                                coupon: basecode,
-                                log: $(".edit_checkout .fieldset:last p").text(),
-                            });
-                            $.ajax(couponlog_postrequest).done(function (response) {
-
-                            });
-                            clearInterval(v);
-                        } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
-                            couponlog_postrequest.data = JSON.stringify({
-                                coupon: basecode,
-                                log: $(".notice.notice--warning .notice__content .notice__text").text(),
-                            });
-                            $.ajax(couponlog_postrequest).done(function (response) {
-
-                            });
-                            clearInterval(v);
-                        } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
-                            couponlog_postrequest.data = JSON.stringify({
-                                coupon: basecode,
-                                log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text(),
-                            });
-                            $.ajax(couponlog_postrequest).done(function (response) {
-
-                            });
-                            clearInterval(v);
-                        }
-                    }, 1000);
-                }, 3000);
             }
-            );
-
 
         }
-    }
-    
-    function reapply_coupon() {
 
-        if (sessionStorage.getItem('coupon-code') && sessionStorage.getItem('coupon-code') != '' && sessionStorage.getItem('coupon-remove') != 'true' && disable_coupons != 1) {
-            sessionStorage.setItem('coupon-remove', true);
-            sessionStorage.setItem('discount_code', '');
-            window.isaddingtocart = true
-            $.ajax({
-                type: "POST",
-                url: "https://www.boat-lifestyle.com/cart",
-                headers: { "Content-Type": "application/json" },
-                data: `{"checkout":"Check out}", "discount":"${sessionStorage.getItem('coupon-code')}"}`,
-            }).then((response) => {
-                window.isaddingtocart = false;
-                console.log(response)
-                console.log('abcd-1')
-                var n = document.createElement("div");
-                n.innerHTML = response;
-                var r = "data-checkout-subtotal-price-target"
-                    , o = n.querySelector("[".concat(r, "]"))
-                    , i = n.querySelector(".reduction-code__text")
-                    , a = n.querySelector("[".concat("data-checkout-discount-amount-target", "]"))
-                    , pr = n.querySelector(".payment-due__price")
-                    , tlr = n.querySelector('.total-line--reduction');
+        // var coupon_quant = setInterval(function () {
+        //     if ($('.imp').length) {
+        //         $('.imp').on('click', function () {
+        //             reapply_coupon();
+        //             console.log('imp')
+        //         })
+        //         clearInterval(coupon_quant)
+        //     }
+        // }, 500)
 
-                console.log(o);
-                console.log(i);
-                if (o && i) {
-                    var l = !!o && Number(o.getAttribute(r))
-                        , tpr = Number(pr.getAttribute('data-checkout-payment-due-target'))
-                        , s = !!a && Number(a.getAttribute("data-checkout-discount-amount-target"))
-                        , u = s && s > 0 ? s : l;
-                    console.log("code", {
-                        name: i.textContent.trim().split(" ")[0],
-                        amount: u
-                    })
-                }
-                console.log("not", i ? {
-                    name: i.textContent,
-                    amount: !1,
-                    deduction: s,
-                    final_pr: tpr
-                } : {
-                    name: !1,
-                    amount: !1
-                })
-                if (i.innerText.trim().includes('•')){
-					return;
-                }
-                if (i != undefined) {
-                    $('.tag-slider-cart').remove();
-                    sessionStorage.setItem('coupon-remove', false);
-                    $('.coupon-text').after(`<div class="tag-slider-cart valid-code" style="
-                          display: flex;
-                          align-items: center;
-                          justify-content: space-around;
-                          width: max-content;
-                          max-width: 500px;
-                          background: #d9d9d9;
-                          border-radius: 5px;
-                          margin: 10px 10px 10px 0;
-                          padding: 3px;
-                          ">
-                                    <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_6.png?v=1636981123" style="
-                              height: 20px;
-                          ">
-                          <div class="applied-coupon-text" style="
-                              font-weight: 600;
-                              text-transform: uppercase;
-                              font-size: 14px;
-                          ">${sessionStorage.getItem('coupon-code').toUpperCase()}</div>
-                          <img class="remove-coupon" onclick="remove_function()" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/image_8.png?v=1636981510" style="
-                              height: 16px;
-                          ">
-                          </div>`)
-                    if (u != 0 && tlr) {
+        // var coupon_remove_prod = setInterval(function () {
+        //     if ($('.cart__item').length) {
+        //         $('.cart__item').on('click', function () {
+        //             reapply_coupon();
+        //             console.log('cart_item')
+        //         })
+        //         clearInterval(coupon_remove_prod)
+        //     }
+        // }, 500)
 
-                        $('.coupon-p')[0].innerText = '- Rs ' + (u / 100);
-                        $('.discount-price')[0].style.display = 'flex';
-                    }
-                    else { $('.discount-price').hide(); }
-                    $('.tam_p')[0].innerText = 'Rs ' + tpr / 100;
-                    $('.total-am')[0].style.display = "flex";
-                    if ($('#coupon-code-text').length > 0) {
-                        if ($('#coupon-code-text')[0].value != '') {
-                            $('#coupon-code-text')[0].value = '';
-                        }
-                    }
-                }
-                else {
-                    $('.tag-slider-cart').remove();
-                    $('.coupon-text').after(`<p class="tag-slider-cart invalid-code">This coupon code is not valid for items in your cart.</p>`)
-                    $('.discount-price').hide();
-                    $('.total-am').hide();
-                    sessionStorage.setItem('coupon-remove', true);
-                    sessionStorage.setItem('coupon-code', '');
-                    sessionStorage.setItem('discount_code', ''); 
-                    if ($('#coupon-code-text').length > 0) {
-                        if ($('#coupon-code-text')[0].value != '') {
-                            $('#coupon-code-text')[0].value = '';
-                        }
-                    }
-                }
-            })
-                .catch((r) => {
-                    console.log(r)
 
+
+        $('#coupon-apply').on('click', function () {
+            applyCoupon();
+            $('#coupon-apply').after(`<div id="apply_coupon_overlay" style="display:none;">
+              <div class="apply_coupon_spinner"></div>
+            </div>`)
+
+            $("#apply_coupon_overlay").fadeIn();
+            $('#coupon-apply').hide();
+            setTimeout(function () { $("#apply_coupon_overlay").remove(); $('#coupon-apply').fadeIn(); }, 3000);
+            let couponCode = $('#coupon-code-text').val();
+            let discountAmount = $(this).closest('.coupon-text').closest('.cart-coupon').siblings('.discount-price').find('.coupon-p').text();
+            setTimeout(function () {if (couponCode) {
+                clevertap.event.push("Discount Code Applied", {
+                    "Discounted Amount": discountAmount,
+                    "Discount Code": couponCode,
+                    "source": 'Cart Drawer'
                 });
-        }
+                console.log('Sheena' + discountAmount)
+            }
+                                    }, 5000)
 
-    }
+        })
 
-    // var coupon_quant = setInterval(function () {
-    //     if ($('.imp').length) {
-    //         $('.imp').on('click', function () {
-    //             reapply_coupon();
-    //             console.log('imp')
-    //         })
-    //         clearInterval(coupon_quant)
-    //     }
-    // }, 500)
+    </script>
+    <script>
+        let cart_cl = setInterval(function () {
+            if ($('.cart-count').length) {
+                $('.cart-count').on('click', function () {
+                    console.log('34');
+                    if ($('.add-cart-modal').length) {
+                        console.log('12');
+                        $('.add-cart-modal').hide();
+                    }
+                })
+                clearInterval(cart_cl)
+            }
+        }, 300)
 
-    // var coupon_remove_prod = setInterval(function () {
-    //     if ($('.cart__item').length) {
-    //         $('.cart__item').on('click', function () {
-    //             reapply_coupon();
-    //             console.log('cart_item')
-    //         })
-    //         clearInterval(coupon_remove_prod)
-    //     }
-    // }, 500)
+        setInterval(function () { if ($('.new_icon').length) { if ($('.new_icon')[0].style.height == '50px') { $('.new_icon')[0].style.height = '65px'; } } }, 100)
 
+        $("#update-cart").click(function () {
+            var cart_total_price = $("#cart__total_price").text().replace("Rs ", "")
+            var product_title_concat = ""
+            var datalayer_items = []
 
+            $("#cart__drawer_items .cart__item").each(function (i, obj) {
+                var product_title = $("." + $(this).attr("class").replaceAll(" ", ".") + " .prod-title").text()
+                var product_id = $("." + $(this).attr("class").replaceAll(" ", ".") + " .product_id").text()
+                var product_price = $("." + $(this).attr("class").replaceAll(" ", ".") + " .cash").clone().find('span').remove().end().text().replace("Rs ", "");
+                var product_category = $("." + $(this).attr("class").replaceAll(" ", ".") + " .product_type").text()
+                var quantity = $("." + $(this).attr("class").replaceAll(" ", ".") + " .quantity").text()
+                if (i == 0) { product_title_concat = product_title }
+                else { product_title_concat = product_title_concat + ',' + product_title }
+                var item = {
+                    'item_name': product_title,
+                    'item_id': product_id,
+                    'price': product_price,
+                    'item_category': product_category,
+                    'quantity': quantity
 
-    $('#coupon-apply').on('click', function () {
-        applyCoupon();
-        $('#coupon-apply').after(`<div id="apply_coupon_overlay" style="display:none;">
-          <div class="apply_coupon_spinner"></div>
-        </div>`)
+                }
+                datalayer_items.push(item)
+            })
 
-        $("#apply_coupon_overlay").fadeIn();
-        $('#coupon-apply').hide();
-        setTimeout(function () { $("#apply_coupon_overlay").remove(); $('#coupon-apply').fadeIn(); }, 3000);
-        let couponCode = $('#coupon-code-text').val();
-        let discountAmount = $(this).closest('.coupon-text').closest('.cart-coupon').siblings('.discount-price').find('.coupon-p').text();
-        setTimeout(function () {if (couponCode) {
-            clevertap.event.push("Discount Code Applied", {
-                "Discounted Amount": discountAmount,
-                "Discount Code": couponCode,
-                "source": 'Cart Drawer'
+            clevertap.event.push("Checkout Button Clicked", {
+                "Amount": cart_total_price,
+                "Product Name": product_title_concat
             });
-            console.log('Sheena' + discountAmount)
+            dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+            dataLayer.push({
+                'event': 'begin_checkout',
+                'ecommerce': {
+                    'items': datalayer_items
+                }
+            });
+
+        });
+        $('.gokwikpay').click(function () {
+            clevertap.event.push('GoKwik Button Clicked');
+        })
+
+        reapply_coupon();
+
+        $('.gokwik-container').hover(function () {
+            $('#update-cart').css('color', 'black');
+            $('#update-cart.active')[0].style.setProperty("background-color", "white", "important");
+        })
+
+        $('.gokwik-container').on('mouseleave', function () {
+            $('#update-cart').css('color', 'white');
+            $('#update-cart.active')[0].style.setProperty("background-color", "red", "important");
+        })
+
+        $('.line:last').hide();
+        // setInterval(function () {
+        //     window.isSubmitting = false;
+        // }, 2000)
+
+    //     document.addEventListener('couponRemoved', function (e) {
+    //         $('.remove-coupon')[0].click();
+    //     })
+        setInterval(function () {
+            if ($('.cart-total-val').val() > 49000) {
+                $('.drawer__content .checkout-buttons, .drawer__content .gokwik-container').hide()
+                $('.drawer__content .cart-val-error').html(`Cart value cannot be greater than <strong>49000!</strong> Reduce cart value to proceed.`).show();
+            } else {
+                $('.drawer__content .checkout-buttons, .drawer__content .gokwik-container').show()
+                $('.drawer__content .cart-val-error').hide()
+            }
+        }, 100)
+
+        function swap_product(event){
+        let qty = event.target.getAttribute('qty');
+        let var_id = event.target.getAttribute('var_id');
+        let selected_var = event.target.getAttribute('selected_var');
+        let color_option = event.target.getAttribute('color_option');
+        let prod_title = event.target.getAttribute('name');
+        event.target.classList.add('strip-active');
+        $(`.stripSwatches_${selected_var} > .selected`).removeClass('strip-active');
+        $.ajax({
+      type: "POST",
+      url: '/cart/add.js',
+      data: {            
+      quantity: qty,
+      id: var_id              
+      },
+       error: function(xhr, error){
+           console.log('out of stock');
+         event.target.classList.remove('strip-active');
+         $(`.stripSwatches_${selected_var} > .selected`).addClass('strip-active');
+               if($('.product-added').length == 0){
+            $('body').append(`<div class= product-added-flex style="display: flex;"></div>`)
+          }
+         $('.product-added-flex').append(`<div class="product-added product_${var_id}" style="border: 0.5px solid #c9c9c9;">${prod_title} - ${color_option}<br><span class="atc_red" style="color: red; font-weight: 800;">Sold Out</span><span class="added_cross" onclick= "remove_added(event)" toRemove= "product_${var_id}" style = "background: #c9c9c9; color: black;">X</span></div>`);
+             setTimeout(()=>{
+                        $('.product_' + var_id).remove(); 
+             if($('product-added').length == 0){
+               $('product-added-flex').remove();
+             }
+           },4000);
+       },
+      success: function(response){
+      $(`.stripSwatches_${selected_var} > div`).removeClass('selected');
+      $(`.stripSwatches_${selected_var} > .strip-active`).addClass('selected');
+      $.ajax({
+        type: "POST",
+        url: '/cart/change.js',
+        data: {
+          quantity: 0,
+          id: selected_var
+        },
+        error: function(xhr, error){
+           console.log('gg');
+        },
+        success: function (response) {
+          event.target.classList.add('strip-active');
+          clevertap.event.push('Variant changed from Lower Strip', {
+            "Product Name": prod_title,
+            "Variant Name": color_option
+          });
+          fetchCart(true)
         }
-                                }, 5000)
+      });
+      }
+      });
+        }
+      function open_swatches(event){
+      $('.stripSwatches').css('height','2.1vw');
+          let var_id = event.target.getAttribute('var_id');
+        $('.arrow-down-strip img').each((i,ele)=>{
+          if(ele.getAttribute('var_id') != var_id){
+          ele.setAttribute('show_swatches','false');
+           $('.arrow-down-strip img').css('transform','rotate(0deg)');
+          }
+        })
+          $(`.stripSwatches`).css('border-radius','0 10px 0 0');
+          $(`.stripSwatches`).css('box-shadow','none');
+    //     console.log(event.target)
+    //    console.log(var_id);
+    //     console.log($(`.stripSwatches_${var_id}`));
+        if(event.target.getAttribute('show_swatches') == 'false'){
+        $(`.stripSwatches_${var_id}`).css('height','max-content');
+         $(`.stripSwatches_${var_id}`).css('border-radius','0');
+          $(`.stripSwatches_${var_id}`).css('box-shadow','black 1.4px -6px 22px -6px');
+          event.target.setAttribute('show_swatches','true')
+          event.target.style.transform = "rotate(180deg)";
+       }
+        else{
+        $(`.stripSwatches_${var_id}`).css('height','2.1vw');
+          event.target.setAttribute('show_swatches','false')
+          event.target.style.transform = "rotate(0deg)";
+          $(`.stripSwatches_${var_id}`).css('border-radius','0 10px 0 0');
+          $(`.stripSwatches_${var_id}`).css('box-shadow','none');
+        }
+      }
 
-    })
-
-</script>
+    </script>
 <script>
     let cart_cl = setInterval(function () {
         if ($('.cart-count').length) {
