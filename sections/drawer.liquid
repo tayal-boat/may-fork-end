@@ -1116,7 +1116,32 @@ border: none;
                 Get Rs <span>349.5</span> off with <b>boAt<br />Select</b>
               </p>
               <div class="links">
-                <button class="membership_btn">Add to cart</button>
+                <button id="membership_btn"
+                        onclick="
+                                 event.preventDefault();
+    							 document.getElementById('membership_btn').setAttribute('aria-busy', 'true');
+    							 document.getElementById('membership_btn').setAttribute('disabled','disabled');
+     							 setTimeout(function(){},5000);
+    							 document.getElementById('membership_btn').removeAttribute('aria-busy');
+    							 document.getElementById('membership_btn').removeAttribute('disabled');
+   								 $.ajax({
+                                 	type: 'POST',
+                                 	url: '/cart/add.js',
+      								data: {
+        								quantity: 1,
+        								id: 39562932781154
+      								},
+      								success: function (response) {
+        								var json_response = JSON.parse(response)
+        								fetchCart(true)
+        								document.getElementById('drawer-name').classList.add('is-active');
+      									document.getElementById('drawer-name').classList.add('is-visible');
+      								}
+    							 })
+
+                				">
+                  Add to cart
+                </button>
                 <a href="">Know more</a>
               </div>
             </div>
