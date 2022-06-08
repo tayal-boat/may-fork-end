@@ -1641,11 +1641,19 @@ border: none;
 
 
 <script>
-        var mimic_automatic_discount = 1;
+  var mimic_automatic_discount = 1;
 
-        document.querySelector('.cross').addEventListener('click', () => {
-            document.getElementById('main-cross-but').click();
-        })
+  document.querySelector('.cross').addEventListener('click', () => {
+                                                    fetchCart(true);
+  document.getElementById('drawer-name').classList.remove("is-active");
+  document.getElementById('drawer-name').classList.remove("is-visible");
+  })
+
+  document.querySelector('.drawerCart__overlay').addEventListener('click', () => {
+                                                                  document.getElementById('drawer-name').classList.remove("is-active");
+  document.getElementById('drawer-name').classList.remove("is-visible");
+  fetchCart(true);
+  })
         // setInterval(function () {
         //     if (!$('#cart__drawer_items div').length) {
         //         //$('.cart-offer').hide()
@@ -1684,6 +1692,10 @@ border: none;
                     $(".cart-item-length").text(data.items.length + "  items")
                     $("#cart__total_price").text("Rs " + data.total_price / 100)
                     $('.cart-total-val').val(data.total_price / 100);
+              
+              		$(".cart-total-text").text("Rs " + data.total_price / 100)
+                	$('.cart-total').val(data.total_price / 100);
+          			$('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
 
                     if (open_slider_cart) {
                         if ($('.add-cart-modal').length > 0) {
@@ -2031,8 +2043,11 @@ border: none;
       console.log('json_response',json_response)
       window.isaddingtocart = false
       $(".`+ product_class + ` .quantity").text(new_quantity)
-      $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
-      $('.cart-total-val').val(json_response.total_price / 100)
+  	  $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
+  	  $('.cart-total-val').val(json_response.total_price / 100)
+  	  $(".cart-total-text").text('Rs '+ (json_response.total_price/100).toString() )
+  	  $('.cart-total').val(json_response.total_price / 100)
+  	  $('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
       if(new_quantity==2){$(".`+ product_class + ` .cart-quantity-message").show()
       $(".`+ product_class + ` .plus").addClass('plus-unusable')}
       else{$(".`+ product_class + ` .cart-quantity-message").hide()
@@ -2114,8 +2129,11 @@ border: none;
       else if(new_quantity<7){
       $(".`+ product_class + ` .quantity").text(new_quantity)
       $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
-      $('.cart-total-val').val(json_response.total_price / 100)
-      $(".`+ product_class + ` .plus").removeClass('plus-unusable')
+  	  $('.cart-total-val').val(json_response.total_price / 100)
+  	  $(".cart-total-text").text('Rs '+ (json_response.total_price/100).toString() )
+  	  $('.cart-total').val(json_response.total_price / 100)
+  	  $('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
+  	  $(".`+ product_class + ` .plus").removeClass('plus-unusable')
       var token_p = json_response.token;
       }
       else {
