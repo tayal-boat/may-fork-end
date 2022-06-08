@@ -1663,594 +1663,654 @@ border: none;
 
 
     window.isSubmitting = true
-    window.isaddingtocart = false
-    function fetchCart(open_slider_cart) {
-        $("#drawer-overlay").fadeIn();
-        window.isSubmitting = true
-        fetch('/cart.js')
-            .then((resp) => resp.json())
-            .then((data) => {
-                sessionStorage.setItem('cartID', `${data.token}`)
-                $(".cart-item-length").text(data.items.length + "  items")
-                $("#cart__total_price").text("Rs " + data.total_price / 100)
-                $('.cart-total-val').val(data.total_price / 100);
-          
-          		$(".cart-total-text").text("Rs " + data.total_price / 100)
-                $('.cart-total').val(data.total_price / 100);
-          		$('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
+        window.isaddingtocart = false
+        var cart_items_obj;
+        var line_item_length; 
+        function fetchCart(open_slider_cart) {
+            $("#drawer-overlay").fadeIn();
+            window.isSubmitting = true
+            fetch('/cart.js')
+                .then((resp) => resp.json())
+                .then((data) => {
+              console.log(data)
+              cart_items_obj = data.items;
+              line_item_length = data.items.length;
+                    sessionStorage.setItem('cartID', `${data.token}`)
+                    $(".cart-item-length").text(data.items.length + "  items")
+                    $("#cart__total_price").text("Rs " + data.total_price / 100)
+                    $('.cart-total-val').val(data.total_price / 100);
 
-                if (open_slider_cart) {
-                    if ($('.add-cart-modal').length > 0) {
-                        $('.add-cart-modal').remove()
+                    if (open_slider_cart) {
+                        if ($('.add-cart-modal').length > 0) {
+                            $('.add-cart-modal').remove()
+                        }
+                        $('body').append(`
+      <div class="add-cart-modal" style="
+      position: fixed;
+      background: white;
+      bottom: 62px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      justify-content: space-between;
+      z-index: 100000;">
+      <div class="cart-strip-logo"><div class="cart-strip-logo-inner"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_10_5b754115-cf00-4e0d-9a75-9c79f7349a2f.png?v=1643803182"/></div><div class="line_item_number">${line_item_length}</div></div>
+      <div class="add-cart-modal-inner"></div>
+      <div class="atc-modal-info" style="
+      color: white;">
+     <div class="total_amount_strip">
+      <div class="atc-modal-btn" style="
+    font-size: 10px; color:black;
+    ">Total Amount: ₹` + (data.total_price / 100).toString() + ` </div>
+        </div>
+      <div class="atc-modal-btn" style="
+      padding: 4px 14px;
+      background: #e00c1a;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      cursor:pointer;
+      ">View Cart</div>
+    </div>
+      <script>
+      $('.atc-modal-btn').on('click',function(){$(".drawer").addClass("is-visible is-active");
+      $('.add-cart-modal').remove()
+      })
+      if($(".new_icon").css("display")=='none' && $(".product-form .quantity-submit-row__submit :input").length == 0){
+      $(".add-cart-modal").css("bottom","0px")
+      }
+      if($(".product-form .quantity-submit-row__submit :input").length>0){
+      $(".add-cart-modal").css("bottom","0px")
+
+      }
+      <\/script>
+        </div>
+      `)
                     }
-                    $('body').append(`
-  <div class="add-cart-modal" style="
-  position: fixed;
-  background: white;
-  bottom: 62px;
-  width: 100%;
-  display: none;
-  align-items: center;
-  padding: 10px 20px;
-  justify-content: space-between;
-  z-index: 100000;">
-  <div class="atc-modal-info" style="
-  color: white;">
-  <div class="added-info" style="
-  color: red;
-  font-weight: 600;
-  font-size: 15px;
-  ">Added to Cart <img style="width:14px; height:14px; vertical-align:middle" class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/check.png?v=1637908202"></div>
-  <div class="atc-modal-btn" style="
-font-size: 10px; color:black;
-  ">Total Cart Amount ` + (data.total_price / 100).toString() + ` </div>
-    </div>
-  <div class="atc-modal-btn" style="
-  padding: 4px 14px;
-  background: red;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: white;
-  cursor:pointer;
-  ">View Cart</div>
-  <script>
-  $('.atc-modal-btn').on('click',function(){$(".drawer").addClass("is-visible is-active");
-  $('.add-cart-modal').remove()
-  })
-  if($(".new_icon").css("display")=='none' && $(".product-form .quantity-submit-row__submit :input").length == 0){
-  $(".add-cart-modal").css("bottom","0px")
-  }
-  if($(".product-form .quantity-submit-row__submit :input").length>0){
-  $(".add-cart-modal").css("bottom","0px")
+                    if (data.items.length > 0) {
 
-  }
-  <\/script>
-    </div>
-  `)
-                }
-                if (data.items.length > 0) {
-
-                    $('.shopp').hide()
-                    $('.cart__item.featured_product').show()
-                    $('.coll').hide()
-                    $('.price-cover').show()
-                    $('.head-cont').show()
+                        $('.shopp').hide()
+                        $('.cart__item.featured_product').show()
+                        $('.coll').hide()
+                        $('.price-cover').show()
+                        $('.head-cont').show()
 
 
-                    $('#cart__drawer_items').empty()
-                    $(".cart-count .beside-svg").eq(0).text(data.items.length)
+                        $('#cart__drawer_items').empty()
+                        $(".cart-count .beside-svg").eq(0).text(data.items.length)
 
-                    $(".icon_bot.bottom_icon_cart .beside-svg").text(data.items.length)
-                    $(".cart-count__text").text(data.items.length)
-                    $(".cart-item-length").text((data.items.length).toString() + " items")
+                        $(".icon_bot.bottom_icon_cart .beside-svg").text(data.items.length)
+                        $(".cart-count__text").text(data.items.length)
+                        $(".cart-item-length").text((data.items.length).toString() + " items")
 
-                    var _products_product_id = []
-                    var _recommended_products_handles = []
-                    var recommended_products_ids = [6604500140130, 6603960123490, 6604455772258, 6603971461218]
-                    var _recommended_priority_list = ['smart-watch-charging-cable-n', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c', 'type-c-a350-cable-1-5-meter']
-                    var gift_cards = [6629027479650, 6629028921442, 6629029773410, 6629030035554]
-                    var recommended_already_added = true
-                    var count = 0
-                    data.items.forEach(function (product, index) {
-                        _products_product_id.push(product.product_id)
-                        
-                        var product_class = "product_index_" + index.toString()
+                        var _products_product_id = []
+                        var _recommended_products_handles = []
+                        var recommended_products_ids = [6604500140130, 6603960123490, 6604455772258, 6603971461218]
+                        var _recommended_priority_list = ['smart-watch-charging-cable-n', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c', 'type-c-a350-cable-1-5-meter']
+                        var gift_cards = [6629027479650, 6629028921442, 6629029773410, 6629030035554]
+                        var recommended_already_added = true
+                        var count = 0
+                        data.items.forEach(function (product, index) {
+                            _products_product_id.push(product.product_id)
+                            var product_url = "https://boat-lifestyle.com" + product.url
+                            var product_class = "product_index_" + index.toString()
+                            var f_img = product.featured_image.url;
+                            var strip_var_id = product.id;
+                            console.log(f_img);
+                          var strip_quantity = product.quantity;
+                          console.log('strip_qty',strip_quantity)
+                            jQuery.getJSON(product.url + '.js', function (productdata) {
+                              let var_arr_strip = productdata.product.variants;
+                              if(productdata.product.options[1] != null){
+                              console.log(productdata.product.options[1].values)
+                              console.log(productdata)
+                              }
+                              else{
+                              console.log(productdata.product.options[0].values)
+                              }
+                              $('.add-cart-modal-inner').prepend(`<div class="strip_div ${product_class}"><p class="strip_qty strip_qty_${strip_var_id}">${strip_quantity}</p><img src="${f_img}"/><div class="arrow-down-strip" show_swatches = "false"  var_id="${strip_var_id}" ><img onclick="open_swatches(event)" show_swatches = "false" var_id="${strip_var_id}" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/angle-arrow-down.png?v=1643713459"/></div><div class="stripSwatches_${strip_var_id} stripSwatches"></div>`)
 
-                        jQuery.getJSON(product.url + '.js', function (productdata) {
-                            count = count + 1
-                            var product_id = productdata.product.id
-                            if (recommended_products_ids.indexOf(product_id)) {
-                                product_url = product.url;
-                            productImg = product.featured_image.url+'&width=120';
-                            }
-                            var product_compare_at_price = parseInt(productdata.product.variants[0].compare_at_price)
-                            var product_price = product.final_price / 100
-                            var percent_discount = Math.floor(((product_compare_at_price - product_price) / product_compare_at_price) * 100)
+                                if(productdata.product.options[1] != null){
 
-                            var product_tags = productdata.product.tags.split(", ")
-                            var has_handle = false
-                            var product_tag_handle = 'none'
-                            for (var i = 0; i < product_tags.length; i++) {
-                                if (product_tags[i].includes("recommend")) {
-                                    has_handle = true
-                                    product_tag_handle = product_tags[i].replace("recommend-", "").toLowerCase()
-                                    _recommended_products_handles.push(product_tag_handle)
-                                }
-                            }
-                            if (has_handle === false) {
-                                if (recommended_products_ids.includes(product_id)) { _recommended_products_handles.push('none') }
-                                else if (product_id == 6591986958434) {
-                                    _recommended_products_handles.push('none');
-                                }
-                                else {
-                                    product_tag_handle = 'type-c-a350-cable-1-5-meter'
-                                    _recommended_products_handles.push(product_tag_handle)
-                                }
-                            }
-                            if (gift_cards.includes(product_id) || product_id == 6629119656034) {
-                                product_url = '#';
-                                $('.gokwik-container').hide();
-								
-                                $("." + product_class + " .compare_price").hide()
-                                $("." + product_class + " .percent_discount").hide()
-                            }
-                            $('#cart__drawer_items').prepend(`<div class="cart__item gg1 ` + product_class + `" style="width: 100% !important">
-  <img class="remove_product lazyload" style="cursor: pointer;"
-  src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107">
-  <a class="anchor" href="`+ product_url + `">
-  <img src="`+ productImg + `"
-  alt="` + product.featured_image.alt + `">
-    </a>
-  <div class="outer-fl">
-  <div class="content-flex">
-  <h5 class="prod-title" style='font-family: "Poppins"'>`+ product.product_title + `</h5>
- 
-
-  <p class="cash">Rs ` + product_price + `<span class="compare_price">Rs ` + product_compare_at_price + `</span><span class="percent_discount">` + percent_discount + `% OFF</span></p>
-  <p class="multiplier">X</p>
-    </div>
-  <div class="product_id" style="display: none;">` + product_id + `</div>
-  <div class="variant_id" style="display: none;">` + product.variant_id + `</div>
-  <div class="product_tag_handle" style="display: none;">` + product_tag_handle + `</div>
-  <div class="product_type" style="display: none;">` + productdata.product.product_type + `</div>
- <div class="d-flex mt-1">
-<div class="imp">
-  <div style="color:white; cursor: pointer;" class="bin">-</div>
-  <div style="color:white;" class="quantity">`+ product.quantity + `</div>
-  <div style="color:white; cursor: pointer;" class="plus">+</div>
-    </div>
-<p class="color"><span>`+ product.variant_options[0] + `</span></p></div>
-  <div class="cart-quantity-message">You have added max allowed units for this item.</div>
-    </div>
-    </div>
-  <script>
-    if(`+ product_id + ` == 6628949229666){
-    if(parseInt($(".`+ product_class + ` .quantity").text())>=2){
-    $(".`+ product_class + ` .plus").addClass('plus-unusable')
-    $(".`+ product_class + ` .cart-quantity-message").show()
-    }
-  }
-  if(parseInt($(".`+ product_class + ` .quantity").text())>=7){
-  $(".`+ product_class + ` .plus").addClass('plus-unusable')
-  $(".`+ product_class + ` .cart-quantity-message").show()
-  }
-  $(".`+ product_class + ` .remove_product").on("click", function(){
-  var variant_id = parseInt($(".`+ product_class + ` .variant_id").text())
-  var cart_item_div = $(".`+ product_class + `.cart__item")
-  var quantity = $(".`+ product_class + ` .quantity").text()
-  var product_type = $(".`+ product_class + ` .product_type").text()
-
-  var product_tag_handle = "`+ product_tag_handle + `"
-  var recommended_products_ids = [6604500140130, 6603971461218, 6603960123490, 6604455772258]
-  var _recommended_priority_list = ['smart-watch-charging-cable-n', 'type-c-a350-cable-1-5-meter', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c']
-  if(product_tag_handle!='none'){
-  var product_tag_handle_product_id = recommended_products_ids[_recommended_priority_list.indexOf(product_tag_handle)].toString()
-  }
-  var product_ids_incart = []
-  var variant_ids_incart = []
-  $(".product_id").each(function(i,j){
-  product_ids_incart.push(j.innerText)
-  })
-  $(".variant_id").each(function(i,j){
-  variant_ids_incart.push(j.innerText)
-  })
-
-  clevertap.event.push('Removed from Cart', {
-  'Product Name': '`+ product.product_title + ` - ` + product.variant_options[0] + `',
-  'Product Id': '`+ product.variant_id + `',
-  'Price': '`+ product_price + `',
-  'Category': 'product_type',
-  'Quantity': quantity,
-  })
-  dataLayer.push({ ecommerce: null });
-  dataLayer.push({
-  'event': 'remove_from_cart',
-  'ecommerce': {
-  'items': [{
-  'item_name': '`+ product.product_title + `',
-  'item_id': '`+ product.variant_id + `}',
-  'price': '`+ product_price + `',
-  'item_category': 'product_type',
-  'item_variant': '`+ product.variant_options[0] + `',
-  'quantity': 'quantity'
-  }]
-  }
-  });
-  $("#drawer-overlay").fadeIn();
-  $.ajax({
-  type: "POST",
-  url: '/cart/change.js',
-  data: {            
-  quantity: 0,
-  id:variant_id               
-  },
-  success: function(response){  
-  var json_response = JSON.parse(response)
-  if(product_ids_incart.indexOf(product_tag_handle_product_id)!= -1){
-    var token_p = json_response.token;
-  $.ajax({
-  type: "POST",
-  url: '/cart/change.js',
-  data: {            
-  quantity: 0,
-  id: variant_ids_incart[product_ids_incart.indexOf(product_tag_handle_product_id)]               
-  },
-  success: function(response){ 
-  fetchCart()
-  }
-  });
-  }
-  else{
-  if(json_response.items.length == 0){
-    var token_p = json_response.token;
-  $('.price-cover').hide()
-  $('.shopp').show()
-  $('.cart__item.featured_product').hide()
-  $('.coll').show()
-  $('.head-cont').hide()
-  }
-  cart_item_div.remove()
-  fetchCart()
-  }
-  }
-  });
-  })
-
-  $(".`+ product_class + ` .plus").on("click", function(){
-
-  var quantity = parseInt($(".`+ product_class + ` .quantity").text())
-  var new_quantity = quantity+1
-  var variant_id = parseInt($(".`+ product_class + ` .variant_id").text())
-  if(`+ product_id + ` != 6628949229666){
-  if(new_quantity<8 && !window.isaddingtocart && `+ product_id + ` != 6591986958434){
-  window.isaddingtocart = true
-  $.ajax({
-  type: "POST",
-  url: '/cart/change.js',
-  data: {            
-  quantity: new_quantity,
-  id:variant_id               
-  },
-  success: function(response){  
-  var json_response = JSON.parse(response)
-  var token_p = json_response.token;
-  console.log('json_response',json_response)
-  window.isaddingtocart = false
-  $(".`+ product_class + ` .quantity").text(new_quantity)
-  $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
-  $('.cart-total-val').val(json_response.total_price / 100)
-  $(".cart-total-text").text('Rs '+ (json_response.total_price/100).toString() )
-  $('.cart-total').val(json_response.total_price / 100)
-  $('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
-  if(new_quantity==7){$(".`+ product_class + ` .cart-quantity-message").show()
-  $(".`+ product_class + ` .plus").addClass('plus-unusable')}
-  else{$(".`+ product_class + ` .cart-quantity-message").hide()
-  $(".`+ product_class + ` .plus").removeClass('plus-unusable')}
-    reapply_coupon();
-  }
-});
-  }
-  }
-  else{
-  if(new_quantity<3 && !window.isaddingtocart && `+ product_id + ` != 6591986958434){
-  window.isaddingtocart = true
-  $.ajax({
-  type: "POST",
-  url: '/cart/change.js',
-  data: {            
-  quantity: new_quantity,
-  id:variant_id               
-  },
-  success: function(response){  
-  var json_response = JSON.parse(response)
-  var token_p = json_response.token;
-  console.log('json_response',json_response)
-  window.isaddingtocart = false
-  $(".`+ product_class + ` .quantity").text(new_quantity)
-  $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
-  $('.cart-total-val').val(json_response.total_price / 100)
-  $(".cart-total-text").text('Rs '+ (json_response.total_price/100).toString() )
-  $('.cart-total').val(json_response.total_price / 100)
-  $('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
-  if(new_quantity==2){$(".`+ product_class + ` .cart-quantity-message").show()
-  $(".`+ product_class + ` .plus").addClass('plus-unusable')}
-  else{$(".`+ product_class + ` .cart-quantity-message").hide()
-  $(".`+ product_class + ` .plus").removeClass('plus-unusable')}
-    reapply_coupon();
-  }
-  });
-  }
-  }
-if(`+ product_id + ` == 6591986958434){
-                $(".`+ product_class + ` .plus").addClass('plus-unusable')
-                $(".`+ product_class + ` .cart-quantity-message").show()
-
-}        
-  })
-
-  $(".`+ product_class + ` .bin").on("click", function(){
-  var quantity = parseInt($(".`+ product_class + ` .quantity").text())
-  var new_quantity = quantity-1
-  var variant_id = parseInt($(".`+ product_class + ` .variant_id").text())
-
-  var product_tag_handle = "`+ product_tag_handle + `"
-  var recommended_products_ids = [6604500140130, 6603971461218, 6603960123490, 6604455772258]
-  var _recommended_priority_list = ['smart-watch-charging-cable-n', 'type-c-a350-cable-1-5-meter', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c']
-  if(product_tag_handle!='none'){
-  var product_tag_handle_product_id = recommended_products_ids[_recommended_priority_list.indexOf(product_tag_handle)].toString()
-  }
-  var product_ids_incart = []
-  var variant_ids_incart = []
-  $(".product_id").each(function(i,j){
-  product_ids_incart.push(j.innerText)
-  })
-  $(".variant_id").each(function(i,j){
-  variant_ids_incart.push(j.innerText)
-  })
-  if(!window.isaddingtocart){
-  $.ajax({
-  type: "POST",
-  url: '/cart/change.js',
-  data: {
-  quantity: new_quantity,
-  id:variant_id
-  },
-  success: function(response){ 
-  var json_response = JSON.parse(response)
-  json_response.items.forEach(function(product_bin, j){
-    console.log( 'count_disc' ,product_bin.discounts.length)
-        if(mimic_automatic_discount != 0 || product_bin.discounts.length> 0){
-            if($('.line-item-discount').length){
-                $('.line-item-discount').remove();
-            }
-            $('.multiplier').eq(j).after('<div class="line-item-discount"><p class="auto-coupon">buyXgetY<p class="auto-coupon-account">-Rs 244</p></div>')
-  }
-  })
-  var token_p = json_response.token;
-  $(".`+ product_class + ` .cart-quantity-message").hide()
-  $(".`+ product_class + ` .quantity").text(new_quantity)
-  if(new_quantity==0){
-
-  $(".`+ product_class + `.cart__item").remove()
-  if(product_ids_incart.indexOf(product_tag_handle_product_id)!= -1){
-
-  $.ajax({
-  type: "POST",
-  url: '/cart/change.js',
-  data: {            
-  quantity: 0,
-  id: variant_ids_incart[product_ids_incart.indexOf(product_tag_handle_product_id)]               
-  },
-  success: function(response){ 
-  fetchCart()
-  }
-  });
-  }
-  else{  
-  fetchCart()
-  }
-  }
-  else if(new_quantity<7){
-  $(".`+ product_class + ` .quantity").text(new_quantity)
-  $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
-  $('.cart-total-val').val(json_response.total_price / 100)
-  $(".cart-total-text").text('Rs '+ (json_response.total_price/100).toString() )
-  $('.cart-total').val(json_response.total_price / 100)
-  $('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
-  $(".`+ product_class + ` .plus").removeClass('plus-unusable')
-  var token_p = json_response.token;
-  }
-  else {
-  if(json_response.items.length == 0){
-    var token_p = json_response.token;
-  $('.price-cover').hide()
-  $('.shopp').show()
-  $('.cart__item.featured_product').hide()
-  $('.coll').show()
-  $('.head-cont').hide()
-  }
-  fetchCart()
-  }
-  window.isaddingtocart = false
-  reapply_coupon();
-  }
-  });
-  }
-})   
-
-  <\/script>
-  `);
-                            if (product_id == 6629119656034) {
-                              $("." + product_class + " .color").hide();
-                                $("." + product_class + " .imp").hide();
-                                $("." + product_class + " .multiplier").hide();
-                                $("." + product_class + " .compare_price").hide();
-                                $("." + product_class + " .percent_discount").hide();
-                            }
-                            console.log('count_dis', product.discounts.length)
-                            if (mimic_automatic_discount != 0 && product.discounts.length > 0) {
-                                $('.multiplier').after(`<div class="line-item-discount"><p class="auto-coupon">` + product.discounts.title + `<p class="auto-coupon-account">` + product.discounts.amount + `</p></div>`)
-                            }
-
-                            if (recommended_products_ids.includes(product_id)) {
-                                $("." + product_class + " .imp").hide()
-                                $("." + product_class + " .multiplier").hide()
-                                recommended_already_added = true
-                            }
-                            if ((count == (data.items.length)) && !recommended_already_added) {
-
-
-                                var startRecommenedInterval = setInterval(function () {
-                                    if (_recommended_products_handles.length == data.items.length && _recommended_products_handles.length == 1 && _recommended_products_handles[0] == 'none') {
-                                        clearInterval(startRecommenedInterval)
-                                        $('#cart__drawer_items_2').empty();
-                                        window.isSubmitting = false;
+                                  productdata.product.options[1].values.forEach((ele,i)=>{
+                                    if(strip_var_id == var_arr_strip[i].id){
+                                    $(`.stripSwatches_${strip_var_id}`).append(`<div class="stripColor_${var_arr_strip[i].id} stripColor strip-active selected" name="${productdata.product.title}" var_id="${var_arr_strip[i].id}" qty ="${strip_quantity}" color_option="${productdata.product.options[0].values[i]}" style="background: ${ele}"></div>`)
                                     }
-                                    else if (_recommended_products_handles.length == data.items.length) {
+                                    })
+                                  productdata.product.options[1].values.forEach((ele,i)=>{
+                                    if(strip_var_id != var_arr_strip[i].id){
+                                    $(`.stripSwatches_${strip_var_id}`).append(`<div class="stripColor_${var_arr_strip[i].id} stripColor" onclick = "swap_product(event)" qty ="${strip_quantity}" name="${productdata.product.title}" var_id="${var_arr_strip[i].id}" selected_var = "${strip_var_id}" color_option="${productdata.product.options[0].values[i]}" style="background: ${ele}"></div>`)
+                                    }
+                                    })
+                              }
+                              else{
+                              productdata.product.options[0].values.forEach((ele,i)=>{
+                                if(strip_var_id == var_arr_strip[i].id){
+                                    $(`.stripSwatches_${strip_var_id}`).append(`<div class="stripColor_${var_arr_strip[i].id} stripColor strip-active selected" var_id="${var_arr_strip[i].id}" var_id="${var_arr_strip[i].id}" name="${productdata.product.title}" selected_var = "${strip_var_id}" qty ="${strip_quantity}" color_option = "${ele}" style="background: ${ele}"></div>`)
+                                }
+                                })
+                              productdata.product.options[0].values.forEach((ele,i)=>{
+                                if(strip_var_id != var_arr_strip[i].id){
+                                    $(`.stripSwatches_${strip_var_id}`).append(`<div class="stripColor_${var_arr_strip[i].id} stripColor" onclick = "swap_product(event)"var_id="${var_arr_strip[i].id}" name="${productdata.product.title}" selected_var = "${strip_var_id}" qty ="${strip_quantity}" color_option = "${ele}" style="background: ${ele}"></div>`)
+                                }
+                                })
+                              }
 
-                                        clearInterval(startRecommenedInterval)
-                                        // var _recommended_priority_list = ['smart-watch-charging-cable-n', 'type-c-a350-cable-1-5-meter', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c']
-                                        var _recommended_priority_handle_index = 10
-                                        for (var i = 0; i < _recommended_products_handles.length; i++) {
-                                            var search_index = _recommended_priority_list.indexOf(_recommended_products_handles[i])
-                                            if (search_index < _recommended_priority_handle_index && search_index != -1) {
-                                                _recommended_priority_handle_index = search_index
-                                            }
+                              if($('.strip_div').length > 5){
+                                let strip_prod_length = $('.strip_div').length -5;
+                                if($('.remove_strip_number').length > 0){
+                                $('.remove_strip_number').remove();
+                                }
+                                $('.add-cart-modal-inner').prepend(`<div class="remove_strip_number"><div class="cart-strip-logo-inner"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_10_5b754115-cf00-4e0d-9a75-9c79f7349a2f.png?v=1643803182"/></div><div class="line_item_number">+${strip_prod_length}</div></div>`)
+                                let strip_prod_count = 5;
+                                while (strip_prod_length) {
+                                  strip_prod_length = strip_prod_length - 1;
+                                  $(`.product_index_${strip_prod_count}`).hide();
+                                  strip_prod_count = strip_prod_count + 1;
+                                }
+                              }
+    //                           $('.add-cart-modal').append(`<p>${productdata.product.id}</p>`)
+                                count = count + 1
+                                var product_id = productdata.product.id
+                                if (recommended_products_ids.indexOf(product_id)) {
+                                    product_url = "https://boat-lifestyle.com/#"
+                                }
+                                var product_compare_at_price = parseInt(productdata.product.variants[0].compare_at_price)
+                                var product_price = product.final_price / 100
+                                var percent_discount = Math.floor(((product_compare_at_price - product_price) / product_compare_at_price) * 100)
 
+                                var product_tags = productdata.product.tags.split(", ")
+                                var has_handle = false
+                                var product_tag_handle = 'none'
+                                for (var i = 0; i < product_tags.length; i++) {
+                                    if (product_tags[i].includes("recommend")) {
+                                        has_handle = true
+                                        product_tag_handle = product_tags[i].replace("recommend-", "").toLowerCase()
+                                        _recommended_products_handles.push(product_tag_handle)
+                                    }
+                                }
+                                if (has_handle === false) {
+                                    if (recommended_products_ids.includes(product_id)) { _recommended_products_handles.push('none') }
+                                    else if (product_id == 6591986958434) {
+                                        _recommended_products_handles.push('none');
+                                    }
+                                    else {
+                                        product_tag_handle = 'type-c-a350-cable-1-5-meter'
+                                        _recommended_products_handles.push(product_tag_handle)
+                                    }
+                                }
+                                if (gift_cards.includes(product_id) || product_id == 6629119656034) {
+                                    product_url = '#';
+                                    $('.gokwik-container').hide();
+
+                                    $("." + product_class + " .compare_price").hide()
+                                    $("." + product_class + " .percent_discount").hide()
+                                }
+
+                                $('#cart__drawer_items').prepend(`<div class="cart__item gg1 ` + product_class + `" style="width: 100% !important">
+      <img class="remove_product lazyload" style="cursor: pointer;"
+      data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107">
+      <a class="anchor" href="`+ product_url + `">
+      <img class="lazyload" data-src="`+ product.featured_image.url + `"
+      alt="` + product.featured_image.alt + `">
+        </a>
+      <div class="outer-fl">
+      <div class="content-flex">
+      <h5 class="prod-title" style='font-family: "Poppins"'>`+ product.product_title + `</h5>
+      <p class="color">`+ product.variant_options[0] + `</p>
+
+      <p class="cash">Rs ` + product_price + `<span class="compare_price">Rs ` + product_compare_at_price + `</span><span class="percent_discount">` + percent_discount + `% OFF</span></p>
+      <p class="multiplier">X</p>
+        </div>
+      <div class="product_id" style="display: none;">` + product_id + `</div>
+      <div class="variant_id" style="display: none;">` + product.variant_id + `</div>
+      <div class="product_tag_handle" style="display: none;">` + product_tag_handle + `</div>
+      <div class="product_type" style="display: none;">` + productdata.product.product_type + `</div>
+      <div class="imp">
+      <div style="color:white; cursor: pointer;" class="bin">-</div>
+      <div style="color:white;" class="quantity">`+ product.quantity + `</div>
+      <div style="color:white; cursor: pointer;" class="plus">+</div>
+        </div>
+      <div class="cart-quantity-message">You have added max allowed units for this item.</div>
+        </div>
+        </div>
+      <script>
+        if(`+ product_id + ` == 6628949229666){
+        if(parseInt($(".`+ product_class + ` .quantity").text())>=2){
+        $(".`+ product_class + ` .plus").addClass('plus-unusable')
+        $(".`+ product_class + ` .cart-quantity-message").show()
+        }
+      }
+      if(parseInt($(".`+ product_class + ` .quantity").text())>=7){
+      $(".`+ product_class + ` .plus").addClass('plus-unusable')
+      $(".`+ product_class + ` .cart-quantity-message").show()
+      }
+      $(".`+ product_class + ` .remove_product").on("click", function(){
+      var variant_id = parseInt($(".`+ product_class + ` .variant_id").text())
+      var cart_item_div = $(".`+ product_class + `.cart__item")
+      var quantity = $(".`+ product_class + ` .quantity").text()
+      var product_type = $(".`+ product_class + ` .product_type").text()
+
+      var product_tag_handle = "`+ product_tag_handle + `"
+      var recommended_products_ids = [6604500140130, 6603971461218, 6603960123490, 6604455772258]
+      var _recommended_priority_list = ['smart-watch-charging-cable-n', 'type-c-a350-cable-1-5-meter', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c']
+      if(product_tag_handle!='none'){
+      var product_tag_handle_product_id = recommended_products_ids[_recommended_priority_list.indexOf(product_tag_handle)].toString()
+      }
+      var product_ids_incart = []
+      var variant_ids_incart = []
+      $(".product_id").each(function(i,j){
+      product_ids_incart.push(j.innerText)
+      })
+      $(".variant_id").each(function(i,j){
+      variant_ids_incart.push(j.innerText)
+      })
+
+      clevertap.event.push('Removed from Cart', {
+      'Product Name': '`+ product.product_title + ` - ` + product.variant_options[0] + `',
+      'Product Id': '`+ product.variant_id + `',
+      'Price': '`+ product_price + `',
+      'Category': 'product_type',
+      'Quantity': quantity,
+      })
+      dataLayer.push({ ecommerce: null });
+      dataLayer.push({
+      'event': 'remove_from_cart',
+      'ecommerce': {
+      'items': [{
+      'item_name': '`+ product.product_title + `',
+      'item_id': '`+ product.variant_id + `}',
+      'price': '`+ product_price + `',
+      'item_category': 'product_type',
+      'item_variant': '`+ product.variant_options[0] + `',
+      'quantity': 'quantity'
+      }]
+      }
+      });
+      $("#drawer-overlay").fadeIn();
+      $.ajax({
+      type: "POST",
+      url: '/cart/change.js',
+      data: {            
+      quantity: 0,
+      id:variant_id               
+      },
+      success: function(response){  
+      var json_response = JSON.parse(response)
+      if(product_ids_incart.indexOf(product_tag_handle_product_id)!= -1){
+        var token_p = json_response.token;
+      $.ajax({
+      type: "POST",
+      url: '/cart/change.js',
+      data: {            
+      quantity: 0,
+      id: variant_ids_incart[product_ids_incart.indexOf(product_tag_handle_product_id)]               
+      },
+      success: function(response){ 
+      fetchCart()
+      }
+      });
+      }
+      else{
+      if(json_response.items.length == 0){
+        var token_p = json_response.token;
+      $('.price-cover').hide()
+      $('.shopp').show()
+      $('.cart__item.featured_product').hide()
+      $('.coll').show()
+      $('.head-cont').hide()
+      }
+      cart_item_div.remove()
+      fetchCart()
+      }
+      }
+      });
+      })
+
+      $(".`+ product_class + ` .plus").on("click", function(){
+
+      var quantity = parseInt($(".`+ product_class + ` .quantity").text())
+      var new_quantity = quantity+1
+      var variant_id = parseInt($(".`+ product_class + ` .variant_id").text())
+      if(`+ product_id + ` != 6628949229666){
+      if(new_quantity<8 && !window.isaddingtocart && `+ product_id + ` != 6591986958434){
+      window.isaddingtocart = true
+      $.ajax({
+      type: "POST",
+      url: '/cart/change.js',
+      data: {            
+      quantity: new_quantity,
+      id:variant_id               
+      },
+      success: function(response){  
+      var json_response = JSON.parse(response)
+      var token_p = json_response.token;
+      console.log('json_response',json_response)
+      window.isaddingtocart = false
+                  json_response.items.forEach(function(product_bin, j){
+        console.log( 'count_disc' ,product_bin.discounts.length)
+            if(mimic_automatic_discount != 0 && product_bin.discounts.length> 0){
+                if($('.line-item-discount').eq(j).length){
+                    $('.line-item-discount').eq(j).remove();
+                }
+                $('.multiplier').eq(j).after('<div class="line-item-discount"><p class="auto-coupon">'+product_bin.discounts[0].title+'<p class="auto-coupon-account">'+Number(product_bin.discounts[0].amount)/100+'/- Off</p></div>')
+      }
+      })
+      $(".`+ product_class + ` .quantity").text(new_quantity)
+      $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
+      $('.cart-total-val').val(json_response.total_price / 100)
+      if(new_quantity==7){$(".`+ product_class + ` .cart-quantity-message").show()
+      $(".`+ product_class + ` .plus").addClass('plus-unusable')}
+      else{$(".`+ product_class + ` .cart-quantity-message").hide()
+      $(".`+ product_class + ` .plus").removeClass('plus-unusable')}
+        reapply_coupon();
+      }
+    });
+      }
+      }
+      else{
+      if(new_quantity<3 && !window.isaddingtocart && `+ product_id + ` != 6591986958434){
+      window.isaddingtocart = true
+      $.ajax({
+      type: "POST",
+      url: '/cart/change.js',
+      data: {            
+      quantity: new_quantity,
+      id:variant_id               
+      },
+      success: function(response){  
+      var json_response = JSON.parse(response)
+      var token_p = json_response.token;
+      console.log('json_response',json_response)
+      window.isaddingtocart = false
+      $(".`+ product_class + ` .quantity").text(new_quantity)
+      $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
+      $('.cart-total-val').val(json_response.total_price / 100)
+      if(new_quantity==2){$(".`+ product_class + ` .cart-quantity-message").show()
+      $(".`+ product_class + ` .plus").addClass('plus-unusable')}
+      else{$(".`+ product_class + ` .cart-quantity-message").hide()
+      $(".`+ product_class + ` .plus").removeClass('plus-unusable')}
+        reapply_coupon();
+      }
+      });
+      }
+      }
+    if(`+ product_id + ` == 6591986958434){
+                    $(".`+ product_class + ` .plus").addClass('plus-unusable')
+                    $(".`+ product_class + ` .cart-quantity-message").show()
+
+    }        
+      })
+
+      $(".`+ product_class + ` .bin").on("click", function(){
+      var quantity = parseInt($(".`+ product_class + ` .quantity").text())
+      var new_quantity = quantity-1
+      var variant_id = parseInt($(".`+ product_class + ` .variant_id").text())
+
+      var product_tag_handle = "`+ product_tag_handle + `"
+      var recommended_products_ids = [6604500140130, 6603971461218, 6603960123490, 6604455772258]
+      var _recommended_priority_list = ['smart-watch-charging-cable-n', 'type-c-a350-cable-1-5-meter', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c']
+      if(product_tag_handle!='none'){
+      var product_tag_handle_product_id = recommended_products_ids[_recommended_priority_list.indexOf(product_tag_handle)].toString()
+      }
+      var product_ids_incart = []
+      var variant_ids_incart = []
+      $(".product_id").each(function(i,j){
+      product_ids_incart.push(j.innerText)
+      })
+      $(".variant_id").each(function(i,j){
+      variant_ids_incart.push(j.innerText)
+      })
+      if(!window.isaddingtocart){
+      $.ajax({
+      type: "POST",
+      url: '/cart/change.js',
+      data: {
+      quantity: new_quantity,
+      id:variant_id
+      },
+      success: function(response){ 
+      var json_response = JSON.parse(response)
+      json_response.items.forEach(function(product_bin, j){
+        console.log( 'count_disc' ,product_bin.discounts.length)
+            if(mimic_automatic_discount != 0 && product_bin.discounts.length> 0){
+                if($('.line-item-discount').eq(j).length){
+                    $('.line-item-discount').eq(j).remove();
+                }
+                $('.multiplier').eq(j).after('<div class="line-item-discount"><p class="auto-coupon">boAt SELECT<p class="auto-coupon-account">'+Number(product_bin.discounts[0].amount)/100+'/- Off</p></div>')
+      }
+      })
+      var token_p = json_response.token;
+      $(".`+ product_class + ` .cart-quantity-message").hide()
+      $(".`+ product_class + ` .quantity").text(new_quantity)
+      if(new_quantity==0){
+
+      $(".`+ product_class + `.cart__item").remove()
+      if(product_ids_incart.indexOf(product_tag_handle_product_id)!= -1){
+
+      $.ajax({
+      type: "POST",
+      url: '/cart/change.js',
+      data: {            
+      quantity: 0,
+      id: variant_ids_incart[product_ids_incart.indexOf(product_tag_handle_product_id)]               
+      },
+      success: function(response){ 
+      fetchCart()
+      }
+      });
+      }
+      else{  
+      fetchCart()
+      }
+      }
+      else if(new_quantity<7){
+      $(".`+ product_class + ` .quantity").text(new_quantity)
+      $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
+      $('.cart-total-val').val(json_response.total_price / 100)
+      $(".`+ product_class + ` .plus").removeClass('plus-unusable')
+      var token_p = json_response.token;
+      }
+      else {
+      if(json_response.items.length == 0){
+        var token_p = json_response.token;
+      $('.price-cover').hide()
+      $('.shopp').show()
+      $('.cart__item.featured_product').hide()
+      $('.coll').show()
+      $('.head-cont').hide()
+      }
+      fetchCart()
+      }
+      window.isaddingtocart = false
+      reapply_coupon();
+      }
+      });
+      }
+    })   
+
+      <\/script>
+      `);
+
+                                if (product_id == 6629119656034) {
+                                  $("." + product_class + " .color").hide();
+                                    $("." + product_class + " .imp").hide();
+                                    $("." + product_class + " .multiplier").hide();
+                                    $("." + product_class + " .compare_price").hide();
+                                    $("." + product_class + " .percent_discount").hide();
+                                }
+                                console.log('count_dis', product.discounts.length)
+                                if (mimic_automatic_discount != 0 && product.discounts.length > 0) {
+                                    $("." + product_class + " .multiplier").after(`<div class="line-item-discount"><p class="auto-coupon">boat SELECT<p class="auto-coupon-account">` + Number(product.discounts[0].amount)/100 + `/- Off</p></div>`)
+                                }
+
+                                if (recommended_products_ids.includes(product_id)) {
+                                    $("." + product_class + " .imp").hide()
+                                    $("." + product_class + " .multiplier").hide()
+                                    recommended_already_added = true
+                                }
+                              if ((count == (data.items.length))){
+                                     var $list = $('#cart__drawer_items');
+
+                                    $list.children('div').detach().sort(function(a, b) {
+                                  console.log($(a))
+                                      return $(a)[0].className.localeCompare($(b)[0].className);
+                                    }).appendTo($list);
+                                }
+                                if ((count == (data.items.length)) && !recommended_already_added) {
+
+                                    var startRecommenedInterval = setInterval(function () {
+                                        if (_recommended_products_handles.length == data.items.length && _recommended_products_handles.length == 1 && _recommended_products_handles[0] == 'none') {
+                                            clearInterval(startRecommenedInterval)
+                                            $('#cart__drawer_items_2').empty();
+                                            window.isSubmitting = false;
                                         }
-                                        if (_recommended_priority_handle_index < 4) {
-                                            jQuery.getJSON('/products/' + _recommended_priority_list[_recommended_priority_handle_index] + '.js', function (productdata) {
-                                                var recommend_product_id = parseInt(productdata.id)
-                                                if (_products_product_id.includes(recommend_product_id)) {
-                                                    //                                     $(".featured_product").remove()
-                                                    $("#cart__drawer_items_2").hide()
-                                                    window.isSubmitting = false
+                                        else if (_recommended_products_handles.length == data.items.length) {
+
+                                            clearInterval(startRecommenedInterval)
+                                            // var _recommended_priority_list = ['smart-watch-charging-cable-n', 'type-c-a350-cable-1-5-meter', 'micro-usb-rugged-v3-1-5-meter', 'aux-500-c']
+                                            var _recommended_priority_handle_index = 10
+                                            for (var i = 0; i < _recommended_products_handles.length; i++) {
+                                                var search_index = _recommended_priority_list.indexOf(_recommended_products_handles[i])
+                                                if (search_index < _recommended_priority_handle_index && search_index != -1) {
+                                                    _recommended_priority_handle_index = search_index
                                                 }
-                                                else {
-                                                    $("#cart__drawer_items_2").show()
-                                                    var _recommend_variant
-                                                    for (var i = 0; i < productdata.variants.length; i++) {
-                                                        if (productdata.variants[i].available == true) {
-                                                            _recommend_variant = productdata.variants[i]
-                                                            break;
-                                                        }
-                                                    }
-                                                    $("#cart__drawer_items_2").empty()
-                                                    if (_recommend_variant) {
-                                                        $("#cart__drawer_items_2").prepend(
-                                                            `<div class="cart__item gg1 featured_product" style="width: 100% !important;background-color:#F7F9FA;">
-  <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/sou.png?v=1635762467" style="position: absolute;top: 0px;left: 0px;max-width:175px">
-  <a class="anchor" href="#">
-  <img class="lazyload" data-src="`+ _recommend_variant.featured_image.src + `" alt="` + _recommend_variant.featured_image.alt + `" />
-    </a>
-  <div class="outer-fl">
-  <div class="content-flex">
-  <h5 class="prod-title" style='font-family: "Poppins"'>`+ productdata.title + `</h5>
-<p class="color">`+ _recommend_variant.option1 + `</p>
 
-  <p class="cash"><span class="t-price">Rs `+ (_recommend_variant.price / 100).toString() + `</span><span class="compare_price">Rs ` + (_recommend_variant.compare_at_price / 100).toString() + `</span><span class="percent_discount">` + (Math.floor(((_recommend_variant.compare_at_price - _recommend_variant.price) * 100) / (_recommend_variant.compare_at_price))).toString() + `% OFF</span></p>
-
-    </div>
-  <div class="featured_product_id" style="display: none;">`+ productdata.id + `</div>
-  <div class="featured_variant_id" style="display: none;">`+ _recommend_variant.id + `</div>
-  <div class="imp2">
-  <div style="color:red; font-weight: 700; font-size: 14px;" class="featured_product_add_to_cart">+ Add to Cart</div>
-    </div>
-    </div>
-    </div>`)
-                                                        $(".featured_product_add_to_cart").on("click", function () {
-                                                            let pName = $(this).closest('.imp2').closest('.outer-fl').find('.prod-title').text();
-                                                            let vTitile = $(this).closest('.imp2').closest('.outer-fl').find('.color').text();
-                                                            let tPrice = $(this).closest('.imp2').closest('.outer-fl').find('.t-price').text();
-                                                            clevertap.event.push('Recommended Product Added to Cart', {
-                                                                "Product Name": pName,
-                                                                "Variant Title": vTitile,
-                                                                "Price": tPrice,
-                                                                "Source": "Cart Drawer"
-                                                            })
-                                                            $("#drawer-overlay").fadeIn();
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: '/cart/add.js',
-                                                                data: {
-                                                                    quantity: 1,
-                                                                    id: parseInt($(".featured_variant_id").text())
-                                                                },
-                                                                success: function (response) {
-
-                                                                    var json_response = JSON.parse(response)
-                                                                    $("#cart__drawer_items_2").hide()
-                                                                    var token_p = json_response.token;
-                                                                    fetchCart()
-
-                                                                }
-                                                            });
-                                                        })
+                                            }
+                                            if (_recommended_priority_handle_index < 4) {
+                                                jQuery.getJSON('/products/' + _recommended_priority_list[_recommended_priority_handle_index] + '.js', function (productdata) {
+                                                    var recommend_product_id = parseInt(productdata.id)
+                                                    if (_products_product_id.includes(recommend_product_id)) {
+                                                        //                                     $(".featured_product").remove()
+                                                        $("#cart__drawer_items_2").hide()
                                                         window.isSubmitting = false
                                                     }
                                                     else {
-                                                        window.isSubmitting = false
+                                                        $("#cart__drawer_items_2").show()
+                                                        var _recommend_variant
+                                                        for (var i = 0; i < productdata.variants.length; i++) {
+                                                            if (productdata.variants[i].available == true) {
+                                                                _recommend_variant = productdata.variants[i]
+                                                                break;
+                                                            }
+                                                        }
+                                                        $("#cart__drawer_items_2").empty()
+                                                        if (_recommend_variant) {
+                                                            $("#cart__drawer_items_2").prepend(
+                                                                `<div class="cart__item gg1 featured_product" style="width: 100% !important;background-color:#F7F9FA;">
+      <img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/sou.png?v=1635762467" style="position: absolute;top: 0px;left: 0px;max-width:175px">
+      <a class="anchor" href="#">
+      <img class="lazyload" data-src="`+ _recommend_variant.featured_image.src + `" alt="` + _recommend_variant.featured_image.alt + `" />
+        </a>
+      <div class="outer-fl">
+      <div class="content-flex">
+      <h5 class="prod-title" style='font-family: "Poppins"'>`+ productdata.title + `</h5>
+      <p class="color">`+ _recommend_variant.option1 + `</p>
+
+      <p class="cash"><span class="t-price">Rs `+ (_recommend_variant.price / 100).toString() + `</span><span class="compare_price">Rs ` + (_recommend_variant.compare_at_price / 100).toString() + `</span><span class="percent_discount">` + (Math.floor(((_recommend_variant.compare_at_price - _recommend_variant.price) * 100) / (_recommend_variant.compare_at_price))).toString() + `% OFF</span></p>
+
+        </div>
+      <div class="featured_product_id" style="display: none;">`+ productdata.id + `</div>
+      <div class="featured_variant_id" style="display: none;">`+ _recommend_variant.id + `</div>
+      <div class="imp2">
+      <div style="color:red; font-weight: 700; font-size: 14px;" class="featured_product_add_to_cart">+ Add to Cart</div>
+        </div>
+        </div>
+        </div>`)
+                                                            $(".featured_product_add_to_cart").on("click", function () {
+                                                                let pName = $(this).closest('.imp2').closest('.outer-fl').find('.prod-title').text();
+                                                                let vTitile = $(this).closest('.imp2').closest('.outer-fl').find('.color').text();
+                                                                let tPrice = $(this).closest('.imp2').closest('.outer-fl').find('.t-price').text();
+                                                                clevertap.event.push('Recommended Product Added to Cart', {
+                                                                    "Product Name": pName,
+                                                                    "Variant Title": vTitile,
+                                                                    "Price": tPrice,
+                                                                    "Source": "Cart Drawer"
+                                                                })
+                                                                $("#drawer-overlay").fadeIn();
+                                                                $.ajax({
+                                                                    type: "POST",
+                                                                    url: '/cart/add.js',
+                                                                    data: {
+                                                                        quantity: 1,
+                                                                        id: parseInt($(".featured_variant_id").text())
+                                                                    },
+                                                                    success: function (response) {
+
+                                                                        var json_response = JSON.parse(response)
+                                                                        $("#cart__drawer_items_2").hide()
+                                                                        var token_p = json_response.token;
+                                                                        fetchCart()
+
+                                                                    }
+                                                                });
+                                                            })
+                                                            window.isSubmitting = false
+                                                        }
+                                                        else {
+                                                            window.isSubmitting = false
+                                                        }
+
                                                     }
-
-                                                }
-                                            })
+                                                })
+                                            }
                                         }
-                                    }
 
-                                    else {
-                                        window.isSubmitting = false
-                                        $("#cart__drawer_items_2").hide()
-                                    }
-                                }, 300)
-                                $("#drawer-overlay").fadeOut();
-                                reapply_coupon();
-                            }
-                            else if ((count == (data.items.length)) && recommended_already_added) {
-                                window.isSubmitting = false;
-                                $("#drawer-overlay").fadeOut();
-                                reapply_coupon();
-                            }
-                        }).fail(function (e) {
-                            if (e.status == '404') {
-                                $.ajax({
-                                    type: "POST",
-                                    url: '/cart/change.js',
-                                    data: {
-                                        quantity: 0,
-                                        id: product.variant_id
-                                    },
-                                    success: function (response) { }
-                                })
-                                console.log('removed-prod');
-                                fetchCart();
-                            }
-                        });
-                        //                   jsonproduct
-                    });
-                    //               dataitems.foreach
+                                        else {
+                                            window.isSubmitting = false
+                                            $("#cart__drawer_items_2").hide()
+                                        }
+                                    }, 300)
+                                    $("#drawer-overlay").fadeOut();
+                                    reapply_coupon();
+                                }
+                                else if ((count == (data.items.length)) && recommended_already_added) {
+                                    window.isSubmitting = false;
+                                    $("#drawer-overlay").fadeOut();
+                                    reapply_coupon();
+                                }
+                            }).fail(function (e) {
+                                if (e.status == '404') {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: '/cart/change.js',
+                                        data: {
+                                            quantity: 0,
+                                            id: product.variant_id
+                                        },
+                                        success: function (response) { }
+                                    })
+                                    console.log('removed-prod');
+                                    fetchCart();
+                                }
+                            });
+                            //                   jsonproduct
+                        }, data.items);
+                        //               dataitems.foreach
 
-                }
-                else {
-                    window.isSubmitting = false
-                    $('#cart__drawer_items').empty()
-                    $("#drawer-overlay").fadeOut();
-                    $('.price-cover').hide()
-                    $('.shopp').show()
-                    $('.cart__item.featured_product').hide()
-                    $('.coll').show()
-                    $('.head-cont').hide()
+                    }
+                    else {
+                        window.isSubmitting = false
+                        $('#cart__drawer_items').empty()
+                        $("#drawer-overlay").fadeOut();
+                        $('.price-cover').hide()
+                        $('.shopp').show()
+                        $('.cart__item.featured_product').hide()
+                        $('.coll').show()
+                        $('.head-cont').hide()
 
-                    $(".cart-count .beside-svg").eq(0).text(data.items.length)
-                    $(".icon_bot.bottom_icon_cart .beside-svg").text(data.items.length)
-                    $(".cart-count__text").text(data.items.length)
-                    $(".cart-item-length").text((data.items.length).toString() + " items")
-                    reapply_coupon();
-                }
-            });
+                        $(".cart-count .beside-svg").eq(0).text(data.items.length)
+                        $(".icon_bot.bottom_icon_cart .beside-svg").text(data.items.length)
+                        $(".cart-count__text").text(data.items.length)
+                        $(".cart-item-length").text((data.items.length).toString() + " items")
+                        reapply_coupon();
+                    }
+                });
 
 
-    }
+        }
 
     var disable_coupons = 0;
 
