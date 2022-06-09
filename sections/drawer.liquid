@@ -1891,7 +1891,24 @@ border: none;
       <div class="imp">
       <div style="color:white; cursor: pointer;" class="bin">-</div>
       <div style="color:white;" class="quantity">`+ product.quantity + `</div>
-      <div style="color:white; cursor: pointer;" class="plus">+</div>
+      <div style="color:white; cursor: pointer;" class="plus" onclick="
+$.ajax({
+            url: "/cart.js",
+            type: 'GET',
+            success: function(response) {
+              var res = JSON.parse(response)
+              console.log(res.items);
+              for(var i=0; i<res.items.length; i++) {
+                if (res.items[i].id == 39562932781154) {
+                  $('.membership p')[0].innerHTML = '\n                You saved <span>{{cart.total_discount | money}}</span> with <b>boAt<br>Select</b>\n '
+                  $('#membership_btn').hide()
+                  $('.membership .links a').hide()
+                  $('.membership .links .know_more_btn').show()
+                }
+              }
+            }
+          });
+">+</div>
         </div>
       <div class="cart-quantity-message">You have added max allowed units for this item.</div>
         </div>
@@ -3542,11 +3559,7 @@ border: none;
 
 </script>
 
-<script>
-  $('.plus').on('click',function(){
-    console.log('jjvghjcgvvhj')
-  })
-</script>
+
 
 
 {% schema %}
