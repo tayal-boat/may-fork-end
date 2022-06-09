@@ -9,7 +9,7 @@
           </picture>
         </a>
     {% endfor %}
-  <div class="carousel-inner">
+  <div class="carousel-inner owl-carousel">
     {% for block in section.blocks %}
       <div class="carousel--item slide_{{forloop.index}}">
         {% if block.settings.show_timer %}
@@ -161,20 +161,26 @@
 
 <script>
 	$(document).ready(function(){
-      $('.carousel-inner').on('init', function(event, slick){
-          $('.temp-slide').remove();
+      var $owl = $( '.owl-carousel' );
+      $owl.on('initialized.owl.carousel', function(event){ 
+         $('.temp-slide').remove();
       });
-      $(".carousel-inner").slick({
-        accessibility: true,
-        infinite: true,
-        arrows: true,
-        cssEase: 'ease-in-out',
+      $(".owl-carousel").owlCarousel({
+        items: 1,
+        loop: true,
+        nav: true,
+        lazyLoad: true,
         autoplay: true,
-        autoplaySpeed: 5000,
-        speed: 500,
-        fade: true,
-        pauseOnHover: true,
-        lazyLoad: 'progressive'
+        autoplayTimeout: 5000,
+        merge: true,
+        startPosition: 0,
+        smartSpeed:500,
+        animateOut: 'fadeOut',
+    	animateIn: 'fadeIn',
+        pullDrag: false,
+        checkVisible: false,
+        responsiveClass:true,
+        autoplayHoverPause: true
       });
     });
   	const slides = document.querySelectorAll('.carousel-inner .carousel--item');
