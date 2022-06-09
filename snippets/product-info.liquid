@@ -43,9 +43,73 @@
         {%- endif -%}
       </div>
     {%- endif -%}
-    {% render 'product-offers' %}
+    {%- if product.available -%}
+    	{% render 'product-offers' %}
+    {%- endif -%}
+    {% unless product.tags contains 'NO-PRICE' %}
+    <div class="product-meta__price-list-container" role="region" aria-live="polite">
+      <div class="price-list" data-product-price-list>
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          <span class="price price--highlight price--large">
+            <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
 
+          <span class="price price--compare">
+            <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+            {%- if settings.currency_code_enabled -%}
+              {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+            {%- else -%}
+              {{- product.selected_or_first_available_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+            {%- endif -%}
+          </span>
+        {%- else -%}
+          <span class="price price--large">
+            <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+            {%- if settings.currency_code_enabled -%}
+              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+            {%- else -%}
+              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+            {%- endif -%}
+          </span>
+        {%- endif -%}
+
+        {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
+          <div class="price text--subdued">
+            <div class="unit-price-measurement">
+              <span class="unit-price-measurement__price">{{ product.selected_or_first_available_variant.unit_price | money }}</span>
+              <span class="unit-price-measurement__separator">/</span>
+
+              {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+                <span class="unit-price-measurement__reference-value">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_value }}</span>
+              {%- endif -%}
+
+              <span class="unit-price-measurement__reference-unit">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}</span>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="product-meta__label-list label-list" data-product-label-list>
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          {%- if settings.discount_mode == 'percentage' -%}
+            {%- assign savings = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100.0 | divided_by: product.selected_or_first_available_variant.compare_at_price | round | append: '%' -%}
+          {%- else -%}
+            {%- capture savings -%}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money }}{%- endcapture -%}
+          {%- endif -%}
+
+          <span class="label label--highlight">{{ 'collection.product.discount_html' | t: savings: savings }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+	<p class="inclusive" style="display: block">Inclusive of all taxes</p>
+    {% endunless %}
+   {% if product.available %} {% render 'random-carts' %} {% endif %}
+    {%- if template contains 'product' -%}
+    <div class="price-container">
+    	{% render 'product-payment-partner' %}
+    </div>
+    {%- endif -%}
     
     {% if product.tags contains "Coming-Soon" %}
  		<div style="background: #000;color: #fff;display: inline-block;padding: 5px 10px;border-radius: 5px;font-size: 16px;font-weight: bold;margin: 10px 0 20px;border:2px solid #fff;">COMING SOON</div>
@@ -201,3 +265,14 @@
     </popover-content>
   {%- endif -%}
 </div>
+<script>
+$('.color-swatch').each(function(ind,el){
+  $(el).on('click',function(e){
+      if ( $( this ).hasClass( "is-disabled" ) ) {
+     document.getElementById("currently-in-cart").style.display = "none";
+    }else{
+     document.getElementById("currently-in-cart").style.display = "block";
+    }
+  });
+           });
+</script>
