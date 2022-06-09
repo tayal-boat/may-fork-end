@@ -1091,8 +1091,44 @@ border: none;
         }
       </script>
 
-	{% if shop.customer_accounts_enabled %}
-             {% if customer %}
+{% if customer %}
+<div class="cust_present"></div>
+{% else %}
+{% endif %}
+      <section class="drawerCart" id="drawer-name" data-drawer-target>
+    <div class="drawerCart__overlay" data-drawer-close tabindex="-1"></div>
+
+                   
+    <div class="drawerCart__wrapper">
+  
+     
+        <div class="ribbon">{{section.settings.cart_announcement}}</div>
+        <div class="head-cont">
+             <p class="cross"><img class="lazyload" style="width: 9px; transform: translateY(3px);"
+                    src='https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down.png?v=1646890029'      /></p>
+            <div class="head-inner" style="color:white;">
+                 Your Cart
+            </div>
+            <div class="cart-item-length" style="color:white;margin-right:2.5rem">
+
+            </div>
+        </div>
+        {%- if cart.item_count == 0 -%}
+          <div class="drawerCart__content drawerCart__content--center">
+           <form id="mini-cart-form" action="{{ routes.cart_url }}" novalidate method="post">
+              <input type="hidden" name="checkout">
+              <div id="drawer-overlay" style="display:none;">
+                <div class="drawer-spinner"></div>
+              </div>
+              
+              <div id="cart__drawer_items">
+                </div>
+<!--               <div class="shopp">
+                <img class="empty-img lazyload"
+                    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/bag_925d9ab5-b7d8-4b86-bfc5-2cb9b4df471e.png?v=1633452372" />
+                <p class="empty-text">Your Shopping Bag Is Empty.</p>
+
+            </div> -->
              <p class='customerrjf'>{{customer.id}}</p>
              <div class="membership">
               <p>
@@ -1129,61 +1165,7 @@ border: none;
               </div>
             </div>
              
-             {% else %}
-             <div class="membership">
-              <p>
-                Get <span>50%</span> off upto <span>Rs 650</span> with <b>boAt<br />Select</b>
-              </p>
-              <div class="links">
-                <button id="membership_btn"
-                        onclick="
-                                 event.preventDefault();
-    							 window.location.pathname = '/account'
-
-                				">
-                  Add to cart
-                </button>
-                <a href="">Know more</a>
-              </div>
-            </div>
-             {% endif %}
-             {% endif %}
-
-      <section class="drawerCart" id="drawer-name" data-drawer-target>
-    <div class="drawerCart__overlay" data-drawer-close tabindex="-1"></div>
-
-                   
-    <div class="drawerCart__wrapper">
-  
-     
-        <div class="ribbon">{{section.settings.cart_announcement}}</div>
-        <div class="head-cont">
-             <p class="cross"><img class="lazyload" style="width: 9px; transform: translateY(3px);"
-                    src='https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down.png?v=1646890029'      /></p>
-            <div class="head-inner" style="color:white;">
-                 Your Cart
-            </div>
-            <div class="cart-item-length" style="color:white;margin-right:2.5rem">
-
-            </div>
-        </div>
-        {%- if cart.item_count == 0 -%}
-          <div class="drawerCart__content drawerCart__content--center">
-           <form id="mini-cart-form" action="{{ routes.cart_url }}" novalidate method="post">
-              <input type="hidden" name="checkout">
-              <div id="drawer-overlay" style="display:none;">
-                <div class="drawer-spinner"></div>
-              </div>
-              
-              <div id="cart__drawer_items">
-                </div>
-<!--               <div class="shopp">
-                <img class="empty-img lazyload"
-                    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/bag_925d9ab5-b7d8-4b86-bfc5-2cb9b4df471e.png?v=1633452372" />
-                <p class="empty-text">Your Shopping Bag Is Empty.</p>
-
-            </div> -->
-			
+             
             {% if section.settings.show_cart_offer %}
             {% for block in section.blocks %}
             {% case block.type %}
