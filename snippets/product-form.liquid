@@ -81,7 +81,7 @@
                                   <span class="visually-hidden">{{ value }}</span>
                                   <img class="variant-swatch__image" loading="lazy" sizes="(max-width: 740px) 64px, 72px" {% render 'image-attributes', image: variant.featured_media, sizes: '64,72,128,144,192,216' %}>
                                 </label>
-                                  {% if variant.available %}<span class="stock-label hidden-lap-and-up">In Stock</span>{% else %}<span class="stock-label out-of-stock hidden-lap-and-up">Out of Stock</span>{% endif %}
+                                  {% if variant.available %}<span class="stock-label hidden-lap-and-up">In Stock</span>{% else %}<span class="stock-label hidden-lap-and-up">Out of Stock</span>{% endif %}
                               </div> 
                             </div>
                             {%- break -%}
@@ -169,9 +169,11 @@
           </product-variants>
         {%- endunless -%}
     {%- if template.suffix != 'quick-buy-popover'  -%}
+    {% unless product.tags contains 'NO-PRICE' %}
       <div class="product-meta__price-list-container" role="region" aria-live="polite">
         <div class="d-flex mb-2 align-items-baseline justify-content-between">
-      <div class="price-list" data-product-price-list>
+      <div class="price-list align-items-center" data-product-price-list>
+        <span class="flash-icon"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_1.png?v=1654757751" alt="thunder" /></span>&nbsp;
         {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
           <span class="price price--highlight price--large">
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -239,7 +241,8 @@
         <p class="inclusive">Inclusive of all taxes</p>
           {% if product.available %} {% render 'random-carts' %} {% endif %}
     </div>
-   </div>
+      </div>
+    {% endunless %}
     {% endif %}
       {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
         <div class="price-container mt-lg-4 mb-4">
@@ -249,8 +252,8 @@
 <!--  for desktop layout -->
     <div class="amazon w-lg-50">
       <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
-
-         <div class="price-list" data-product-price-list>
+         <div class="price-list align-items-center" data-product-price-list>
+          	<span class="flash-icon"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_1.png?v=1654757751" alt="thunder" /></span>&nbsp;
           {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
           <span class="price price--highlight price--large">
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
