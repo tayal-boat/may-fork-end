@@ -2,7 +2,7 @@
  <div class="flashtimer"> 
    {% if title != blank %}<h4 class="timer__title">{{ title }}:</h4>{% endif %} 
    <div class="timer-display"> 
-     <div class="timer-block"> 
+     <div class="timer-block visually-hidden"> 
        <span class="timer-block__num js-timer-days">00</span> 
      </div> 
      <div class="timer-block"> 
@@ -13,11 +13,15 @@
      </div> 
      <div class="timer-block"> 
        <span class="timer-block__num js-timer-seconds">00</span> 
-     </div> 
+     </div>
+     <div class="timer-block milliseconds"> 
+       <span class="timer-block__num js-timer-ms">00</span> 
+     </div>
    </div> 
  </div> 
 
  <style> 
+   .flash-icon {display: none;}
    .flash_sale {
       display: none;
       align-items: center;
@@ -78,6 +82,13 @@
      display: block; 
      text-align: center; 
    } 
+   .flashtimer .milliseconds {
+   	 background: white;
+     color: black;
+     font-weight: bold;
+     padding: 0;
+     width: 22px;
+   }
    
    @keyframes bgstrip {
    	0% {
@@ -102,7 +113,7 @@
 
  <script type="text/javascript"> 
    $(window).on('load', function() {
-   	$('.flash_sale').css("display", "flex");
+   	$('.flash_sale, .flash-icon').css("display", "flex");
    })
    var second = 1000, 
        minute = second * 60, 
@@ -116,8 +127,20 @@
        document.querySelector('.flashtimer .js-timer-days').innerText = Math.floor(distance / (_day)) + ' d', 
        document.querySelector('.flashtimer .js-timer-hours').innerText = Math.floor((distance % (_day)) / (hour)) + ' h', 
        document.querySelector('.flashtimer .js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)) + ' m', 
-       document.querySelector('.flashtimer .js-timer-seconds').innerText = Math.floor((distance % (minute)) / second) + ' s'; 
-   }, second) 
+       document.querySelector('.flashtimer .js-timer-seconds').innerText = Math.floor((distance % (minute)) / second) + ' s';
+       if (distance < 0) {
+        $('.flash_sale, .flash-icon').remove();
+       }
+   }, second);
+   
+   const printNumbersForEvery2Sec = (n)=>{
+    for (let i = 1; i <= n; i++) {
+        var y = setInterval( () =>{
+          document.querySelector('.flashtimer .js-timer-ms').innerText = i;
+        }, i * 90)
+      }
+  }
+  printNumbersForEvery2Sec(10);
  </script> 
 
  {% endif %} 
