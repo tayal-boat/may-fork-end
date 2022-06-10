@@ -1092,11 +1092,17 @@ border: none;
       </script>
 
 {% if customer %}
-<div class="cust_present"></div>
-{% if customer.tags contains 'select-member' %}
-<div class="membership_tags"></div>
-{% endif %}
-{% else %}
+	<div class="cust_present"></div>
+	{% if customer.tags contains 'select-member' %}
+		<div class="membership_tags"></div>
+		{% if customer.tags contains 'first-offer' %}
+			<div class="membership_first_offer"></div>
+		{% endif %}
+		{% if customer.tags contains 'third-offer' %}
+			<div class="membership_third_offer"></div>
+		{% endif %}
+	{% endif %}
+	{% else %}
 {% endif %}
 
       <section class="drawerCart" id="drawer-name" data-drawer-target>
@@ -1701,6 +1707,7 @@ border: none;
             $('#membership_btn').show()
             $('.membership .links a').show()
             $('.membership .links .know_more_btn').hide()
+            
           
             $("#drawer-overlay").fadeIn();
             window.isSubmitting = true
@@ -1719,6 +1726,34 @@ border: none;
                 	$('.cart-total').val(data.total_price / 100);
           			$('.cart-total-text')[0].innerText = 'Rs ' + parseFloat($('.cart-total-text')[0].innerText.split(' ')[1]).toLocaleString() + '.00'
 
+                    if($('.membership_tags').length > 0 ) {
+                      if($('.membership_first').length > 0 && (data.total_discount/100) > 0 ) {
+                        $('.membership p')[0].innerHTML = '\n                You saved <span>'+(data.total_discount/100)+'</span> with <b>boAt<br />Select</b>\n '
+            			$('#membership_btn').hide()
+            			$('.membership .links a').hide()
+            			$('.membership .links .know_more_btn').show()
+                      }
+                      else if($('.membership_third').length > 0) {
+                        if((data.total_price/100) < 1500) {
+                        	$('.membership p')[0].innerHTML = '\n                Shop for <span>'+(1500-(data.total_price/100))+'</span> more to avail</br><b>boAt Select</b>\n '
+            				$('#membership_btn').hide()
+            				$('.membership .links a').hide()
+            				$('.membership .links .know_more_btn').show()
+                        }
+                        else {
+                        	$('.membership p')[0].innerHTML = '\n                You saved <span>'+(data.total_discount/100)+'</span> with <b>boAt<br />Select</b>\n '
+            				$('#membership_btn').hide()
+            				$('.membership .links a').hide()
+            				$('.membership .links .know_more_btn').show()
+                        }
+                      }
+                      else {
+                      		fetchCart(true);
+  							document.getElementById('drawer-name').classList.remove("is-active");
+						    document.getElementById('drawer-name').classList.remove("is-visible");
+                      }
+                    }
+                    
                     if (open_slider_cart) {
                         if ($('.add-cart-modal').length > 0) {
                             $('.add-cart-modal').remove()
