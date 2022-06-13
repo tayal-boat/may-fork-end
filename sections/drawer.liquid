@@ -2081,6 +2081,9 @@
                           $('.multiplier').eq(j).after('<div class="line-item-discount" style="color: indianred; border-radius: 5px;"><p class="auto-coupon" style="font-weight: 600;">boAt SELECT-Rs &nbsp <p class="auto-coupon-account">' +Number(product_bin.discounts[0].amount)/100+'</p></div>')
                       }      
       }
+			else if($('.product_index_'+j+' .line-item-discount').length){
+						$('.product_index_'+j+' .line-item-discount').remove();	
+					}
             })
             $(".`+ product_class + ` .quantity").text(new_quantity)
             $("#cart__total_price").text('Rs '+ (json_response.total_price/100).toString() )
@@ -2199,14 +2202,19 @@
             var json_response = JSON.parse(response)
             json_response.items.forEach(function(product_bin, j){
               console.log( 'count_disc' ,product_bin.discounts.length)
-                  if($('.product_index_'+j+' .line-item-discount').length){
+                  if(product_bin.id != 39562932781154 && mimic_automatic_discount != 0 && product_bin.discounts.length> 0){
+      				 if($('.product_index_'+j+' .line-item-discount').length){
                           $('.product_index_'+j+' .line-item-discount .auto-coupon')[0].innerText = "boAt SELECT -Rs "
                           $('.product_index_'+j+' .line-item-discount .auto-coupon-account')[0].innerText = Number(product_bin.discounts[0].amount/100)
                       }
                       else{
                           $('.multiplier').eq(j).after('<div class="line-item-discount" style="color: indianred; border-radius: 5px;"><p class="auto-coupon" style="font-weight: 600;">boAt SELECT-Rs &nbsp <p class="auto-coupon-account">' +Number(product_bin.discounts[0].amount)/100+'</p></div>')
-                      } 
-            }
+                      }      
+      				}
+					else if($('.product_index_'+j+' .line-item-discount').length){
+						$('.product_index_'+j+' .line-item-discount').remove();	
+					}
+            		
             })
             var token_p = json_response.token;
             $(".`+ product_class + ` .cart-quantity-message").hide()
