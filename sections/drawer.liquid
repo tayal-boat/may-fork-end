@@ -1517,119 +1517,20 @@
                 </div>
 
                 <div class="price-cover">
-                      <div class="cart-coupon">
-                          <h3 class="coupon-heading">PROMO CODE</h3>
-                          <div class="coupon-text">
-                              <input type="text" id="coupon-code-text" placeholder="Enter Coupon Code">
-                              <input type="submit" value="Apply" id="coupon-apply">
-                          </div>
-                          {%comment%}
-                          {% for block in section.blocks %}
-                          {% case block.type %}
-                          {% when 'available-offers' %}
-                          <h4 class="avai-coupons">AVAILABLE COUPONS</h4>
+                	<div class="discount-price">
+                    <p class="coupon-d">Coupon Discount</p>
+                    <p class="coupon-p">Rs 0</p>
+                  </div>
+                  <div class="total-shipping">
+                    <h4 class="shipping-title">Shipping: </h4>
+                    <h4 class="shipping-price" style="margin: 0;font-size: 16px;">FREE</h4>
+                  </div>
+                  <div class="total-am">
+                    <h4 class="tam">Total Amount: </h4>
+                    <h4 class="tam_p" style="margin: 0;font-size: 16px;">{{- cart.total_price | money_with_currency -}}</h4>
+                  </div>      
 
-                          {%break%}
-                          {% endcase %}
-                          {%endfor%}
-                          {%endcomment%}
-                          <div class="available-offers">
-                              <form name="offer-coupons" id="offer-coupons">
-                                  {% for block in section.blocks %}
-                                  {% case block.type %}
-                                  {% when 'available-offers' %}
-                                  <style>
-                                      .available-offers {
-                                          display: block !important;
-                                      }
-                                  </style>
-                                  <div class="select-coupon">
-                                      <input type="radio" name="available-offers" id="{{block.settings.offer}}"
-                                          value="{{block.settings.offer}}">
-                                      <label for="{{block.settings.offer}}">
-                                          <div class="offer-body" {{ block.shopify_attributes }}>
-                                              <div class="code-details">
-                                                  <div class="code_cou">{{block.settings.offer}}</div>
-                                                  <div class="code_usp">{{block.settings.offer-usp}}</div>
-                                              </div>
-                                              <p class="code-desc">{{block.settings.offer-details}}</p>
-                                          </div>
-                                      </label><br>
-                                  </div>
-                                  {% endcase %}
-                                  {%endfor%}
-                              </form>
-                          </div>
-      <!--                   <div class="discount-div">
-                          <input class="discount-input" placeholder="I have a discount code" />
-                          <button class="discount-but">APPLY</button>
-                        </div> -->
-
-                        <div class="total-cover">
-                          <h4 class="totamou">Subtotal: </h4>
-                          <h4 id="cart__total_price" style="margin: 0;font-size: 16px;"></h4>
-                          <input type="hidden" value="" class="cart-total-val" />
-                        </div>
-                        <div class="discount-price">
-                          <p class="coupon-d">Coupon Discount</p>
-                          <p class="coupon-p">Rs 0</p>
-                        </div>
-                        <div class="total-shipping">
-                          <h4 class="shipping-title">Shipping: </h4>
-                          <h4 class="shipping-price" style="margin: 0;font-size: 16px;">FREE</h4>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                          <span class="cart-total pb-2"> <b>Total:</b></span>
-                          <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
-                          <span class="cart-total-text" style="font-weight: bolder;"><b>{{- cart.total_price | money_with_currency -}}</b>.00</span>
-                        </div>
-                        <div id="zestmoney-widget-control-cart"></div> 
-
-                        {%- if section.settings.show_checkout_button -%}
-                    {% if cart.total_price <= 4700000 %}
-                        {%- assign is_validation_ok = true -%}
-                        {%- assign qty_error_msg = 'Please Modify your cart to proceed.' -%}
-                        {%- assign product_limit_ok = true -%}
-                        {% for line_item in cart.items %}
-                            {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
-                                {%- assign product_limit_ok = false -%}
-                            {% endif %}
-                            {%- if line_item.product.metafields.set.quantity_limit == 2 and line_item.quantity > 2 -%}
-                                {%- assign product_limit_ok = false -%}
-                            {% endif %}
-                            {%- if line_item.product.metafields.set.quantity_limit == 3 and line_item.quantity > 3 -%}
-                                {%- assign product_limit_ok = false -%}
-                            {% endif %}
-                            {%- if line_item.product.metafields.set.quantity_limit == 4 and line_item.quantity > 4 -%}
-                                {%- assign product_limit_ok = false -%}
-                            {% endif %}
-                            {%- if line_item.product.metafields.set.quantity_limit == 5 and line_item.quantity > 5 -%}
-                                {%- assign product_limit_ok = false -%}
-                            {% endif %}
-                            {%- if line_item.product.metafields.set.quantity_limit == 6 and line_item.quantity > 6 -%}
-                                {%- assign product_limit_ok = false -%}
-                            {% endif %}
-                            {% if line_item.quantity > 7 %}
-                                {%- assign is_validation_ok = false -%}
-                            {% endif %}
-                        {% endfor %}
-                        {% if is_validation_ok == true and product_limit_ok == true %}
-                          <div class="row justify-content-around checkout-buttons-div">
-                            {% render 'gokwik-checkout' %}
-                            <button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-                            Pay Via Card  </button>
-                          </div>
-                        {% else %}
-                            <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
-                        {% endif %}
-                    {%- else -%}
-                            <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
-                    {% endif %}
-                  {%- else -%}
-                    <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
-                  {%- endif -%}
-
-                        </div>
+                </div>
                   
                     </div>
               {%- endif -%}
