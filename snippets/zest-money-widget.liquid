@@ -149,6 +149,12 @@
     let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
     if (displayHtml) {
       
+      const widgetElement = document.getElementById('zestmoney-widget-control-cart');
+        if (widgetElement) {
+          console.log('---removed---')
+			widgetElement.remove();
+        }
+      
       const zestmoneyWidgetControlElement = injectElement()
 //       var zestmoneyWidgetControlElement = document.getElementById('zestmoney-widget-control-cart');
       zestmoneyWidgetControlElement.innerHTML = displayHtml;
@@ -171,12 +177,6 @@
 //   const cart_change_observer_selector = document.getElementsByTagName("body")[0];
     const priceChangeObserver = new MutationObserver(async function() {
         priceChangeObserver.disconnect();  
-      
-      	const widgetElement = document.getElementById('zestmoney-widget-control-cart');
-        if (widgetElement) {
-          console.log('---removed---')
-			widgetElement.remove();
-        }
       
         await initApp();
         priceChangeObserver.observe(cart_change_observer_selector, { childList: true, subtree: true });
