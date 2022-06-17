@@ -84,7 +84,7 @@
     var zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
     if(!zestmoneyWidgetControl){
       
-            const placement_container = 'mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered';
+      const placement_container = 'mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered';
       let widget_container = document.getElementsByClassName(placement_container);
       if (widget_container.length === 0) {
         return;
@@ -111,7 +111,6 @@
     }
        
     var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
-    console.log("{{ cart.total_price }}", 'price total')
     let zest_price = parseFloat("{{ cart.total_price }}") / 100;
        
     const priceElement = document.getElementsByClassName('cart-total-text');
@@ -127,25 +126,25 @@
     }
     
     
-       var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
-           merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
-           environment: "production",
-           basketAmount: zest_price || 0,
-           downpaymentAmount: null,
-           paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
-           widgetType: 'product',
-       });
-       let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
- 
-       if (displayHtml) {
-           zestmoneyWidgetControl.innerHTML = displayHtml;
-           var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
-           if (zestmoneyWidgetTrigger) {
-               zestmoneyWidgetTrigger.addEventListener("click", function () {
-                   zestMoneyWidget.open();
-               });
-           }
-       }
+    var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
+      merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
+      environment: "production",
+      basketAmount: zest_price || 0,
+      downpaymentAmount: null,
+      paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
+      widgetType: 'product',
+    });
+    let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
+
+    if (displayHtml) {
+      zestmoneyWidgetControl.innerHTML = displayHtml;
+      var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
+      if (zestmoneyWidgetTrigger) {
+        zestmoneyWidgetTrigger.addEventListener("click", function () {
+          zestMoneyWidget.open();
+        });
+      }
+    }
   }
  
   setTimeout(async() => {
@@ -154,7 +153,6 @@
 
 //     const cart_change_observer_selector = document.getElementsByClassName("cart-total-text")[0];
     const cart_change_observer_selector = document.getElementById("mini-cart");
-  console.log(cart_change_observer_selector.innerHTML);
     const priceChangeObserver = new MutationObserver(async function() {
         priceChangeObserver.disconnect();  
       
