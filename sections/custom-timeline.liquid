@@ -5,6 +5,7 @@
 {%- endif -%}
 
 <style>
+
   #shopify-section-{{ section.id }} {
     {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
       {%- assign section_background = settings.background -%}
@@ -48,6 +49,18 @@
     --primary-button-text-color: {{ item_background.red }}, {{ item_background.green }}, {{ item_background.blue }};
     --section-box-background: {{ item_background.red }}, {{ item_background.green }}, {{ item_background.blue }};
   }
+    .button-wrapper .button{background:transparent; border:1px solid white;color:white;}
+    @media (max-width:768px){
+    .timeline__content {
+    padding: 20px;background: #000000d9;
+    }
+      
+    }
+    @media (min-width:1000px){
+     .timeline__content {
+      background: transparent;
+     }  
+  }
 </style>
 
 <section class="section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -80,7 +93,7 @@
           <div class="container">
             <div class="timeline__list">
               {%- for block in section.blocks -%}
-                <div id="block-{{ section.id }}-{{ block.id }}" class="timeline__item" {% unless forloop.first %}hidden{% endunless %} {{ block.shopify_attributes }}>
+                <div id="block-{{ section.id }}-{{ block.id }}" class="timeline__item time-i{% increment %}" {% unless forloop.first %}hidden{% endunless %} {{ block.shopify_attributes }}>
                   <div class="timeline__image-wrapper">
                     {%- if block.settings.image != blank -%}
                       <img alt="{{block.settings.alt_imgtext}}" class="timeline__image" loading="lazy" sizes="(max-width: 740px) 81vw, 490px" {% render 'image-attributes', image: block.settings.image, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
@@ -96,7 +109,7 @@
                       {%- endif -%}
 
                       {%- if block.settings.content != blank -%}
-                        {{- block.settings.content -}}
+                        {{ block.settings.content }}
                       {%- endif -%}
 
                       {%- if block.settings.button_text != blank -%}
@@ -136,7 +149,7 @@
 
 {% schema %}
 {
-  "name": "boAt Timeline",
+  "name": "custom Timeline",
   "class": "shopify-section--boat-timeline",
   "max_blocks": 5,
   "blocks": [
@@ -168,7 +181,7 @@
           "default": "Your heading"
         },
         {
-          "type": "richtext",
+          "type": "html",
           "id": "content",
           "label": "Content",
           "default": "<p>Write content about your store</p>"

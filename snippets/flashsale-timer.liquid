@@ -1,0 +1,150 @@
+{% if end_date != blank %} 
+ <div class="flashtimer"> 
+   {% if title != blank %}<h4 class="timer__title">{{ title }}:</h4>{% endif %} 
+   <div class="timer-display"> 
+     <div class="timer-block visually-hidden"> 
+       <span class="timer-block__num js-timer-days">00</span> 
+     </div> 
+     <div class="timer-block"> 
+       <span class="timer-block__num js-timer-hours">00</span> 
+     </div> 
+     <div class="timer-block"> 
+       <span class="timer-block__num js-timer-minutes">00</span> 
+     </div> 
+     <div class="timer-block"> 
+       <span class="timer-block__num js-timer-seconds">00</span> 
+     </div>
+     <div class="timer-block milliseconds"> 
+       <span class="timer-block__num js-timer-ms">00</span> 
+     </div>
+   </div> 
+ </div> 
+
+ <style> 
+   .flash-icon {display: none;}
+   .flash-icon img {
+   	max-width: 20px;
+   }
+   .flash_sale {
+      display: none;
+      align-items: center;
+      max-width: 400px;
+      justify-content: space-between;
+      padding: 0px 10px;
+      background: linear-gradient(270deg, #FBC50A 23.86%, #DFB108 47.06%, #FBC50A 66.05%);
+      border-radius: 5px;
+      margin-top: 7px;
+      margin-bottom: 7px;
+      animation: 5s linear 0s infinite normal none running bgstrip;
+   }
+   .flash_text {
+   	 font-weight:600;
+     display: flex;
+     align-items: center;
+   }
+   .flashtimer { 
+     margin: 0;
+     background: transparent;
+     padding: 10px 0; 
+     max-width: max-content;
+     border-radius: 5px;
+     line-height: normal;
+     display: flex;
+     align-items:center;
+   } 
+   .flashtimer .timer--expired { 
+     display: none; 
+   } 
+   .flashtimer .timer__title { 
+     text-align: center;
+      margin: 0 !important;
+      color: #070707;
+      font-size: 16px;
+      font-weight: 500;
+   } 
+   .flashtimer .timer-display { 
+     display: -webkit-box; 
+     display: -ms-flexbox; 
+     display: flex; 
+     -ms-flex-wrap: wrap; 
+     flex-wrap: wrap; 
+     -webkit-box-pack: justify; 
+     -ms-flex-pack: justify; 
+     margin-top: 0; 
+   } 
+   .flashtimer .timer-block { 
+     position: relative; 
+     width: 36px;
+     padding: 0;
+     text-align: center;
+     font-size: 16px;
+     color: #070707;
+     font-weight: 500;
+   } 
+   .flashtimer .timer-block__num, 
+   .flashtimer .timer-block__unit { 
+     display: block; 
+     text-align: center; 
+   } 
+   .flashtimer .milliseconds {
+   	 background: white;
+     color: black;
+     font-weight: bold;
+     padding: 0;
+     width: 22px;
+   }
+   
+   @keyframes bgstrip {
+   	0% {
+    background-position: -1000px 0px;
+    }
+    100% {
+        background-position: 1000px 0px;
+    }
+   }
+   
+   @media screen and (max-width: 767px) {
+   	.flashtimer .timer-block {
+      width: 31px !important;
+      font-size: 14px !important;
+	}
+    .flashtimer .timer__title, .flash_text {
+      font-size: 14px !important;
+    }
+   }
+
+ </style> 
+
+ <script type="text/javascript"> 
+   $(window).on('load', function() {
+   	$('.flash_sale, .flash-icon').css("display", "flex");
+   })
+   var second = 1000, 
+       minute = second * 60, 
+       hour = minute * 60, 
+       _day = hour * 24; 
+
+   var countDown = new Date('{{- end_date -}}').getTime(), 
+       x = setInterval(function() { 
+   var now = new Date().getTime(), 
+       distance = countDown - now; 
+       document.querySelector('.flashtimer .js-timer-days').innerText = Math.floor(distance / (_day)) + 'd', 
+       document.querySelector('.flashtimer .js-timer-hours').innerText = Math.floor((distance % (_day)) / (hour)) + 'h', 
+       document.querySelector('.flashtimer .js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)) + 'm', 
+       document.querySelector('.flashtimer .js-timer-seconds').innerText = Math.floor((distance % (minute)) / second) + 's';
+       if (distance < 0) {
+        $('.flash_sale, .flash-icon').remove();
+       }
+   }, second);
+   
+   const printNumbersForEvery2Sec = (n)=>{
+    for (let i = 1; i <= n; i++) {
+        var y = setInterval( () =>{
+          document.querySelector('.flashtimer .js-timer-ms').innerText = i;
+        }, i * 90)
+      }
+  }
+  printNumbersForEvery2Sec(10);
+ </script> 
+
+ {% endif %} 

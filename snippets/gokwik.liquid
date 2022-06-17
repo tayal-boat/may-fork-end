@@ -52,6 +52,26 @@ settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
           }
         });
   }
+    //analytics
+//     var gkelement = document.getElementsByTagName('cart-drawer')[0]
+//     console.log(gkelement)
+   
+//     var observer = new MutationObserver(function(mutations) {
+//       mutations.forEach(function(mutation) {
+//         if (mutation.type === "attributes") {
+//           console.log('mutation', mutation)
+//           if(mutation.attributeName==='open'){
+//             console.log('cart-open')
+// //           window.postMessage({type:'cartOpen'}, w.location.href);
+
+//           }
+//         }
+//       });
+//     });
+
+//     observer.observe(gkelement, {
+//       attributes: true //configure it to listen to attribute changes
+//     });
   function gokwikBuyNow() {
     /*---------------Swatchsize check------------------*/
     $('.SizeSwatchList .show-size-message').css('display','none');
@@ -188,16 +208,31 @@ let  targetNode = document.querySelector('html')
               }
               
           })
-      })
-    }
-     const config = { attributes: true, childList: true, subtree: true };
+         if (mutation.type === "attributes") {
+          if(mutation.attributeName==='open'){
+          window.postMessage({type:'cartOpen'}, window.location.href);
 
+          }
+        }
+      })
   
-      const removeOverlay = new MutationObserver(hideFoldieCallback)
-      removeOverlay.observe(targetNode, config)
+  }
+  
+  const config = { attributes: true, childList: true, subtree: true };
+  const removeOverlay = new MutationObserver(hideFoldieCallback)
+  removeOverlay.observe(targetNode, config)
      
 }); 
 </script>
+
+<style>
+  {% if settings.goEnable %}
+  .row.justify-content-around.checkout-buttons-div .gokwik-checkout button > span.btn-text > span:first-child
+  {
+    font-size:12px !important;
+  }
+  {%endif%}
+</style>
 
 <script>
   function onCheckoutClick(e) {
