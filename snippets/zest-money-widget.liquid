@@ -83,30 +83,36 @@
     
     console.log('init app')
   
-    var zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
-    console.log('found', zestmoneyWidgetControl);
-    if(!zestmoneyWidgetControl){
+    const injectElement = function () {
+    
+    	const zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
+        console.log('found', zestmoneyWidgetControl);
+        if(!zestmoneyWidgetControl){
+
+          const placement_container = 'mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered';
+          let widget_container = document.getElementsByClassName(placement_container);
+          if (widget_container.length === 0) {
+            return;
+          }
+
+          widget_container = widget_container[0];
+          // Get the target placeholder for adding the ZestMoneyWidget
+          const placement_selector = 'text-center'
+          let pricing_containers = widget_container.getElementsByClassName(placement_selector);
+          if (pricing_containers.length === 0) {
+            return;
+          }
+
+          pricing_containers = pricing_containers[0];
+
+          zestmoneyWidgetControl = document.createElement("div");
+          zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
+
+          widget_container.insertBefore(zestmoneyWidgetControl, pricing_containers);
+        }
       
-      const placement_container = 'mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered';
-      let widget_container = document.getElementsByClassName(placement_container);
-      if (widget_container.length === 0) {
-        return;
-      }
-      
-      widget_container = widget_container[0];
-      // Get the target placeholder for adding the ZestMoneyWidget
-      const placement_selector = 'text-center'
-      let pricing_containers = widget_container.getElementsByClassName(placement_selector);
-      if (pricing_containers.length === 0) {
-      	return;
-      }
-      
-      pricing_containers = pricing_containers[0];
-	
-      zestmoneyWidgetControl = document.createElement("div");
-      zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
-      
-      widget_container.insertBefore(zestmoneyWidgetControl, pricing_containers);
+      return zestmoneyWidgetControl;
+    
     }
     
 //     if(!zestmoneyWidgetControl){
@@ -143,7 +149,8 @@
     let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
     if (displayHtml) {
       
-      var zestmoneyWidgetControlElement = document.getElementById('zestmoney-widget-control-cart');
+      const zestmoneyWidgetControlElement = injectElement()
+//       var zestmoneyWidgetControlElement = document.getElementById('zestmoney-widget-control-cart');
       zestmoneyWidgetControlElement.innerHTML = displayHtml;
       
       var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
