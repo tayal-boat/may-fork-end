@@ -82,31 +82,6 @@
   const initApp = async function () {
     
     console.log('init app')
-    
-    var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
-    let zest_price = parseFloat("{{ cart.total_price }}") / 100;
-       
-    const priceElement = document.getElementsByClassName('cart-total-text');
-    if (priceElement.length > 0) {
-    	
-      	let amount = priceElement[0].innerHTML;
-
-  		amount = amount.split(' ');
-  		amount = (amount.length > 1) ? amount[1] : amount[0]
-
-  		zest_price = amount.replace(/[^0-9.]/g, '');
-    
-    }
-    
-    
-    var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
-      merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
-      environment: "production",
-      basketAmount: zest_price || 0,
-      downpaymentAmount: null,
-      paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
-      widgetType: 'product',
-    });
   
     var zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
     console.log('found', zestmoneyWidgetControl);
@@ -138,6 +113,30 @@
 //       return;
 //     }
        
+    var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
+    let zest_price = parseFloat("{{ cart.total_price }}") / 100;
+       
+    const priceElement = document.getElementsByClassName('cart-total-text');
+    if (priceElement.length > 0) {
+    	
+      	let amount = priceElement[0].innerHTML;
+
+  		amount = amount.split(' ');
+  		amount = (amount.length > 1) ? amount[1] : amount[0]
+
+  		zest_price = amount.replace(/[^0-9.]/g, '');
+    
+    }
+    
+    
+    var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
+      merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
+      environment: "production",
+      basketAmount: zest_price || 0,
+      downpaymentAmount: null,
+      paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
+      widgetType: 'product',
+    });
     
     let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
     if (displayHtml) {
