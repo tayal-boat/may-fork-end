@@ -81,60 +81,104 @@
  
   const initApp = async function () {
   
-    var zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
-    if(!zestmoneyWidgetControl){
-            // Get the target placeholder for adding the ZestMoneyWidget
-            const placement_selector = '.d-flex justify-content-between'
-            if(placement_selector){
-            const pricing_containers = document.querySelectorAll(placement_selector);
-            if(pricing_containers.length == 0){
-                return;
-            }
-            zestmoneyWidgetControl = document.createElement("div");
-            zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
-            pricing_containers[0].appendChild(zestmoneyWidgetControl);
-            }
-       }
-       if(!zestmoneyWidgetControl){
-           return;
-       }
+    const injectElement = function () {
+    
+    	let zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
+        if(!zestmoneyWidgetControl){
+
+          const placement_container = 'mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered';
+          let widget_container = document.getElementsByClassName(placement_container);
+          if (widget_container.length === 0) {
+            return;
+          }
+
+          widget_container = widget_container[0];
+          // Get the target placeholder for adding the ZestMoneyWidget
+          const placement_selector = 'text-center'
+          let pricing_containers = widget_container.getElementsByClassName(placement_selector);
+          if (pricing_containers.length === 0) {
+            return;
+          }
+
+          pricing_containers = pricing_containers[0];
+
+          zestmoneyWidgetControl = document.createElement("div");
+          zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
+
+          widget_container.insertBefore(zestmoneyWidgetControl, pricing_containers);
+        }
+      
+      return zestmoneyWidgetControl;
+    
+    }
+    
+//     if(!zestmoneyWidgetControl){
+//       return;
+//     }
        
-       var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
-       const zest_price = parseFloat("{{ cart.total_price }}") / 100;
-       var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
-           merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
-           environment: "production",
-           basketAmount: zest_price || 0,
-           downpaymentAmount: null,
-           paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
-           widgetType: 'product',
-       });
-       let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
- 
-       if (displayHtml) {
-           zestmoneyWidgetControl.innerHTML = displayHtml;
-           var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
-           if (zestmoneyWidgetTrigger) {
-               zestmoneyWidgetTrigger.addEventListener("click", function () {
-                   zestMoneyWidget.open();
-               });
-           }
-       }
+    var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
+    let zest_price = parseFloat("{{ cart.total_price }}") / 100;
+       
+    const priceElement = document.getElementsByClassName('cart-total-text');
+    if (priceElement.length > 0) {
+    	
+      	let amount = priceElement[0].innerHTML;
+
+  		amount = amount.split(' ');
+  		amount = (amount.length > 1) ? amount[1] : amount[0]
+
+  		zest_price = amount.replace(/[^0-9.]/g, '');
+    
+    }
+    
+    
+    
+    var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
+      merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
+      environment: "production",
+      basketAmount: zest_price || 0,
+      downpaymentAmount: null,
+      paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
+      widgetType: 'product',
+    });
+    
+    let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
+    if (displayHtml) {
+      
+      const widgetElement = document.getElementById('zestmoney-widget-control-cart');
+        if (widgetElement) {
+			widgetElement.remove();
+        }
+      
+      const zestmoneyWidgetControlElement = injectElement()
+//       var zestmoneyWidgetControlElement = document.getElementById('zestmoney-widget-control-cart');
+      zestmoneyWidgetControlElement.innerHTML = displayHtml;
+      
+      var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
+      if (zestmoneyWidgetTrigger) {
+        zestmoneyWidgetTrigger.addEventListener("click", function () {
+          zestMoneyWidget.open();
+        });
+      }
+    }
   }
  
   setTimeout(async() => {
              await initApp();
     },200)
 
-    const cart_change_observer_selector = document.getElementsByClassName("cart-total-text")[0];
-//     const cart_change_observer_selector = document.getElementById("mini-cart");
-  console.log(cart_change_observer_selector.innerHTML);
+//     const cart_change_observer_selector = document.getElementsByClassName("mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered")[0];
+    const cart_change_observer_selector = document.getElementById("mini-cart");
+//   const cart_change_observer_selector = document.getElementsByTagName("body")[0];
     const priceChangeObserver = new MutationObserver(async function() {
         priceChangeObserver.disconnect();  
-        await initApp();
-        priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});
+      
+        setTimeout(async() => {
+             await initApp();
+        	priceChangeObserver.observe(cart_change_observer_selector, { childList: true, subtree: true, characterData: true });
+    	},300)
     });
-    priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});
+    priceChangeObserver.observe(cart_change_observer_selector, { childList: true, subtree: true, characterData: true });
 
   
   

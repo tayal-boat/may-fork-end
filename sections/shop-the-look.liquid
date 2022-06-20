@@ -5,10 +5,6 @@
 {%- endcase -%}
 
 <style>
-  .shop-the-look__counter,
-  span.shop-the-look__label.heading.heading--small.hidden-pocket {
-    display: none;
-}
   {%- for block in section.blocks -%}
     #block-{{ section.id }}-{{ block.id }} {
       {%- if block.settings.dot_type == 'normal' -%}
@@ -55,6 +51,7 @@
         {%- capture look_id -%}block-{{ section.id }}-{{ block.id }}{%- endcapture -%}
 
         <shop-the-look-item {% unless forloop.first %}hidden{% endunless %} id="{{ look_id }}" class="shop-the-look__item" {{ block.shopify_attributes }}>
+         <a href="{% if block.settings.look_url %}{{block.settings.look_url}} {% else %} javascript:void(0){% endif %}">
           <div class="shop-the-look__image-wrapper">
             {%- if block.settings.image != blank -%}
               <img loading="lazy" sizes="100vw" {% if section.settings.reveal_on_scroll and forloop.first %}reveal{% endif %} class="shop-the-look__image {% if block.settings.mobile_image != blank %}hidden-pocket{% endif %}" {% render 'image-attributes', image: block.settings.image, sizes: '500,600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000' %}>
@@ -72,7 +69,7 @@
                 {%- endif -%}
               </div>
             {%- endif -%}
-          </div>
+           </div></a>
 
           {%- assign product_1 = block.settings.product_1 -%}
           {%- assign product_2 = block.settings.product_2 -%}
@@ -266,14 +263,6 @@
   </shop-the-look>
 </section>
 
-<script>
-  $('.shopify-section--shop-the-look').click(function(e) {
-      clevertap.event.push('Homepage Shop the Look Section Clicked', {
-    	 "userSource": userSource
-    });
-  });
-</script>
-
 {% schema %}
 {
   "name": "Shop the look",
@@ -284,6 +273,11 @@
       "type": "look",
       "name": "Look",
       "settings": [
+        {
+          "type": "url",
+          "id": "look_url",
+          "label": "look-link"
+        },
         {
           "type": "image_picker",
           "id": "image",
