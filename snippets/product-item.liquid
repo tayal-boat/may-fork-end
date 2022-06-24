@@ -236,6 +236,7 @@
        {% if product.compare_at_price > product.price %}     
          <p style="font-size: 12px;margin: 0.5rem 0 0;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
        {% endif %}
+        {% if product.available %}{%- render 'inventroy-bar' -%}{% endif %}
         {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
         {%- if product.variants.size == 0 -%}
           {%- capture form_id -%}product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}{%- endcapture -%}
@@ -350,7 +351,7 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-    {% if product.available %}{%- render 'inventroy-bar' -%}{% endif %}
+    
     <script>
   	let base_inventory = 30000;
     let total_inventory = 0;
