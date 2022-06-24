@@ -75,6 +75,7 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
     cursor: pointer;
   }
   .myDropdown .toggle-link img {
+    max-width: 20px;
     width: 100%;
     display: inline-block;
    vertical-align: middle;
@@ -118,6 +119,43 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
     color: #fff!important;
     font-weight: bold;
   }
+      .cart--img {
+          max-width: 20px;
+          width: 100%;
+          display: inline-block;
+          vertical-align: middle;
+        }
+      .tooltip3 .tooltip3text {
+             visibility: hidden;
+              background-color: black;
+              color: #fff;
+              text-align: center;
+              position: absolute;
+              z-index: 1;
+        }
+       .tooltip3 .tooltip3text {
+           width: max-content;
+           top: 70%;
+           margin-left: -27px;
+           padding: 3px 8px;
+      	}
+
+        .tooltip3:hover .tooltip3text {
+          visibility: visible;
+        }
+      .cart-count__text{
+        position: absolute;
+        top: 12px;
+        right: 30px;
+        z-index: 999;
+        background: #ff0000;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+        line-height: 20px;
+      }
   @media screen and (min-width: 741px) {
     #shopify-section-{{ section.id }} .header__logo-image {
       max-width: {{ section.settings.logo_max_width }}px;
@@ -361,7 +399,7 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                    <div class="account-links-inline contains-dropdown">
                      {%- if customer -%}
                        <div class="your-acct"><a href="{{ routes.account_url }}">Account</a></div>
-                      <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
+                      <div class="logout"><a href="{{ routes.account_logou_url }}">Logout</a></div>
                      {%- else -%}
                        <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
                      {%- endif -%}
@@ -379,25 +417,25 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
             <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
             {%- render 'icon' with 'header-search' -%}
           </a>
-          <div class="gift-card-icon">
+          <div class="gift-card-icon" style="height: 22px;">
               <a href="https://www.boat-lifestyle.com/products/gift-card">
                  <img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gift.png?v=1606314809" alt="gift card"style="max-width:22px;" />
               </a>
             </div>
-          <a href="{{ routes.cart_url }}" {% unless settings.cart_type == 'page' or request.page_type == 'cart' %}is="toggle-link" aria-controls="mini-cart" aria-expanded="false"{% endunless %} class="header__icon-wrapper tap-area header__cart {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'header.general.cart' | t | escape }}" data-no-instant>
-            {%- case settings.cart_icon -%}
-              {%- when 'shopping_bag' -%}
-                {%- render 'icon' with 'header-cart' -%}
+          <div class="cart-summary tooltip3">
+            <a href="#" class="cart-count {% if section.settings.use_btn_style_cart_link %}button{% endif %}" data-drawer-trigger aria-controls="drawer-name" aria-expanded="false">
+              <img class="cart--img" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/cart.png?v=1606314839" alt="cart" />
+              {% if cart.items.size %}
+              <span class="cart-count__text"> {{ cart.items.size }}</span>
+              {% else %}
+              <span class="cart-count__text">0</span>
+              {% endif %}
+              {% unless section.settings.use_btn_style_cart_link %}
 
-              {%- when 'shopping_cart' -%}
-                {%- render 'icon' with 'header-shopping-cart' -%}
-
-              {%- when 'tote_bag' -%}
-                {%- render 'icon' with 'header-tote-bag' -%}
-            {%- endcase -%}
-
-            <cart-count class="header__cart-count header__cart-count--floating bubble-count">{{ cart.item_count }}</cart-count>
-          </a>
+              {% endunless %}
+            </a>
+            <!--                   <span class="tooltip3text">Cart</span> -->
+          </div>
  
         </div>
 
@@ -475,16 +513,6 @@ SEARCH DRAWER
 {%- render 'predictive-search' -%}
 
 <script>
-          $(".announce .announcement-bar__message p").each(function(ind,el){
-              $(el).on('click',function(e){
-          var announcementText = $(this).text();
-        clevertap.event.push("Announcement bar clicked", {
-            "Message": announcementText,
-            "userSource": userSource
-        });
-      }); 
-    });  
-  
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
       headerHeight = headerElement.clientHeight,
@@ -493,6 +521,16 @@ SEARCH DRAWER
     document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
     document.documentElement.style.setProperty('--header-height-without-bottom-nav', headerHeightWithoutBottomNav + 'px');
   })();
+</script>
+
+<script>
+
+  document.querySelector('.cart-count').addEventListener('click', (event) => {
+    document.getElementById("drawer-name").classList.add("is-active");
+    document.getElementById("drawer-name").classList.add("is-visible");
+    
+  })
+
 </script>
 
 <script type="application/ld+json">
