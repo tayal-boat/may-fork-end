@@ -78,19 +78,25 @@
       {%- if section.settings.title != blank or section.settings.subheading != blank or section.settings.content != blank -%}
         <header class="section__header {% if section.settings.content != blank %}section__header--tight{% endif %}">
           <div class="text-container">
-            {%- if section.settings.subheading != blank -%}
-              <h2 class="heading heading--small">{{ section.settings.subheading }}</h2>
-            {%- endif -%}
 
             {%- if section.settings.title != blank -%}
-              <h3 class="heading h2">{{ section.settings.title }}</h3>
+            
+            <a href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%- else -%} javascript:void(0){%- endif -%}"> <h3 class="heading h2">{{ section.settings.title }}</h3></a>
             {%- endif -%}
 
             {%- if section.settings.content != blank -%}
               {{- section.settings.content -}}
             {%- endif -%}
           </div>
-
+             {% if section.settings.title-url %}
+           <a style="display:flex;flex-direction: column; align-items: center;margin-top: 1rem;" href="{{section.settings.title-url}}">
+	<div class="flash_sale">
+       <p class="m-0 text-uppercase flash_text"><span class="thunder"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2.png?v=1655103798" loading="lazy" alt="thunder" /></span>&nbsp;Flash sale</p>
+        {% render 'flashsale-timer', title: {{section.settings.flash_timer_text}}, end_date: section.settings.flash_end_date %}
+    </div>
+             <p > <b>View All ></b> </p>
+      </a>
+          {% endif %}    
           {%- if section.blocks.size > 1 -%}
             <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
               <scrollable-content class="tabs-nav__scroller hide-scrollbar">
@@ -102,6 +108,8 @@
                       <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}" {{ block.shopify_attributes }}>
                         {{- block.settings.label | default: block.settings.collection.title | default: on_boarding_title -}}
                       </button>
+                    
+              
                     {%- endfor -%}
                   </div>
                 </div>
@@ -137,6 +145,7 @@
                     {%- render 'product-item-placeholder', product_image: product_image, show_cta: section.settings.show_cta, reveal: settings.stagger_products_apparition -%}
                   {%- endfor -%}
                 {%- endfor -%}
+         {% if section.settings.title-url !=blank %}<p style="display: flex;justify-content: center;align-items: center;"><a style="text-decoration:none;" href="{{collection.url}}"> <b>more ></b> </a></p>{% endif %}
               </div>
             </div>
 
@@ -223,10 +232,19 @@
       "default": "input"
     },
     {
+      "type": "url",
+      "id": "title-url",
+      "label": "only-input-for-flash-sale"
+    },
+	{
       "type": "text",
-      "id": "subheading",
-      "label": "Subheading",
-      "default": "Your title"
+      "id": "flash_end_date",
+      "label": "Flash Sale End Date (Ex: Apr 30, 2022 12:00:00)"
+    },
+	{
+      "type": "text",
+      "id": "flash_timer_text",
+      "label": "Flash Sale Timer Text"
     },
     {
       "type": "text",
@@ -261,7 +279,7 @@
       "type": "checkbox",
       "id": "stack_products",
       "label": "Stack products",
-      "default": true
+      "default": false
     },
     {
       "type": "checkbox",
