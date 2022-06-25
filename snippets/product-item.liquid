@@ -20,10 +20,30 @@
   	<span class="label label--highlight custom-label coming-soon">COMING SOON</span>
   {% endif %}
   {%- if product.available == true -%}
+   {% if product.tags contains 'flash-sale' %}
+  
   	{%- for tag in product.tags -%}
 		{%- if tag contains 'meta-label-lowest-price' -%}
   			{%-if product.price < product.compare_at_price -%}
-		  <span class="label label--highlight custom-label lowest-price">
+		  <span class="label label--highlight custom-label lowest-price flash">
+            
+          	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" />
+            {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
+		  </span>
+  			{%- endif -%}
+  		{% else %}
+  			{%- if tag contains 'meta-label-' -%}
+              <span class="label label--highlight custom-label flash {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+            {%- endif -%}
+		{%- endif -%}
+      {%- endfor -%}
+  
+   {% else %}
+  	{%- for tag in product.tags -%}
+		{%- if tag contains 'meta-label-lowest-price' -%}
+  			{%-if product.price < product.compare_at_price -%}
+		  <span class="label label--highlight custom-label lowest-price ">
+            
           	You Save {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
 		  </span>
   			{%- endif -%}
@@ -33,6 +53,7 @@
             {%- endif -%}
 		{%- endif -%}
       {%- endfor -%}
+    {%- endif -%}
   {%- endif -%}
   {%- comment -%}
   {%- capture product_labels -%}
@@ -124,7 +145,7 @@
         {% comment %}End automatically added Judge.me widget{% endcomment %}
 
       <div class="product-item-meta__price-list-container">
-       {% unless product.tags contains 'NO-PRICE' %}
+        {% unless product.tags contains 'NO-PRICE' %}
         <div class="price-list price-list--centered">
           {%- if product.price_varies and product.compare_at_price -%}
             {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
@@ -235,9 +256,6 @@
           {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-            {%- if product.tags contains 'flash-sale' -%}
-            <input class="flash_sale_enable" type="hidden" name="properties[flash_sale]" value="true">
-            {%- endif -%}
             <button is="loader-button" type="submit" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch">ADD</button>
             <button type="submit" class="product-item__quick-buy-button hidden-no-touch">
               <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
@@ -249,7 +267,7 @@
           IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
           {%- endcomment -%}
 
-          <div class="product-item__quick-form{% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
+          <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
             <button is="toggle-button" loader aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone">ADD TO CART</button>
             <button is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="product-item__quick-buy-button hidden-no-touch hidden-phone">
               <span class="visually-hidden">ADD</span>
@@ -346,8 +364,11 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-    {% unless template contains 'index' %}
+        {% unless template contains 'index' %}
     	{% if product.available and product.tags contains 'flash-sale' %}{%- render 'inventroy-bar' -%}{% endif %}
-    {% endunless %}
+        {% endunless %}
+
   </div>
+  
+
 </product-item>
