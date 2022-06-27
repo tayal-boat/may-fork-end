@@ -75,7 +75,7 @@
                         {%- for variant in product.variants -%}
                           {%- if variant.options[option_position0] == value -%}
                             <div class="variant-swatch {% if variant.available == false %}is-disabled{% endif %}">
-                              <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}" form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" data-bind-value="{{ option_id }}-value" {% if value == option.selected_value %}checked="checked"{% endif %} aria-label="{{ value | escape }}" data-price="{{ variant.price | money | remove: '.00' | replace: 'Rs.', '₹' }}" data-compare-price ="{{ variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' }}">
+                              <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}" form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" data-bind-value="{{ option_id }}-value" {% if value == option.selected_value %}checked="checked"{% endif %} aria-label="{{ value | escape }}" data-price="{{ variant.price }}" data-compare-price ="{{ variant.compare_at_price }}">
                            <div class="variant-swatch__item-div text-center">
                                 <label class="variant-swatch__item" for="{{ option_id }}-{{ forloop.index }}">
                                   <span class="visually-hidden">{{ value }}</span>
@@ -169,24 +169,35 @@
           </product-variants>
         {%- endunless -%}
     {%- if template.suffix != 'quick-buy-popover'  -%}
-
+    {% unless product.tags contains 'NO-PRICE' %}
       <div class="product-meta__price-list-container" role="region" aria-live="polite">
         <div class="d-flex mb-2 align-items-end justify-content-between">
       <div class="price-list custom-product-price" data-product-price-list>
         {%- if product.tags contains 'flash-sale' -%}
         	<span class="flash-icon"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group-2.png?v=1655107410" alt="thunder" /></span>&nbsp;
         {%- endif -%}
+               
+        
+        {%- if product.tags contains 'flash-sale' -%}
+        {% assign discount_price = product.selected_or_first_available_variant.price | times: section.settings.flash_discount | divided_by: 100  %}
+        {% assign discounted_price = product.selected_or_first_available_variant.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
+        {%- else -%}
+        {% assign discounted_price = product.selected_or_first_available_variant.price %}
+        {%- endif -%}  
+        
         {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+
           <span class="price price--highlight price--large">
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
  
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
+            
           </span>
-
+		
           <span class="price price--compare line-through">
             <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -200,9 +211,9 @@
           <span class="price price--large">
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
           </span>
         {%- endif -%}
@@ -235,8 +246,8 @@
         {%- endif -%}
       </div>
 	{% endcomment %}
-        {% if product.compare_at_price > product.price %}     
-        <p style="margin: 0.25rem 0 0;font-weight: 600;font-size: 14px;letter-spacing: -0.045em;color: #00C68C;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
+        {% if product.compare_at_price > discounted_price %}     
+        <p class="custom-saved-price" style="margin: 0.25rem 0 0;font-weight: 600;font-size: 14px;letter-spacing: -0.045em;color: #00C68C;"> You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} ({{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
          {% endif %}
         </div>
         <div class="amazon-c d-flex align-items-baseline justify-content-between">
@@ -244,7 +255,7 @@
           {% if product.available %} {% render 'random-carts' %} {% endif %}
     </div>
       </div>
-
+    {% endunless %}
     {% endif %}
       {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
         <div class="price-container mt-lg-4 mb-4">
@@ -263,9 +274,9 @@
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
           </span>
 
@@ -282,9 +293,9 @@
           <span class="price price--large">
             <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
             {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- else -%}
-              {{- product.selected_or_first_available_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
             {%- endif -%}
           </span>
         {%- endif -%}
@@ -320,8 +331,8 @@
 
 
         <div class="d-flex  mt-2 align-items-baseline justify-content-between">
-          {% if product.compare_at_price > product.price %}     
-        <p style="letter-spacing: -0.045em;  color: #00C68C;  font-weight: 600; font-size: 14px; line-height: 20px;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
+          {% if product.compare_at_price > discounted_price %}     
+        <p class="custom-saved-price" style="letter-spacing: -0.045em;  color: #00C68C;  font-weight: 600; font-size: 14px; line-height: 20px;"> You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} ({{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
          {% endif %}
         <p class="inclusive">Inclusive of all taxes</p>
 
@@ -332,6 +343,7 @@
 	   {% if product.available %} {% render 'random-carts' %} {% endif %}
 
      </div>    </div>
+
     {% endif %}
     
 <!--                         -->
@@ -541,7 +553,9 @@
           <div class="product-form__buy-buttons" {{ block.shopify_attributes }}>
             {%- form 'product', product, is: 'product-form', id: product_form_id -%}
               <input type="hidden" disabled name="id" value="{{ product.selected_or_first_available_variant.id }}">
-
+            {%- if product.tags contains 'flash-sale' -%}
+            <input class="flash_sale_enable" type="hidden" name="properties[flash_sale]" value="true">
+            {%- endif -%}
               <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer"{% endif %} class="product-form__payment-container" {{ block.shopify_attributes }}>
                 <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
                   {%- if product.selected_or_first_available_variant.available -%}

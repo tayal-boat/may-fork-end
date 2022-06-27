@@ -376,6 +376,7 @@
       }
        div#zestmoney-widget-control-cart {
           margin-bottom: 12px!important;
+         display:none;
       }
       #mini-cart .drawer__footer--bordered {
            box-shadow: 0 0px 10px #878787b8; /* We use box-shadow due to the shadow */
@@ -722,6 +723,7 @@
                             <span class="product-item-meta__property text--subdued text--xsmall">{{ line_item.selling_plan_allocation.selling_plan.name }}</span>
                           {%- endif -%}
 
+                        {% comment %}
                           {%- unless line_item.properties == blank -%}
                             <ul class="product-item-meta__property list--unstyled text--subdued text--xsmall" role="list">
                               {%- for property in line_item.properties -%}
@@ -731,10 +733,11 @@
                                   {%- continue -%}
                                 {%- endif -%}
 
-                                <li>{{ property.first }}: {{ property.last }}</li>
+                                <li class="{{ property.first }}">{{ property.first }}: {{ property.last }}</li>
                               {%- endfor -%}
                             </ul>
                           {%- endunless -%}
+                        {% endcomment %}
                         {%- endcapture -%}
 
 
@@ -1011,8 +1014,10 @@
               <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
               <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency -}}</b></span>
             </div>
+{%- comment -%}     
             <div id="zestmoney-widget-control-cart"></div>
-            {%- comment -%}<div id="zestmoney-widget-control-cart"></div>{%- endcomment -%}
+            <div id="zestmoney-widget-control-cart"></div>
+{%- endcomment -%}
             {%- if section.settings.show_checkout_button -%}
               {% if cart.total_price <= 4700000 %}
                   {%- assign is_validation_ok = true -%}
