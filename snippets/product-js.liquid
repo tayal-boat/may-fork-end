@@ -1,8 +1,9 @@
 <script type="text/javascript">
   $(document).ready(function() {
-       
+    if(localStorage.getItem('Namogoo')) {  
      let NamogooDiscount = JSON.parse(localStorage.getItem('Namogoo'));
      let discountValue = NamogooDiscount.discountValue;
+    }
     
     function NamogooDisCalculation(){
       let selectedVarient = $('.variant-swatch-list .variant-swatch input:checked');
@@ -30,7 +31,9 @@
         $('.custom-product-price .price.price--compare.line-through').html(Shopify.formatMoney(comparePrice,Shopify.money_format));
        console.log(savePrice);
     }
-    NamogooDisCalculation(); 
+    if(localStorage.getItem('Namogoo')) {
+    	NamogooDisCalculation(); 
+    }
     
     if($('.variant-swatch input[checked="checked"]').parent('.variant-swatch').hasClass('is-disabled')) {
        $('.stock-label-side').text('Out of Stock');
