@@ -7,13 +7,45 @@
     .label.label--highlight.meta-label-lowest-price {display: none;}
     .q.-out-click-to-notify + .product-item__image-wrapper > a {opacity: .5;}
   {% endif %}
-</style>
-{%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' |
-downcase | split: ',' -%} {%- assign color_white_label = 'general.label.white' |
-t | downcase -%} {%- assign quick_buy_icon_name = 'quick-buy-' | append:
-settings.cart_icon | replace: '_', '-' -%} {%- if product.url contains '?' -%}
-{%- assign product_url_contains_query = true -%} {%- else -%} {%- assign
-product_url_contains_query = false -%} {%- endif -%}
+  {%- if product.available == true -%}
+   {% if product.tags contains 'flash-sale' %}
+  		{%-if product.price < product.compare_at_price -%}
+		  <span class="label label--highlight custom-label lowest-price flash">
+          	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" />
+            {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
+		  </span>
+  		{%- endif -%}
+   {% else %}
+  	{%- for tag in product.tags -%}
+		{%- if tag contains 'meta-label-lowest-price' -%}
+  			{%-if product.price < product.compare_at_price -%}
+		  <span class="label label--highlight custom-label lowest-price ">
+          	You Save {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
+		  </span>
+  			{%- endif -%}
+  		{% else %}
+  			{%- if tag contains 'meta-label-' -%}
+              <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+            {%- endif -%}
+		{%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- comment -%}
+  {%- capture product_labels -%}
+    {%- for tag in product.tags -%}
+      {%- if tag contains '__label' -%}
+        <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
+  	  {%- elsif settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag -%}
+        {%- if settings.discount_mode == 'percentage' -%}
+          {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
+        {%- else -%}
+          {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
+        {%- endif -%}
+      <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
+      {%- endif -%}
+  	 {%- else -%}
+    {%- endfor -%}
 
 <product-item
   class="product-item {% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}"
@@ -574,13 +606,13 @@ product_url_contains_query = false -%} {%- endif -%}
       {%- endif -%}
     </div>
     {%- elsif reduced_content -%}
-    <div class="product-item__cta-wrapper">
-      <span class="product-item__link text--subdued">{{
-        "collection.product.sold_out" | t
-      }}</span>
-    </div>
-    {%- endif -%} {% unless template contains 'index' %} {% if product.available
-    and product.tags contains 'flash-sale' %}{%- render 'inventory-bar' -%}{%
-    endif %} {% endunless %}
+      <div class="product-item__cta-wrapper">
+        <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
+      </div>
+    {%- endif -%}
+        {% unless template contains 'index' %}
+    	{% if product.available and product.tags contains 'flash-sale' and settings.flash_end_date !=blank %}{%- render 'inventory-bar' -%}{% endif %}
+        {% endunless %}
+
   </div>
 </product-item>

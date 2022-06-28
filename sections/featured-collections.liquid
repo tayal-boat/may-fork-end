@@ -5,7 +5,6 @@
 {%- endif -%}
 
 <style>
-
   #shopify-section-{{ section.id }} {
     {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
       {%- assign section_background = settings.background -%}
@@ -69,6 +68,17 @@
     }
       .product-item-meta__color-count {margin-bottom: 5px;}
   }
+    
+  @media screen and (max-width: 600px) {
+    .flash_sale {width: 100%;padding:0;}
+    .flashtimer .timer-block {
+        width: 31px !important;
+        font-size: 14px !important;
+    }
+    .flashtimer .timer__title, .flash_text {
+        font-size: 14px !important;
+    }
+  }
 
 </style>
 
@@ -88,11 +98,11 @@
               {{- section.settings.content -}}
             {%- endif -%}
           </div>
-             {% if section.settings.title-url %}
+             {% if section.settings.title-url and settings.flash_end_date !=blank %}
            <a style="display:flex;flex-direction: column; align-items: center;margin-top: 1rem;" href="{{section.settings.title-url}}">
 	<div class="flash_sale">
        <p class="m-0 text-uppercase flash_text"><span class="thunder"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2.png?v=1655103798" loading="lazy" alt="thunder" /></span>&nbsp;Flash sale</p>
-        {% render 'flashsale-timer', title: {{section.settings.flash_timer_text}}, end_date: section.settings.flash_end_date %}
+        {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
     </div>
              <p > <b>View All ></b> </p>
       </a>
@@ -234,17 +244,7 @@
     {
       "type": "url",
       "id": "title-url",
-      "label": "only-input-for-flash-sale"
-    },
-	{
-      "type": "text",
-      "id": "flash_end_date",
-      "label": "Flash Sale End Date (Ex: Apr 30, 2022 12:00:00)"
-    },
-	{
-      "type": "text",
-      "id": "flash_timer_text",
-      "label": "Flash Sale Timer Text"
+      "label": "required-input-for-flash-sale"
     },
     {
       "type": "text",

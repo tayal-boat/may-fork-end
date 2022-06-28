@@ -1015,12 +1015,16 @@
               <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency -}}</b></span>
             </div>
 
-            {%- if section.settings.show_checkout_button -%}
+        {%- if section.settings.show_checkout_button -%}
               {% if cart.total_price <= 4700000 %}
                   {%- assign is_validation_ok = true -%}
                   {%- assign qty_error_msg = 'Please Modify your cart to proceed.' -%}
                   {%- assign product_limit_ok = true -%}
+            {%- assign product_flash = false -%}
                   {% for line_item in cart.items %}
+            {% if line_item.product.tags contains 'flash-sale' %}
+            {%- assign product_flash = true -%}
+               {% endif %}
                       {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
                           {%- assign product_limit_ok = false -%}
                       {% endif %}

@@ -1,8 +1,52 @@
 <script type="text/javascript">
-    $(document).ready(function() {
-      setInterval(function () {
-        function getRndInteger(min, max) {
-          return Math.floor(Math.random() * (max - min)) + min;
+  $(document).ready(function() {
+    if(localStorage.getItem('Namogoo')) {
+     let NamogooDiscount = JSON.parse(localStorage.getItem('Namogoo'));
+     let discountValue = NamogooDiscount.discountValue;
+    }
+    console.log('product-js');
+    function NamogooDisCalculation(){
+      if($('.variant-swatch-list').length > 0){
+      let selectedVarient = $('.variant-swatch-list .variant-swatch input:checked');
+      let savePrice = selectedVarient.attr('data-price');
+      let comparePrice = selectedVarient.attr('data-compare-price');
+   savePrice = parseInt(savePrice);
+      comparePrice = parseInt(comparePrice);
+      {% if settings.enable_flash_sale and product.tags contains 'flash-sale' %}
+      let savePriceDis = savePrice / 100 * {{ settings.flash_discount }};
+      savePrice = savePrice - savePriceDis;
+      let custom_saved_price = comparePrice - savePrice;
+      let custom_saved_dis = Math.round(custom_saved_price * 100 / comparePrice);
+      $('.custom-saved-price').html('You Save: '+Shopify.formatMoney(custom_saved_price,Shopify.money_format)+' ('+custom_saved_dis+'%) ');
+      console.log(savePriceDis);
+
+      {% elsif settings.enable_namagoo %}
+      {% if product.tags contains 'namogoo' %}
+       if(localStorage.getItem('Namogoo')) {
+      let savePriceDis = savePrice / 100 * discountValue;
+      savePrice = savePrice - savePriceDis;
+      let custom_saved_price = comparePrice - savePrice;
+      let custom_saved_dis = Math.round(custom_saved_price * 100 / comparePrice);
+      $('.custom-saved-price').html('You Save: '+Shopify.formatMoney(custom_saved_price,Shopify.money_format)+' ('+custom_saved_dis+'%) ');
+      console.log(savePriceDis);
+       }
+       {% endif %}
+      {% endif %}
+      $('.custom-product-price .price.price--highlight.price--large').html(Shopify.formatMoney(savePrice,Shopify.money_format));
+        $('.custom-product-price .price.price--compare.line-through').html(Shopify.formatMoney(comparePrice,Shopify.money_format));
+       console.log(savePrice);
+      }
+    }
+    	NamogooDisCalculation();
+
+    if($('.variant-swatch input[checked="checked"]').parent('.variant-swatch').hasClass('is-disabled')) {
+       $('.stock-label-side').text('Out of Stock');
+       $('.stock-label-side').css("visibility", "visible");
+          $('.currently-in-cart').fadeOut();
+        } else  {
+          $('.stock-label-side').text('In Stock');
+          $('.currently-in-cart').fadeIn();
+          $('.stock-label-side, .currently-in-cart').css("visibility", "visible");
         }
         document.querySelector('.amazon .currently-in-cart #random').innerHTML = getRndInteger(50,300)
         document.querySelector('.amazon-c .currently-in-cart #random').innerHTML = getRndInteger(50,300)

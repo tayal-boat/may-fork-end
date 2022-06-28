@@ -48,6 +48,7 @@
 
      .heading.h1{font-size: 26px;}
  }
+ 
 /*  -------------------------------   */
 
   @media screen and (min-width: 741px) {
@@ -127,6 +128,12 @@
     <h1 class="heading h1">
     	<split-lines>{{ collection.title }}</split-lines>
     </h1>
+       {%- if template contains 'flash' and settings.flash_end_date !=blank -%}
+	<div class="flash_sale">
+       <p class="m-0 text-uppercase flash_text"><span class="thunder"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2.png?v=1655103798" loading="lazy" alt="thunder" /></span>&nbsp;Flash sale</p>
+        {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
+    </div>
+    {%- endif -%}
     <product-facet section-id="{{ section.id }}" class="product-facet">
       {%- if section.settings.show_filters and collection.filters != empty -%}
         {%- if section.settings.filter_position == 'always_visible' -%}
@@ -312,6 +319,20 @@
     </product-facet>
   </div>
 </section>
+
+  <style>
+  	@media screen and (max-width: 600px) {
+    .flash_sale {width: 100%;}
+    .flashtimer .timer-block {
+        width: 27px !important;
+        font-size: 13px !important;
+    }
+    .flashtimer .timer__title, .flash_text {
+        font-size: 11px !important;
+    }
+  }
+  </style>
+
 {% comment %}
 <script>
   var products_on_page = $('.product-list__inner');
