@@ -144,6 +144,8 @@ settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
 let  targetNode = document.querySelector('html')
 
   window.addEventListener("load", function(){
+  var cartMessageSent = false;
+
   const hideFoldieCallback = function(mutationList){
       mutationList.forEach((mutation) => {
           let gokwikIfram = document.querySelector('#gokwik-iframe')
@@ -156,6 +158,13 @@ let  targetNode = document.querySelector('html')
               }
               
           })
+          
+          if (mutation.type === "attributes") {
+			if (mutation.attributeName === "open" && !cartMessageSent) {
+				window.postMessage({ type: "cartOpen" }, window.location.href);
+				cartMessageSent = true;
+			}
+		}
       })
     }
   const sizeCallback = function(mutationList){

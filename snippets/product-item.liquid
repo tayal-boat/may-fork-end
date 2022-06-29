@@ -20,6 +20,14 @@
   	<span class="label label--highlight custom-label coming-soon">COMING SOON</span>
   {% endif %}
   {%- if product.available == true -%}
+   {% if product.tags contains 'flash-sale' %}
+  		{%-if product.price < product.compare_at_price -%}
+		  <span class="label label--highlight custom-label lowest-price flash">
+          	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" />
+            {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
+		  </span>
+  		{%- endif -%}
+   {% else %}
   	{%- for tag in product.tags -%}
 		{%- if tag contains 'meta-label-lowest-price' -%}
   			{%-if product.price < product.compare_at_price -%}
@@ -33,6 +41,7 @@
             {%- endif -%}
 		{%- endif -%}
       {%- endfor -%}
+    {%- endif -%}
   {%- endif -%}
   {%- comment -%}
   {%- capture product_labels -%}
@@ -91,7 +100,8 @@
       {%- endif -%}
 
       {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-        {%- assign next_media = product.media[product.selected_variant.image.position] | default: product.media[1] -%}
+      	{%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position] | plus: 1 -%}
+        {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position] | default: product.media[next_media_pos] -%}
         <img class="product-item__secondary-image" loading="lazy" sizes="{{ sizes_attribute }}" {% render 'image-attributes', image: next_media, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' %}>
       {%- endif -%}
     </a>
