@@ -164,9 +164,10 @@ settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
     }
   
 let  targetNode = document.querySelector('html')
+  var cartMessageSent = false;
+
 
   window.addEventListener("load", function(){
-  var cartMessageSent = false;
 
   const hideFoldieCallback = function(mutationList){
       mutationList.forEach((mutation) => {
@@ -181,22 +182,20 @@ let  targetNode = document.querySelector('html')
               
           })
           
-//           if (mutation.type === "attributes") {
-// 			if (mutation.attributeName === "open" && !cartMessageSent) {
+          if (mutation.type === "attributes") {
+			if (mutation.attributeName === "open" && !cartMessageSent) {
 
             
-//               if(document.querySelector('.gokwik-checkout+div')){
-//   window.postMessage({ type: "cartOpen" }, window.location.href);
-// cartMessageSent = true;
-// console.log(cartMessageSent)
-// }
+              if(document.querySelector('.gokwik-checkout+div')){
+ 				 window.postMessage({ type: "cartOpen" }, window.location.href);
+				cartMessageSent = true;
+				}
               
-// 			}
-// 		}
+			}
+		}
       })
     }
   
-  var cartMessageSent = false;
 new MutationObserver((mutation) => {
 	if (!cartMessageSent) {
 		mutation.forEach((m) => {
