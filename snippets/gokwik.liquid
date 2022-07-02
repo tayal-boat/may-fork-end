@@ -195,6 +195,23 @@ let  targetNode = document.querySelector('html')
 // 		}
       })
     }
+  
+  var cartMessageSent = false;
+new MutationObserver((mutation) => {
+	if (!cartMessageSent) {
+		mutation.forEach((m) => {
+			const nodeArray = [...m.addedNodes].filter((node) => {
+				if (node.nodeName.toLowerCase() === "footer") {
+					window.postMessage({ type: "cartOpen" }, window.location.href);
+					cartMessageSent = true;
+				}
+			});
+		});
+	}
+}).observe(document.getElementsByTagName("CART-DRAWER")[0], {
+	childList: true,
+});
+
   const sizeCallback = function(mutationList){
     mutationList.forEach((mutation) => {
       var allForms = document.querySelectorAll('.drawer__content .product-form .product-form__buy-buttons form.shopify-product-form')
