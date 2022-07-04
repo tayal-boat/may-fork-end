@@ -1,0 +1,68 @@
+{% assign quinn_playlists = shop.metafields.quinn_playlists %}
+{% assign settings = shop.metafields.quinn_settings.global %}
+
+{% assign page_type = template.name %}
+
+{% if page_type == 'collection' %}
+  {% assign page_handle = collection.handle %}
+{% elsif page_type == 'product' %}
+  {% assign page_handle = product.handle %}
+{% elsif page_type == 'page' %}
+  {% assign page_handle = page.handle %}
+{% elsif page_type == 'index' %}
+  {% assign page_type = 'home' %}
+{% endif %}
+
+<script>
+  window.Quinn = {}
+  Quinn.debug_logs = {{ shop.metafields.quinn_settings.debug_logs | json }} == 'true';
+  Quinn.shop_domain = {{ shop.permanent_domain | json }}
+  Quinn.page_type = {{ page_type | json }}
+  Quinn.page_handle = {{ page_handle | json }}
+  Quinn.currency_symbol = {{ settings.general.currency_symbol | json }} || {{ cart.currency.symbol | json }},
+  Quinn.NetworkInterceptor = {{ settings.enable_interceptor | json  }};
+  Quinn.ABTestMode = {{ settings.ab_testing | json  }};
+  Quinn.ABTestId = {{ settings.ab_testing_id | json }};
+  Quinn.PageTracking = {{ settings.page_tracking | json  }};
+  Quinn.CartTracking = {{ settings.cart_tracking | json  }};
+  Quinn.AppSettings = {{ settings | json }};
+  Quinn.ProductPage = {{ product | json }};
+  Quinn.AppReady = true;
+
+  if(Quinn.NetworkInterceptor){
+    const origFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await origFetch(...args);
+      if(Quinn.interceptorCallback){
+        Quinn.interceptorCallback.Fetch(response.url, response, origFetch);
+      }
+      return response;
+    };
+
+    (function (XHR) {
+      let send = XHR.prototype.send;
+        XHR.prototype.send = function (data) {
+          let oldOnReadyStateChange;
+
+          function onReadyStateChange() {
+            if (this.readyState === 4 && Quinn.interceptorCallback) {
+              Quinn.interceptorCallback.XHR(this._url, this.response, XHR);
+            }
+            if (oldOnReadyStateChange) oldOnReadyStateChange();
+          }
+
+          /* Set xhr.noIntercept to true to disable the interceptor for a particular call */
+          if (!this.noIntercept) {
+            if (this.addEventListener) {
+              this.addEventListener("readystatechange", onReadyStateChange, false);
+            } else {
+              oldOnReadyStateChange = this.onreadystatechange;
+              this.onreadystatechange = onReadyStateChange;
+            }
+          }
+          send.call(this, data);
+        };
+      })(XMLHttpRequest);
+  }
+</script>
+<script src="{{ 'quinn-live.bundle.js' | asset_url }}" async></script>
