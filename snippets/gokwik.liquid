@@ -2,6 +2,28 @@
 settings.envType == 'sandbox' %} {% assign env = 'sandbox.pdp' %} {% elsif
 settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
 
+<style>
+ #gokwik-buy-now {
+   text-transform:uppercase;
+    padding: 10px!important;
+    font-size: 15px!important;
+   font-family: 'Montserrat', sans-serif !important;
+    margin-block: 8px 0;
+    text-align: center !important;
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    font-weight: 700!important;
+    background: transparent;
+    letter-spacing: initial;
+   text-align:center;
+   position:relative;
+}
+#gokwik-buy-now #btn-loader{
+  border-radius:3px!important;
+  
+}
+</style>
+
 <script src="https://{{ env }}.gokwik.co/integration.js?shop={{
     shop.url
   }}"></script>
@@ -142,9 +164,10 @@ settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
     }
   
 let  targetNode = document.querySelector('html')
+  var cartMessageSent = false;
+
 
   window.addEventListener("load", function(){
-  var cartMessageSent = false;
 
   const hideFoldieCallback = function(mutationList){
       mutationList.forEach((mutation) => {
@@ -161,34 +184,60 @@ let  targetNode = document.querySelector('html')
           
           if (mutation.type === "attributes") {
 			if (mutation.attributeName === "open" && !cartMessageSent) {
-				window.postMessage({ type: "cartOpen" }, window.location.href);
+
+            
+              if(document.querySelector('.gokwik-checkout+div')){
+ 				 window.postMessage({ type: "cartOpen" }, window.location.href);
 				cartMessageSent = true;
+				}
+              
 			}
 		}
       })
     }
+  
+new MutationObserver((mutation) => {
+	if (!cartMessageSent) {
+		mutation.forEach((m) => {
+			const nodeArray = [...m.addedNodes].filter((node) => {
+				if (node.nodeName.toLowerCase() === "footer") {
+					window.postMessage({ type: "cartOpen" }, window.location.href);
+					cartMessageSent = true;
+				}
+			});
+		});
+	}
+}).observe(document.getElementsByTagName("CART-DRAWER")[0], {
+	childList: true,
+});
+
   const sizeCallback = function(mutationList){
     mutationList.forEach((mutation) => {
       var allForms = document.querySelectorAll('.drawer__content .product-form .product-form__buy-buttons form.shopify-product-form')
         mutation.addedNodes.forEach((added_node) => {
           allForms.forEach(form => {
             if(isInViewport(form)){
+              var gokwikBuyNowButton= form.querySelector('#gokwik-buy-now')
+              if(gokwikBuyNowButton){
               if (form.querySelector('.loader-button__text').innerHTML == 'Sold out'){
-              	form.querySelector('#gokwik-buy-now').style.display = 'none'
+              	gokwikBuyNowButton.style.display = 'none'
               }else{
-              	form.querySelector('#gokwik-buy-now').style.display = 'block'
-              }
+              	gokwikBuyNowButton.style.display = 'block'
+              }}
             }
           })
         })
         mutation.removedNodes.forEach((removed_node) => {
           allForms.forEach(form => {
             if(isInViewport(form)){
+              
+               var gokwikBuyNowButton= form.querySelector('#gokwik-buy-now')
+              if(gokwikBuyNowButton){
               if (form.querySelector('.loader-button__text').innerHTML == 'Sold out'){
-              	form.querySelector('#gokwik-buy-now').style.display = 'none'
+              	gokwikBuyNowButton.style.display = 'none'
               }else{
-              	form.querySelector('#gokwik-buy-now').style.display = 'block'
-              }
+              	gokwikBuyNowButton.style.display = 'block'
+              }}
             }
           })
         })
@@ -323,23 +372,3 @@ removeOverlay?.observe(targetNode, config)
 }  
 </script>
 
-<style>
- #gokwik-buy-now {
-   text-transform:uppercase;
-    padding: 10px!important;
-    font-size: 15px!important;
-    margin-block: 8px 0;
-    text-align: center;
-    border: 2px solid #ff0000;
-    color: #ff0000;
-    font-weight: 700!important;
-    background: transparent;
-    letter-spacing: initial;
-   text-align:center;
-   position:relative;
-}
-#gokwik-buy-now #btn-loader{
-  border-radius:3px!important;
-  
-}
-</style
