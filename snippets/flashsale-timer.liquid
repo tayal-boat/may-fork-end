@@ -1,4 +1,4 @@
-{% if end_date != blank %} 
+
  <div class="flashtimer"> 
    {% if title != blank %}<h4 class="timer__title">{{ title }}:</h4>{% endif %} 
    <div class="timer-display"> 
@@ -29,9 +29,9 @@
        minute = second * 60, 
        hour = minute * 60, 
        _day = hour * 24; 
-
+{% if end_date != blank %} 
    var countDown = new Date('{{- end_date -}}').getTime(), 
-       x = setInterval(function() { 
+          x = setInterval(function() { 
    var now = new Date().getTime(), 
        distance = countDown - now; 
        if (distance < 0) {
@@ -42,9 +42,25 @@
        document.querySelector('.flashtimer .js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)) + 'm', 
        document.querySelector('.flashtimer .js-timer-seconds').innerText = Math.floor((distance % (minute)) / second) + 's';  
        }
-   }, second);
+   }, second); 
      var now = new Date().getTime(), 
      distance = countDown - now; 
+ {% else %} 
+var hr = 23;
+var sec = 60;
+var min = 60;
+var distance = 1; 
+       x = setInterval(function() { 
+       var curr = new Date();   
+//     document.querySelector('.flashtimer .js-timer-days').innerText = Math.floor(distance / (_day)) + 'd', 
+       document.querySelector('.flashtimer .js-timer-hours').innerText =  hr - curr.getHours() + 'h', 
+         console.log(hr - curr.getHours() + 'h');
+       document.querySelector('.flashtimer .js-timer-minutes').innerText = min - curr.getMinutes() + 'm', 
+       document.querySelector('.flashtimer .js-timer-seconds').innerText = sec - curr.getSeconds() + 's';  
+   }, second);    
+{% endif %} 
+
+
    if (distance > 0) { 
    const printNumbersForEvery2Sec = (n)=>{
     for (let i = 1; i <= n; i++) {
@@ -162,4 +178,3 @@
   }
    {%- endif -%}
  </style> 
- {% endif %} 
