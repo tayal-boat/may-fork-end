@@ -17,6 +17,8 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
 
 <html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}"draggable="false">
   <head>
+   {% render 'quinn-scripts.liquid' %}
+
    
 
    
@@ -445,7 +447,7 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
     {%- render 'bottom-navbar-mobile' -%}
         {% endunless %}
     <!--   NO RESULTS FOUND EVENT ends   -->
-   {%- if template contains 'product' -%} {%- render 'w369' -%}{%- endif -%}
+{% comment %}   {%- if template contains 'product' -%} {%- render 'w369' -%}{%- endif -%}  {% endcomment %}
 
     {% include 'zest-money-widget' %}
     
@@ -464,5 +466,21 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
    
 
    
-</body>
+
+   {% if template == 'index' %}{% render 'quinn-live.liquid' %}{% endif %}
+      <script>
+var _rmData = _rmData || [];
+_rmData.push(['setStoreKey', 'Rm193om6']);
+{% if customer %}
+_rmData.push(['setCustomer', {{ customer.email | json }}]);
+{% endif %}
+</script>
+<script>(function(d, t) {
+var g = d.createElement(t),
+s = d.getElementsByTagName(t)[0];
+g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
+s.parentNode.insertBefore(g, s);
+}(document, 'script'));</script>
+<script type="text/javascript" src="https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js"></script> 
+{% include 'invitereferrals' %}</body>
 </html>
