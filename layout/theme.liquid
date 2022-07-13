@@ -18,11 +18,6 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
 <html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}"draggable="false">
   <head>
    {% render 'quinn-scripts.liquid' %}
-
-   
-
-   
-
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -449,38 +444,31 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
     <!--   NO RESULTS FOUND EVENT ends   -->
 {% comment %}   {%- if template contains 'product' -%} {%- render 'w369' -%}{%- endif -%}  {% endcomment %}
 
-    {% include 'zest-money-widget' %}
-    
-    
-         
+{% include 'zest-money-widget' %}
 <!--  Magic Checkout Code Starts -->
-
 {% include 'magicCheckoutSnippet' %}
-
 <!--  Magic Checkout Code Ends -->  
         
 {% unless template contains 'product' or template contains 'customers' %}
     {% comment %}{% render 'chatbot' %}{% endcomment %}
 {% endunless %}
-  
-   
-
-   
-
-   {% if template == 'index' %}{% render 'quinn-live.liquid' %}{% endif %}
-      <script>
-var _rmData = _rmData || [];
-_rmData.push(['setStoreKey', 'Rm193om6']);
-{% if customer %}
-_rmData.push(['setCustomer', {{ customer.email | json }}]);
-{% endif %}
+{%- if template == 'index' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
+<script>
+  var _rmData = _rmData || [];
+  _rmData.push(['setStoreKey', 'Rm193om6']);
+  {% if customer %}
+  _rmData.push(['setCustomer', {{ customer.email | json }}]);
+  {% endif %}
 </script>
-<script>(function(d, t) {
-var g = d.createElement(t),
-s = d.getElementsByTagName(t)[0];
-g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
-s.parentNode.insertBefore(g, s);
-}(document, 'script'));</script>
+<script>
+  (function(d, t) {
+  var g = d.createElement(t),
+  s = d.getElementsByTagName(t)[0];
+  g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
+  s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+</script>
 <script type="text/javascript" src="https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js"></script> 
-{% include 'invitereferrals' %}</body>
+{%- render 'invitereferrals' -%}
+</body>
 </html>

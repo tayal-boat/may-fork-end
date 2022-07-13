@@ -42,7 +42,7 @@
             <div class="form-group" style="margin: 0;">
               <div class="myform" style="display: flex;margin: 0;justify-content: center;">
               	<input style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;" type="email" name="email" id="sale_email" placeholder="Email Address">
-              <button style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;" class="button sale-btn" type="submit">YES</button>
+              <button style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;" class="button sale-btn" type="submit">NOTIFY ME</button>
               </div>
             </div>
           </div>
@@ -147,9 +147,10 @@
     padding: 0 12px;
     height: 45px;
   }
+  
   #saleModal input::-webkit-input-placeholder {color: #ccc;}
   #saleModal .sale-btn:hover {background: #EB1C24!important;}
-  
+  .modal {transform: translateY(0%)!important;}
   @media screen and (max-width: 600px) {
   	#saleModal .modal-dialog{top: 25%;}
   }
@@ -211,7 +212,7 @@
               ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
               : (localStorage.setItem("userEmailIdSale", e),
                 clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
-                clevertap.event.push("Notify Me AD175", { Email: e, Source: "HomePage Banner Popup" }),
+                clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
                 $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
           : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
       setTimeout(function () {
@@ -242,6 +243,11 @@
           "type": "text",
           "id": "banner_number",
           "label": "Enter banner number on which you want to show popup"
+        },
+         {
+          "type": "text",
+          "id": "clevertap_id",
+          "label": "clever tap event"
         }
 	],
 	"blocks": [

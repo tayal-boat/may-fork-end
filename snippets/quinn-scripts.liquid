@@ -1,7 +1,9 @@
 {% assign quinn_playlists = shop.metafields.quinn_playlists %}
 {% assign settings = shop.metafields.quinn_settings.global %}
+{% assign load_script = true %}
 
 {% assign page_type = template.name %}
+{% assign page_handle = '' %}
 
 {% if page_type == 'collection' %}
   {% assign page_handle = collection.handle %}
@@ -10,7 +12,48 @@
 {% elsif page_type == 'page' %}
   {% assign page_handle = page.handle %}
 {% elsif page_type == 'index' %}
+  {% assign page_handle = 'index' %}  
+{% endif %}
+
+{% if settings.disable_all_page_script %}
+  {% assign load_script = false %}
+
+  {% for current_playlist in quinn_playlists %}
+    {% for page in current_playlist[1].exclude_pages %}
+      {% if page.type == page_type and page.handle == page_handle %}
+        {% assign exclude_page = true %}
+        {% break %}
+      {% endif %}
+      {% if page.type == page_type and page.handle == 'quinn_all' %}
+        {% assign exclude_page = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if exclude_page %}
+      {% continue %}
+    {% endif %}
+
+    {% for page in current_playlist[1].pages %}
+      {% if page.type == 'all' %}
+        {% assign load_script = true %}
+        {% break %}
+      {% endif %}
+      {% if page.type == page_type and page.handle == page_handle %}
+        {% assign load_script = true %}
+        {% break %}
+      {% endif %}
+      {% if page.type == page_type and page.handle == 'quinn_all' %}
+        {% assign load_script = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endif %} 
+
+{% if page_type == 'index' %}
   {% assign page_type = 'home' %}
+  {% assign page_handle = nil %}
 {% endif %}
 
 <script>
@@ -65,4 +108,80 @@
       })(XMLHttpRequest);
   }
 </script>
-<script src="{{ 'quinn-live.bundle.js' | asset_url }}" async></script>
+<script>
+function addPropertiesToProductForm() {
+  let products = localStorage.getItem("_quinn-products-viewed");
+  if (Quinn.NetworkInterceptor || !products) return;
+
+  products = JSON.parse(products);
+  products = products.filter(
+    (product) =>
+      product.timestamp &&
+      Date.now() < product.timestamp + 15 * 24 * 60 * 60 * 1000
+  );
+
+  const forms = document.querySelectorAll('form[action="/cart/add"]');
+  forms.forEach((form) => {
+    // const formId = form.attributes.id.value;
+    const productIdInput = form.querySelector('input[name="id"]');
+
+    let productViewed = false;
+    let properties = "";
+
+    if (Quinn.ProductPage) {
+      productViewed = products.find(
+        (product) =>
+          product.productid === Quinn.ProductPage.id ||
+          product.variants.includes(Quinn.ProductPage.id)
+      );
+    } else if (productIdInput) {
+      const productId = parseInt(productIdInput.value);
+      productViewed = products.find(
+        (product) =>
+          product.productid === productId ||
+          product.variants.includes(productId)
+      );
+    }
+
+    const distinctid = localStorage.getItem("_quinn_guid");
+    const sessionid = sessionStorage.getItem("_quinn_session_id");
+    const commonid = localStorage.getItem("_quinn_common_id");
+
+    if (productViewed) {
+      const pagetype = productViewed.pagetype || Quinn.page_type;
+      const pagepath =
+        pagetype != "home" ? productViewed.pagepath || Quinn.page_handle : null;
+      properties = JSON.stringify({
+        distinctid,
+        sessionid,
+        commonid,
+        pagetype,
+        pagepath,
+        widgettype: productViewed.widgettype,
+        type: "influenced",
+      });
+    } else if (Quinn.ABTestMode || Quinn.CartTracking)
+      properties = JSON.stringify({
+        distinctid,
+        sessionid,
+        commonid,
+        pagetype: Quinn.page_type,
+        pagepath: Quinn.page_handle,
+        type: "other",
+      });
+
+    if (!properties) return;
+    const inputNode = document.createElement("input");
+    inputNode.setAttribute("type", "hidden");
+    inputNode.setAttribute("name", "properties[_quinn-properties]");
+    inputNode.setAttribute("value", properties);
+    form.appendChild(inputNode);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", addPropertiesToProductForm);
+</script>
+
+{% if load_script or settings.ab_testing %}
+  <script src="{{ 'quinn-live.bundle.js' | asset_url }}" async></script>
+{% endif %}
