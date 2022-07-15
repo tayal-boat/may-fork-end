@@ -789,14 +789,9 @@ display: flex;
         {% assign i = -1 %} 
         {% for variant in product.variants %}
         {% if variant.available == true %}
-        {% if variant.title contains '/'%}
-        {% assign arr_var = variant.title | split: "/" %}
-        {% assign color = arr_var[1] %}
-        {% assign title = arr_var[0] %}
-        {% else %}
-        {% assign color = variant.title %}
-        {% assign title = variant.title %}
-        {% endif %}
+        
+        {% assign color = variant.metafields.my_fields.variantcolorcode %}
+        
         {% assign i =  i | plus: 1 %} 
 
 <div prod-id ="{{p_id}}" var-id = "{{variant.id}}" swatch-num = "{{i}}" color = {{color}} class="new color-swatch {{color}} {{variant.id}}_color-swatch" style="color:white; background: {{color}}" data-title="{{title}}"></div>
@@ -804,12 +799,7 @@ display: flex;
         {% endfor %}
         {% for variant in product.variants %}
         {% if variant.available == false %}
-        {% if variant.title contains '/'%}
-        {% assign arr_var = variant.title | split: "/" %}
-        {% assign color = arr_var[1] %}
-        {% else %}
-        {% assign color = variant.title %}
-        {% endif %}
+        {% assign color = variant.metafields.my_fields.variantcolorcode %}
         {% assign i =  i | plus: 1 %} 
 
   <div prod-id ="{{p_id}}" var-id = "{{variant.id}}" swatch-num = "{{i}}" color = {{color}} class="new color-swatch {{color}} {{variant.id}}_color-swatch" style="color:white; background: {{color}}"></div>
