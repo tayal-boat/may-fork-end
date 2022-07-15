@@ -5256,6 +5256,7 @@
       if (!productPrices) {
         return;
       }
+      console.log("price trigger changes")
       if (!variant) {
         productPrices.style.display = "none";
       } else {

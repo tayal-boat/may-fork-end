@@ -4,7 +4,6 @@
      let NamogooDiscount = JSON.parse(localStorage.getItem('Namogoo'));
      let discountValue = NamogooDiscount.discountValue;
     }
-    console.log('product-js');
     function NamogooDisCalculation(){
       if($('.variant-swatch-list').length > 0){
       let selectedVarient = $('.variant-swatch-list .variant-swatch input:checked');
@@ -18,7 +17,7 @@
       let custom_saved_price = comparePrice - savePrice;
       let custom_saved_dis = Math.round(custom_saved_price * 100 / comparePrice);
       $('.custom-saved-price').html('You Save: '+Shopify.formatMoney(custom_saved_price,Shopify.money_format)+' ('+custom_saved_dis+'%) ');
-      console.log(savePriceDis);
+      console.log(savePrice);
       
       {% elsif settings.enable_namagoo %}
       {% if product.tags contains 'namogoo' %}
@@ -28,13 +27,12 @@
       let custom_saved_price = comparePrice - savePrice;
       let custom_saved_dis = Math.round(custom_saved_price * 100 / comparePrice);
       $('.custom-saved-price').html('You Save: '+Shopify.formatMoney(custom_saved_price,Shopify.money_format)+' ('+custom_saved_dis+'%) ');
-      console.log(savePriceDis);
        }
        {% endif %}
       {% endif %}
       $('.custom-product-price .price.price--highlight.price--large').html(Shopify.formatMoney(savePrice,Shopify.money_format));
         $('.custom-product-price .price.price--compare.line-through').html(Shopify.formatMoney(comparePrice,Shopify.money_format));
-       console.log(savePrice);
+       console.log(savePrice, "savePrice");
       }
     }
     	NamogooDisCalculation(); 
@@ -52,6 +50,7 @@
     $('button.product__thumbnail-item.hidden-pocket').hover(function(){  $(this).trigger('click');  }); 
     $('.variant-swatch-list .variant-swatch').each(function() {
       $(this).click(function() {
+        
        if($(this).hasClass('is-disabled')) {
           $('.stock-label-side').text('Out of Stock');
           $('.stock-label-side').css("visibility", "visible");
@@ -281,9 +280,16 @@
              $(this).attr("data-target", "#manualModal");
              $(this).attr("data-toggle", "modal");
           }
-        })
-        
-        
+        });
+<!--         Functionality to enable different page redirects for different variants -->
+        $('.product__info .variant-swatch-list .variant-swatch').each(function() {
+          $(this).click(function(e) {
+              if($(this).is("[data-var-url]")) {
+                  var currVar = $(this).data('var-url');
+                  location.href = currVar;
+              }
+          });
+        }); 
   });
 
 </script>
