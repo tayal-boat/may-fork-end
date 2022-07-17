@@ -31,11 +31,20 @@ function openRzpCheckout(e) {
             if (cart.total_price === 0 || cart.items.length === 0) {
                 return Promise.reject("Your cart is empty, add an item to continue");
             }
-            return fetch("/apps/rzp_1cc/checkout?key_id=" + rzpMerchantKey, {
+            // return fetch("/apps/rzp_1cc/checkout?key_id=" + rzpMerchantKey, {
+            //     method: "POST",
+            //     headers: {
+            //     "Accept": "application/json",
+            //     "Content-Type": "application/json"
+            //     },
+            //     body: JSON.stringify({ cart: cart, key: rzpMerchantKey }),
+            // });
+
+            return fetch("https://api.razorpay.com/v1/1cc/shopify/checkout?key_id=" + rzpMerchantKey, {
                 method: "POST",
                 headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
+                  "Accept": "application/json",
+                  "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ cart: cart, key: rzpMerchantKey }),
             });
