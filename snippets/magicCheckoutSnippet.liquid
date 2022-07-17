@@ -4,6 +4,14 @@
 
 <script>
 
+    // fetch("/apps/rzp_1cc/complete?key_id="+ rzpMerchantKey , {
+    //     method: "POST",
+    //     headers: {
+    //     "Accept": "application/json",
+    //     "Content-Type": "application/json"
+    //     },
+    //     body: JSON.stringify({ ...handlerRes, key: rzpMerchantKey }),
+    // })
 
 var inProgress = false;
 var rzpMerchantKey = "rzp_live_iCBWgJBHr7vDrd";
@@ -31,6 +39,7 @@ function openRzpCheckout(e) {
             if (cart.total_price === 0 || cart.items.length === 0) {
                 return Promise.reject("Your cart is empty, add an item to continue");
             }
+            // NOTE: keeping this here until cdn upgrade
             // return fetch("/apps/rzp_1cc/checkout?key_id=" + rzpMerchantKey, {
             //     method: "POST",
             //     headers: {
@@ -95,11 +104,11 @@ function rzpCanCheckout() {
 function handlePaymentRes(handlerRes) {
     var finalRes;
   	toggleLoader(true);
-    fetch("/apps/rzp_1cc/complete?key_id="+ rzpMerchantKey , {
+    fetch("https://api.razorpay.com/v1/1cc/shopify/complete?key_id="+ rzpMerchantKey , {
         method: "POST",
         headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+          "Accept": "application/json",
+          "Content-Type": "text/plain"
         },
         body: JSON.stringify({ ...handlerRes, key: rzpMerchantKey }),
     })
