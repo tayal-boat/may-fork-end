@@ -1017,14 +1017,19 @@
 
         {%- if section.settings.show_checkout_button -%}
               {% if cart.total_price <= 4700000 %}
+                  {%- assign gokwick_ok = true -%}
                   {%- assign is_validation_ok = true -%}
                   {%- assign qty_error_msg = 'Please Modify your cart to proceed.' -%}
                   {%- assign product_limit_ok = true -%}
             {%- assign product_flash = false -%}
                   {% for line_item in cart.items %}
+            {% if line_item.product.tags contains 'prebooking' %} 
+               {%- assign gokwick_ok = false -%}
+                {% endif %}
             {% if line_item.product.tags contains 'flash-sale' %}
             {%- assign product_flash = true -%}
                {% endif %}
+            
                       {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
                           {%- assign product_limit_ok = false -%}
                       {% endif %}
@@ -1052,9 +1057,9 @@
           </button></p>
                   {% if is_validation_ok == true and product_limit_ok == true %}
                     <div class=" checkout-buttons-div">
- {%- unless line_item.product.tags contains 'prebooking' -%} 
+ {%- if gokwick_ok == true -%} 
    {% render 'gokwik-checkout' %}
-        {%- endunless -%}   
+        {%- endif -%}   
 <!-- 						<button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
                       Pay Via Card  </button> -->
                       
