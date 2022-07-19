@@ -81,7 +81,9 @@
                                   <span class="visually-hidden">{{ value }}</span>
                                   <img class="variant-swatch__image" loading="lazy" sizes="(max-width: 740px) 64px, 72px" {% render 'image-attributes', image: variant.featured_media, sizes: '64,72,128,144,192,216' %}>
                                 </label>
-                                  {% if variant.available %}<span class="stock-label hidden-lap-and-up">In Stock</span>{% else %}<span class="stock-label hidden-lap-and-up">Out of Stock</span>{% endif %}
+                {%- unless product.tags contains 'prebooking' -%} 
+                    {% if variant.available %}<span class="stock-label hidden-lap-and-up">In Stock</span>{% else %} <span class="stock-label hidden-lap-and-up">Out of Stock</span>{% endif %}
+                    {% endunless %}
                               </div> 
                             </div>
                             {%- break -%}
@@ -556,31 +558,29 @@
             {%- if product.tags contains 'flash-sale' -%}
             <input class="flash_sale_enable" type="hidden" name="properties[flash_sale]" value="true">
             {%- endif -%}
-              <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer"{% endif %} class="product-form__payment-container" {{ block.shopify_attributes }}>
-                <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-                  {%- if product.selected_or_first_available_variant.available -%}
-                    {%- if product.template_suffix == 'pre-order' -%}
+            <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer"{% endif %} class="product-form__payment-container" {{ block.shopify_attributes }}>
+         {%- if product.tags contains 'prebooking' -%}  
+              <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %} >
                       {{- 'product.form.pre_order' | t -}}
-                    {%- else -%}
+                </button>
+          {% else %}
+              <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"     {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                  {%- if product.selected_or_first_available_variant.available -%}
                       {{- 'product.form.add_to_cart' | t -}}
-                    {%- endif -%}
-                  {%- else -%}
+                        {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
-			{%- comment -%}              
-              <button style="background: white; color: #ff0000;border: 2px solid;" id="" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-				BUY NOW
-              </button>
-			{%- endcomment -%} 
-             {%- if product.selected_or_first_available_variant.available -%} 
-               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}         
-                <button type="button" onclick="onBuyNowClick(this, '{{ product_form_id }}')" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}>
+               {%- endif -%}
+
+               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}         
+                <button type="button" onclick="onBuyNowClick(this, '{{ product_form_id }}')" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
                  {{ settings.buynow-titile }}
                  <div style="display:none"><div class="cir-loader">Loading..</div></div>
                  </button>
                {%- endif -%}
-		      {%- endif -%}
+		  
+ 
        {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
           {%- comment -%}           {{ form | payment_button }}       	{%- endcomment -%}   
                 
