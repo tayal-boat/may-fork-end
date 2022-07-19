@@ -1,22 +1,13 @@
-<script>
-  window.merchantInfo  = {
-          mid: "{{ settings.mid }}",
-          environment: "{{ settings.envType }}",
-          type: "merchantInfo",
-    		storeId: "{{shop.id}}",
-    		fbpixel: "{{settings.fbpixel}}",
-        }
-  var productFormSelector = '.shopify-product-form';
-  var cart = {{ cart | json }}
-  var templateName = '{{template.name}}'
-</script>
-<script src="https://pdp.gokwik.co/merchant-integration/build/merchant.integration.js?v4"></script>
+{% if settings.envType == 'production' %} {% assign env = 'pdp' %} {% elsif
+settings.envType == 'sandbox' %} {% assign env = 'sandbox.pdp' %} {% elsif
+settings.envType == 'qa' %} {% assign env = 'qa.pdp' %} {%endif%}
+
 <style>
  #gokwik-buy-now {
    text-transform:uppercase;
     padding: 10px!important;
     font-size: 15px!important;
-   font-family: 'Montserrat', sans-serif !important;
+   font-family: 'Montserrat', sans-serif !important; 
     margin-block: 8px 0;
     text-align: center !important;
     border: 2px solid #ff0000;
@@ -33,14 +24,149 @@
 }
 </style>
 
-
-
+<script src="https://{{ env }}.gokwik.co/integration.js?shop={{
+    shop.url
+  }}"></script>
 <script>
-let  targetNode = document.querySelector('html')
-  var cartMessageSent = false;
+  
+  let currentForm = ''
+  {% if settings.goEnable %}
+  window.merchantInfo  = {
+          mid: "{{ settings.mid }}",
+          environment: "{{ settings.envType }}",
+          type: "merchantInfo",
+    		storeId: "{{shop.id}}",
+    		fbpixel: "{{settings.fbpixel}}",
+        }
+  {% endif %}
+  {% if settings.goBuynowEnable %}
+  /* gokwik buy now  */
+    function makeXhr(method, url, data, track){
+      var xhttp = new XMLHttpRequest();
+      xhttp.open(method, url, true);
+      xhttp.setRequestHeader("Content-type", "application/json");
+      xhttp.onload = function() {
+        var status = xhttp.status;
+        var response = xhttp.response;
+         track( status, response)
+      };
+      xhttp.send(data ? JSON.stringify(data) : null);
+    }
+  /* retrieve cart after checkout and refresh the page */
+  retrieveCart()
+  HTMLElement.prototype.serialize = function(){
+      var obj = {};
+      var elements = this.querySelectorAll( "input, select, textarea" );
+      for( var i = 0; i < elements.length; ++i ) {
+          var element = elements[i];
+          var name = element.name;
+          var value = element.value;
 
+          if( name ) {
+              obj[ name ] = value;
+          }
+      }
+      return JSON.stringify( obj );
+  }
+  
+  
+
+ 
+
+  gokwikSdk.on("modal_closed",()=>{
+        retrieveCart();
+  });
+
+  function retrieveCart(){
+
+     var reTakeCart = JSON.parse(localStorage.getItem('cartItems'));
+     if(reTakeCart && reTakeCart.length){
+      var data = {
+        'items': reTakeCart
+      }
+      makeXhr('POST', '/cart/clear.js', '', function(statusCode){
+         if(statusCode === 200){
+          makeXhr('POST', '/cart/add.js', data, function(j){
+            if(j==200){
+             localStorage.removeItem('cartItems');
+            }
+          });
+         }
+      });
+
+    }
+
+  }
+
+  {% endif %}
+
+
+  function getCookie(cname) {
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+  //   onclick="gokwikSdk.initCheckout(merchantInfo);logEvent({})"
+  function logEvent() {
+    var url;
+    {% if settings.envType == 'production' %}
+    	url = 'https://hits.gokwik.co/api/v1/events';
+    {% elsif settings.envType == 'sandbox' %}
+    	url = 'https://sandbox-hits.gokwik.co/api/v1/events'
+    {%endif%}
+    var timestamp = Date.now();
+    var userAgent = navigator.userAgent;
+    var merchantId = window.merchantInfo.mid;
+    var name = "gokwik-button-clicked";
+    var eventType = "onGkClick";
+    var type = "event";
+    var adSource = getCookie("_shopify_sa_p")
+    var sessionId = localStorage.getItem('gokwik-sessionID');
+    var version = "1";
+    var analyticObj = { timestamp, userAgent, version, merchantId, name, sessionId, type, adSource, eventType };
+    if (!sessionId) delete analyticObj["sessionId"];
+    if (!adSource) delete analyticObj["adSource"];
+
+    xhrPostCall(url, analyticObj);
+
+  };
+
+  function xhrPostCall(url, body) {
+      return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+  //       xhr.responseType = 'json';
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function () {
+          const response = JSON.parse(xhr.response);
+          resolve(response);
+        };
+        xhr.onerror = function () {
+          const response = JSON.parse(xhr.response);
+          resolve(response);
+        };
+        xhr.send(JSON.stringify(body));
+      });
+  };
+
+    function  initiateGokwik() {
+    	gokwikSdk.initCheckout(merchantInfo);
+      logEvent();
+    }
+  
+let  targetNode = document.querySelector('html')
 
   window.addEventListener("load", function(){
+  var cartMessageSent = false;
 
   const hideFoldieCallback = function(mutationList){
       mutationList.forEach((mutation) => {
@@ -55,20 +181,22 @@ let  targetNode = document.querySelector('html')
               
           })
           
-          if (mutation.type === "attributes") {
-			if (mutation.attributeName === "open" && !cartMessageSent) {
+//           if (mutation.type === "attributes") {
+// 			if (mutation.attributeName === "open" && !cartMessageSent) {
 
             
-              if(document.querySelector('.gokwik-checkout+div')){
- 				 window.postMessage({ type: "cartOpen" }, window.location.href);
-				cartMessageSent = true;
-				}
+//               if(document.querySelector('.gokwik-checkout+div')){
+//   window.postMessage({ type: "cartOpen" }, window.location.href);
+// cartMessageSent = true;
+// console.log(cartMessageSent)
+// }
               
-			}
-		}
+// 			}
+// 		}
       })
     }
   
+  var cartMessageSent = false;
 new MutationObserver((mutation) => {
 	if (!cartMessageSent) {
 		mutation.forEach((m) => {
@@ -135,11 +263,113 @@ const config = { attributes: true, childList: true, subtree: true };
 const sizeObserver2 = new MutationObserver(sizeCallback2);
 sizeObserver2.observe(targetNode, config);
 
-//const sizeObserver = new MutationObserver(sizeCallback);
-//sizeObserver.observe(targetNode, config); 
+const sizeObserver = new MutationObserver(sizeCallback);
+sizeObserver.observe(targetNode, config);
      
 const removeOverlay = new MutationObserver(hideFoldieCallback)
 removeOverlay?.observe(targetNode, config)
      
 }); 
+      
 </script>
+
+<script>
+  function onBuyNowClick(e, isProductpage){
+                const loader = e.children[0];
+                loader.setAttribute("id","btn-loader");
+                e.disabled = true
+                e.style.cursor = "not-allowed";
+    		    gokwikBuyNow(isProductpage);
+                loader.style.display = "flex";
+        setTimeout(() =>{
+                 loader.style.display = "none";
+  				  e.disabled = false
+                  e.style.cursor = "pointer";
+        loader.removeAttribute("id")
+       },3000)
+  }
+  function onCheckoutClick(e) {
+    const loader = e.children[2];
+    loader.setAttribute("id", "btn-loader");
+    e.disabled = true;
+    e.style.cursor = "not-allowed";
+    initiateGokwik();
+    loader.style.display = "flex";
+    setTimeout(() => {
+      loader.style.display = "none";
+      e.disabled = false;
+      e.style.cursor = "pointer";
+      loader.removeAttribute("id");
+    }, 3000);
+    clevertap.event.push("GoKwik Button Clicked");
+  }
+  
+   function gokwikBuyNow(isProductpage){
+    console.log('gokwikbuynow');
+    /*---------------Swatchsize check------------------*/
+    
+//     $('.SizeSwatchList .show-size-message').css('display','none');
+//     if($(`.SizeSwatchList input:checked`).val() == undefined){
+//       $('.SizeSwatchList .show-size-message').css('display','block');
+//       return;
+//     };
+
+    if ({{ cart.item_count | json | json }}) {
+      makeXhr('GET', '/cart.js', '', function(statusCode, res){
+        if(statusCode === 200 ){
+          var cartItems = JSON.parse(res).items.map(element=>({
+            id:element.id,
+            quantity: element.quantity,
+            options_with_values : element.options_with_values
+          }));
+          localStorage.setItem('cartItems', JSON.stringify(cartItems));
+          makeXhr('POST', '/cart/clear.js', '', function(statusCode){
+            if(statusCode === 200){
+             gkaddCartBuyNow(isProductpage)
+            }
+          });
+
+        }
+      });
+    } else {
+     gkaddCartBuyNow(isProductpage)
+    }
+  }
+  function serialize(data) {
+	let obj = {};
+	for (let [key, value] of data) {
+		if (obj[key] !== undefined) {
+			if (!Array.isArray(obj[key])) {
+				obj[key] = [obj[key]];
+			}
+			obj[key].push(value);
+		} else {
+			obj[key] = value;
+		}
+	}
+	return obj;
+  }
+  
+  function gkaddCartBuyNow(isProductpage){
+    var productForm = document.querySelector(`#${isProductpage}`);
+    let data = new FormData(productForm);
+    var productItems = serialize(data);
+
+    makeXhr('POST', '/cart/add.js', productItems, function(j){
+          if(j==200){
+           gokwikSdk.initCheckout(merchantInfo);
+          }
+        });
+  }
+
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}  
+</script>
+
