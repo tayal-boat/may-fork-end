@@ -38,27 +38,38 @@
     	NamogooDisCalculation(); 
     
     if($('.variant-swatch input[checked="checked"]').parent('.variant-swatch').hasClass('is-disabled')) {
-       $('.stock-label-side').text('Out of Stock');
-       $('.stock-label-side').css("visibility", "visible");
-          $('.currently-in-cart').fadeOut();
+        $('.stock-label-side').text('Out of Stock');
+        $('.stock-label-side').css("visibility", "visible");
+        $('.currently-in-cart').fadeOut();
+        {% if product.tags contains 'prebooking' %}
+            $('button#AddToCart').attr('data-sold', true);
+        {% endif %}
         } else  {
           $('.stock-label-side').text('In Stock');
           $('.currently-in-cart').fadeIn();
           $('.stock-label-side, .currently-in-cart').css("visibility", "visible");
+          {% if product.tags contains 'prebooking' %}
+            $('button#AddToCart').attr('data-sold', false);
+          {% endif %}
         }
     $('.product-tabs__content').find('img').attr('loading', 'lazy');
     $('button.product__thumbnail-item.hidden-pocket').hover(function(){  $(this).trigger('click');  }); 
     $('.variant-swatch-list .variant-swatch').each(function() {
       $(this).click(function() {
-        
        if($(this).hasClass('is-disabled')) {
           $('.stock-label-side').text('Out of Stock');
           $('.stock-label-side').css("visibility", "visible");
           $('.currently-in-cart').fadeOut();
+          {% if product.tags contains 'prebooking' %}
+            $('button#AddToCart').attr('data-sold', true);
+          {% endif %}
         } else  {
           $('.stock-label-side').text('In Stock');
           $('.currently-in-cart').fadeIn();
           $('.stock-label-side, .currently-in-cart').css("visibility", "visible");
+          {% if product.tags contains 'prebooking' %}
+            $('button#AddToCart').attr('data-sold', false);
+          {% endif %}
         }
         NamogooDisCalculation(); 
       });
