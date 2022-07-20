@@ -1,0 +1,145 @@
+<script>
+  window.merchantInfo  = {
+          mid: "{{ settings.mid }}",
+          environment: "{{ settings.envType }}",
+          type: "merchantInfo",
+    		storeId: "{{shop.id}}",
+    		fbpixel: "{{settings.fbpixel}}",
+        }
+  var productFormSelector = '.shopify-product-form';
+  var cart = {{ cart | json }}
+  var templateName = '{{template.name}}'
+</script> 
+<script src="https://pdp.gokwik.co/merchant-integration/build/merchant.integration.js?v4"></script>
+<style>
+ #gokwik-buy-now {
+   text-transform:uppercase;
+    padding: 10px!important;
+    font-size: 15px!important;
+   font-family: 'Montserrat', sans-serif !important;
+    margin-block: 8px 0;
+    text-align: center !important;
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    font-weight: 700!important;
+    background: transparent;
+    letter-spacing: initial;
+   text-align:center;
+   position:relative;
+}
+#gokwik-buy-now #btn-loader{
+  border-radius:3px!important;
+  
+}
+</style>
+
+
+
+<script>
+let  targetNode = document.querySelector('html')
+  var cartMessageSent = false;
+
+
+  window.addEventListener("load", function(){
+
+  const hideFoldieCallback = function(mutationList){
+      mutationList.forEach((mutation) => {
+          let gokwikIfram = document.querySelector('#gokwik-iframe')
+          let foldieIfram = document.querySelector('.foldie-container-overlay')
+          mutation.addedNodes.forEach((added_node) => {
+              if(gokwikIfram){
+                   if(screen.width<700 && gokwikIfram){
+                      document.querySelector('#nmg-templates').parentElement.style.zIndex = "2147483646";
+                   }
+              }
+              
+          })
+          
+          if (mutation.type === "attributes") {
+			if (mutation.attributeName === "open" && !cartMessageSent) {
+
+            
+              if(document.querySelector('.gokwik-checkout+div')){
+ 				 window.postMessage({ type: "cartOpen" }, window.location.href);
+				cartMessageSent = true;
+				}
+              
+			}
+		}
+      })
+    }
+  
+new MutationObserver((mutation) => {
+	if (!cartMessageSent) {
+		mutation.forEach((m) => {
+			const nodeArray = [...m.addedNodes].filter((node) => {
+				if (node.nodeName.toLowerCase() === "footer") {
+					window.postMessage({ type: "cartOpen" }, window.location.href);
+					cartMessageSent = true;
+				}
+			});
+		});
+	}
+}).observe(document.getElementsByTagName("CART-DRAWER")[0], {
+	childList: true,
+});
+
+  const sizeCallback = function(mutationList){
+    mutationList.forEach((mutation) => {
+      var allForms = document.querySelectorAll('.drawer__content .product-form .product-form__buy-buttons form.shopify-product-form')
+        mutation.addedNodes.forEach((added_node) => {
+          allForms.forEach(form => {
+            if(isInViewport(form)){
+              var gokwikBuyNowButton= form.querySelector('#gokwik-buy-now')
+              if(gokwikBuyNowButton){
+              if (form.querySelector('.loader-button__text').innerHTML == 'Sold out'){
+              	gokwikBuyNowButton.style.display = 'none'
+              }else{
+              	gokwikBuyNowButton.style.display = 'block'
+              }}
+            }
+          })
+        })
+        mutation.removedNodes.forEach((removed_node) => {
+          allForms.forEach(form => {
+            if(isInViewport(form)){
+              
+               var gokwikBuyNowButton= form.querySelector('#gokwik-buy-now')
+              if(gokwikBuyNowButton){
+              if (form.querySelector('.loader-button__text').innerHTML == 'Sold out'){
+              	gokwikBuyNowButton.style.display = 'none'
+              }else{
+              	gokwikBuyNowButton.style.display = 'block'
+              }}
+            }
+          })
+        })
+    })
+}
+   const sizeCallback2 = function(mutationList){
+    mutationList.forEach((mutation) => {
+       var btnBoth = document.querySelector(".loader-button__text")?.innerHTML == "Sold out";
+        mutation.addedNodes.forEach((added_node) => {
+          if (btnBoth){
+          	$("#gokwik-buy-now").hide()
+          }
+        })
+        mutation.removedNodes.forEach((removed_node) => {
+		if (!btnBoth){
+          	 $("#gokwik-buy-now").show()
+          }
+        })
+    })
+}
+const config = { attributes: true, childList: true, subtree: true };
+const sizeObserver2 = new MutationObserver(sizeCallback2);
+sizeObserver2.observe(targetNode, config);
+
+//const sizeObserver = new MutationObserver(sizeCallback);
+//sizeObserver.observe(targetNode, config); 
+     
+const removeOverlay = new MutationObserver(hideFoldieCallback)
+removeOverlay?.observe(targetNode, config)
+     
+}); 
+</script>
