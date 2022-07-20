@@ -255,17 +255,24 @@
           IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
           {%- endcomment -%}
 
-          <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
+  <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
             <button is="toggle-button" loader aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone">
-              {% if product.tags contains 'prebooking' %}PRE-ORDER {% else %} ADD TO CART {% endif %}</button>
+          {%- if product.tags contains 'prebooking' -%}{{- 'product.form.pre_order' | t -}} {% else %}
+            {{- 'product.form.add_to_cart' | t -}}
+           {% endif %}
+          </button>
             <button is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="product-item__quick-buy-button hidden-no-touch hidden-phone">
               <span class="visually-hidden">ADD</span>
-              {% if product.tags contains 'prebooking' %}PRE-ORDER {% else %} ADD TO CART {% endif %}
+        {%- if product.tags contains 'prebooking' -%}{{- 'product.form.pre_order' | t -}} {% else %}
+        {{- 'product.form.add_to_cart' | t -}}
+          {% endif %}
             </button>
 
             <button is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" aria-expanded="false" class="product-item__quick-buy-button hidden-tablet-and-up">
               <span class="visually-hidden">ADD</span>
-              {% if product.tags contains 'prebooking' %}PRE-ORDER {% else %} ADD TO CART {% endif %}
+           {%- if product.tags contains 'prebooking' -%}{{- 'product.form.pre_order' | t -}} {% else %}
+        {{- 'product.form.add_to_cart' | t -}}
+          {% endif %}
             </button>
           </div>
 
