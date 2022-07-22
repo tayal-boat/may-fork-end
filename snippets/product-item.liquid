@@ -10,7 +10,20 @@
   {%- assign product_url_contains_query = false -%}
 {%- endif -%}
 
-<product-item class="product-item {% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}" {% if reveal %}reveal{% endif %}>
+
+{%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
+
+{%- if settings.enable_flash_sale and product.tags contains 'flash-sale' -%}
+{% assign cheapest_variant_discount_price = cheapest_variant.price | times: settings.flash_discount | divided_by: 100  %}
+{% assign cheapest_variant_discounted_price = cheapest_variant.price | minus: cheapest_variant_discount_price | divided_by: 100 | round | times: 100 %}
+{% assign discount_price = product.price | times: settings.flash_discount | divided_by: 100  %}
+{% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
+{%- else -%}
+{% assign cheapest_variant_discounted_price = cheapest_variant.price %}
+{% assign discounted_price = product.price %}
+{%- endif -%} 
+
+<product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}" {% if reveal %}reveal{% endif %}>
   {% unless product.tags contains 'Coming-Soon' %}
     {%- if product.available == false -%}
        <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
@@ -24,14 +37,14 @@
   		{%-if product.price < product.compare_at_price -%}
 		  <span class="label label--highlight custom-label lowest-price flash">
           	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" />
-            {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
+            {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
 		  </span>
   		{%- endif -%}
    {% else %}
   	{%- for tag in product.tags -%}
 		{%- if tag contains 'meta-label-lowest-price' -%}
   			{%-if product.price < product.compare_at_price -%}
-		  <span class="label label--highlight custom-label lowest-price ">
+		  <span class="label label--highlight custom-label lowest-price custom-saved-price-lable">
           	You Save {{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }}
 		  </span>
   			{%- endif -%}
@@ -134,25 +147,24 @@
 
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
-        <div class="price-list price-list--centered">
+        <div class="price-list price-list--centered{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
           {%- if product.price_varies and product.compare_at_price -%}
-            {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
             {%- capture price_min -%}
               {%- if settings.currency_code_enabled -%}
-                {{- cheapest_variant.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
               {%- else -%}
-                {{- cheapest_variant.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- cheapest_variant_discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             {%- endcapture -%}
 
             {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
-              <span class="price price--highlight">
+              <span class="price price--highlight product-card-price-varies product-card-price" data-price="{{ cheapest_variant.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
               </span>
 
-              <span class="price price--compare line-through">
+              <span class="price price--compare line-through" data-compare-price ="{{ cheapest_variant.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
@@ -162,23 +174,24 @@
                 {%- endif -%}
               </span>
             {%- else -%}
-              <span class="price">
+              <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
               </span>
             {%- endif -%}
           {%- elsif product.price < product.compare_at_price -%}
-            <span class="price price--highlight">
+
+            <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
               {%- if settings.currency_code_enabled -%}
-                {{- product.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
               {%- else -%}
-                {{- product.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
 
-            <span class="price price--compare line-through">
+            <span class="price price--compare line-through" data-compare-price ="{{ product.compare_at_price }}">
               <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
               {%- if settings.currency_code_enabled -%}
                 {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
@@ -208,13 +221,13 @@
               {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
             </span>
           {%- else -%}
-            <span class="price">
+            <span class="price product-card-price sur4" data-price="{{ product.price }}">
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
               {%- if settings.currency_code_enabled -%}
-                {{- product.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
               {%- else -%}
-                {{- product.price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
           {%- endif -%}
@@ -235,7 +248,7 @@
           {%- endif -%}
         </div>
        {% if product.compare_at_price > product.price %}     
-         <p style="font-size: 12px;margin: 0.5rem 0 0;"> You Save: ₹ {{ product.compare_at_price | minus: product.price | divided_by: 100 }} ({{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
+         <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;"> You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} ({{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
        {% endif %}
         {% endunless %}
         {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
@@ -255,7 +268,7 @@
           IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
           {%- endcomment -%}
 
-  <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
+          <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
             <button is="toggle-button" loader aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone">
           {%- if product.tags contains 'prebooking' -%}{{- 'product.form.pre_order' | t -}} {% else %}
             {{- 'product.form.add_to_cart' | t -}}
