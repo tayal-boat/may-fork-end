@@ -1,58 +1,89 @@
-{%- if settings.enable_flash_sale -%}   
-
- {% if settings.inventory_bar_min != blank and settings.inventory_bar_max != blank %}
-{% assign min = settings.inventory_bar_min %} {% assign max = settings.inventory_bar_max %}
+{%- if settings.enable_flash_sale -%}
+  {%
+    if settings.inventory_bar_min != blank
+    and settings.inventory_bar_max != blank
+  %}
+    {%
+      assign min =
+      settings.inventory_bar_min
+    %}
+    {% assign max = settings.inventory_bar_max %}
   {% else %}
-  {% assign present =  "now" | date: "%H" %}
-{% assign  distance =  24 | minus:present %} 
-   {% if distance <= 4 %}
-{% assign min = 92 %} {% assign max = 99 %} 
-     {% elsif distance <= 8 and distance > 4 %}
-{% assign min = 73 %} {% assign max = 91 %}
-             {% elsif distance <= 12 and distance > 8 %} 
-{% assign min = 55 %} {% assign max = 72 %}
-              {% elsif distance <= 16 and distance > 12 %} 
-{% assign min = 37 %} {% assign max = 54 %}
-       {% elsif distance <= 20 and distance > 16 %} 
-{% assign min = 19 %} {% assign max = 36 %}
-         {% else distance > 20 %} 
-{% assign min = 1 %} {% assign max = 18 %}
-    {% endif %} 
- {% endif %}
-{% assign diff = max | minus: min%} {% assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min %}
-<div class="progress">
-<div class="progress-bar" role="progressbar" aria-valuenow="{{randomNumber}}"
-aria-valuemin="0" aria-valuemax="100" style="width:{{randomNumber}}%">
-<span class="bar-status" style="color: black">{{randomNumber}}% Sold</span>
-</div>
-</div>
+    {% assign present = "now" | date: "%H" %}
+    {%
+      assign distance = 24 |
+      minus:present
+    %}
+    {% if distance <= 4 %}
+      {% assign min=92 %}
+      {% assign max=99 %}
+    {% elsif distance <=8 and distance> 4 %}
+      {% assign min = 73 %}
+      {%
+        assign max =
+        91
+      %}
+    {% elsif distance <= 12 and distance> 8 %}
+      {% assign min = 55 %}
+      {% assign max = 72 %}
+    {% elsif distance <= 16 and distance> 12 %}
+      {% assign min = 37 %}
+      {% assign max = 54 %}
+    {% elsif distance <= 20 and distance> 16 %}
+      {%
+        assign min =
+        19
+      %}
+      {% assign max = 36 %}
+    {% else distance > 20 %}
+      {% assign min = 1 %}
+      {% assign max = 18 %}
+    {% endif %}
+  {% endif %}
+  {% assign diff = max | minus: min %}
+  {% assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min %}
+  <div class="progress">
+    <div
+      class="progress-bar"
+      role="progressbar"
+      aria-valuenow="{{ randomNumber }}"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      style="width:{{ randomNumber }}%"
+    >
+      <span class="bar-status" style="color: black">{{ randomNumber }}% Sold</span>
+    </div>
+  </div>
 
-<style>
-.progress {
-max-width: 400px;
-margin-top: 0.75rem;
-position: relative;
-background: #E3E3E3;
-}
-.product__info .progress {
-margin-top: 0.5rem;
-margin-bottom: 1rem;
-}
-.progress-bar {
-height: 100% !important;
-background: #FACF19 !important;
-position: static;
-}
-.bar-status {
-color: black;
-font-weight: bold;
-padding: 5px;
-font-size: 10px;
-position: absolute;
-z-index: 9;
-top: 50%;
-left: 10px;
-transform: translateY(-50%);
-}
-</style>
+  <style>
+    .progress {
+        max-width: 400px;
+        margin-top: 0.75rem;
+        position: relative;
+        background: #e3e3e3;
+    }
+
+    .product__info .progress {
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .progress-bar {
+        height: 100% !important;
+        background: #facf19 !important;
+        position: static;
+    }
+
+    .bar-status {
+        color: black;
+        font-weight: bold;
+        padding: 5px;
+        font-size: 10px;
+        position: absolute;
+        z-index: 9;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+    }
+  </style>
 {%- endif -%}
