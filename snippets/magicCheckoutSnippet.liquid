@@ -3,12 +3,12 @@
 <script src="https://cdn.razorpay.com/static/shopify/modal.js" data-merchant-name="boAt"></script>
 
 <script >
-
-  var inProgress = false;
-var rzpMerchantKey = null;
+var inProgress = false;
+var rzpMerchantKey = "rzp_live_iCBWgJBHr7vDrd";
 var delay = document.currentScript.getAttribute('data-delay');
 var checkoutJsTimerId;
-var MagicAnalytics = window.MagicAnalytics;
+var razorpayCheckout = null;
+  
 
 function injectCheckoutJsUrl() {
   return new Promise(resolve => {
@@ -20,6 +20,16 @@ function injectCheckoutJsUrl() {
     };
 
     document.body.appendChild(script);
+
+
+    var script = document.createElement('script');
+    script.src = 'https://cdn.razorpay.com/static/shopify/modal.js';
+    script.onload = function() {
+      resolve();
+    };
+
+    document.body.appendChild(script);
+    
   });
 }
 
@@ -45,7 +55,7 @@ function openAbandonedCheckout() {
     if (id) {
       toggleLoader(true);
       window
-        .fetch('/apps/rzp_1cc/checkout_options?order_id=' + id)
+        .fetch('https://api.razorpay.com/v1/1cc/shopify/checkout_options?order_id=' + id)
         .then(function(response) {
           if (!response.ok) {
             return Promise.reject('Error fetching order details');
@@ -66,13 +76,88 @@ function openAbandonedCheckout() {
   }
 }
 
+function getCartAndOrder() {
+  return new Promise((resolve, reject) => {
+    window
+      .fetch('/cart.js') // https://shopify.dev/api/ajax/reference/cart#get-locale-cart-js
+      .then(function(cartRes) {
+        if (!cartRes.ok) {
+          reject('Error fetching cart');
+          return;
+        }
+        return cartRes.json();
+      })
+      .then(function(cart) {
+        if (cart.total_price === 0 || cart.items.length === 0) {
+          reject('Your cart is empty, add an item to continue');
+          return;
+        }
+        // return window.fetch('/apps/rzp_1cc/checkout?key_id=' + rzpMerchantKey, {
+        //   method: 'POST',
+        //   headers: {
+        //     Accept: 'application/json',
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({ cart: cart, key: rzpMerchantKey }),
+        // });
+           return fetch("https://api.razorpay.com/v1/1cc/shopify/checkout?key_id=" + rzpMerchantKey, {
+                method: "POST",
+                headers: {
+                  "Accept": "application/json",
+                  "Content-Type": "text/plain"
+                },
+                body: JSON.stringify({ cart: cart, key: rzpMerchantKey }),
+            });
+            
+      })
+      .then(function(checkRes) {
+        if (!checkRes.ok) {
+          reject('Error creating an order');
+          return;
+        }
+        return checkRes.json();
+      })
+      .then(function(params) {
+        if (!params) return;
+        if (params.customer_cart) {
+          params.customer_cart.content_ids = params.customer_cart.contents.map(
+            item => item.variant_id
+          );
+          params.customer_cart.num_items = params.customer_cart.contents.length;
+        }
+
+        resolve(params);
+      });
+  });
+}
+
+
+function getDiscountCodeFromCookie() { 
+  var value = "; " + document.cookie;
+  var parts = value.split('; discount_code=');
+  if (parts.length == 2) return parts.pop().split(";").shift();
+}
+  
+  
+function initAndPrefetchPromisified() {
+  return new Promise(resolve => {
+    if (!razorpayCheckout.initAndPrefetchPrefs) {
+      resolve('prefetch failed');
+      return;
+    }
+
+    razorpayCheckout.initAndPrefetchPrefs();
+    razorpayCheckout.on('prefs_prefetch', function(status) {
+      if (status === 'success') {
+        resolve();
+      } else {
+        resolve('prefetch failed');
+      }
+    });
+  });
+}
+
 window.openRzpCheckout = function openRzpCheckout(e) {
-  if (window.widgetIDForMagicCheckout && document.getElementById(window.widgetIDForMagicCheckout)) {
-    document.getElementById(window.widgetIDForMagicCheckout).style.zIndex = "100";
-  }
-  if (window.widgetClassForMagicCheckout && document.getElementsByClassName(window.widgetClassForMagicCheckout).length > 0) {
-    document.getElementsByClassName(window.widgetClassForMagicCheckout)[0].style.zIndex = "100";
-  }
   if (e && e.preventDefault) {
     e.preventDefault();
   }
@@ -84,46 +169,19 @@ window.openRzpCheckout = function openRzpCheckout(e) {
   } else {
     toggleLoader(true);
   }
-  window
-    .fetch('/cart.js') // https://shopify.dev/api/ajax/reference/cart#get-locale-cart-js
-    .then(function(cartRes) {
-      if (!cartRes.ok) {
-        return Promise.reject('Error fetching cart');
+
+  razorpayCheckout = new Razorpay({ key: rzpMerchantKey });
+
+  Promise.all([initAndPrefetchPromisified(), getCartAndOrder()])
+    .then(values => {
+    	
+      if (values[0] === 'prefetch failed') {
+        const { order, ...optionsParams } = values[1];
+             
+        openModal(optionsParams); // this will open 1cc with the usual flow
+        return;
       }
-      return cartRes.json();
-    })
-    .then(function(cart) {
-      if (cart.total_price === 0 || cart.items.length === 0) {
-        return Promise.reject('Your cart is empty, add an item to continue');
-      }
-      return window.fetch('/apps/rzp_1cc/checkout?key_id=' + rzpMerchantKey, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cart: cart, key: rzpMerchantKey }),
-      });
-    })
-    .then(function(checkRes) {
-      if (!checkRes.ok) {
-        return Promise.reject('There was an issue while creating your order. Please try after some time.');
-      }
-      return checkRes.json();
-    })
-    .then(function(params) {
-      if (params.customer_cart) {
-        params.customer_cart.content_ids = params.customer_cart.contents.map(
-          item => item.variant_id
-        );
-        params.customer_cart.num_items = params.customer_cart.contents.length;
-      }
-      var couponCookieValue = getDiscountCodeFromCookie();
-      if (couponCookieValue) {
-        params.prefill = params.prefill || {};
-        params.prefill.coupon_code = couponCookieValue;
-      }
-      openModal(params);
+      openModal(values[1]); // this will open 1cc with the faster flow
     })
     .catch(function(e) {
       if (window.MagicCheckout) {
@@ -138,12 +196,6 @@ window.openRzpCheckout = function openRzpCheckout(e) {
       }
     });
 };
-
-function getDiscountCodeFromCookie() { 
-  var value = "; " + document.cookie;
-  var parts = value.split('; discount_code=');
-  if (parts.length == 2) return parts.pop().split(";").shift();
-}
 
 function toggleLoader(flag) {
   if (flag) {
@@ -165,13 +217,13 @@ function handlePaymentRes(handlerRes) {
   var finalRes;
   toggleLoader(true);
   window
-    .fetch('/apps/rzp_1cc/complete?key_id=' + rzpMerchantKey, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ...handlerRes, key: rzpMerchantKey }),
+    .fetch("https://api.razorpay.com/v1/1cc/shopify/complete?key_id="+ rzpMerchantKey , {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "text/plain"
+        },
+        body: JSON.stringify({ ...handlerRes, key: rzpMerchantKey }),
     })
     .then(function(res) {
       if (res.status !== 200) {
@@ -239,7 +291,7 @@ function formSerialize(myDocument) {
   return JSON.stringify(obj);
 }
 
-window.onBuyNowClick = function onBuyNowClick(event) {
+window.onBuyNowClickzp = function onBuyNowClick(event) {
   // it will call when someone click on BuyNow button
   toggleLoader(true);
   window
@@ -297,8 +349,8 @@ window.onBuyNowClick = function onBuyNowClick(event) {
             product_title,
             variant_title,
             product_type,
-          } = cartRes.items[0];
-          MagicAnalytics?.buyNowClicked({
+          } = cartRes;
+          window.MagicAnalytics.buyNowClicked({
             id: sku || variant_id,
             price: final_price / 100, // convert from paise to rupee
             quantity: quantity,
@@ -334,74 +386,66 @@ async function openModal(params) {
     await injectCheckoutJsUrl();
   }
 
-  if (window.configForMagicCheckout) {
-    params.config = window.configForMagicCheckout;
-  }
+  
+  
+  var { order, ...optionsParams } = params;
+       
 
-  if (window.nameForMagicCheckout) {
-    params.name = window.nameForMagicCheckout;
+    
+  setOptionsInInstance(optionsParams);
+       
+       
+  if (order && typeof order === 'object' && Object.keys(order).length) {
+    razorpayCheckout._order = order;
   }
-  var razorpayCheckout = new Razorpay({
-    ...params,
-    modal: {
-      animation: false,
-      ondismiss: function() {
-        Promise.all([
-          window.
-            fetch("/apps/rzp_1cc/abandon_checkout" , { // update magic checkout url
-              method: "POST",
-              headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ "order_id": params.order_id }),
-            }),
-          window.
-            fetch("/apps/rzp_1cc/checkout/url" , { // update magic checkout url
-              method: "POST",
-              headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ "order_id": params.order_id }),
-            })
-        ])
-        .then(() => {
-          if (window.onDismissMagiCheckout) {
-            window.onDismissMagiCheckout();
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      },
-    },
-    handler: function(handlerRes) {
-      try {
-        if (window && window.fbq) {
-          window.fbq('track', 'Purchase', params.customer_cart);
-        }
-      } catch (e) {}
-      handlePaymentRes(handlerRes);
-    },
-  });
   razorpayCheckout.open();
-  razorpayCheckout.on('render', () => {
-    if (window.MagicCheckout) {
-      window.MagicCheckout.hideModal();
-    } else {
-      toggleLoader(false);
-    }
-  });
+  razorpayCheckout.on('render', () => window.MagicCheckout?.hideModal());
+  razorpayCheckout.on('fault.close', () => window.MagicCheckout?.hideModal());
+}
 
-  razorpayCheckout.on('fault.close', () => {
-    if (window.MagicCheckout) {
-      window.MagicCheckout.hideModal();
-    } else {
-      toggleLoader(false);
+function setOptionsInInstance(params) {
+  Object.keys(params).forEach(key => razorpayCheckout.set(key, params[key]));
+
+  razorpayCheckout.set('animation', false);
+       
+  var couponCookieValue = getDiscountCodeFromCookie();
+       
+  razorpayCheckout.set("prefill", { coupon_code : couponCookieValue } );
+
+    razorpayCheckout.set("config", { display : { sequence : [ "upi" ] } });
+
+  var MagicCheckoutCallback = function() {
+        window.
+          fetch("https://api.razorpay.com/v1/1cc/shopify/abandon_checkout?key_id="+ rzpMerchantKey , { // update magic checkout url
+            method: "POST",
+            headers: {
+            "Accept": "application/json",
+            "Content-Type": "text/plain"
+            },
+            body: JSON.stringify({ "order_id": params.order_id }),
+          }),
+        window.
+          fetch("https://api.razorpay.com/v1/1cc/shopify/checkout/url?key_id="+ rzpMerchantKey , { // update magic checkout url
+            method: "POST",
+            headers: {
+            "Accept": "application/json",
+            "Content-Type": "text/plain"
+            },
+            body: JSON.stringify({ "order_id": params.order_id }),
+          })
     }
+  razorpayCheckout.set('modal.ondismiss',     MagicCheckoutCallback);
+
+  razorpayCheckout.set('handler', function(handlerRes) {
+    try {
+      if (window && window.fbq) {
+        window.fbq('track', 'Purchase', params.customer_cart);
+      }
+    } catch (e) {}
+    handlePaymentRes(handlerRes);
   });
 }
+
 </script>
 
  <script src="https://cdn.razorpay.com/static/shopify/analytics.js" defer></script> 
