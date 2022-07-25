@@ -110,7 +110,7 @@
       {%- endif -%}
 
       <div class="quick-buy-product__info {% if template.suffix == 'quick-buy-popover' %}text--small{% endif %}">
-        <product-meta form-id="product-form-{{ section.id }}-{{ product.id }}" unit-price-class="text--xsmall" class="product-item-meta">
+        <product-meta form-id="product-form-{{ section.id }}-{{ product.id }}" unit-price-class="text--xsmall" class="product-item-meta" >
           {%- if section.settings.show_vendor -%}
             {%- assign vendor_handle = product.vendor | handle -%}
             {%- assign collection_for_vendor = collections[vendor_handle] -%}
@@ -124,20 +124,27 @@
 
           <a href="{{ product.url }}" class="product-item-meta__title">{{ product.title }}</a>
 
+          {%- if product.tags contains 'flash-sale' -%}
+          {% assign discount_price = product.selected_or_first_available_variant.price | times: settings.flash_discount | divided_by: 100  %}
+          {% assign discounted_price = product.selected_or_first_available_variant.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
+          {%- else -%}
+          {% assign discounted_price = product.selected_or_first_available_variant.price %}
+          {%- endif -%} 
+
           <div class="product-item-meta__price-list-container" role="region" aria-live="polite">
-            <div class="price-list" data-product-price-list>
+            <div class="price-list{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list>
               {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
-                <span class="price price--highlight">
+                <span class="price price--highlight quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- product.selected_or_first_available_variant.price | money_with_currency -}}
+                    {{- discounted_price | money_with_currency -}}
                   {%- else -%}
-                    {{- product.selected_or_first_available_variant.price | money -}}
+                    {{- discounted_price | money -}}
                   {%- endif -%}
                 </span>
 
-                <span class="price price--compare">
+                <span class="price price--compare line-through">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
@@ -147,13 +154,13 @@
                   {%- endif -%}
                 </span>
               {%- else -%}
-                <span class="price">
+                <span class="price quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- product.selected_or_first_available_variant.price | money_with_currency -}}
+                    {{- discounted_price | money_with_currency -}}
                   {%- else -%}
-                    {{- product.selected_or_first_available_variant.price | money -}}
+                    {{- discounted_price | money -}}
                   {%- endif -%}
                 </span>
               {%- endif -%}

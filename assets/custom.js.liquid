@@ -199,3 +199,47 @@ $('.product-item').each(function() {
 })
 
 Shopify.enable_namagoo = {{settings.enable_namagoo }};
+Shopify.enable_flash_sale = {{settings.enable_flash_sale }};
+Shopify.flash_discount = {{settings.flash_discount }};
+
+$(document).ready(function() {
+
+function DisCalculation(selectedVarient, i){
+selectedVarient = selectedVarient[i];
+
+let savePrice = selectedVarient.getAttribute('data-price');
+savePrice = parseInt(savePrice);
+let product_flas_sale = selectedVarient.parentElement.className;
+if(Shopify.enable_namagoo && product_flas_sale.includes("custom-product-card_namogoo")){
+if(localStorage.getItem('Namogoo')) { 
+  let NamogooDiscount = JSON.parse(localStorage.getItem('Namogoo'));
+  let discountValue = NamogooDiscount.discountValue;
+  let savePriceDis = savePrice / 100 * discountValue;
+  let comparePrice = selectedVarient.nextElementSibling.getAttribute('data-compare-price');
+  savePrice = savePrice - savePriceDis;
+  let custom_saved_price = comparePrice - savePrice;
+  let custom_saved_dis = Math.round(custom_saved_price * 100 / comparePrice);
+  let custom_saved_price_lable = selectedVarient.offsetParent.children[0];
+  let custom_save_price = selectedVarient.parentElement.nextElementSibling;
+  if(custom_saved_price_lable.className.includes("custom-saved-price-lable")){
+    custom_saved_price_lable.innerHTML = 'You Save ' + custom_saved_dis + '%';
+  }
+  if(custom_save_price.className.includes("custom-save-price")){
+    custom_save_price.innerHTML = 'You Save: '+Shopify.formatMoney(custom_saved_price,Shopify.money_format)+' ('+custom_saved_dis+'%) '
+  }
+  if(selectedVarient.className.includes("product-card-price-varies")){
+    selectedVarient.innerHTML = 'From ' + Shopify.formatMoney(savePrice,Shopify.money_format);
+  }else{
+    selectedVarient.innerHTML = Shopify.formatMoney(savePrice,Shopify.money_format);
+  }
+}   
+}    
+}
+if(Shopify.enable_flash_sale || Shopify.enable_namagoo){
+let selectedVarient = $('.product-card-price');
+for (let i = 0; i < selectedVarient.length; i++) {
+DisCalculation(selectedVarient, i);
+}
+};
+
+});
