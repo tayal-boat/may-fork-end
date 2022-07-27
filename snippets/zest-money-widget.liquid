@@ -66,8 +66,7 @@
     
         
 </script>
-{% endif %}
-{% if cart %}
+{% endif %}{% if cart %}
 <link href="https://s3.ap-south-1.amazonaws.com/prod-merchants-assets/merchant-assets/zestmoney.widget.v3.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="https://s3.ap-south-1.amazonaws.com/prod-merchants-assets/merchant-assets/zestmoney.widget.v3.js"></script>
 
@@ -75,136 +74,64 @@
 <div id="zestmoney-widget-container" class="zestmoney-widget-wrapper hide-zestmoney-widget"></div>  
 
 <div id="zestmoney-overlay-cart"></div>  
-<div id="zestmoney-widget-container-cart" class="zestmoney-widget-wrapper hide-zestmoney-widget"></div> 
+<div id="zestmoney-widget-container-cart" class="zestmoney-widget-wrapper hide-zestmoney-widget"></div>  
 
 <script type="text/javascript">
  
-  const initApp = async function () {
-  
-    const injectElement = function () {
-    
-    	let zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
-        if(!zestmoneyWidgetControl){
-
-          const placement_container = 'mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered';
-          let widget_container = document.getElementsByClassName(placement_container);
-          if (widget_container.length === 0) {
-            return;
-          }
-
-          widget_container = widget_container[0];
-          // Get the target placeholder for adding the ZestMoneyWidget
-          const placement_selector = 'text-center'
-          let pricing_containers = widget_container.getElementsByClassName(placement_selector);
-          if (pricing_containers.length === 0) {
-            return;
-          }
-
-          pricing_containers = pricing_containers[0];
-
-          zestmoneyWidgetControl = document.createElement("div");
-          zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
-
-          widget_container.insertBefore(zestmoneyWidgetControl, pricing_containers);
-        }
-      
-      return zestmoneyWidgetControl;
-    
-    }
-    
-//     if(!zestmoneyWidgetControl){
-//       return;
-//     }
-       
-    var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
-    let zest_price = parseFloat("{{ cart.total_price }}") / 100;
-       
-    const priceElement = document.getElementsByClassName('cart-total-text');
-    if (priceElement.length > 0) {
-    	
-      	let amount = priceElement[0].innerHTML;
-
-  		amount = amount.split(' ');
-  		amount = (amount.length > 1) ? amount[1] : amount[0]
-
-  		zest_price = amount.replace(/[^0-9.]/g, '');
-    
-    }
-    
-    
-    
-    var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
-      merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
-      environment: "production",
-      basketAmount: zest_price || 0,
-      downpaymentAmount: null,
-      paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
-      widgetType: 'product',
-    });
-    
-    let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
-    if (displayHtml) {
-      
-      const widgetElement = document.getElementById('zestmoney-widget-control-cart');
-        if (widgetElement) {
-			widgetElement.remove();
-        }
-      
-      const zestmoneyWidgetControlElement = injectElement()
-//       var zestmoneyWidgetControlElement = document.getElementById('zestmoney-widget-control-cart');
-      zestmoneyWidgetControlElement.innerHTML = displayHtml;
-      
-      var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
-      if (zestmoneyWidgetTrigger) {
-        zestmoneyWidgetTrigger.addEventListener("click", function () {
-          zestMoneyWidget.open();
-        });
-      }
-    }
-  }
- 
   setTimeout(async() => {
-             await initApp();
+    var zestmoneyWidgetControl = document.getElementById('zestmoney-widget-control-cart');
+    if(!zestmoneyWidgetControl){
+            // Get the target placeholder for adding the ZestMoneyWidget
+            const placement_selector = '.discount-price'
+            if(placement_selector){
+            const pricing_containers = document.querySelectorAll(placement_selector);
+            if(pricing_containers.length == 0){
+                return;
+            }
+            zestmoneyWidgetControl = document.createElement("div");
+            zestmoneyWidgetControl.setAttribute('id','zestmoney-widget-control-cart');
+            pricing_containers[0].appendChild(zestmoneyWidgetControl);
+            }
+       }
+       if(!zestmoneyWidgetControl){
+           return;
+       }
+       
+       var zestMoneyWidgetElement = document.getElementById('zestmoney-widget-container-cart');
+       const zest_price = parseFloat("{{ cart.total_price }}") / 100;
+       var zestMoneyWidget = new ZestMoneyWidgetCart(zestMoneyWidgetElement, {
+           merchantId: "3df633f7-95d9-431c-8803-8b0f8abbfabb",
+           environment: "production",
+           basketAmount: zest_price || 0,
+           downpaymentAmount: null,
+           paymentGatewayId: "31a2b66b-f364-48f9-a7fd-6870a5a224b4",
+           widgetType: 'product',
+       });
+       let displayHtml = await zestMoneyWidget.getDisplayHTMLCart();
+ 
+       if (displayHtml) {
+           zestmoneyWidgetControl.innerHTML = displayHtml;
+           var zestmoneyWidgetTrigger = document.getElementById('zestmoney-widget-trigger-cart');
+           if (zestmoneyWidgetTrigger) {
+               zestmoneyWidgetTrigger.addEventListener("click", function () {
+                   zestMoneyWidget.open();
+               });
+           }
+       }
     },200)
 
-//     const cart_change_observer_selector = document.getElementsByClassName("mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered")[0];
-    const cart_change_observer_selector = document.getElementById("mini-cart");
-//   const cart_change_observer_selector = document.getElementsByTagName("body")[0];
-    const priceChangeObserver = new MutationObserver(async function() {
+    const cart_change_observer_selector = document.querySelector("price-cover");
+    const priceChangeObserver = new MutationObserver(function() {
         priceChangeObserver.disconnect();  
-      
-        setTimeout(async() => {
-             await initApp();
-        	priceChangeObserver.observe(cart_change_observer_selector, { childList: true, subtree: true, characterData: true });
-    	},300)
+        var cart_price_selector = document.getElementsByClassName("#cart__total_price")[0].innerHTML.replace(/\D/g, "")/100;
+        document.getElementById("zestmoney-amount-cart").innerHTML = Math.round(cart_price_selector/3);
+        priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});
+        var href = new URL(document.getElementById('zestmoney-widget-iframe-cart').src);
+        href.searchParams.set('basketAmount', Math.round(cart_price_selector));
+        document.getElementById('zestmoney-widget-iframe-cart').src = href.toString();
     });
-    priceChangeObserver.observe(cart_change_observer_selector, { childList: true, subtree: true, characterData: true });
+    priceChangeObserver.observe(cart_change_observer_selector, {attributes: true, childList: true, subtree: true, characterData:true});
 
-  
-  
-  
-  
-const element = document.getElementsByClassName("header__cart-count")[0];
-element.addEventListener("click", cartClickZestGtmEvent);
-var carteventfired = 0;
-function cartClickZestGtmEvent() {
-if(carteventfired == 0){
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-K3MHDXL');
-dataLayer.push({
-event: "PageLoad",
-eventAction: "Zest-widget-text-load-Cart",
-eventCategory: "Widget",
-merchantName: "PreEnrolMerchant",
-widgeturl: window.location.origin,
-});
-}
-carteventfired = 1;
-}
-  
-  </script>
+</script>
 
 {% endif %}

@@ -1,44 +1,11 @@
 {%- if settings.enable_flash_sale -%}
-  {%
-    if settings.inventory_bar_min != blank
-    and settings.inventory_bar_max != blank
-  %}
-    {%
-      assign min =
-      settings.inventory_bar_min
-    %}
+  {% if settings.inventory_bar_min != blank and settings.inventory_bar_max != blank %}
+    {% assign min = settings.inventory_bar_min %}
     {% assign max = settings.inventory_bar_max %}
   {% else %}
-    {% assign present = "now" | date: "%H" %}
-    {%
-      assign distance = 24 |
-      minus:present
-    %}
-    {% if distance <= 4 %}
-      {% assign min=92 %}
-      {% assign max=99 %}
-    {% elsif distance <=8 and distance> 4 %}
-      {% assign min = 73 %}
-      {%
-        assign max =
-        91
-      %}
-    {% elsif distance <= 12 and distance> 8 %}
-      {% assign min = 55 %}
-      {% assign max = 72 %}
-    {% elsif distance <= 16 and distance> 12 %}
-      {% assign min = 37 %}
-      {% assign max = 54 %}
-    {% elsif distance <= 20 and distance> 16 %}
-      {%
-        assign min =
-        19
-      %}
-      {% assign max = 36 %}
-    {% else distance > 20 %}
-      {% assign min = 1 %}
-      {% assign max = 18 %}
-    {% endif %}
+    {% assign present = "now" | date: "%H" | times: 4 | plus :8 %}
+    {% assign min = present | minus: 8 %}
+    {% assign max = present %}
   {% endif %}
   {% assign diff = max | minus: min %}
   {% assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min %}
