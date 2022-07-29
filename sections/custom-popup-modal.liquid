@@ -75,20 +75,20 @@
 </div>
 <script>
       $("{{ section.settings.popup_id }}").click(function(e){
-        $("#saleModal").modal("show");
+        $(".custom_Popup #saleModal").modal("show");
       });
-     $(".sale-btn").click(function () {
+     $(".custom_Popup .sale-btn").click(function () {
       var e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
-          ? localStorage.getItem("userEmailIdSale") === e
+          ? localStorage.getItem("userEmailIdSale{{ section.settings.clevertap_id }}") === e
               ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
-              : (localStorage.setItem("userEmailIdSale", e),
+              : (localStorage.setItem("userEmailIdSale{{ section.settings.clevertap_id }}", e),
                 clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
                 clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "section custom Popup" }),
-                $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
-          : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+                $(".custom_Popup #saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+          : $(".custom_Popup .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
       setTimeout(function () {
-          $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          $(".custom_Popup .error-msg-sale, .custom_Popup .thankyou-msg-sale, .custom_Popup .aluser-msg-sale").remove();
       }, 5e3);
   });
 </script>
