@@ -1,211 +1,237 @@
 {%- comment -%}
-------------------------------------------------------------------------------------------------------------------------
-NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing
-this theme as much as we did for developing it. We have put a lot of work to
-make this theme as developer friendly as possible by offering you hooks to
-integrate into critical parts of the theme. You will find the complete technical
-documentation (including all events, dependencies...) in the "custom.js" file,
-located in the Assets folder.
-------------------------------------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------------------------
+  NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing
+  this theme as much as we did for developing it. We have put a lot of work to
+  make this theme as developer friendly as possible by offering you hooks to
+  integrate into critical parts of the theme. You will find the complete technical
+  documentation (including all events, dependencies...) in the "custom.js" file,
+  located in the Assets folder.
+  ------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
 <!DOCTYPE html>
 
-{%- assign direction = 'ltr' -%} {%- case request.locale.iso_code -%} {%- when
-'ar' or 'arc' or 'dv' or 'fa' or 'ha' or 'he' or 'kwh' or 'ks' or 'ku' or 'ps'
-or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
+{%- assign direction = 'ltr' -%}
+{%- case request.locale.iso_code -%}
+  {%-
+    when 'ar' or 'arc' or 'dv' or 'fa' or 'ha' or 'he' or 'kwh' or 'ks' or 'ku' or 'ps'
+    or 'ur' or 'yi'
+  -%}
+    {%- assign direction = 'rtl' -%}
+{%- endcase -%}
 
-<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}"draggable="false">
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}" draggable="false">
   <head>
-   {% render 'quinn-scripts.liquid' %}
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0"
-    />
-    <meta name="theme-color" content="{{ settings.header_background }}" />
+    >
+    <meta name="theme-color" content="{{ settings.header_background }}">
     <meta
       name="facebook-domain-verification"
       content="qad1e3gldwmxjf6luncdygpvcpduub"
-    />
+    >
     <title>
-      {% if page_title == blank %}{{ shop.name }}{% else %}{{ page_title }}{% if
-      current_page != 1 %} &ndash;
-      {{ "general.meta.page" | t: page:current_page }}{% endif %}{% endif %}
+      {% if page_title == blank -%}
+        {{- shop.name -}}
+      {%- else -%}
+        {{- page_title -}}
+        {%- if current_page != 1 %}
+          &ndash; {{ "general.meta.page" | t: page:current_page -}}
+        {%- endif -%}
+      {%- endif %}
     </title>
 
     {%- if page_description -%}
-    <meta name="description" content="{{ page_description | escape }}" />
+      <meta name="description" content="{{ page_description | escape }}">
     {%- endif -%}
 
-    <link rel="canonical" href="{{ canonical_url }}" />
+    <link rel="canonical" href="{{ canonical_url }}">
 
     {%- if settings.favicon -%}
-    <link
-      rel="shortcut icon"
-      href="{{ settings.favicon | img_url: '96x96' }}"
-      type="image/png"
-    />
-    {%- endif -%} {%- comment -%}Few prefech to increase performance on commonly
-    used third-parties{%- endcomment -%}
-    <link rel="preconnect" href="https://cdn.shopify.com" />
-    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com" />
-    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+        rel="shortcut icon"
+        href="{{ settings.favicon | img_url: '96x96' }}"
+        type="image/png"
+      >
+    {%- endif -%}
+    {%- comment -%}
+      Few prefech to increase performance on commonly
+      used third-parties
+    {%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     {%- unless settings.heading_font.system? and settings.text_font.system? -%}
-    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin />
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {% endunless %}
-    <link rel="dns-prefetch" href="https://www.google.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://www.googletagmanager.com"
       crossorigin
-    />
+    >
     <link
       rel="dns-prefetch"
       href="https://d2r1yp2w7bby2u.cloudfront.net"
       crossorigin
-    />
+    >
     <link
       rel="dns-prefetch"
       href="https://config1.veinteractive.com"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://wzrkt.com" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://wzrkt.com" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://www.googleadservices.com"
       crossorigin
-    />
+    >
     <link
       rel="dns-prefetch"
       href="https://monorail-edge.shopifysvc.com"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://connect.facebook.net" crossorigin />
-    <link rel="dns-prefetch" href="https://partner.zestmoney.in" crossorigin />
-    <link rel="dns-prefetch" href="https://s3.ap-south-1.amazonaws.com" crossorigin />
-    <link rel="dns-prefetch" href="https://sc-static.net" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://connect.facebook.net" crossorigin>
+    <link rel="dns-prefetch" href="https://partner.zestmoney.in" crossorigin>
+    <link rel="dns-prefetch" href="https://s3.ap-south-1.amazonaws.com" crossorigin>
+    <link rel="dns-prefetch" href="https://sc-static.net" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://9732895.fls.doubleclick.net"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://asia.creativecdn.com" crossorigin />
-    <link rel="dns-prefetch" href="https://q.quora.com" crossorigin />
-    <link rel="dns-prefetch" href="https://pixel.advertising.com" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://asia.creativecdn.com" crossorigin>
+    <link rel="dns-prefetch" href="https://q.quora.com" crossorigin>
+    <link rel="dns-prefetch" href="https://pixel.advertising.com" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://fledge-asia.creativecdn.com"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://adservice.google.com" crossorigin />
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://adservice.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://stats.g.doubleclick.net"
       crossorigin
-    />
+    >
     <link
       rel="dns-prefetch"
       href="https://cookiee1.veinteractive.com"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://www.google.co.in" crossorigin />
-    <link rel="dns-prefetch" href="https://cdn.judge.me" crossorigin />
-    <link rel="dns-prefetch" href="https://pdp.gokwik.co" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://www.google.co.in" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.judge.me" crossorigin>
+    <link rel="dns-prefetch" href="https://pdp.gokwik.co" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://d11yp7khhhspcr.cloudfront.net"
       crossorigin
-    />
+    >
     <link
       rel="dns-prefetch"
       href="https://googleads.g.doubleclick.net"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://cdn.preciso.net" crossorigin />
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://cdn.preciso.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://ups.analytics.yahoo.com"
       crossorigin
-    />
+    >
     <link
       rel="dns-prefetch"
       href="https://sessionapi.veinteractive.com"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://www.facebook.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.ref-r.com" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://www.facebook.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.ref-r.com" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://dtrc.veinteractive.com"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://clk.2trk.info" crossorigin />
-    <link rel="dns-prefetch" href="https://cdn.nmgassets.com" crossorigin />
-    <link rel="dns-prefetch" href="https://analytics.gokwik.co" crossorigin />
-    <link rel="dns-prefetch" href="https://intg.snapchat.com" crossorigin />
-    <link rel="dns-prefetch" href="https://app.backinstock.org" crossorigin />
-    <link rel="dns-prefetch" href="https://tr.snapchat.com" crossorigin />
-    <link rel="dns-prefetch" href="https://clarity.microsoft.com" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://clk.2trk.info" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.nmgassets.com" crossorigin>
+    <link rel="dns-prefetch" href="https://analytics.gokwik.co" crossorigin>
+    <link rel="dns-prefetch" href="https://intg.snapchat.com" crossorigin>
+    <link rel="dns-prefetch" href="https://app.backinstock.org" crossorigin>
+    <link rel="dns-prefetch" href="https://tr.snapchat.com" crossorigin>
+    <link rel="dns-prefetch" href="https://clarity.microsoft.com" crossorigin>
     <link
       rel="dns-prefetch"
       href="https://wkxppshj-qx.global.ssl.fastly.net"
       crossorigin
-    />
-    <link rel="dns-prefetch" href="https://evnt.nmgplatform.com" crossorigin />
+    >
+    <link rel="dns-prefetch" href="https://evnt.nmgplatform.com" crossorigin>
 
     {%- comment -%}Preload important resources{%- endcomment -%}
-    <link rel="preload" as="style" href="{{ 'theme-min.css' | asset_url }}" />
-    <link rel="preload" as="script" href="{{ 'theme.min.js' | asset_url }}" />
-    <link rel="preload" as="script" href="{{ 'jquery.min.js' | asset_url }}" />
-    <link rel="preload" as="script" href="{{ 'custom.js' | asset_url }}" />
+    <link rel="preload" as="style" href="{{ 'theme-min.css' | asset_url }}">
+    <link rel="preload" as="script" href="{{ 'theme.min.js' | asset_url }}">
+    <link rel="preload" as="script" href="{{ 'jquery.min.js' | asset_url }}">
+    <link rel="preload" as="script" href="{{ 'custom.js' | asset_url }}">
     {% if template contains 'page' %}
-    <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}" />
-    {% endif %} {%- comment -%} IMPLEMENTATION NOTE: for improving performance,
-    Focal tries to preload images on known pages (such as blog page, product or
-    collection pages). In order to keep a main JS file size minimal, the theme
-    also lazyloads non-essential libraries (such as PhotoSwipe or Flickity) and
-    only loads them on demand. {%- endcomment -%} {%- if request.page_type ==
-    'product' -%} {%- assign selected_media =
-    product.selected_or_first_available_variant.image | default:
-    product.selected_or_first_available_variant.image -%}
+      <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
+    {% endif %}
+    {%- comment -%}
+       IMPLEMENTATION NOTE: for improving performance,
+      Focal tries to preload images on known pages (such as blog page, product or
+      collection pages). In order to keep a main JS file size minimal, the theme
+      also lazyloads non-essential libraries (such as PhotoSwipe or Flickity) and
+      only loads them on demand.
+    {%- endcomment -%}
+    {%-
+      if request.page_type ==
+      'product'
+    -%}
+      {%-
+        assign selected_media =
+        product.selected_or_first_available_variant.image | default:
+        product.selected_or_first_available_variant.image
+      -%}
 
-    <link rel="preload" as="fetch" href="{{ product.url }}.js" crossorigin />
-    <link
-      rel="preload"
-      as="image"
-      imagesizes="(max-width: 999px) calc(100vw - 48px), 640px"
-      imagesrcset="{% render 'image-attributes', image: selected_media, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800', sizes_only: true %}"
-    />
+      <link rel="preload" as="fetch" href="{{ product.url }}.js" crossorigin>
+      <link
+        rel="preload"
+        as="image"
+        imagesizes="(max-width: 999px) calc(100vw - 48px), 640px"
+        imagesrcset="{% render 'image-attributes', image: selected_media, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800', sizes_only: true %}"
+      >
 
-    {%- if product.media.size > 1 -%}
-    <link rel="preload" as="script" href="{{ 'flickity.js' | asset_url }}" />
-    {%- endif -%} {%- elsif request.page_type == 'collection' and
-    collection.image -%}
-    <link
-      rel="preload"
-      as="image"
-      media="(max-width: 740px)"
-      imagesizes="100vw"
-      imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}"
-    />
-    <link
-      rel="preload"
-      as="image"
-      media="(min-width: 741px)"
-      imagesizes="100vw"
-      imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', sizes_only: true %}"
-    />
-    {%- endif -%} {% render 'social-meta-tags' %} {% render 'microdata-schema'
-    %} {% render 'css-variables', direction: direction %} {% render
-    'js-variables', direction: direction %}
+      {%- if product.media.size > 1 -%}
+        <link rel="preload" as="script" href="{{ 'flickity.js' | asset_url }}">
+      {%- endif -%}
+    {%-
+      elsif request.page_type == 'collection' and
+      collection.image
+    -%}
+      <link
+        rel="preload"
+        as="image"
+        media="(max-width: 740px)"
+        imagesizes="100vw"
+        imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}"
+      >
+      <link
+        rel="preload"
+        as="image"
+        media="(min-width: 741px)"
+        imagesizes="100vw"
+        imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', sizes_only: true %}"
+      >
+    {%- endif -%}
+    {% render 'social-meta-tags' %}
+    {% render 'microdata-schema' %}
+    {% render 'css-variables', direction: direction %}
+    {% render 'js-variables', direction: direction %}
 
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}" />
+    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
 
     <script src="{{ 'jquery.min.js' | asset_url }}"></script>
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
@@ -229,7 +255,8 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=AW-816285276"
-    ></script>
+    >
+    </script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
@@ -243,7 +270,7 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
       );
     </script>
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
-    
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6LGXJKGVE2"></script>
     <script>
@@ -253,7 +280,7 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
 
       gtag('config', 'G-6LGXJKGVE2');
     </script>
-	<!-- Global site tag (gtag.js) - Google Analytics Ends -->
+    <!-- Global site tag (gtag.js) - Google Analytics Ends -->
     <script>
       $(document).ready(function () {
         AOS.init({
@@ -265,23 +292,23 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
       });
     </script>
     {%- capture content_for_header -%}
-    {{ content_for_header | replace: '  ', '' | strip_newlines }}
+      {{ content_for_header | replace: '  ', '' | strip_newlines }}
     {%- endcapture -%}
-    {{
-      content_for_header
-    }}
-    {%- render 'wizrocket_variables_generator' -%} {% render 'clevertap' %} {%
-    if template contains 'product' %}
-  {% render 'product-css' %}
-    {%- render 'product-js' -%}
-    <!--       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
+    {{ content_for_header }}
+    {%- render 'wizrocket_variables_generator' -%}
+    {% render 'clevertap' %}
+    {% if template contains 'product' %}
+      {% render 'product-css' %}
+      {%- render 'product-js' -%}
+      <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
     {% endif %}
-    
-	{%- render 'ms-clarity' -%}
-</head>
 
-  {%- assign feature_classes = '' -%} {%- if settings.show_image_zoom -%} {%
-  assign feature_classes = feature_classes | append: ' features--image-zoom' %}
+    {%- render 'ms-clarity' -%}
+  </head>
+
+  {%- assign feature_classes = '' -%}
+  {%- if settings.show_image_zoom -%}
+    {% assign feature_classes = feature_classes | append: ' features--image-zoom' %}
   {%- endif -%}
 
   <body
@@ -299,8 +326,11 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
     ></noscript>
 
     <!-- End Google Tag Manager (noscript) -->
-    {%- comment -%}Common SVG definitions that we are re-using in several
-    places{%- endcomment -%}
+    {%- comment -%}
+      Common SVG definitions that we are re-using in several
+      places
+    {%- endcomment -%}
+    {% render 'quinn-scripts.liquid' %}
     <svg class="visually-hidden">
       <linearGradient id="rating-star-gradient-half">
         <stop offset="50%" stop-color="rgb(var(--product-star-rating))" />
@@ -312,145 +342,184 @@ or 'ur' or 'yi' -%} {%- assign direction = 'rtl' -%} {%- endcase -%}
       </linearGradient>
     </svg>
 
-    <a href="#main" class="visually-hidden skip-to-content">{{
-      "general.accessibility.skip_to_content" | t
-    }}</a>
+    <a href="#main" class="visually-hidden skip-to-content">{{ "general.accessibility.skip_to_content" | t }}</a>
     <loading-bar class="loading-bar"></loading-bar>
 
-    {%- if request.page_type != 'gift_card' and request.page_type != 'password'
-    -%} {%- section 'announcement-bar' -%} {%- section 'popup' -%} {%- section
-    'header' -%} {%- unless settings.cart_type == 'page' or request.page_type ==
-    'cart' -%} {%- section 'mini-cart' -%} {%- endunless -%} {%- endif -%}
+    {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
+      {%- section 'announcement-bar' -%}
+      {%- section 'popup' -%}
+      {%- section 'header' -%}
+      {%-
+        unless settings.cart_type == 'page' or request.page_type ==
+        'cart'
+      -%}
+        {%- section 'mini-cart' -%}
+      {%- endunless -%}
+    {%- endif -%}
 
     <div id="main" role="main" class="anchor">
-      {%- comment -%} IMPLEMENTATION NOTE: on collection and search page, the
-      theme was designed to show on mobile the filter bar and/or sort by at the
-      very top of the page. However, due to the fact that sections are isolated,
-      I had to move the code here. Then, the collection section, based on the
-      selected settings, will eventually hide those elements in CSS {%-
-      endcomment -%} {%- if request.page_type == 'collection' or
-      request.page_type == 'search' -%} {%- assign active_filters_count = 0 -%}
-      {%- if request.page_type == 'collection' -%} {%- assign filters =
-      collection.filters -%} {%- else -%} {%- assign filters = search.filters
-      -%} {%- endif -%} {%- for filter in filters -%} {%- if filter.type ==
-      'list' -%} {%- assign active_filters_count = active_filters_count | plus:
-      filter.active_values.size -%} {%- elsif filter.type == 'price_range' and
-      filter.min_value.value or filter.max_value.value -%} {%- assign
-      active_filters_count = active_filters_count | plus: 1 -%} {%- endif -%}
-      {%- endfor -%} {%- assign is_toolbar_collapsed = false -%} {%- if
-      request.page_type == 'search' and search.results.first.object_type !=
-      'product' -%} {%- assign is_toolbar_collapsed = true -%} {%- endif -%}
+      {%- comment -%}
+         IMPLEMENTATION NOTE: on collection and search page, the
+        theme was designed to show on mobile the filter bar and/or sort by at the
+        very top of the page. However, due to the fact that sections are isolated,
+        I had to move the code here. Then, the collection section, based on the
+        selected settings, will eventually hide those elements in CSS
+      {%- endcomment -%}
+      {%-
+        if request.page_type == 'collection' or
+        request.page_type == 'search'
+      -%}
+        {%- assign active_filters_count = 0 -%}
+        {%- if request.page_type == 'collection' -%}
+          {%-
+            assign filters =
+            collection.filters
+          -%}
+        {%- else -%}
+          {%- assign filters = search.filters -%}
+        {%- endif -%}
+        {%- for filter in filters -%}
+          {%-
+            if filter.type ==
+            'list'
+          -%}
+            {%-
+              assign active_filters_count = active_filters_count | plus:
+              filter.active_values.size
+            -%}
+          {%-
+            elsif filter.type == 'price_range' and
+            filter.min_value.value or filter.max_value.value
+          -%}
+            {%- assign active_filters_count = active_filters_count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- assign is_toolbar_collapsed = false -%}
+        {%-
+          if request.page_type == 'search' and search.results.first.object_type !=
+          'product'
+        -%}
+          {%- assign is_toolbar_collapsed = true -%}
+        {%- endif -%}
 
-      <div
-        id="mobile-facet-toolbar"
-        class="mobile-toolbar {% if is_toolbar_collapsed %}is-collapsed{% endif %} hidden-lap-and-up"
-      >
-        <button
-          is="toggle-button"
-          class="mobile-toolbar__item mobile-toolbar__item--filters {% if active_filters_count > 0 %}has-filters{% endif %}"
-          aria-expanded="false"
-          aria-controls="facet-filters"
-          style="display: none"
+        <div
+          id="mobile-facet-toolbar"
+          class="mobile-toolbar {% if is_toolbar_collapsed %}is-collapsed{% endif %} hidden-lap-and-up"
         >
-          {%- render 'icon' with 'filters' -%}
-          <span
-            class="mobile-toolbar__item-label"
-            >{{- 'collection.general.filters' | t -}}</span
+          <button
+            is="toggle-button"
+            class="mobile-toolbar__item mobile-toolbar__item--filters {% if active_filters_count > 0 %}has-filters{% endif %}"
+            aria-expanded="false"
+            aria-controls="facet-filters"
+            style="display: none"
           >
-        </button>
+            {%- render 'icon' with 'filters' -%}
+            <span class="mobile-toolbar__item-label">
+              {{- 'collection.general.filters' | t -}}
+            </span>
+          </button>
 
-        <button
-          is="toggle-button"
-          class="mobile-toolbar__item mobile-toolbar__item--sort"
-          aria-expanded="false"
-          aria-controls="sort-by-popover"
-          style="display: none"
-        >
-          <span
-            class="mobile-toolbar__item-label"
-            >{{- 'collection.general.sort_by' | t -}}</span
+          <button
+            is="toggle-button"
+            class="mobile-toolbar__item mobile-toolbar__item--sort"
+            aria-expanded="false"
+            aria-controls="sort-by-popover"
+            style="display: none"
           >
-          {%- render 'icon' with 'chevron' -%}
-        </button>
-      </div>
+            <span class="mobile-toolbar__item-label">
+              {{- 'collection.general.sort_by' | t -}}
+            </span>
+            {%- render 'icon' with 'chevron' -%}
+          </button>
+        </div>
       {%- endif -%}
 
       {{ content_for_layout }}
 
-      {%- unless request.page_type == 'index' or request.page_type == 'password'
-      or request.page_type == 'gift_card' -%} {%- section
-      'static-text-with-icons' -%} {%- section 'static-newsletter' -%} {%-
-      endunless -%}
+      {%-
+        unless request.page_type == 'index' or request.page_type == 'password'
+        or request.page_type == 'gift_card'
+      -%}
+        {%- section 'static-text-with-icons' -%}
+        {%- section 'static-newsletter' -%}
+      {%- endunless -%}
     </div>
 
-    {%- if request.page_type != 'gift_card' and request.page_type != 'password'
-    -%} {%- section 'footer' -%} {%- endif -%} {% render 'back-in-stock-helper'
-    %} {% render 'judgeme_core' %} {% render
-    'gokwik' %} {% render 'invitereferrals' %}
+    {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
+      {%- section 'footer' -%}
+    {%- endif -%}
+    {% render 'back-in-stock-helper' %}
+    {% render 'judgeme_core' %}
+    {% render 'gokwik' %}
+    {% render 'invitereferrals' %}
 
     <!-- google dynamic remarketing tag for theme.liquid -->
     {%- render 'google-adwords-remarketing' -%}
     <!-- Preciso Script -->
-    {%- render 'preciso' -%} {% if template == 'collection' or template ==
-    'product' %}
-    <script>
-      scrollLoad = function () {
-        setTimeout(function () {
-          jdgm.customizeBadges();
-        }, 100);
-      };
-      document.addEventListener("scroll", scrollLoad);
-    </script>
-    {% endif %} {%comment%} Added by SearchTap team{%endcomment%} {% section
-    'searchtap' %}
-
-    <!--   NO RESULTS FOUND EVENT begins   -->
-    {% if template contains 'search' %}
-    <script>
-      setTimeout(function () {
-        if ($("#searchModalContainer").hasClass("st-no-results")) {
-          let noURL = window.location.href;
-          var noTerm = noURL.split("=")[1].replaceAll("%20", " ");
-          console.log(noTerm);
-          clevertap.event.push("No Results Found", {
-            "Search Term": noTerm,
-          });
-        }
-      }, 3000);
-    </script>
+    {%- render 'preciso' -%}
+    {%
+      if template == 'collection' or template ==
+      'product'
+    %}
+      <script>
+        scrollLoad = function () {
+          setTimeout(function () {
+            jdgm.customizeBadges();
+          }, 100);
+        };
+        document.addEventListener("scroll", scrollLoad);
+      </script>
     {% endif %}
-     {% unless template contains 'product' or template contains 'customers' %}
-    {%- render 'bottom-navbar-mobile' -%}
-        {% endunless %}
-    <!--   NO RESULTS FOUND EVENT ends   -->
-  {%- if template contains 'product' -%} {%- render 'w369' -%}{%- endif -%} 
+    {% comment %} Added by SearchTap team{% endcomment %}
+    {% section 'searchtap' %}
 
-{% include 'zest-money-widget' %}
-<!--  Magic Checkout Code Starts -->
-{% include 'magicCheckoutSnippet' %}
-<!--  Magic Checkout Code Ends -->  
-        
-{% unless template contains 'product' or template contains 'customers' %}
-    {% comment %}{% render 'chatbot' %}{% endcomment %}
-{% endunless %}
-{%- if template == 'index' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
-<script>
-  var _rmData = _rmData || [];
-  _rmData.push(['setStoreKey', 'Rm193om6']);
-  {% if customer %}
-  _rmData.push(['setCustomer', {{ customer.email | json }}]);
-  {% endif %}
-</script>
-<script>
-  (function(d, t) {
-  var g = d.createElement(t),
-  s = d.getElementsByTagName(t)[0];
-  g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
-  s.parentNode.insertBefore(g, s);
-  }(document, 'script'));
-</script>
-<script type="text/javascript" src="https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js"></script> 
-{%- render 'invitereferrals' -%}
-        {% render 'quinn-live.liquid' %}
-</body>
+    <!-- NO RESULTS FOUND EVENT begins -->
+    {% if template contains 'search' %}
+      <script>
+        setTimeout(function () {
+          if ($("#searchModalContainer").hasClass("st-no-results")) {
+            let noURL = window.location.href;
+            var noTerm = noURL.split("=")[1].replaceAll("%20", " ");
+            console.log(noTerm);
+            clevertap.event.push("No Results Found", {
+              "Search Term": noTerm,
+            });
+          }
+        }, 3000);
+      </script>
+    {% endif %}
+    {% unless template contains 'product' or template contains 'customers' %}
+      {%- render 'bottom-navbar-mobile' -%}
+    {% endunless %}
+    <!-- NO RESULTS FOUND EVENT ends -->
+    {%- if template contains 'product' -%}{%- render 'w369' -%}{%- endif -%}
+
+    {% include 'zest-money-widget' %}
+    <!-- Magic Checkout Code Starts -->
+    {% include 'magicCheckoutSnippet' %}
+    <!-- Magic Checkout Code Ends -->
+
+    {% unless template contains 'product' or template contains 'customers' %}
+      {% comment %}{% render 'chatbot' %}{% endcomment %}
+    {% endunless %}
+    {%- if template == 'index' or template contains 'product' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
+    <script>
+      var _rmData = _rmData || [];
+      _rmData.push(['setStoreKey', 'Rm193om6']);
+      {% if customer %}
+      _rmData.push(['setCustomer', {{ customer.email | json }}]);
+      {% endif %}
+    </script>
+    <script>
+      (function(d, t) {
+      var g = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+      g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
+      s.parentNode.insertBefore(g, s);
+      }(document, 'script'));
+    </script>
+    <script type="text/javascript" src="https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js">
+    </script>
+    {%- render 'invitereferrals' -%}
+  </body>
 </html>
