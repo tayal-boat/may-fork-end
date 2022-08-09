@@ -1,56 +1,69 @@
 {%- if settings.enable_flash_sale -%}
-  {% if settings.inventory_bar_min != blank and settings.inventory_bar_max != blank %}
-    {% assign min = settings.inventory_bar_min %}
-    {% assign max = settings.inventory_bar_max %}
-  {% else %}
-    {% assign present = "now" | date: "%H" | times: 4 | plus :8 %}
-    {% assign min = present | minus: 8 %}
-    {% assign max = present %}
-  {% endif %}
-  {% assign diff = max | minus: min %}
-  {% assign randomNumber = "now" | date: "%N" | modulo: diff | plus: min %}
-  <div class="progress">
-    <div
-      class="progress-bar"
-      role="progressbar"
-      aria-valuenow="{{ randomNumber }}"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      style="width:{{ randomNumber }}%"
-    >
-      <span class="bar-status" style="color: black">{{ randomNumber }}% Sold</span>
-    </div>
-  </div>
+{% liquid
+    assign product = inventory-bar
+        if settings.inventory_bar_min != blank and settings.inventory_bar_max != blank 
+            assign min = settings.inventory_bar_min 
+            assign max = settings.inventory_bar_max 
+            assign diff = max | minus: min 
+            assign sold_percentage = "now" | date: "%N" | modulo: diff | plus: min 
+        else
+            assign second_last = product.id | slice: 11 
+            assign last = product.id | slice: 12
+            assign total = second_last | plus: last
+            assign current_hours = "now" | date: "%H"
+            assign current_date = "now" | date: "%m"
 
-  <style>
-    .progress {
-        max-width: 400px;
-        margin-top: 0.75rem;
-        position: relative;
-        background: #e3e3e3;
-    }
+            if settings.flash_end_date == blank
+                assign sold_percentage = current_hours | times: 2 | plus: current_date | plus: total
+            else
+                assign sold_percentage = current_hours | times: 3.9 | plus: last
+            endif
+        endif 
+ 
+%}
+    
+        <div class="progress ">
+            <div class="progress-bar"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="{{ sold_percentage }}" 
+            style="width: {{ sold_percentage }}%" >
+            <span class="bar-status" style="color: black">{{ sold_percentage }}% sold</span>
+            </div>
+        </div>
 
-    .product__info .progress {
-        margin-top: 0.5rem;
-        margin-bottom: 1rem;
-    }
+        <style>
+            .progress {
+                max-width: 400px;
+                margin-top: 0.75rem;
+                position: relative;
+                background: #e3e3e3;
+            }
 
-    .progress-bar {
-        height: 100% !important;
-        background: #facf19 !important;
-        position: static;
-    }
+            .product__info .progress {
+                margin-top: 0.5rem;
+                margin-bottom: 1rem;
+            }
 
-    .bar-status {
-        color: black;
-        font-weight: bold;
-        padding: 5px;
-        font-size: 10px;
-        position: absolute;
-        z-index: 9;
-        top: 50%;
-        left: 10px;
-        transform: translateY(-50%);
-    }
-  </style>
+            .progress-bar {
+                height: 100% !important;
+                background: #facf19 !important;
+                position: static;
+            }
+
+            .bar-status {
+                color: black;
+                font-weight: bold;
+                padding: 5px;
+                font-size: 10px;
+                position: absolute;
+                z-index: 9;
+                top: 50%;
+                left: 10px;
+                transform: translateY(-50%);
+            }
+        </style>
+
+
 {%- endif -%}
