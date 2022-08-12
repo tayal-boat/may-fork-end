@@ -32,6 +32,9 @@
       name="facebook-domain-verification"
       content="qad1e3gldwmxjf6luncdygpvcpduub"
     >
+    {% if page.metafields.custom.no_index == true %}
+    <meta name="robots" content="noindex">
+    {% endif %}
     <title>
       {% if page_title == blank -%}
         {{- shop.name -}}
@@ -236,7 +239,7 @@
     <script src="{{ 'jquery.min.js' | asset_url }}"></script>
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
-
+    {%- unless handle contains 'quick-checkout' -%}
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -291,6 +294,7 @@
         $(".video, .video-new").videoPopup();
       });
     </script>
+    {% endunless %}
     {%- capture content_for_header -%}
       {{ content_for_header | replace: '  ', '' | strip_newlines }}
     {%- endcapture -%}
@@ -303,7 +307,9 @@
       <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
     {% endif %}
 
+    {%- unless handle contains 'quick-checkout' -%}
     {%- render 'ms-clarity' -%}
+    {%- endunless -%}
   </head>
 
   {%- assign feature_classes = '' -%}
@@ -315,6 +321,7 @@
     class="no-focus-outline {{ feature_classes }}"
     data-instant-allow-query-string
   >
+    {%- unless handle contains 'quick-checkout' -%}
     <!-- Google Tag Manager (noscript) -->
     <noscript
       ><iframe
@@ -326,11 +333,14 @@
     ></noscript>
 
     <!-- End Google Tag Manager (noscript) -->
+    {% endunless %}
     {%- comment -%}
       Common SVG definitions that we are re-using in several
       places
     {%- endcomment -%}
+    {%- unless handle contains 'quick-checkout' -%}
     {% render 'quinn-scripts.liquid' %}
+    {%- endunless -%}
     <svg class="visually-hidden">
       <linearGradient id="rating-star-gradient-half">
         <stop offset="50%" stop-color="rgb(var(--product-star-rating))" />
@@ -448,15 +458,19 @@
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
       {%- section 'footer' -%}
     {%- endif -%}
+    {%- unless handle contains 'quick-checkout' -%}
     {% render 'back-in-stock-helper' %}
     {% render 'judgeme_core' %}
-    {% render 'gokwik' %}
     {% render 'invitereferrals' %}
-
+    {%- endunless -%}
+    {% render 'gokwik' %}
+    
+    {%- unless handle contains 'quick-checkout' -%}
     <!-- google dynamic remarketing tag for theme.liquid -->
     {%- render 'google-adwords-remarketing' -%}
     <!-- Preciso Script -->
     {%- render 'preciso' -%}
+    {% endunless %}
     {%
       if template == 'collection' or template ==
       'product'
@@ -493,16 +507,19 @@
     {% endunless %}
     <!-- NO RESULTS FOUND EVENT ends -->
     {%- if template contains 'product' -%}{%- render 'w369' -%}{%- endif -%}
-
+    
+    {%- unless handle contains 'quick-checkout' -%}
     {% include 'zest-money-widget' %}
     <!-- Magic Checkout Code Starts -->
     {% include 'magicCheckoutSnippet' %}
     <!-- Magic Checkout Code Ends -->
+    {% endunless %}
 
     {% unless template contains 'product' or template contains 'customers' %}
       {% comment %}{% render 'chatbot' %}{% endcomment %}
     {% endunless %}
     {%- if template == 'index' or template contains 'product' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
+    {%- unless handle contains 'quick-checkout' -%}
     <script>
       var _rmData = _rmData || [];
       _rmData.push(['setStoreKey', 'Rm193om6']);
@@ -520,6 +537,6 @@
     </script>
     <script type="text/javascript" src="https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js">
     </script>
-    {%- render 'invitereferrals' -%}
+    {% endunless %}
   </body>
 </html>
