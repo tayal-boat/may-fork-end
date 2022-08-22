@@ -100,7 +100,6 @@
       crossorigin
     >
     <link rel="dns-prefetch" href="https://connect.facebook.net" crossorigin>
-    <link rel="dns-prefetch" href="https://partner.zestmoney.in" crossorigin>
     <link rel="dns-prefetch" href="https://s3.ap-south-1.amazonaws.com" crossorigin>
     <link rel="dns-prefetch" href="https://sc-static.net" crossorigin>
     <link
@@ -446,10 +445,7 @@
 
       {{ content_for_layout }}
 
-      {%-
-        unless request.page_type == 'index' or request.page_type == 'password'
-        or request.page_type == 'gift_card'
-      -%}
+      {%- unless request.page_type == 'index' or request.page_type == 'password' or request.page_type == 'gift_card' -%}
         {%- section 'static-text-with-icons' -%}
         {%- section 'static-newsletter' -%}
       {%- endunless -%}
@@ -471,10 +467,7 @@
     <!-- Preciso Script -->
     {%- render 'preciso' -%}
     {% endunless %}
-    {%
-      if template == 'collection' or template ==
-      'product'
-    %}
+    {% if template == 'collection' or template =='product' %}
       <script>
         scrollLoad = function () {
           setTimeout(function () {
@@ -506,18 +499,18 @@
       {%- render 'bottom-navbar-mobile' -%}
     {% endunless %}
     <!-- NO RESULTS FOUND EVENT ends -->
-    {%- if template contains 'product' -%}{%- render 'w369' -%}{%- endif -%}
-    
+
     {%- unless handle contains 'quick-checkout' -%}
-    {% include 'zest-money-widget' %}
+
     <!-- Magic Checkout Code Starts -->
     {% include 'magicCheckoutSnippet' %}
     <!-- Magic Checkout Code Ends -->
     {% endunless %}
-
-    {% unless template contains 'product' or template contains 'customers' %}
-      {% comment %}{% render 'chatbot' %}{% endcomment %}
-    {% endunless %}
+    {% comment %}
+      {% unless template contains 'product' or template contains 'customers' %}
+        {% render 'chatbot' %}
+      {% endunless %}
+    {% endcomment %}
     {%- if template == 'index' or template contains 'product' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
     {%- unless handle contains 'quick-checkout' -%}
     <script>
