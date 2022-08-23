@@ -216,7 +216,7 @@
                 <collapsible-content {% if processed_blocks == 0 %}open{% endif %} id="block-{{ section.id }}-{{ block.id }}-content" class="collapsible">
                   <div class="product-tabs__tab-item-content">
                     <div id="shopify-product-reviews" class="spr-reviews" data-id="{{ product.id }}">
-                    {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+             
                     </div>
                   </div>
                 </collapsible-content>
@@ -341,6 +341,25 @@
     </div>
   </section>
 {%- endif -%}
+
+<script>
+sessionStorage.setItem('productDis','false'); 
+function productDis() {
+let imageSelector = document.querySelectorAll('.custom_lazyload'); 
+if(sessionStorage.getItem('productDis') == 'false' && imageSelector.length > 0){
+for (let i = 0; i < imageSelector.length; i++) {
+let src = imageSelector[i].getAttribute('data-src');
+console.log(src);
+imageSelector[i].setAttribute('src',src) 
+}    
+sessionStorage.setItem('productDis','true');  
+}
+}
+document.addEventListener("touchmove", productDis);
+document.addEventListener("touchstart", productDis);
+document.addEventListener("touchend", productDis);
+document.addEventListener("scroll", productDis);
+</script>
 
 {% schema %}
 {
