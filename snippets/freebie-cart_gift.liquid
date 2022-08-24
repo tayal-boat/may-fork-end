@@ -1,0 +1,48 @@
+{% assign gift-product = collections['freebie-offer'].products[0] %}
+{% assign gift-product_variant = gift-product.variants[0].id %}
+{% if cart.total_price > 100000 %}
+  {% if customer %}
+    {% assign lowercase_tags = customer.tags | join: ',' | downcase | split: ',' %}
+    {% if lowercase_tags contains 'freebie-offer' %}
+      {% assign customer_message = 'Welcome, '| append: customer.name | append: ' you have got a freebie-offer!' %}
+      <p class="custom-discount m-0 text-center">{{ customer_message }}</p>
+
+      {% capture itemTags %}
+        {% for item in cart.items %}
+          {{ item.product.tags | downcase }},
+        {% endfor %}
+      {% endcapture %}
+      {% unless itemTags contains 'freebie-offer' %}
+        <p class="custom-discount m-0 text-center">yay! {{ gift-product.title }}</p>
+        {%- form 'product', gift-product, is: 'product-form', id: form_id, class: 'product-item__quick-form d-none' -%}
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="id" value="{{ gift-product_variant }}">
+          <button
+            is="loader-button"
+            type="submit"
+            class="button button--outline custom-gift-button button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch"
+          >
+            ADD YOUR FREE GIFT
+          </button>
+          <button type="submit" class="product-item__quick-buy-button hidden-no-touch ">
+            <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
+            ADD YOUR FREE GIFT
+          </button>
+        {%- endform -%}
+      {% endunless %}
+    {% else %}
+      {% comment %} This will be the message for logged-in customers without any special tags {% endcomment %}
+      {% assign customer_message = 'Logged in as  ' | append: customer.name %}
+      <span class="welcome-message">{{ customer_message }}, sorry we currently have no offers for you.</span>
+    {% endif %}
+  {% else %}
+    {% comment %} Customer is not logged in {% endcomment %}
+    <style>
+      .custom-discount a:hover{color: red!important;font-weight: 700;}
+    </style>
+    <p class="custom-discount text-center">
+      Please <a class="text-red" href="https://www.boat-lifestyle.com/account/login">Login</a> to get your customized
+      offers
+    </p>
+  {% endif %}
+{% endif %}
