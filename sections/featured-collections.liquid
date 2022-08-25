@@ -247,10 +247,21 @@
 {% if section.settings.lazyload_section %}
   <script>
     window.addEventListener("load", function(){
- setTimeout(function () {
+      sessionStorage.setItem('featured-collections-{{section.id}}','false');
+      $('.featured-collections-container').css('height',$('.featured-collections').height());
+      function ScrollStart() {
+        if(sessionStorage.getItem('featured-collections-{{section.id}}') == 'false'){
         document.querySelector('.featured-collections-container-{{section.id}}').innerHTML = `{{ custom_featured_collection | strip_newlines }}`;
-      }, 5000);
-
+        sessionStorage.setItem('featured-collections-{{section.id}}','true');
+        }
+      }
+      var observer = new IntersectionObserver(function(entries) {
+      if(entries[0].isIntersecting === true)
+        ScrollStart();
+    }, { threshold: [1] });
+    if(document.querySelector('.featured-collections-main-container-{{section.id}}') !== null){
+      observer.observe(document.querySelector('.featured-collections-main-container-{{section.id}}'));
+    }
     });
   </script>
 {% endif %}
