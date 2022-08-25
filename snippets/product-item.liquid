@@ -252,15 +252,31 @@
        {% endif %}
         {% endunless %}
         {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
-        {%- if product.variants.size == 0 -%}
+        {% assign available_variants = 0 %}
+           {% for variant in product.variants %}
+             {% if variant.available %}
+               {% assign available_variants = available_variants | plus : 1 %} 
+             {% endif %}
+           {% endfor %}
+        {%- if available_variants == 1 -%}
           {%- capture form_id -%}product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}{%- endcapture -%}
           {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-            <button is="loader-button" type="submit" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch">ADD</button>
+            <button is="loader-button" type="submit" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch">
+              {%- if product.tags contains 'prebooking' -%}
+                {{- 'product.form.pre_order' | t -}} 
+              {% else %}
+                {{- 'product.form.add_to_cart' | t -}}
+               {% endif %}
+            </button>
             <button type="submit" class="product-item__quick-buy-button hidden-no-touch">
               <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
-              ADD
+               {%- if product.tags contains 'prebooking' -%}
+                  {{- 'product.form.pre_order' | t -}} 
+               {% else %}
+                  {{- 'product.form.add_to_cart' | t -}}
+               {% endif %}
             </button>
           {%- endform -%}
         {%- else -%}

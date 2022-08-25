@@ -632,7 +632,7 @@
               <input type="hidden" name="checkout">
 
               {%- for line_item in cart.items -%}
-                <line-item class="line-item">
+                <line-item class="line-item" data-item-id="{{ line_item.id }}">
                   <div class="line-item__content-wrapper">
                     <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
                       <span class="line-item__loader" hidden>
@@ -853,7 +853,10 @@
                   </select>
                 </line-item>
               {%- endfor -%}
-            </form>
+            </form>       
+          {% render 'freebie-cart_gift' %} 
+
+
 
 {% comment %}            {%- if section.settings.show_recommendations -%}
               <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
@@ -1782,18 +1785,59 @@
         $( document ).ready(function() {
           console.log( "readyyyyy!" );
       });
+      </script>
+<!--       freebie-offer -->
+{% assign gift-product = collections['freebie-offer'].products[0] %}
+{% assign gift-product_variant = gift-product.variants[0].id %}
+<script>
+let giftId = "{{ gift-product_variant }}";
 if(document.readyState === 'loading') {
+    console.log("loading");
   $(".header__icon-list").css("pointer-events", "none");
 }
 $(window).on("load", function(){
 $(".header__icon-list").css("pointer-events", "auto");
 });
+$('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
+$(document).ready(function(){
+const targNode = document.getElementById('mini-cart');
+const config_ = { attributes: false, childList: true, subtree: false };
+const callback_ = (mutationList, observer) => {
+ for (const mutation of mutationList) {
+    console.log('mutation')
+    let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
+    console.log('price',total_price);
+    if ($('.custom-gift-button').length > 0) {
+      $('.custom-gift-button')[0].click();
+    }
+    
+ $('#mini-cart-form .line-item').each(function() {
+    let dataItemId = $(this).data('item-id');
+      if (dataItemId == giftId){
+        let remove_price = $(`.line-item[data-item-id="${dataItemId}"] .price.price--highlight`).text().replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3);
+            console.log(remove_price);
+            if(total_price - remove_price < 1000) {
+             $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+            }
+        }
+  });
+ }
+};
+const observer_ = new MutationObserver(callback_);
+observer_.observe(targNode, config_);
 
-
-
-
-      </script>
-
+const customer_id = "{{customer.id}}"
+   $('#mini-cart-form .line-item').each(function() {
+    let dataItemId = $(this).data('item-id');
+      if (dataItemId == giftId){
+            if(customer_id.trim().length == 0) {
+             $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+            }
+        }
+  });
+  
+});
+</script>
 			<script>
           function handleapplyclick(){
               applyCoupon();
