@@ -2381,6 +2381,42 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       }
     </script>
     <script>
+          $(document).ready(function(){
+        $('[data-address-field="zip"]').insertBefore($('[data-address-field="city"]'))
+        });
+                 $('#checkout_shipping_address_zip').keyup(function () {
+                          			var zip = $(this).val();
+                          			if (zip.length == 6) {
+                          				$.ajax({
+                          					type: 'get',
+                          					url: `https://api.postalpincode.in/pincode/${zip}`,
+                                    success: function (response) {
+                          					  	  if (response[0].Status == 'Error') {
+                          							     alert(response[0].Message);
+                          							     $('#city').val('');
+                          							     $('#state').val('');
+                          						    } else {
+                                            if (response[0].PostOffice[0].Block == "NA") {
+                                            $('#checkout_shipping_address_city').val(response[0].PostOffice[0].District);
+                                            }else{
+                                          	$('#checkout_shipping_address_city').val(response[0].PostOffice[0].Block);
+                                            }
+
+                                            $('#checkout_shipping_address_province option').each( function (){
+                                              let rtext = (response[0].PostOffice[0].State).replace(" & ", " and " );
+                                              if( $(this).text() == rtext ){
+                                               $(this).prop('selected', true)
+                                              }
+                                            })
+                          					    	}
+                          					    },
+                          					error: function (response) {
+                          						  console.log(response);
+                          						  alert("something went wrong");
+                          					 }
+                          				});
+                          			}
+      });
       $("#checkout_shipping_address_zip").on("change", async function () {
         var pin_c = $("#checkout_shipping_address_zip")[0].value;
 
