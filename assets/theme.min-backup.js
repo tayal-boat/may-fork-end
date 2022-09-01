@@ -5298,7 +5298,9 @@
       if (!productPrices) {
         let customPriceSelector = document.querySelector('.custom-product-price');
         if(customPriceSelector){
-          productPrices = document.querySelector('.custom-product-price [data-product-price-list]');
+          if(window.innerWidth > 990){
+            productPrices = document.querySelector('.custom-product-price [data-product-price-list]');
+          }else{productPrices = document.querySelector('.custom-product-price-mobile [data-product-price-list]')}
           currencyFormat = window.themeVariables.settings.currencyCodeEnabled ? window.themeVariables.settings.moneyWithCurrencyFormat : Shopify.money_format;
         }else{return;}
       }
