@@ -66,7 +66,6 @@
     <link rel="dns-prefetch" href="https://stats.g.doubleclick.net" crossorigin>
     <link rel="dns-prefetch" href="https://cookiee1.veinteractive.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.google.co.in" crossorigin>
-    <link rel="dns-prefetch" href="https://cdn.judge.me" crossorigin>
     <link rel="dns-prefetch" href="https://pdp.gokwik.co" crossorigin>
     <link rel="dns-prefetch" href="https://d11yp7khhhspcr.cloudfront.net" crossorigin>
     <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" crossorigin>
@@ -134,12 +133,6 @@
       -%}
 
       <link rel="preload" as="fetch" href="{{ product.url }}.js" crossorigin>
-      <link
-        rel="preload"
-        as="image"
-        imagesizes="(max-width: 999px) calc(100vw - 48px), 640px"
-        imagesrcset="{% render 'image-attributes', image: selected_media, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800', sizes_only: true %}"
-      >
 
       {%- if product.media.size > 1 -%}
         <link rel="preload" as="script" href="{{ 'flickity.js' | asset_url }}">
@@ -270,15 +263,44 @@
 <script type="text/template" id="template_algolia_instant_search_product">{% include 'algolia_instant_search_product.hogan' %}</script>
 <script type="text/template" id="template_algolia_instant_search_no_result">{% include 'algolia_instant_search_no_result.hogan' %}</script>
 {{ 'algolia_dependency_font-awesome-4-4-0.min.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'algolia_externals.js' | asset_url }}" defer></script>
-{{ 'algolia_init.js' | asset_url | script_tag }}
-<script src="{{ 'algolia_analytics.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_translations.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_helpers.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_autocomplete.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_facets.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_sort_orders.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_instant_search.js' | asset_url }}" defer></script>
+
+
+
+<script>
+        function algolia_script(url) {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = url;
+        var x = document.getElementsByTagName('body')[0];
+        x.appendChild(s);
+    }
+    window.addEventListener("load", function(){
+    $('.algolia-header-search-input').css('pointer-events','all');
+    sessionStorage.setItem('algolia_scripts','false'); 
+    document.addEventListener("touchmove", algolia_ScrollStart, true);
+    document.addEventListener("scroll", algolia_ScrollStart, true);
+    $('.algolia-header-search-input').click(function(){
+      algolia_ScrollStart();
+    });
+    function algolia_ScrollStart() {
+    if(sessionStorage.getItem('algolia_scripts') == 'false'){
+      algolia_script("{{ 'algolia_externals.js' | asset_url }}");
+      algolia_script("{{ 'algolia_init.js' | asset_url }}");
+      setTimeout(function(){
+      algolia_script("{{ 'algolia_analytics.js' | asset_url }}");
+      algolia_script("{{ 'algolia_translations.js' | asset_url }}");
+      algolia_script("{{ 'algolia_helpers.js' | asset_url }}");
+      algolia_script("{{ 'algolia_autocomplete.js' | asset_url }}");
+      algolia_script("{{ 'algolia_facets.js' | asset_url }}");
+      algolia_script("{{ 'algolia_sort_orders.js' | asset_url }}");
+      algolia_script("{{ 'algolia_instant_search.js' | asset_url }}");
+      },500);
+      sessionStorage.setItem('algolia_scripts','true');   
+    }
+    }
+  });
+    
+</script>
   <!-- /Algolia head -->
 
   </head>
@@ -432,10 +454,7 @@
     {%- render 'google-adwords-remarketing' -%}
     <!-- Preciso Script -->
     {%- render 'preciso' -%}
-    {%
-      if template == 'collection' or template ==
-      'product'
-    %}
+    {% if template contains 'collection' or template contains 'product'%}
     {% render 'judgeme_core' %}
       <script>
         scrollLoad = function () {
@@ -470,9 +489,6 @@
     {% include 'magicCheckoutSnippet' %}
     <!-- Magic Checkout Code Ends -->
 
-    {% unless template contains 'product' or template contains 'customers' %}
-      {% comment %}{% render 'chatbot' %}{% endcomment %}
-    {% endunless %}
     {%- if template == 'index' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
     <script>
       var _rmData = _rmData || [];

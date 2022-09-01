@@ -29,19 +29,18 @@
           if (result) {
             lastResults = result.results;
           }
-         
           return lastResults[index];
         });
     }
 
   return function multiQuerySource(singleIndex, params, extendHits = null) {
-    
       return function search(query, cb) {
         sessionStorage.setItem('algoliaSearchQuery', query);
+        if(query.length >= 3){
         const index =
           queue.push({ indexName: singleIndex.indexName, query, params }) - 1;
-          
         requestSearch(index)
+         
         .then((res) => {
           var extendedHits = [];
           
@@ -54,7 +53,10 @@
           return cb(extendedHits, res);
         })
           .catch((err) => cb([], err));
+          // let algoliaAutocomplete = document.querySelector('.algolia-autocomplete').innerHTML;
+          // document.querySelector('.algolia-custom-search-results').innerHTML = algoliaAutocomplete;
       };
+    }
     };
   }
 
@@ -195,7 +197,7 @@
 
     $node.style.left = '';
     $node.style.right = '';
-    $node.style.top = top + height + document.querySelector('.algolia-trending-list').offsetHeight + 45 + 'px';
+    $node.style.top = top + height + 45 + 'px';
     $node.style[align] = dist + 'px';
     $node.style.width = newWidth + 'px';
     

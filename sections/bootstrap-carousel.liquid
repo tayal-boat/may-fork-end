@@ -1,14 +1,21 @@
 <div id="homepage-carousel">
   <!-- The slideshow -->
-  {% for block in section.blocks limit: 1 %}
-    	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide">
-          <picture>
-            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
-            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}>
-            <img style="width: 100%;" class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
+  <div class="homepage-carousels-inner">
+    {% for block in section.blocks %}
+    {% if forloop.first == true %}
+    	<a href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}" class="homepage-carousels-picture slide-url temp-slide">
+        {% if block.settings.desktop_image %}
+          <picture style="display: block;">
+            <source media="(max-width: 768px)" srcset="{{block.settings.mobile_image |img_url: '767x'}}">
+            <img loading="eager" class="homepage-carousels-lazyload_image" fetchpriority="high" src="{{block.settings.desktop_image |img_url: '1200x'}}" alt="{{block.settings.desktop_image.alt}}" width="{{block.settings.desktop_image.width}}" height="{{block.settings.desktop_image.height}}" />
           </picture>
+          {% endif %}
         </a>
-    {% endfor %}
+        {% endif %}
+      {% endfor %}  
+    <div class="owl-nav homepage-carousels-nav"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next homepage-carousels-next"><span aria-label="Next">›</span></button></div>
+    </div>
+ {% capture mainSliderInner %}   
   <div class="carousel-inner owl-carousel">
     {% for block in section.blocks %}
       <div class="carousel--item slide_{{forloop.index}}">
@@ -20,7 +27,7 @@
           <picture>
             <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
             <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}>
-            <img class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
+            <img loading="lazy" class="image-overlay__image_" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
           </picture>
 
         </a>
@@ -36,7 +43,10 @@
       </div>
     {% endfor %}
   </div>
+   {% endcapture %}
 </div>
+
+
 {% if section.settings.show_popup %}
 <div id="saleModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -68,7 +78,7 @@
     {% endif %}
               <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: center;">
               	<input style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;" type="email" name="email" id="sale_email" placeholder="Email Address">
-              <button style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;" class="button sale-btn" type="submit">{{ section.settings.button_text }}</button>
+              <button style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;" class="button sale-btn" type="submit">YES</button>
               </div>
             </div>
           </div>
@@ -234,7 +244,15 @@
 </style>
 
 <script>
-	$(document).ready(function(){
+  window.addEventListener("load", function(){
+    sessionStorage.setItem('mainSlider','false'); 
+    document.addEventListener("touchmove", ScrollStart);
+    document.addEventListener("scroll", ScrollStart);
+    document.querySelector('.homepage-carousels-next').addEventListener("click", ScrollStart, true);
+    function ScrollStart() {
+    if(sessionStorage.getItem('mainSlider') == 'false'){
+      $('.homepage-carousels-inner').append(`{{ mainSliderInner | strip_newlines }}`);
+      $('.homepage-carousels-nav').remove();
       var $owl = $( '.owl-carousel' );
       $owl.on('initialized.owl.carousel', function(event){ 
          $('.temp-slide').remove();
@@ -256,7 +274,11 @@
         responsiveClass:true,
         autoplayHoverPause: true
       });
-    });
+      sessionStorage.setItem('mainSlider','true');   
+    }
+    }
+  });
+
   	const slides = document.querySelectorAll('.carousel-inner .carousel--item');
     slides.forEach((slide, i) => {
       slide.addEventListener('click', function() {
@@ -381,7 +403,7 @@
           "label": "botton1 textsplit products",
            "default": "primary"
         },
-                 {
+        {
           "type": "text",
           "id": "split_buttontwo",
           "label": "botton2 textsplit products",
