@@ -121,7 +121,6 @@
         </header>
       {%- endif -%}
 
-      {% capture custom_featured_collection %}
       <div class="featured-collections">
         {%- for block in section.blocks -%}
           {%- assign collection = block.settings.collection -%}
@@ -182,42 +181,12 @@
           </product-list>
         {%- endfor -%}
       </div>
-      {% endcapture %}
-      {% if section.settings.lazyload_section %}
-      <div class="featured-collections-container featured-collections-container-{{section.id}}">
-        <div class="loading_icon">
-          <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765" alt="Load More" style="width: 50px;" />
-      </div>
-      </div>
-  {% else %}
-  {{ custom_featured_collection }}
-  {% endif %}
 
     </div>
   </div>
 
 </section>
-{% if section.settings.lazyload_section %}
-<script>
-  window.addEventListener("load", function(){
-    sessionStorage.setItem('featured-collections-{{section.id}}','false'); 
-    $('.featured-collections-container').css('height',$('.featured-collections').height());
-    function ScrollStart() {
-      if(sessionStorage.getItem('featured-collections-{{section.id}}') == 'false'){
-      document.querySelector('.featured-collections-container-{{section.id}}').innerHTML = `{{ custom_featured_collection | strip_newlines }}`;
-      sessionStorage.setItem('featured-collections-{{section.id}}','true');  
-      }
-    }
-    var observer = new IntersectionObserver(function(entries) {
-    if(entries[0].isIntersecting === true)
-      ScrollStart();
-  }, { threshold: [1] });
-  if(document.querySelector('.featured-collections-main-container-{{section.id}}') !== null){
-    observer.observe(document.querySelector('.featured-collections-main-container-{{section.id}}'));
-  }
-  });
-</script>
-{% endif %}
+
 
 {% schema %}
 {
@@ -255,11 +224,6 @@
     }
   ],
   "settings": [
-    {
-    "type": "checkbox",
-    "id": "lazyload_section",
-    "label": "lazyload section"
-    },
     {
       "type": "checkbox",
       "id": "enable_flash_sale",
