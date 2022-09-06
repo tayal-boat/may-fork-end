@@ -10,7 +10,6 @@
 {%- endcomment -%}
 
 <!DOCTYPE html>
-
 {%- assign direction = 'ltr' -%}
 {%- case request.locale.iso_code -%}
   {%-
@@ -36,21 +35,6 @@
   {%- if settings.favicon -%}
     <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
   {%- endif -%}
-    {%- comment -%}
-      Few prefech to increase performance on commonly
-      used third-parties
-    {%- endcomment -%}
-    <link rel="preconnect" href="https://cdn.shopify.com">
-    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
-    <link rel="dns-prefetch" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    {%- unless settings.heading_font.system? and settings.text_font.system? -%}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-    {% endunless %}
-    <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
     <title>
       {% if page_title == blank -%}
         {{- shop.name -}}
@@ -93,12 +77,40 @@
     {% render 'microdata-schema' %}
     {% render 'css-variables', direction: direction %}
     {% render 'js-variables', direction: direction %}
-
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
-    {% if template contains 'page' %}
+    {{ content_for_header }}
+    {% if template contains 'index' %}
+    <link rel="stylesheet" href="{{ 'starter-index.css' | asset_url }}">
+    {% elsif template contains 'product' %}
+    <link rel="stylesheet" href="{{ 'starter-product.css' | asset_url }}"> 
+    {% elsif template contains 'collection' %}  
+    <link rel="stylesheet" href="{{ 'starter-collection.css' | asset_url }}"> 
+     {% else %} 
+     <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
+    {% endif %}  
+   {% if template contains 'page' %}
     <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
-  {% endif %}    
-  <script src="{{ 'jquery.min.js' | asset_url }}"></script>
+  {% endif %}
+    <script src="{{ 'jquery.min.js' | asset_url }}"></script>
+    {% if template contains 'product' %}
+      {% render 'product-css' %}
+      {%- render 'product-js' -%}
+    {% endif %}
+    {%- render 'wizrocket_variables_generator' -%}
+    {%- render 'ms-clarity' -%}
+    {% section 'algolia-search-popup' %}
+<script type="text/template" id="template_algolia_money_format">{% include 'algolia_money_format' %}</script>
+<script type="text/template" id="template_algolia_current_collection_id">{% include 'algolia_current_collection_id' %}</script>
+<script type="text/template" id="template_algolia_autocomplete">{% include 'algolia_autocomplete.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete.css">{% include 'algolia_autocomplete.css.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_pages_empty">{% include 'algolia_autocomplete_pages_empty.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_page">{% include 'algolia_autocomplete_page.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_collection">{% include 'algolia_autocomplete_collection.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_collections_empty">{% include 'algolia_autocomplete_collections_empty.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_article">{% include 'algolia_autocomplete_article.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_articles_empty">{% include 'algolia_autocomplete_articles_empty.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_product">{% include 'algolia_autocomplete_product.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_products_empty">{% include 'algolia_autocomplete_products_empty.hogan' %}</script>
+<script type="text/template" id="template_algolia_autocomplete_footer">{% include 'algolia_autocomplete_footer.hogan' %}</script>
     <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -142,29 +154,7 @@
 
       gtag('config', 'G-6LGXJKGVE2');
     </script>
-    <!-- Global site tag (gtag.js) - Google Analytics Ends -->
-    {{ content_for_header }}
-    {% if template contains 'product' %}
-      {% render 'product-css' %}
-      {%- render 'product-js' -%}
-    {% endif %}
-    {%- render 'wizrocket_variables_generator' -%}
-    {% render 'clevertap' %}
-    {%- render 'ms-clarity' -%}
-    {% section 'algolia-search-popup' %}
-<script type="text/template" id="template_algolia_money_format">{% include 'algolia_money_format' %}</script>
-<script type="text/template" id="template_algolia_current_collection_id">{% include 'algolia_current_collection_id' %}</script>
-<script type="text/template" id="template_algolia_autocomplete">{% include 'algolia_autocomplete.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete.css">{% include 'algolia_autocomplete.css.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_pages_empty">{% include 'algolia_autocomplete_pages_empty.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_page">{% include 'algolia_autocomplete_page.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_collection">{% include 'algolia_autocomplete_collection.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_collections_empty">{% include 'algolia_autocomplete_collections_empty.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_article">{% include 'algolia_autocomplete_article.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_articles_empty">{% include 'algolia_autocomplete_articles_empty.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_product">{% include 'algolia_autocomplete_product.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_products_empty">{% include 'algolia_autocomplete_products_empty.hogan' %}</script>
-<script type="text/template" id="template_algolia_autocomplete_footer">{% include 'algolia_autocomplete_footer.hogan' %}</script>
+    <!-- Global site tag (gtag.js) - Google Analytics Ends -->    
   </head>
   <body
     class="no-focus-outline {{ feature_classes }}"
@@ -277,10 +267,19 @@
         {%- section 'static-text-with-icons' -%}
         {%- section 'static-newsletter' -%}
       {%- endunless -%}
+ {%- if template == 'index' -%}
+ <div class="custom-lazyloaded-content">
+ <div class="loading_icon">
+  <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765" alt="Load More" style="width: 50px;" />
+ </div>
+</div> 
+   {% endif %}
     </div>
+
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
     {%- section 'footer' -%}     
     {%- endif -%}
+    {% render 'clevertap' %}
         <!-- Google Tag Manager (noscript) -->
         <noscript
         ><iframe
@@ -295,9 +294,12 @@
         Common SVG definitions that we are re-using in several
         places
       {%- endcomment -%}
-      {%- if template == 'index' -%}
+    {%- if template == 'index' -%}
       {% render 'quinn-scripts.liquid' %}
       {% endif %}
+   {%- if template contains 'index' or template contains 'product' or template contains 'collection'-%}
+    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
+   {% endif %}           
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>        
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
     {% if template contains 'product'%}
@@ -329,5 +331,16 @@
     {%- if template == 'index' -%}{%- render 'quinn-live.liquid' -%}{%- endif -%}
     {%- render 'custom-scripts' -%}
     {%- render 'invitereferrals' -%}
+    <script>
+      let isEligibleForFreebie = false;
+      {% if customer and customer.tags contains 'freebie-offer' %}
+        isEligibleForFreebie = true;
+      {% endif %}
+      clevertap.onUserLogin.push({
+       "Site": {
+         "isEligibleForFreebie": isEligibleForFreebie
+       }
+      });
+    </script>
   </body>
 </html>
