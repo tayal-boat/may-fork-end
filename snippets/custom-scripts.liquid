@@ -1,4 +1,12 @@
 <!-- Algolia head -->
+  {% for tag in customer.tags %}
+  {% if tag == 'gst_added' %}
+  {% assign gst_added = true %}
+  {% break %}
+  {% else %}
+  {% assign gst_added = false %}
+  {% endif %}
+  {% endfor %} 
 <script>
       function algolia_script(url) {
       var s = document.createElement('script');
@@ -50,6 +58,19 @@
       s.parentNode.insertBefore(g, s);
       }(document, 'script'));
     algolia_script("https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js");
+
+      {% if customer.metafields.custom.gst_address %}
+      Shopify.gst_added = {% if gst_added %} {{ gst_added }} {% else %} false {% endif %};
+      let address = {{ customer.metafields.custom.gst_address }};
+      
+      sessionStorage.setItem('gstin', address.gst );
+      sessionStorage.setItem('gst_billing_name', address.name ); 
+      sessionStorage.setItem('gst_billing_address', address.address1 );
+      sessionStorage.setItem('gst_billing_city', address.city );
+      sessionStorage.setItem('gst_billing_state', address.state );
+      sessionStorage.setItem('gst_billing_pincode', address.pincode );
+      {% endif %}
+      
 });  
 </script>
 <!-- /Algolia head -->

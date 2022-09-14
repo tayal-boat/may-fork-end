@@ -1,5 +1,5 @@
 {
-    "title": "{{ product.title }}",
+    "title": "{{ product.title  | escape }}",
     "available": "{{ product.available | json }}",
     "compare_at_price": "{{ product.compare_at_price | money  }}",
     "compare_at_price_max": "{{ product.compare_at_price_max | money  }}",
@@ -57,7 +57,7 @@
                     {
                         "name": "{{ value.name }}",
                         "position": "{{ value.position }}",
-                        "id": "{{ value.id }}",
+                        "id": "{{ value.id }}"
                     }{% unless forloop.last %},{% endunless %}
                         
                     {% endfor %}
@@ -92,8 +92,7 @@
                     "variant_id": "{{ variant.id | json }}",
                     "value": {{ variant.option1 | json }},
                     "available": {{ variant.available | json }},
-                    "group": {{ variant.metafields.color.group | json }},
-                    "image": {{ variant.option1 | handle | append: '.png' | file_img_url: '50x50' | prepend: 'https:' | split: '?' | first | json }}
+                    "group": {{ variant.metafields.color.group | json }}
                 }{% unless forloop.last %},{% endunless %}
             {% endfor %}
         {% endif %}
