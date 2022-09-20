@@ -15,15 +15,19 @@
       var x = document.getElementsByTagName('body')[0];
       x.appendChild(s);
   }
-  window.addEventListener("load", function(){
+   algolia_script("{{ 'algolia_config.js' | asset_url }}");
+   algolia_script("{{ 'algolia_externals.js' | asset_url }}");
+    algolia_script("{{ 'algolia_init.js' | asset_url }}");
+document.addEventListener('DOMContentLoaded', (event) => {
       AOS.init({
         duration: 1200,
       });
       $(function () {
         $(".video, .video-new").videoPopup();
       }); 
-   algolia_script("{{ 'algolia_config.js' | asset_url }}"); 
+   
   $('.algolia-header-search-input').css('pointer-events','all');
+ 
   sessionStorage.setItem('algolia_scripts','false'); 
   document.addEventListener("touchmove", algolia_ScrollStart, true);
   document.addEventListener("scroll", algolia_ScrollStart, true);
@@ -32,8 +36,7 @@
   });
   function algolia_ScrollStart() {
   if(sessionStorage.getItem('algolia_scripts') == 'false'){
-    algolia_script("{{ 'algolia_externals.js' | asset_url }}");
-    algolia_script("{{ 'algolia_init.js' | asset_url }}");
+    
     setTimeout(function(){
     algolia_script("{{ 'algolia_analytics.js' | asset_url }}");
     algolia_script("{{ 'algolia_translations.js' | asset_url }}");
@@ -41,7 +44,7 @@
     algolia_script("{{ 'algolia_autocomplete.js' | asset_url }}");
     algolia_script("{{ 'algolia_facets.js' | asset_url }}");
     algolia_script("{{ 'algolia_sort_orders.js' | asset_url }}");
-    },500);
+    },700);
     sessionStorage.setItem('algolia_scripts','true');   
   }
   }
