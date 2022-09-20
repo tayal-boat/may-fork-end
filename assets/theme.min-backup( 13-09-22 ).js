@@ -4144,7 +4144,11 @@
         Shopify.cartGst = function(){
             if($('.main-checkout-btn').length == 0){
             $('.mini-cart_footer').append(`<button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="main-checkout-btn checkout-button hide button button--primary button--full" name="checkout">Complete payment</button>`);
-           
+            if(document.querySelector('.gst-container input').checked){
+            $('.mini-cart__gst_details').show();
+            $('.main-checkout-btn').show(); 
+            $('.checkout-buttons-div').hide(); 
+            }
             if(Shopify.gst_added){
              $('.mini-cart__gst').append(`<div class="mini-cart__gst_details"><p> ${sessionStorage.gst_billing_name} </p><p> ${sessionStorage.gst_billing_address} ${sessionStorage.gst_billing_city} ${sessionStorage.gst_billing_state} ${sessionStorage.gst_billing_pincode} </p></div>`);
              document.querySelector('.gst-container input').checked = true;
