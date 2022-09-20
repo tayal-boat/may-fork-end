@@ -2,13 +2,7 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
-<style>
-  {% if product.tags contains 'Coming-Soon' %}
-    #MainPaymentContainer, .amazon-c {
-      display: none !important;
-    }
-  {% endif %}
-</style>
+
 <div class="product-form">
   <div {% if template.suffix != 'quick-buy-drawer'  %} class="w-lg-50" {% endif %}>
   {%- for block in section.blocks -%}
@@ -267,7 +261,7 @@
     {% endif %}
       {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
       <div class="seo-new pr-lg-1" style="overflow-y: auto;">
-        <div class="price-container d-none mt-lg-4 mb-2">
+        <div class="price-container mt-lg-4 mb-2 d-none">
             {% render 'product-payment-partner' %}
         </div>
 {% if product.metafields.custom.product_highlights %}
@@ -590,7 +584,7 @@
          
 
                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}         
-                <button type="button" onclick="onBuyNowClick(this)" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                <button type="button" onclick="onBuyNowClick(this, '#{{ product_form_id }}')" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
                  {{ settings.buynow-titile }}
                  <div style="display:none"><div class="cir-loader">Loading..</div></div>
                  </button>
