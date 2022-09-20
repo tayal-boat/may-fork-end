@@ -1,0 +1,105 @@
+
+<!-- Find your match section starts here -->
+<div class="container find_your_match_section">
+  <div class="row content_row">
+    <div class="col-md-5" >
+      <div class="content_wrapper">
+          <h2>{{- section.settings.sectionHeading -}}</h2>
+          <p>{{- section.settings.description -}}</p>
+      </div>
+    </div>
+    <div class="col-md-7 owl-carousel owl-theme find_your_match_slider">
+      {% for block in section.blocks %}
+      <div class="item">
+          <a href="{{- block.settings.image -}}">{{- block.settings.label -}}</a>
+          <img src="{{block.settings.image | img_url: ''}}">
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Find your match section starts here -->
+
+<script>
+    jQuery(document).ready(function() {
+      jQuery('.find_your_match_slider').owlCarousel({
+        loop: true,
+        responsiveClass: true,
+        autoplay:true,
+        items: 3,
+        nav: false,
+        dots: false,
+        responsive: {
+          300: {
+            items: 2,
+            margin: 10
+          },
+          600: {
+            items: 2,
+            margin: 10
+          },
+          1000: {
+            items: 3,
+            loop: true,
+            margin: 20
+          }
+        }
+      })
+    })
+  </script>
+
+{% schema %}
+  {
+    "name": "Find you match",
+	"max_blocks": 28,
+    "settings": [
+      {
+        "type": "text",
+        "id": "sectionHeading",
+        "label": "Section Heading"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description"
+      }
+    ],
+	"blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Image"
+              },
+              {
+                  "type": "text",
+                  "id": "label",
+                  "label": "Button Label"
+              },
+              {
+                  "type": "url",
+                  "id": "target_url",
+                  "label": "Target URL"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Find your match",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
