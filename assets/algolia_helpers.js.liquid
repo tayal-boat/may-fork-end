@@ -19,10 +19,6 @@
         ' <span class="ais-hit--price-striked">' +
         formatPrice(compare_at_price) +
         '</span> ';
-      // res +=
-      //   ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
-      //   Math.floor(discount_ratio * 100) +
-      //   '%)</p>';
     }
  
     return res;
@@ -95,6 +91,17 @@
 
       return escapeHtml(res);
     },
+    youSavePrice: function inventory() {
+      var res = '';
+      var compare_at_price = this.compare_at_price;
+      var price = this.price;
+      var price_ratio = this.price_ratio;
+      var discount_ratio = 1.0 - price_ratio;
+      res += ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
+        Math.floor(discount_ratio * 100) +
+        '%)</p>';
+       return res;
+    },
     inventory: function inventory() {
       var res = this.inventory_available;
       var flashSale = '';
@@ -104,9 +111,30 @@
       if(this.inventory_available) {
         res = '<input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + flashSale + '" />';
       }else{
-        res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+      if(this.tags.includes('Coming-Soon')){
+        res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
+      }else{
+      res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+      }
       }
       return res;
+    },
+      reviews: function reviews() {
+      var res = '';
+      var reviews = this.meta.reviews;
+      if(reviews){
+      var rating = reviews.rating; 
+        rating = JSON.parse(rating);
+      var rating_value = rating.value;
+        rating_value =  Math.round(rating_value * 10) / 10;
+      var rating_count = reviews.rating_count;
+      res = `<div class="rating"><div class="rating__stars" role="img" aria-label="${rating_value} out of 5.0 stars">
+        <svg fill="none" focusable="false" width="14" height="14" class="icon icon--rating-star  
+  rating__star rating__star--full" viewBox="0 0 14 13">  <path d="M7 0L8.6458 4.73475L13.6574 4.83688L9.66296 7.86525L11.1145 12.6631L7 9.8L2.8855 12.6631L4.33704 7.86525L0.342604 4.83688L5.3542 4.73475L7 0Z" fill="currentColor"></path> </svg>
+    ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
+  </div>`;  
+      }
+     return res;
     },
     badge: function badge() {
       var res = '';

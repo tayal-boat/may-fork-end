@@ -111,10 +111,12 @@
       }, true);
     </script>
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
-    
+    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
+       {%- if template == 'index' -%}
+    <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">{% endif %} 
     {%- render 'wizrocket_variables_generator' -%}
     {%- render 'ms-clarity' -%}
-    {% section 'algolia-search-popup' %}
+    
     <script type="text/template" id="template_algolia_money_format">{% include 'algolia_money_format' %}</script>
     <script type="text/template" id="template_algolia_current_collection_id">{% include 'algolia_current_collection_id' %}</script>
     <script type="text/template" id="template_algolia_autocomplete">{% include 'algolia_autocomplete.hogan' %}</script>
@@ -128,9 +130,15 @@
     <script type="text/template" id="template_algolia_autocomplete_product">{% include 'algolia_autocomplete_product.hogan' %}</script>
     <script type="text/template" id="template_algolia_autocomplete_products_empty">{% include 'algolia_autocomplete_products_empty.hogan' %}</script>
     <script type="text/template" id="template_algolia_autocomplete_footer">{% include 'algolia_autocomplete_footer.hogan' %}</script>
-    <link rel = "preload" href = "{{ 'theme-min.css' | asset_url }}" type = "text/css" as = "style" onload = "this.onload = null; this.rel = 'stylesheet' ; "/>       
+   {% if template contains 'product' %}
+    {% render 'product-css' %}
+    {%- render 'product-js' -%}
+  {% elsif template contains 'page' %}  
+   <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}"> 
+  {% endif %}  
   </head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string >
+  
   {%- assign feature_classes = '' -%}
   {%- if settings.show_image_zoom -%}
     {% assign feature_classes = feature_classes | append: ' features--image-zoom' %}
@@ -252,19 +260,9 @@
     {%- endif -%}
     {% render 'clevertap' %}
 
-    
-   {%- if template contains 'index' or template contains 'product' or template contains 'collection'-%}
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
-   {% endif %}   
-  {% if template contains 'product' %}
-    {% render 'product-css' %}
-    {%- render 'product-js' -%}
-  {% elsif template contains 'page' %}  
-   <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}"> 
-  {% endif %}  
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>        
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
-    {% render 'gokwik' %}          
+    
     {% if template contains 'product'%}
       {% render 'back-in-stock-helper' %}
     {% endif %}
@@ -291,9 +289,10 @@
     <!-- Magic Checkout Code Starts -->
     {% include 'magicCheckoutSnippet' %}
     <!-- Magic Checkout Code Ends -->
- 
+       {% render 'gokwik' %}    
     {%- render 'custom-scripts' -%}
     {%- render 'invitereferrals' -%}
+    <style>.spr-chat__trigger-box {right: 0;}</style>
     <script>
       let isEligibleForFreebie = false;
       {% if customer and customer.tags contains 'freebie-offer' %}
@@ -327,6 +326,6 @@
       -webkit-box-orient: vertical;
     }
   </style>
-      {%- render 'quinn-custom' -%}  
+      {%- render 'quinn-custom' -%}
   </body>
 </html>

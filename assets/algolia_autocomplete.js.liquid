@@ -39,8 +39,7 @@
         if(query.length >= 3){
         const index =
           queue.push({ indexName: singleIndex.indexName, query, params }) - 1;
-        requestSearch(index)
-         
+          requestSearch(index)        
         .then((res) => {
           var extendedHits = [];
           
@@ -52,11 +51,15 @@
           
           return cb(extendedHits, res);
         })
-          .catch((err) => cb([], err));
-          // let algoliaAutocomplete = document.querySelector('.algolia-autocomplete').innerHTML;
-          // document.querySelector('.algolia-custom-search-results').innerHTML = algoliaAutocomplete;
+          .catch((err) => cb([], err));       
+ var searchPopupContainer = document.querySelectorAll(".search-popup-container");
+for (var i=0; i<searchPopupContainer.length; i++) {
+    searchPopupContainer[i].removeAttribute("style");
+}
+document.querySelector("body").classList.add("noScroll");          
       };
     }
+    
     };
   }
 
@@ -194,10 +197,10 @@
       dist = left;
       newWidth = width;
     }
-
+   
     $node.style.left = '';
     $node.style.right = '';
-    $node.style.top = top + height + 45 + 'px';
+    $node.style.top = top + height + 2 + 'px';
     $node.style[align] = dist + 'px';
     $node.style.width = newWidth + 'px';
     
@@ -327,8 +330,13 @@
   // Event listeners
   autocompleteInstance.on('autocomplete:selected', function(obj, datum, name) {
 setTimeout(function(){
+if(window.innerWidth < 1200){
+document.querySelector('.algolia-search__form_mobile input').value = sessionStorage.getItem('algoliaSearchQuery'); 
+document.querySelector('.algolia-search__form_mobile input').dispatchEvent(new Event('input', {bubbles:true}));
+}else{
 document.querySelector('.predictive-search__input').value = sessionStorage.getItem('algoliaSearchQuery'); 
-document.querySelector('.predictive-search__input').dispatchEvent(new Event('input', {bubbles:true}));
+document.querySelector('.predictive-search__input').dispatchEvent(new Event('input', {bubbles:true}));  
+}    
 },300);
     if (algolia.config.analytics_enabled) {
       var clickData = {
@@ -345,7 +353,44 @@ document.querySelector('.predictive-search__input').dispatchEvent(new Event('inp
        * Uncomment the following function call to start storing data in
        * local storage for conversion tracking
        */
-      // algolia.saveForConversionTracking(clickData);
+      algolia.saveForConversionTracking(clickData);
+        /**
+ * Try to get the details from local storage for conversion tracking.
+ * We're using a try...catch here to handle any possible exceptions resulting
+ * from local storage or JSON parsing.
+ */
+function trackConversion() {
+  try {
+    // Get any previously stored data.
+    const previousClickItemsString = localStorage.getItem(localStorageKey)
+    // If data was found, send a conversion event for those products.
+    if (!!previousClickItemsString) {
+      const previousClickItems = JSON.parse(previousClickItemsString)
+      previousClickItems.forEach((data) => {
+        aa('convertedObjectIDsAfterSearch', data)
+      })
+    }
+  } catch (error) {
+    // No need to do anything in this scenario.
+  }
+
+  // Try to remove the items from local storage.
+  try {
+    localStorage.removeItem(localStorageKey)
+  } catch (error) {
+    // No need to do anything in this scenario.
+  }
+}
+// console.log(event);
+// Track a conversion event when clicking the 'add to cart' button.
+// Change the query selector to be the correct one for your theme.
+const addToCartBtn = document.querySelector('.custom-search-cta')
+
+if (addToCartBtn) {
+  addToCartBtn.addEventListener('click', function (e) {
+    trackConversion()
+  })
+}
     }
     switch (name) {
       case 'products': {
@@ -388,13 +433,15 @@ document.querySelector('.predictive-search__input').dispatchEvent(new Event('inp
     });
   });
 
-const input = document.querySelector('.predictive-search__input');
-input.addEventListener('input', function(e) {
-if(this.value.length > 0){
-document.getElementsByClassName('algolia-trending-list')[0].style.display = 'none';
-}else{
-document.getElementsByClassName('algolia-trending-list')[0].removeAttribute('style');
+const input = document.querySelectorAll('.predictive-search__input');
+for (var i=0; i<input.length; i++) {
+ input[i].addEventListener('input', function(e) {
+if(this.value.length == 0){
+document.querySelector("body").classList.remove("noScroll");  
+}else if(this.value.length > 2){
+document.querySelector("body").classList.add("noScroll");    
 }
-});
-
+});   
+}  
+  
 })(window.algoliaShopify);
