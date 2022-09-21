@@ -1,3 +1,23 @@
+<style>
+  @media screen and (min-width: 740px){
+  #desktop-menu-1 {
+    width: 90%;
+    margin: auto;
+    left: 0;
+    right: 0;
+    display: flex; flex-wrap:wrap;
+    align-items: center;
+    overflow: auto;
+   }
+   #desktop-menu-1 .nav-dropdown__item {
+    width: 25%;
+    }
+   #desktop-menu-1 a.nav-dropdown__link.link--faded.test {
+    align-items: center;
+    font-size:9px;
+}
+}
+</style>
 <desktop-navigation>
   <ul
     class="header__linklist list--unstyled {% unless bottom_navigation %}hidden-pocket hidden-lap{% endunless %}"
@@ -197,11 +217,12 @@
                     {%- if sub_link.object.image -%}
                       <img
                         loading="lazy"
-                        sizes="400px"
+                        sizes="150px"
                         {% render 'image-attributes', image: sub_link.object.image, sizes: '240,480,720,960,1200,1440,1680,1920,2160' %}
                         alt="{{- sub_link.title -}}"
                       >
-                    {%- else -%}
+                      <p><b>{{- sub_link.title -}}</b></p>
+                    {% else %}
                       {{- sub_link.title -}}
                     {%- endif -%}
                     {%- if sub_link.links.size > 0 -%}
@@ -236,6 +257,8 @@
 </desktop-navigation>
 <script>
   window.addEventListener('load', function() {
-      $('desktop-navigation').html(`{{ header_custom }}`)
+    if(window.innerWidth > 1199){
+      $('desktop-navigation').html(`{{ header_custom | strip_newlines }}`)
+    }
   })
 </script>

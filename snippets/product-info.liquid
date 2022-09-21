@@ -15,14 +15,12 @@
         {%- endif -%}
       </h2>
     {%- endif -%}
-    {% if product.available %}
-     {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
-	    <div class="flash_sale">
-         <p class="m-0 text-uppercase flash_text"><span class="thunder"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2.png?v=1655103798" loading="lazy" alt="thunder" /></span>&nbsp;{{settings.flash_sale_title}}</p>
-           {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
-        </div>
-    	{%- render 'inventory-bar' with product -%}
-      {% endif %}
+    {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
+	<div class="flash_sale">
+       <p class="m-0 text-uppercase flash_text"><span class="thunder"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2.png?v=1655103798" loading="lazy" alt="thunder" /></span>&nbsp;{{settings.flash_sale_title}}</p>
+        {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
+    </div>
+    	{% if product.available %}{%- render 'inventory-bar' with product -%}{% endif %}
     {%- endif -%}
     {% unless featured %}
       <h1 class="product-meta__title heading h3">{{ product.title }}</h1>

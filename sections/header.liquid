@@ -1,206 +1,248 @@
-{%- unless handle contains 'quick-checkout' -%}
 {% comment %}Namogoo Snippet{% endcomment %}
-<script type="text/javascript" async> (() => { const cfgKey = "namogooDataLayer", categoriesCfgKey = "NmgDLProductCategories"; let userData = {}, siteData = {}, productData = {}, cartData = {}, searchProductsData = [], categoryProductsData = [], categoryData = {}; let utils = { objectIsEmpty: (obj) => { if (Array.isArray(obj)) { return obj.length === 0; } return Object.keys(obj).length === 0 && obj.constructor === Object; } }; let page = { href: () => window.location.href, pageType: () => { let pType = "{{ request.page_type }}"; switch (pType) { case '404': case 'password': case 'list-collections': { return 'Other'; } case 'article': case 'blog': case 'page': { return 'Content Page'; } case 'cart': { return 'Cart'; } case 'collection': { return 'Category'; } case 'customers/account': case 'customers/reset_password': { return 'Account'; } case 'customers/activate_account': case 'customers/addresses': case 'customers/login': case 'customers/register': { return 'Customer Service' } case 'customers/order': { return 'Order Details'; } case 'gift_card': { return 'Promotion'; } case 'product': { return 'Product'; } case 'index': { return 'Homepage'; } case 'search': { return 'Search'; } } let href = page.href(); if (href.includes("/cart")) { return 'Cart'; } else if (href.includes("/account")) { return 'Account'; } else if (href.includes("/thank_you")) { return 'Order Confirmation'; } else if (href.includes("/orders/")) { return 'Order Details'; } else if (href.includes("/checkout")) { return 'Checkout'; } else { return 'Other'; } }, requiredDataLayerGroups: () => { let pt = page.pageType(); let groups = ['userData', 'siteData', 'cartData']; if (pt === 'Product'){ groups.push('productData'); } else if (pt === 'Category'){ groups.push('categoryData', 'categoryProductsData'); } else if (pt === 'Search'){ groups.push('searchProductsData'); } return groups; }, td: () => window.ShopifyAnalytics.lib.trekkie.defaultAttributes, meta: () => window.ShopifyAnalytics.meta, get: { user: { uniqToken: () => page.td().uniqToken, visitToken: () => page.td().visitToken, id: () => __st.cid, }, }, set: { userData: () => { userData.guestUserId = page.get.user.uniqToken(); userData.sessionId = page.get.user.visitToken(); let userId = page.get.user.id(); if (userId){ userData.userId = userId; userData.loginType = 'logged in user'; } else { userData.userId = ''; userData.loginType = 'guest user'; } }, siteData: () => { siteData.local = "{{ request.locale.iso_code }}"; siteData.language = document.documentElement.lang; siteData.currency = "{{ shop.currency }}"; siteData.shopCurrency = "{{ shop.currency }}"; let currency = window.Currency ? window.Currency.currentCurrency : ''; siteData.cartCurrency = currency || "{{ cart.currency.iso_code }}"; siteData.pageType = page.pageType(); siteData.timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; {%- if search and search.performed -%} siteData.searchTerms = "{{ search.terms }}"; {%- endif -%} }, productData: () => { {%- if product -%} let selectedVariantId = page.meta().selectedVariantId || {{ product.selected_or_first_available_variant.id }}; let allVariants = [ {%- for variant in product.variants -%} { sku: {{ variant.sku | json }}, id: {{ variant.id }}, salePrice: {{ variant.price }}, originalPrice: {{ variant.price }}, available: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }, {%- endfor -%} ]; let selectedVariant = allVariants.filter(v => v.id == selectedVariantId)[0] || {}; productData.sku = selectedVariant.sku || ''; productData.id = {{ product.id }}; productData.variantId = selectedVariant.id; productData.title = "{{ product.title | escape }}"; productData.brand = "{{ product.vendor | escape }}"; productData.salePrice = selectedVariant.salePrice / 100 + ''; productData.originalPrice = selectedVariant.originalPrice / 100 + ''; productData.quantity = selectedVariant.quantity; productData.inStock = selectedVariant.available; productData.imageUrl = "{{ product | img_url }}"; let productCollections = [ {%- if product.collections -%} {%- for collection in product.collections -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" }, {%- endfor -%} {%- elsif collection -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" } {%- endif -%} ]; productData.categoryIds = []; productData.categoryNames = []; productData.categoryHandles = []; productCollections.forEach(collection => { productData.categoryIds.push(collection.id); productData.categoryNames.push(collection.title); productData.categoryHandles.push(collection.handle); }); {%- endif -%} }, cartData: () => { cartData.total = {{ cart.total_price }} / 100 + ''; cartData.subTotal = {{ cart.items_subtotal_price }} / 100 + ''; {% assign discounts = cart.cart_level_discount_applications | default: cart.discount_applications %} {%- for dscnt in discounts -%} cartData.discountData = { id: "{{ dscnt.key }}", name: "{{ dscnt.title | escape }}", discountType: "{{ dscnt.type }}", totalAmount: {{ dscnt.total_allocated_amount }} / 100 + '', value: "{{ dscnt.value }}", valueType: "{{ dscnt.value_type }}", }; {% break %} {%- endfor -%} {%- if cart.item_count -%} cartData.items = [ {%- for item in cart.items -%} { sku: "{{ item.sku }}", id: {{ item.product_id }}, variantId: {{ item.id }}, title: "{{ item.title | ecsape }}", brand: "{{ item.vendor | escape}}", price: {{ item.price }} / 100 + '', originalPrice: {{ item.price }} / 100 + '', salePrice: {{ item.discounted_price }} / 100 + '', quantity: {{ item.quantity }}, imageUrl: "{{ item | img_url }}", inStock: true, {%- if item.product.collections -%} {%- assign categoryIds = '' -%} {%- assign categoryNames = '' -%} {%- assign categoryHandles = '' -%} {%- for collection in item.product.collections -%} {%- assign categoryIds = categoryIds | append: collection.id | append: ' ,|!|, ' -%} {%- assign categoryNames = categoryNames | append: collection.title | escape | append: ' ,|!|, ' -%} {%- assign categoryHandles = categoryHandles | append: collection.handle | append: ' ,|!|, ' -%} {%- endfor -%} categoryIds: {{ categoryIds | split: ' ,|!|, ' | json }}, categoryNames: {{ categoryNames | split: ' ,|!|, ' | json }}, categoryHandles: {{ categoryHandles | split: ' ,|!|, ' | json }}, {%- else -%} categoryIds: [], categoryNames: [], categoryHandles: [], {%- endif -%} {% if item.discounts.size > 0 %} discountData: { amount: {{ item.discounts[0].amount | default: 0 }} / 100 + '', title: {{ item.discounts[0].title | json }}, }, {% endif %} }, {%- endfor -%} ]; let productCategoriesData = {}; cartData.items.forEach(item => { productCategoriesData[item.variantId] = { categoryIds: item.categoryIds, categoryNames: item.categoryNames, categoryHandles: item.categoryHandles, } }); localStorage.setItem(categoriesCfgKey, JSON.stringify(productCategoriesData)); {%- endif -%} cartData.totalQuantity = {{ cart.item_count }}; }, categoryData: () => { {%- if request.page_type == 'collection' -%} {%- assign collection = collections[handle] -%} categoryData.id = "{{ collection.id }}"; categoryData.handle = "{{ collection.handle }}"; categoryData.title = "{{ collection.title }}"; {%- endif -%} }, categoryProductsData: () => { categoryProductsData.length = 0; {%- if request.page_type == 'collection' -%} {%- assign collection = collections[handle] -%} {%- if collection.products -%} let product = {}, firstVariant = {}, variants = [], productCollections = []; {%- for product in collection.products -%} productCollections = [ {%- if product.collections -%} {%- for collection in product.collections -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" }, {%- endfor -%} {%- endif -%} ]; product = { id: {{ product.id }}, title: `{{ product.title }}`, brand: `{{ product.vendor }}`, imageUrl: "{{ product | img_url }}", categoryIds: productCollections ? productCollections.map(collection => collection.id) : [], categoryNames: productCollections ? productCollections.map(collection => collection.title) : [], categoryHandles: productCollections ? productCollections.map(collection => collection.handle) : [], {%- if product.variants.size == 1 -%} {% assign variant = product.variants[0] %} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, variants: [], }; {%- else -%} }; firstVariant = { {%- assign variant = product.selected_or_first_available_variant -%} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }; variants = [ {%- for variant in product.variants -%} {%- if variant.id == product.selected_or_first_available_variant.id -%} {%- continue -%} {%- endif -%} { sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }, {%- endfor -%} ]; product.variants = variants.map(v => {return {...product, ...v}}); product = {...product, ...firstVariant}; {%- endif -%} categoryProductsData.push({...product}); {%- endfor -%} {%- else -%} categoryProductsData.push({}); {%- endif -%} {%- endif -%} }, searchProductsData: () => { searchProductsData.length = 0; {%- if request.page_type == 'search' -%} {%- if search and search.performed -%} let searchResult = {}, searchResultFirstVariant = {}, searchResultVariants = [], searchResultCollections = []; {%- for product in search.results -%} {%- if product.object_type != "product" -%} {%- continue -%} {%- endif -%} searchResultCollections = [ {%- if product.collections -%} {%- for collection in product.collections -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" }, {%- endfor -%} {%- endif -%} ]; searchResult = { id: {{ product.id }}, title: `{{ product.title }}`, brand: `{{ product.vendor }}`, imageUrl: "{{ product | img_url }}", categoryIds: searchResultCollections ? searchResultCollections.map(collection => collection.id) : [], categoryNames: searchResultCollections ? searchResultCollections.map(collection => collection.title) : [], categoryHandles: searchResultCollections ? searchResultCollections.map(collection => collection.handle) : [], {%- if product.variants.size == 1 -%} {% assign variant = product.variants[0] %} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, variants: [], }; {%- else -%} }; searchResultFirstVariant = { {%- assign variant = product.selected_or_first_available_variant -%} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }; searchResultVariants = [ {%- for variant in product.variants -%} {%- if variant.id == product.selected_or_first_available_variant.id -%} {%- continue -%} {%- endif -%} { sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }, {%- endfor -%} ]; searchResult.variants = searchResultVariants.map(v => {return {...searchResult, ...v}}); searchResult = {...searchResult, ...searchResultFirstVariant}; {%- endif -%} searchProductsData.push({...searchResult}); {%- else -%} searchProductsData.push({}); {%- endfor -%} {%- endif -%} {%- endif -%} }, } }; let setRequiredGroupsData = () => { let requiredDataLayerGroups = page.requiredDataLayerGroups(); requiredDataLayerGroups.forEach((item, index) => { if (utils.objectIsEmpty(eval(item))){ try { page.set[item]() } catch (e) { } } }); }; let setLog = (groupsList) => { let log = {}; groupsList.forEach((item, index) => { if (['userData', 'siteData', 'cartData', 'categoryData'].includes(item)){ log[item] = eval(item) } else if (['categoryProductsData', 'searchProductsData'].includes(item)){ log['items'] = eval(item) } else if (item === 'productData'){ log['items'] = [eval(item)] } }); window[cfgKey] = [log] }; let interval; let perform = (i=1000) => { interval = setInterval(() => { setRequiredGroupsData(); let c = 0; let requiredGroups = page.requiredDataLayerGroups(); requiredGroups.forEach((item, index) => { if (!utils.objectIsEmpty(eval(item))){ c++ } }); if (requiredGroups.length === c){ clearInterval(interval); setLog(requiredGroups) } }, i) }; perform(); let initialHref = window.location.href; let trackUrl = setInterval(() => { if (page.href() !== initialHref){ initialHref = page.href(); userData = {}; siteData = {}; productData = {}; cartData = {} ; searchProductsData = []; categoryProductsData = []; categoryData = {}; perform() } }, 1000) })();
+<script type="text/javascript" async>
+   (() => { const cfgKey = "namogooDataLayer", categoriesCfgKey = "NmgDLProductCategories"; let userData = {}, siteData = {}, productData = {}, cartData = {}, searchProductsData = [], categoryProductsData = [], categoryData = {}; let utils = { objectIsEmpty: (obj) => { if (Array.isArray(obj)) { return obj.length === 0; } return Object.keys(obj).length === 0 && obj.constructor === Object; } }; let page = { href: () => window.location.href, pageType: () => { let pType = "{{ request.page_type }}"; switch (pType) { case '404': case 'password': case 'list-collections': { return 'Other'; } case 'article': case 'blog': case 'page': { return 'Content Page'; } case 'cart': { return 'Cart'; } case 'collection': { return 'Category'; } case 'customers/account': case 'customers/reset_password': { return 'Account'; } case 'customers/activate_account': case 'customers/addresses': case 'customers/login': case 'customers/register': { return 'Customer Service' } case 'customers/order': { return 'Order Details'; } case 'gift_card': { return 'Promotion'; } case 'product': { return 'Product'; } case 'index': { return 'Homepage'; } case 'search': { return 'Search'; } } let href = page.href(); if (href.includes("/cart")) { return 'Cart'; } else if (href.includes("/account")) { return 'Account'; } else if (href.includes("/thank_you")) { return 'Order Confirmation'; } else if (href.includes("/orders/")) { return 'Order Details'; } else if (href.includes("/checkout")) { return 'Checkout'; } else { return 'Other'; } }, requiredDataLayerGroups: () => { let pt = page.pageType(); let groups = ['userData', 'siteData', 'cartData']; if (pt === 'Product'){ groups.push('productData'); } else if (pt === 'Category'){ groups.push('categoryData', 'categoryProductsData'); } else if (pt === 'Search'){ groups.push('searchProductsData'); } return groups; }, td: () => window.ShopifyAnalytics.lib.trekkie.defaultAttributes, meta: () => window.ShopifyAnalytics.meta, get: { user: { uniqToken: () => page.td().uniqToken, visitToken: () => page.td().visitToken, id: () => __st.cid, }, }, set: { userData: () => { userData.guestUserId = page.get.user.uniqToken(); userData.sessionId = page.get.user.visitToken(); let userId = page.get.user.id(); if (userId){ userData.userId = userId; userData.loginType = 'logged in user'; } else { userData.userId = ''; userData.loginType = 'guest user'; } }, siteData: () => { siteData.local = "{{ request.locale.iso_code }}"; siteData.language = document.documentElement.lang; siteData.currency = "{{ shop.currency }}"; siteData.shopCurrency = "{{ shop.currency }}"; let currency = window.Currency ? window.Currency.currentCurrency : ''; siteData.cartCurrency = currency || "{{ cart.currency.iso_code }}"; siteData.pageType = page.pageType(); siteData.timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; {%- if search and search.performed -%} siteData.searchTerms = "{{ search.terms }}"; {%- endif -%} }, productData: () => { {%- if product -%} let selectedVariantId = page.meta().selectedVariantId || {{ product.selected_or_first_available_variant.id }}; let allVariants = [ {%- for variant in product.variants -%} { sku: {{ variant.sku | json }}, id: {{ variant.id }}, salePrice: {{ variant.price }}, originalPrice: {{ variant.price }}, available: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }, {%- endfor -%} ]; let selectedVariant = allVariants.filter(v => v.id == selectedVariantId)[0] || {}; productData.sku = selectedVariant.sku || ''; productData.id = {{ product.id }}; productData.variantId = selectedVariant.id; productData.title = "{{ product.title | escape }}"; productData.brand = "{{ product.vendor | escape }}"; productData.salePrice = selectedVariant.salePrice / 100 + ''; productData.originalPrice = selectedVariant.originalPrice / 100 + ''; productData.quantity = selectedVariant.quantity; productData.inStock = selectedVariant.available; productData.imageUrl = "{{ product | img_url }}"; let productCollections = [ {%- if product.collections -%} {%- for collection in product.collections -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" }, {%- endfor -%} {%- elsif collection -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" } {%- endif -%} ]; productData.categoryIds = []; productData.categoryNames = []; productData.categoryHandles = []; productCollections.forEach(collection => { productData.categoryIds.push(collection.id); productData.categoryNames.push(collection.title); productData.categoryHandles.push(collection.handle); }); {%- endif -%} }, cartData: () => { cartData.total = {{ cart.total_price }} / 100 + ''; cartData.subTotal = {{ cart.items_subtotal_price }} / 100 + ''; {% assign discounts = cart.cart_level_discount_applications | default: cart.discount_applications %} {%- for dscnt in discounts -%} cartData.discountData = { id: "{{ dscnt.key }}", name: "{{ dscnt.title | escape }}", discountType: "{{ dscnt.type }}", totalAmount: {{ dscnt.total_allocated_amount }} / 100 + '', value: "{{ dscnt.value }}", valueType: "{{ dscnt.value_type }}", }; {% break %} {%- endfor -%} {%- if cart.item_count -%} cartData.items = [ {%- for item in cart.items -%} { sku: "{{ item.sku }}", id: {{ item.product_id }}, variantId: {{ item.id }}, title: "{{ item.title | ecsape }}", brand: "{{ item.vendor | escape}}", price: {{ item.price }} / 100 + '', originalPrice: {{ item.price }} / 100 + '', salePrice: {{ item.discounted_price }} / 100 + '', quantity: {{ item.quantity }}, imageUrl: "{{ item | img_url }}", inStock: true, {%- if item.product.collections -%} {%- assign categoryIds = '' -%} {%- assign categoryNames = '' -%} {%- assign categoryHandles = '' -%} {%- for collection in item.product.collections -%} {%- assign categoryIds = categoryIds | append: collection.id | append: ' ,|!|, ' -%} {%- assign categoryNames = categoryNames | append: collection.title | escape | append: ' ,|!|, ' -%} {%- assign categoryHandles = categoryHandles | append: collection.handle | append: ' ,|!|, ' -%} {%- endfor -%} categoryIds: {{ categoryIds | split: ' ,|!|, ' | json }}, categoryNames: {{ categoryNames | split: ' ,|!|, ' | json }}, categoryHandles: {{ categoryHandles | split: ' ,|!|, ' | json }}, {%- else -%} categoryIds: [], categoryNames: [], categoryHandles: [], {%- endif -%} {% if item.discounts.size > 0 %} discountData: { amount: {{ item.discounts[0].amount | default: 0 }} / 100 + '', title: {{ item.discounts[0].title | json }}, }, {% endif %} }, {%- endfor -%} ]; let productCategoriesData = {}; cartData.items.forEach(item => { productCategoriesData[item.variantId] = { categoryIds: item.categoryIds, categoryNames: item.categoryNames, categoryHandles: item.categoryHandles, } }); localStorage.setItem(categoriesCfgKey, JSON.stringify(productCategoriesData)); {%- endif -%} cartData.totalQuantity = {{ cart.item_count }}; }, categoryData: () => { {%- if request.page_type == 'collection' -%} {%- assign collection = collections[handle] -%} categoryData.id = "{{ collection.id }}"; categoryData.handle = "{{ collection.handle }}"; categoryData.title = "{{ collection.title }}"; {%- endif -%} }, categoryProductsData: () => { categoryProductsData.length = 0; {%- if request.page_type == 'collection' -%} {%- assign collection = collections[handle] -%} {%- if collection.products -%} let product = {}, firstVariant = {}, variants = [], productCollections = []; {%- for product in collection.products -%} productCollections = [ {%- if product.collections -%} {%- for collection in product.collections -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" }, {%- endfor -%} {%- endif -%} ]; product = { id: {{ product.id }}, title: `{{ product.title }}`, brand: `{{ product.vendor }}`, imageUrl: "{{ product | img_url }}", categoryIds: productCollections ? productCollections.map(collection => collection.id) : [], categoryNames: productCollections ? productCollections.map(collection => collection.title) : [], categoryHandles: productCollections ? productCollections.map(collection => collection.handle) : [], {%- if product.variants.size == 1 -%} {% assign variant = product.variants[0] %} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, variants: [], }; {%- else -%} }; firstVariant = { {%- assign variant = product.selected_or_first_available_variant -%} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }; variants = [ {%- for variant in product.variants -%} {%- if variant.id == product.selected_or_first_available_variant.id -%} {%- continue -%} {%- endif -%} { sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }, {%- endfor -%} ]; product.variants = variants.map(v => {return {...product, ...v}}); product = {...product, ...firstVariant}; {%- endif -%} categoryProductsData.push({...product}); {%- endfor -%} {%- else -%} categoryProductsData.push({}); {%- endif -%} {%- endif -%} }, searchProductsData: () => { searchProductsData.length = 0; {%- if request.page_type == 'search' -%} {%- if search and search.performed -%} let searchResult = {}, searchResultFirstVariant = {}, searchResultVariants = [], searchResultCollections = []; {%- for product in search.results -%} {%- if product.object_type != "product" -%} {%- continue -%} {%- endif -%} searchResultCollections = [ {%- if product.collections -%} {%- for collection in product.collections -%} { id: "{{ collection.id }}", handle: "{{ collection.handle }}", title: "{{ collection.title }}" }, {%- endfor -%} {%- endif -%} ]; searchResult = { id: {{ product.id }}, title: `{{ product.title }}`, brand: `{{ product.vendor }}`, imageUrl: "{{ product | img_url }}", categoryIds: searchResultCollections ? searchResultCollections.map(collection => collection.id) : [], categoryNames: searchResultCollections ? searchResultCollections.map(collection => collection.title) : [], categoryHandles: searchResultCollections ? searchResultCollections.map(collection => collection.handle) : [], {%- if product.variants.size == 1 -%} {% assign variant = product.variants[0] %} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, variants: [], }; {%- else -%} }; searchResultFirstVariant = { {%- assign variant = product.selected_or_first_available_variant -%} sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }; searchResultVariants = [ {%- for variant in product.variants -%} {%- if variant.id == product.selected_or_first_available_variant.id -%} {%- continue -%} {%- endif -%} { sku: {{ variant.sku | json }}, variantId: {{ variant.id }}, salePrice: {{ variant.price }} / 100 + '', originalPrice: {{ variant.price }} / 100 + '', inStock: {{ variant.available }}, quantity: {{ variant.inventory_quantity }}, }, {%- endfor -%} ]; searchResult.variants = searchResultVariants.map(v => {return {...searchResult, ...v}}); searchResult = {...searchResult, ...searchResultFirstVariant}; {%- endif -%} searchProductsData.push({...searchResult}); {%- else -%} searchProductsData.push({}); {%- endfor -%} {%- endif -%} {%- endif -%} }, } }; let setRequiredGroupsData = () => { let requiredDataLayerGroups = page.requiredDataLayerGroups(); requiredDataLayerGroups.forEach((item, index) => { if (utils.objectIsEmpty(eval(item))){ try { page.set[item]() } catch (e) { } } }); }; let setLog = (groupsList) => { let log = {}; groupsList.forEach((item, index) => { if (['userData', 'siteData', 'cartData', 'categoryData'].includes(item)){ log[item] = eval(item) } else if (['categoryProductsData', 'searchProductsData'].includes(item)){ log['items'] = eval(item) } else if (item === 'productData'){ log['items'] = [eval(item)] } }); window[cfgKey] = [log] }; let interval; let perform = (i=1000) => { interval = setInterval(() => { setRequiredGroupsData(); let c = 0; let requiredGroups = page.requiredDataLayerGroups(); requiredGroups.forEach((item, index) => { if (!utils.objectIsEmpty(eval(item))){ c++ } }); if (requiredGroups.length === c){ clearInterval(interval); setLog(requiredGroups) } }, i) }; perform(); let initialHref = window.location.href; let trackUrl = setInterval(() => { if (page.href() !== initialHref){ initialHref = page.href(); userData = {}; siteData = {}; productData = {}; cartData = {} ; searchProductsData = []; categoryProductsData = []; categoryData = {}; perform() } }, 1000) })();
 </script>
 {% comment %}END of Namogoo Snippet{% endcomment %}
-{% endunless %}
 {%- comment -%}
-IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of different layouts. In order to make
-  this code as efficient as possible and avoid as many reflows, we are using a lot of different CSS variables. If you
-  need to touch this code, make sure to do it with EXTRA CARE as it may have some unwanted side effects
+  IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of different layouts. In order to make
+    this code as efficient as possible and avoid as many reflows, we are using a lot of different CSS variables. If you
+    need to touch this code, make sure to do it with EXTRA CARE as it may have some unwanted side effects
 {%- endcomment -%}
 
 <style>
-  :root {
-    --enable-sticky-header: {% if section.settings.enable_sticky_header %}1{% else %}0{% endif %};
-    --enable-transparent-header: {% if request.page_type == 'index' and section.settings.enable_transparent_header %}1{% else %}0{% endif %};
-    --loading-bar-background: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }}; /* Prevent the loading bar to be invisible */
+   body {
+     background: none!important;
   }
+  button:focus{outline: none;}
+   a.header__linklist-link.link--animated {
+     font-weight: 700;font-size: 16px;text-transform: uppercase;
+  }
+     :root {
+       --enable-sticky-header: {% if section.settings.enable_sticky_header %}1{% else %}0{% endif %};
+       --enable-transparent-header: {% if request.page_type == 'index' and section.settings.enable_transparent_header %}1{% else %}0{% endif %};
+       --loading-bar-background: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }}; /* Prevent the loading bar to be invisible */
+     }
 
-  #shopify-section-{{ section.id }} {
-    {%- assign header_border_color = settings.header_background | color_mix: settings.header_text_color, 85 -%}
+     #shopify-section-{{ section.id }} {
+       {%- assign header_border_color = settings.header_background | color_mix: settings.header_text_color, 85 -%}
 
-    --header-background: {{ settings.header_background.red }}, {{ settings.header_background.green }}, {{ settings.header_background.blue }};
-    --header-text-color: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
-    --header-border-color: {{ header_border_color.red }}, {{ header_border_color.green }}, {{ header_border_color.blue }};
-    --reduce-header-padding: {% if section.settings.reduce_desktop_padding %}1{% else %}0{% endif %};
+       --header-background: {{ settings.header_background.red }}, {{ settings.header_background.green }}, {{ settings.header_background.blue }};
+       --header-text-color: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
+       --header-border-color: {{ header_border_color.red }}, {{ header_border_color.green }}, {{ header_border_color.blue }};
+       --reduce-header-padding: {% if section.settings.reduce_desktop_padding %}1{% else %}0{% endif %};
 
-    {%- if section.settings.enable_sticky_header -%}
-      position: -webkit-sticky;
-      position: sticky;
-    {%- else -%}
-      position: relative;
-    {%- endif -%}
+       {%- if section.settings.enable_sticky_header -%}
+         position: -webkit-sticky;
+         position: sticky;
+       {%- else -%}
+         position: relative;
+       {%- endif -%}
 
-    top: {% if section.settings.enable_sticky_header %}calc(var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)){% else %}0{% endif %};
-    z-index: 4;
-  }
-
-  {%- if request.page_type == 'index' and section.settings.enable_transparent_header -%}
-    #shopify-section-{{ section.id }} {
-      margin-bottom: calc(-1 * (var(--header-height, 0px) + var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)));
-    }
-
-    .js #shopify-section-{{ section.id }} .header--transparent {
-      {%- if settings.header_text_color == section.settings.transparent_header_text_color -%}
-        {%- assign header_bubble_text_color = settings.header_background -%}
-      {%- else -%}
-        {%- assign header_bubble_text_color = settings.header_text_color -%}
-      {%- endif -%}
-
-      --header-background: transparent;
-      --header-text-color: {{ section.settings.transparent_header_text_color.red }}, {{ section.settings.transparent_header_text_color.green }}, {{ section.settings.transparent_header_text_color.blue }};
-      --header-border-color: {{ section.settings.transparent_header_text_color.red }}, {{ section.settings.transparent_header_text_color.green }}, {{ section.settings.transparent_header_text_color.blue }}, 0.15;
-      --header-transparent-bubble-text-color: {{ header_bubble_text_color.red }}, {{ header_bubble_text_color.green }}, {{ header_bubble_text_color.blue }};
-    }
-  {%- endif -%}
-  .custom_svg_icon{ height: 18px; }
-  #shopify-section-{{ section.id }} .header__logo-image {
-    max-width: {{ section.settings.mobile_logo_max_width }}px;
-  }
-  .hreder__cart {top: -4px;}
-  .myDropdown {
-    position: relative;
-    bottom: 0;
-    line-height: normal;
-  }
-  .close-popup {
-    position: absolute;
-    top: 0px;
-    right: 5px;
-    font-size: 30px;
-    cursor: pointer;
-    line-height: normal;
-    color: white;
-  }
-  .myDropdown .toggle-link {
-    cursor: pointer;
-  }
-  .myDropdown .toggle-link img {
-    width: 100%;
-    display: inline-block;
-   vertical-align: middle;
-  }
-  .myDropdown .dropdown-menu {
-    display: block;
-    color: #000;
-    min-width: 219px;
-    padding: 10px;
-    top: 2.8rem;
-    right: -50%;
-    left: unset;
-    transform: translateX(43%);
-    background: #000;
-  }
-  .myDropdown .dropdown-menu a {
-    color: #fff !important;
-    font-size: 14px!important;
-    line-height: 32px;
-    margin: 6px 0 0; 
-    display: block;
-  }
-  .myDropdown .dropdown-menu a:hover {
-        text-decoration: none!important;
-    }
-  .myDropdown .dropdown-menu a.trackorder {
-    display: block;
-    padding: 0;
-  }
-  .myDropdown .dropdown-menu .account-links-inline {
-    display: block;
-    width: 100%;
-  } 
-  .myDropdown .dropdown-menu .login, .myDropdown .dropdown-menu .logout {
-    display: block;
-    background: #ea2127;
-    text-align: center;
-    margin: 15px 0 0;
-  }
-  .myDropdown .dropdown-menu .login a, .myDropdown .dropdown-menu .logout a {
-    color: #fff!important;
-    font-weight: bold;
-  }
-  @media screen and (min-width: 741px) {
-    #shopify-section-{{ section.id }} .header__logo-image {
-      max-width: {{ section.settings.logo_max_width }}px;
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    {%- if section.settings.header_layout == 'logo_left_navigation_inline' -%}
-      /* For this navigation we have to move the logo at the first and add a margin */
-      [dir="rtl"] .header__logo {
-        margin-left: 40px;
+       // top: {% if section.settings.enable_sticky_header %}calc(var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)){% else %}0{% endif %};
+      top: -2px; 
+      z-index: 10;
+     }
+     {%- if request.page_type == 'index' -%}
+      .shopify-section h3.heading {
+       font-size: 16px;    text-align: left;
+       font-weight: 700;    color: black;    text-transform: uppercase;
       }
+       .section__header {
+         max-width: 100%;
+       }
+       @media (min-width: 991px){
+       .shopify-section h3.heading {
+        font-size: 20px;
+       }
+     }
+     {%- endif -%}
+     {%- if request.page_type == 'index' and section.settings.enable_transparent_header -%}
+       #shopify-section-{{ section.id }} {
+         margin-bottom: calc(-1 * (var(--header-height, 0px) + var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)));
+       }
 
-      [dir="ltr"] .header__logo {
-        margin-right: 40px;
-      }
+       .js #shopify-section-{{ section.id }} .header--transparent {
+         {%- if settings.header_text_color == section.settings.transparent_header_text_color -%}
+           {%- assign header_bubble_text_color = settings.header_background -%}
+         {%- else -%}
+           {%- assign header_bubble_text_color = settings.header_text_color -%}
+         {%- endif -%}
 
-      .header__logo {
-        order: -1;
-      }
+         --header-background: transparent;
+         --header-text-color: {{ section.settings.transparent_header_text_color.red }}, {{ section.settings.transparent_header_text_color.green }}, {{ section.settings.transparent_header_text_color.blue }};
+         --header-border-color: {{ section.settings.transparent_header_text_color.red }}, {{ section.settings.transparent_header_text_color.green }}, {{ section.settings.transparent_header_text_color.blue }}, 0.15;
+         --header-transparent-bubble-text-color: {{ header_bubble_text_color.red }}, {{ header_bubble_text_color.green }}, {{ header_bubble_text_color.blue }};
+       }
+     {%- endif -%}
 
-      @media screen and (min-width: 741px) {
-        .header__secondary-links {
-          max-width: max-content;
-          margin-inline-start: 48px;
-        }
-      }
-    {%- endif -%}
+     #shopify-section-{{ section.id }} .header__logo-image {
+       max-width: {{ section.settings.mobile_logo_max_width }}px;
+     }
+     .hreder__cart {top: -4px;}
+     .myDropdown {
+       position: relative;
+       bottom: 0;
+       line-height: normal;
+     }
+     .close-popup {
+       position: absolute;
+       top: 0px;
+       right: 5px;
+       font-size: 30px;
+       cursor: pointer;
+       line-height: normal;
+       color: white;
+     }
+     .myDropdown .toggle-link {
+       cursor: pointer;
+     }
+     .myDropdown .toggle-link img {
+       width: 100%;
+       display: inline-block;
+      vertical-align: middle;
+     }
+     .myDropdown .dropdown-menu {
+        display: block;
+        color: #000;
+        min-width: 219px;
+        padding: 10px;
+        top: 2.8rem;
+        right: 0%;
+        left: unset;
+        transform: translateX(32%);
+        background: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 2px 2px #ccc;
+     }
+     .myDropdown .dropdown-menu a {
+       font-size: 14px!important;
+       line-height: 32px;
+       margin: 6px 0 0;
+       display: block;
+     }
+     .myDropdown .dropdown-menu a:hover {
+           text-decoration: none!important;
+       }
+     .myDropdown .dropdown-menu a.trackorder {
+       display: block;
+       padding: 0;
+     }
+     .myDropdown .dropdown-menu .account-links-inline {
+       display: block;
+       width: 100%;
+     }
+     .myDropdown .dropdown-menu .login, .myDropdown .dropdown-menu .logout {
+       display: block;
+       background: #ea2127;
+       text-align: center;
+       margin: 15px 0 0;
+     }
+     .myDropdown .dropdown-menu .login a, .myDropdown .dropdown-menu .logout a {
+       color: #fff!important;
+       font-weight: bold;
+     }
+     @media screen and (min-width: 741px) {
+       #shopify-section-{{ section.id }} .header__logo-image {
+         max-width: {{ section.settings.logo_max_width }}px;
+       }
+     }
 
-    {%- if section.settings.header_layout == 'logo_left_navigation_center' -%}
-      /* For this navigation we have to move the logo and make sure the navigation takes the whole width */
-      .header__logo {
-        order: -1;
-        flex: 1 1 0;
-      }
+     @media screen and (min-width: 1200px) {
+       {%- if section.settings.header_layout == 'logo_left_navigation_inline' -%}
+         /* For this navigation we have to move the logo at the first and add a margin */
+         [dir="rtl"] .header__logo {
+           margin-left: 40px;
+         }
 
-      .header__inline-navigation {
-        flex: 1 1 auto;
-        justify-content: center;
-        max-width: max-content;
-        margin-inline: 48px;
-      }
-    {%- endif -%}
-  }
+         [dir="ltr"] .header__logo {
+           margin-right: 40px;
+         }
 
-  {%- if request.page_type == '404' -%}
-    .shopify-section--404 {
-      /* For the 404 page, we re-use the same colors as the header for design reason */
-      --background: {{ settings.header_background.red }}, {{ settings.header_background.green }}, {{ settings.header_background.blue }};
-      --heading-color: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
-      --text-color: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
-      --primary-button-background: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
-      --primary-button-text-color: {{ settings.header_background.red }}, {{ settings.header_background.green }}, {{ settings.header_background.blue }};
-    }
-  {%- endif -%}
+         .header__logo {
+           order: -1;
+         }
+
+         @media screen and (min-width: 741px) {
+           .header__secondary-links {
+             max-width: max-content;
+             margin-inline-start: 48px;
+           }
+         }
+       {%- endif -%}
+
+       {%- if section.settings.header_layout == 'logo_left_navigation_center' -%}
+         /* For this navigation we have to move the logo and make sure the navigation takes the whole width */
+         .header__logo {
+           order: -1;
+           flex: 0.3 1 0;
+         }
+
+         .header__inline-navigation {
+           flex: 1 1 auto;
+           justify-content: center;
+           max-width: max-content;
+           margin-inline: 48px;
+         }
+       {%- endif -%}
+     }
+
+     {%- if request.page_type == '404' -%}
+       .shopify-section--404 {
+         /* For the 404 page, we re-use the same colors as the header for design reason */
+         --background: {{ settings.header_background.red }}, {{ settings.header_background.green }}, {{ settings.header_background.blue }};
+         --heading-color: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
+         --text-color: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
+         --primary-button-background: {{ settings.header_text_color.red }}, {{ settings.header_text_color.green }}, {{ settings.header_text_color.blue }};
+         --primary-button-text-color: {{ settings.header_background.red }}, {{ settings.header_background.green }}, {{ settings.header_background.blue }};
+       }
+     {%- endif -%}
+     .custom_svg_icon {
+       height: 18px;
+   }
 </style>
 
-<store-header {% if section.settings.enable_sticky_header %}sticky{% endif %} {% if request.page_type == 'index' and section.settings.enable_transparent_header %}transparent{% endif %} class="header {% if settings.background == settings.header_background %}header--bordered{% endif %} {% if request.page_type == 'index' and section.settings.enable_transparent_header %}header--transparent{% endif %}" role="banner">
+<store-header
+  {% if section.settings.enable_sticky_header %}
+    sticky
+  {% endif %}
+  {% if request.page_type == 'index' and section.settings.enable_transparent_header %}
+    transparent
+  {% endif %}
+  class="header {% if settings.background == settings.header_background %}header--bordered{% endif %} {% if request.page_type == 'index' and section.settings.enable_transparent_header %}header--transparent{% endif %}"
+  role="banner"
+>
   {%- assign menu = section.settings.navigation_menu -%}
 
   <div class="container">
     <div class="header__wrapper">
       <!-- LEFT PART -->
-      <nav class="header__inline-navigation" {% unless section.settings.header_layout == 'logo_center_search_open' %}role="navigation"{% endunless %}>
+      <nav
+        class="header__inline-navigation"
+        {% unless section.settings.header_layout == 'logo_center_search_open' %}
+          role="navigation"
+        {% endunless %}
+      >
         {%- if menu.links.size > 0 and section.settings.header_layout == 'logo_left_navigation_inline' or section.settings.header_layout == 'logo_left_navigation_center' or section.settings.header_layout == 'logo_center_navigation_inline' -%}
           {%- render 'desktop-menu', menu: menu -%}
         {%- endif -%}
 
         <div class="header__icon-list {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-desk{% endif %}">
           {%- if menu.links.size > 0 -%}
-            <button is="toggle-button" class="header__icon-wrapper tap-area {% unless section.settings.header_layout == 'drawer' %}hidden-desk{% endunless %}" aria-controls="mobile-menu-drawer" aria-expanded="false">
+            <button
+              is="toggle-button"
+              class="header__icon-wrapper tap-area {% unless section.settings.header_layout == 'drawer' %}hidden-desk{% endunless %}"
+              aria-controls="mobile-menu-drawer"
+              aria-expanded="false"
+            >
               <span class="visually-hidden">{{ 'header.general.navigation' | t }}</span>
               {%- render 'icon' with 'header-hamburger' -%}
             </button>
           {%- endif -%}
-		  {% comment %} Commented by SearchTap team
-          <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
-            {%- render 'icon' with 'header-search' -%}
-          </a>
+          {% comment %}
+            <a href="" is="toggle-link" class="header__icon-wrapper tap-area {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
+              {%- render 'icon' with 'header-search' -%}
+            </a>
           {% endcomment %}
- 
         </div>
 
         {%- if section.settings.header_layout == 'logo_center_search_open' -%}
@@ -208,10 +250,25 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
             <form class="predictive-search__form" action="{{ routes.search_url }}" method="get" role="search">
               <input type="hidden" name="type" value="product">
               <input type="hidden" name="options[prefix]" value="last">
-              <input type="hidden" name="options[unavailable_products]" value="{{ settings.search_unavailable_products }}">
+              <input
+                type="hidden"
+                name="options[unavailable_products]"
+                value="{{ settings.search_unavailable_products }}"
+              >
 
               {%- render 'icon' with 'header-search' -%}
-              <input class="predictive-search__input" is="predictive-search-input" type="text" name="q" autocomplete="off" autocorrect="off" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t }}" placeholder="{{ 'search.general.search_placeholder' | t }}">
+              <input
+                class="predictive-search__input"
+                is="predictive-search-input"
+                type="text"
+                name="q"
+                autocomplete="off"
+                autocorrect="off"
+                aria-controls="search-drawer"
+                aria-expanded="false"
+                aria-label="{{ 'search.general.title' | t }}"
+                placeholder="{{ 'search.general.search_placeholder' | t }}"
+              >
             </form>
           </div>
         {%- endif -%}
@@ -221,12 +278,35 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
       {%- capture logo -%}
         <a class="header__logo-link" href="{{ routes.root_url }}">
           {%- if section.settings.logo != blank -%}
-            {%- capture logo_size -%}{{ section.settings.logo_max_width | at_least: section.settings.mobile_logo_max_width | times: 2 | append: 'x' }}{%- endcapture -%}
+            {%- capture logo_size -%}
+              {{
+                section.settings.logo_max_width
+                | at_least: section.settings.mobile_logo_max_width
+                | times: 2
+                | append: 'x'
+              }}
+            {%- endcapture -%}
             <span class="visually-hidden">{{ shop.name }}</span>
-            <img class="header__logo-image" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" src="{{ section.settings.logo | img_url: logo_size }}" alt="{{ section.settings.logo.alt | escape }}">
+            <img
+              class="header__logo-image"
+              loading="eager"
+              fetchpriority="high"
+              width="{{ section.settings.logo.width }}"
+              height="{{ section.settings.logo.height }}"
+              src="{{ section.settings.logo | img_url: logo_size }}"
+              alt="{{ section.settings.logo.alt | escape }}"
+            >
 
             {%- if request.page_type == 'index' and section.settings.enable_transparent_header and section.settings.transparent_logo != blank -%}
-              <img class="header__logo-image header__logo-image--transparent" width="{{ section.settings.transparent_logo.width }}" height="{{ section.settings.transparent_logo.height }}" src="{{ section.settings.transparent_logo | img_url: logo_size }}" alt="{{ section.settings.transparent_logo.alt | escape }}">
+              <img
+                class="header__logo-image header__logo-image--transparent"
+                loading="eager"
+                fetchpriority="high"
+                width="{{ section.settings.transparent_logo.width }}"
+                height="{{ section.settings.transparent_logo.height }}"
+                src="{{ section.settings.transparent_logo | img_url: logo_size }}"
+                alt="{{ section.settings.transparent_logo.alt | escape }}"
+              >
             {%- endif -%}
           {%- else -%}
             <span class="header__logo-text heading h5">{{ shop.name }}</span>
@@ -257,8 +337,16 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                 <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}">
                 <span class="visually-hidden">{{ 'header.general.country' | t }}</span>
 
-                <button type="button" is="toggle-button" class="popover-button text--small" aria-expanded="false" aria-controls="header-localization-form-currency">
-                  {{- localization.country.name }} ({{ localization.country.currency.iso_code }} {% if localization.country.currency.symbol %}{{ localization.country.currency.symbol }}{%- endif -%})
+                <button
+                  type="button"
+                  is="toggle-button"
+                  class="popover-button text--small"
+                  aria-expanded="false"
+                  aria-controls="header-localization-form-currency"
+                >
+                  {{- localization.country.name }} ({{ localization.country.currency.iso_code }}
+                  {% if localization.country.currency.symbol %}{{ localization.country.currency.symbol }}{%- endif -%}
+                  )
                   {%- render 'icon' with 'chevron', width: 9, height: 6, inline: true -%}
                 </button>
 
@@ -268,18 +356,34 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                   <header class="popover__header">
                     <span class="popover__title heading h6">{{- 'header.general.country' | t -}}</span>
 
-                    <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+                    <button
+                      type="button"
+                      class="popover__close-button tap-area tap-area--large"
+                      data-action="close"
+                      title="{{ 'general.accessibility.close' | t | escape }}"
+                    >
                       {%- render 'icon' with 'close' -%}
                     </button>
-              
                   </header>
 
                   <div class="popover__content popover__content--restrict">
                     <div class="popover__choice-list">
                       {%- for country in localization.available_countries -%}
-                        <button type="submit" name="country_code" value="{{ country.iso_code }}" class="popover__choice-item">
-                          <span class="popover__choice-label" {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %}>
-                            {{- country.name }} ({{ country.currency.iso_code }} {% if country.currency.symbol %}{{ country.currency.symbol }}{%- endif -%})
+                        <button
+                          type="submit"
+                          name="country_code"
+                          value="{{ country.iso_code }}"
+                          class="popover__choice-item"
+                        >
+                          <span
+                            class="popover__choice-label"
+                            {% if country.iso_code == localization.country.iso_code %}
+                              aria-current="true"
+                            {% endif %}
+                          >
+                            {{- country.name }} ({{ country.currency.iso_code }}
+                            {% if country.currency.symbol %}{{ country.currency.symbol }}{%- endif -%}
+                            )
                           </span>
                         </button>
                       {%- endfor -%}
@@ -294,7 +398,13 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                 <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}">
                 <span class="visually-hidden">{{ 'header.general.language' | t }}</span>
 
-                <button type="button" is="toggle-button" class="popover-button text--small" aria-expanded="false" aria-controls="header-localization-form-locale">
+                <button
+                  type="button"
+                  is="toggle-button"
+                  class="popover-button text--small"
+                  aria-expanded="false"
+                  aria-controls="header-localization-form-locale"
+                >
                   {{- localization.language.endonym_name | capitalize -}}
                   {%- render 'icon' with 'chevron', width: 9, height: 6, inline: true -%}
                 </button>
@@ -305,7 +415,12 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                   <header class="popover__header">
                     <span class="popover__title heading h6">{{- 'header.general.language' | t -}}</span>
 
-                    <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+                    <button
+                      type="button"
+                      class="popover__close-button tap-area tap-area--large"
+                      data-action="close"
+                      title="{{ 'general.accessibility.close' | t | escape }}"
+                    >
                       {%- render 'icon' with 'close' -%}
                     </button>
                   </header>
@@ -313,8 +428,18 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
                   <div class="popover__content">
                     <div class="popover__choice-list">
                       {%- for language in localization.available_languages -%}
-                        <button type="submit" name="locale_code" value="{{ language.iso_code }}" class="popover__choice-item">
-                          <span class="popover__choice-label" {% if language.iso_code == localization.language.iso_code %}aria-current="true"{% endif %}>
+                        <button
+                          type="submit"
+                          name="locale_code"
+                          value="{{ language.iso_code }}"
+                          class="popover__choice-item"
+                        >
+                          <span
+                            class="popover__choice-label"
+                            {% if language.iso_code == localization.language.iso_code %}
+                              aria-current="true"
+                            {% endif %}
+                          >
                             {{- language.endonym_name | capitalize -}}
                           </span>
                         </button>
@@ -329,79 +454,148 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
 
         <div class="header__icon-list">
           {%- comment -%}IMPLEMENTATION NOTE: this icon is hidden by the "popup" section if it is disabled{%- endcomment -%}
-          <button is="toggle-button" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-controls="newsletter-popup" aria-expanded="false">
+          <button
+            is="toggle-button"
+            class="header__icon-wrapper tap-area hidden-phone visually-hidden {% unless section.settings.show_icons %}hidden-desk{% endunless %}"
+            aria-controls="newsletter-popup"
+            aria-expanded="false"
+          >
             <span class="visually-hidden">{{ 'header.general.newsletter' | t }}</span>
             {%- render 'icon' with 'header-email' -%}
           </button>
 
-          {% comment %} Commented by SearchTap team
-
           {%- if section.settings.header_layout != 'logo_center_search_open' -%}
-            <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area hidden-pocket hidden-lap {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'search.general.title' | t | escape }}" aria-controls="search-drawer" aria-expanded="false">
-              {%- render 'icon' with 'header-search' -%}
-            </a>
+            {% comment -%}
+              <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area hidden-pocket hidden-lap {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'search.general.title' | t | escape }}" aria-controls="search-drawer" aria-expanded="false">
+                {%- render 'icon' with 'header-search' -%}
+              </a>
+            {% endcomment -%}
+            <div
+              class="header__icon-wrapper tap-area hidden-pocket hidden-lap{% unless section.settings.show_icons %} hidden-desk{% endunless %}"
+              aria-label="{{ 'search.general.title' | t | escape }}"
+            >
+            <div class="algolia-header-custom-search">
+             <div class="algolia-header-search-input">   
+             
+      <div class="algolia-custom-search-input">   
+              <input
+                class="search__input predictive-search__input predictive-search__input_desk"
+                type="text"
+                name="q"
+                autocomplete="off"
+                autocorrect="off"
+                aria-label="{{ 'search.general.title' | t }}"
+                placeholder="Search..."
+              >
+            <div class="search-clear-icon"><span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>
+            </span></div>
+    </div> 
+    <form id="predictive-search-form" class="algolia-search__form">
+      <input
+      type="text"
+      name="q"
+      autocomplete="off"
+      autocorrect="off"
+      aria-label="{{ 'search.general.title' | t }}"
+      placeholder="Search..."
+    >  
+    </form>
+    </div> 
+ <div class="search-popup-container" style=" display: none;">
+<ul class="algolia-trending-list">
+  {% for block in section.blocks %}
+   {% if block.type == 'algolia' %} 
+  <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
+     {% endif %}
+  {% endfor %}
+</ul>
+</div>  </div>
+            </div>
           {%- endif -%}
-          
-          {% endcomment %}
-		  
-          {%comment%}Desktop Searchbox Added By SearchTap team{%endcomment%}
-          {% render 'st-searchbox-desktop' %}
+
           <div class="myDropdown tooltip2 hidden-phone">
-             <span class="toggle-link">
-               {%- render 'icon' with 'header-customer' -%}
-             </span>
-             <div class="dropdown-menu visually-hidden">
-                 <span class="close-popup">&times;</span>
-                 {%- if customer -%}
-                 <p class="mb-0"><span class="text-red" style="color: #ff0000;font-size: 14px;"><strong>Hi {{customer.first_name}}!</strong></span></p>
-                 {%- else -%}
-                 <p class="mb-0"><span class="text-red" style="color: #ff0000;font-size: 14px;"><strong>Hi boAthead!</strong></span></p>
-                 {%- endif -%}
-                 {% if customer %}
-                 <a class="trackorder" href="https://boat-lifestyle.com/apps/ret">Manage Your Order</a>
-                 {% endif %}
-                 {%- if shop.customer_accounts_enabled -%}
-                   <div class="account-links-inline contains-dropdown">
-                     {%- if customer -%}
-                       <div class="your-acct"><a href="{{ routes.account_url }}">Account</a></div>
-                      <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
-                     {%- else -%}
-                       <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
-                     {%- endif -%}
-                   </div>
-                 {%- endif -%}
-             </div>
+            <span class="toggle-link">
+              {%- render 'icon' with 'header-customer' -%}
+            </span>
+            <div class="dropdown-menu visually-hidden">
+              <span class="close-popup">&times;</span>
+              {%- if customer -%}
+                <p class="mb-0">
+                  <span
+                    class="text-red"
+                    style="color: #ff0000;font-size: 14px;"
+                    ><strong>Hi {{ customer.first_name }}!</strong></span
+                  >
+                </p>
+              {%- else -%}
+                <p class="mb-0">
+                  <span class="text-red" style="color: #ff0000;font-size: 14px;"><strong>Hi boAthead!</strong></span>
+                </p>
+              {%- endif -%}
+              {% if customer %}
+                <a class="trackorder" href="https://boat-lifestyle.com/apps/ret">Manage Your Order</a>
+              {% endif %}
+              {%- if shop.customer_accounts_enabled -%}
+                <div class="account-links-inline contains-dropdown">
+                  {%- if customer -%}
+                    <div class="your-acct"><a href="{{ routes.account_url }}">Account</a></div>
+                    <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
+                  {%- else -%}
+                    <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
           </div>
           {%- comment -%}
-          {%- if shop.customer_accounts_enabled -%}
-            <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{% if customer %}{{ 'header.general.account' | t | escape }}{% else %}{{ 'header.general.login' | t | escape }}{% endif %}">
-              {%- render 'icon' with 'header-customer' -%}
-            </a>
-          {%- endif -%}
-          {%- endcomment -%}
-            <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
-            {%- render 'icon' with 'header-search' -%}
-          </a>
-          <div class="gift-card-icon">
-              <a href="https://www.boat-lifestyle.com/products/gift-card">
-                  <svg class="custom_svg_icon" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 270.1"><defs><style>.cls-1{fill:#fff;}</style></defs><path class="cls-1" d="M1182.4,664.64a69.78,69.78,0,0,1-2.7,8.52c-6.17,13.45-16.75,20.58-31.55,20.68-28.87.18-57.73,0-86.6,0H933.6V563.08c.88,1.12,1.57,1.89,2.13,2.74,7.29,10.9,14.54,21.83,21.86,32.71,2.76,4.11,6.71,6,11.61,5.1,4.73-.88,7.71-3.92,8.89-8.59.92-3.67-.34-6.85-2.37-9.87-5.57-8.28-11.08-16.6-16.9-25.34,4.68,0,9,.59,13.13-.11,12.1-2,20.6-9.11,25.58-20.23,1.1-2.47,2.35-3.17,4.92-3.17q90,.1,180,.06Zm-102-83.26c-14.85,0-29.71-.09-44.56.09a16,16,0,0,0-7.4,2,10.53,10.53,0,0,0-4.58,12c1.52,5.25,5.65,8.36,11.46,8.37q44.76,0,89.51,0c7.52,0,12.65-4.68,12.58-11.37s-5.16-11.12-12.81-11.12Q1102.47,581.36,1080.37,581.38Zm-.38,67.51q22.47,0,44.94,0c7.32,0,12.38-4.57,12.45-11.12s-5.05-11.36-12.57-11.37h-88.76c-7.54,0-12.68,4.64-12.64,11.31s5.16,11.17,12.77,11.18Q1058.08,648.91,1080,648.89Z" transform="translate(-798.4 -423.84)"></path><path class="cls-1" d="M1182.4,513.88H998.94c-2.88-7.68-7.25-14.17-14.25-18.4-12.81-7.75-25.75-7.79-38.54.16-4.1,2.56-8.07,5.33-12.51,8.28V423.87h211.88c19.77,0,31.39,9,36.39,28.25a5.14,5.14,0,0,0,.49,1Z" transform="translate(-798.4 -423.84)"></path><path class="cls-1" d="M798.4,536.38h46.75c7,18,23.32,26.43,40.37,23.37l-6.76,10.16c-3.53,5.31-7.11,10.57-10.57,15.92-3.81,5.89-2.61,12.62,2.77,16.15s12,2,16-3.78c7.13-10.55,14.14-21.18,21.21-31.77.68-1,1.41-2,2.5-3.54v131H834.88c-19.15,0-31.23-9.39-35.93-27.89a9.92,9.92,0,0,0-.55-1.36Z" transform="translate(-798.4 -423.84)"></path><path class="cls-1" d="M798.4,453.12c.5-1.79,1-3.59,1.5-5.36,4.12-13.6,16.75-23.65,30.87-23.78,26.12-.25,52.24-.09,78.36-.09a13.92,13.92,0,0,1,1.58.19v79.76c-3.1-2-6-3.79-8.78-5.76-6.86-4.87-14.19-8.43-22.84-8.25q-22.56.48-32.4,20.85c-.43.89-.8,1.82-1.21,2.73a3.93,3.93,0,0,1-.42.47H798.4Z" transform="translate(-798.4 -423.84)"></path><path class="cls-1" d="M902,525.13c-6.23,4.08-11.69,8-17.46,11.33a12.33,12.33,0,0,1-15.78-3.33,12.78,12.78,0,0,1,.16-16.2,12.38,12.38,0,0,1,15.84-3C890.38,517.25,895.76,521.06,902,525.13Z" transform="translate(-798.4 -423.84)"></path><path class="cls-1" d="M942.35,525.12c6.42-4.18,12.07-8.28,18.12-11.66,5.12-2.85,11.83-.75,15.38,4a12.83,12.83,0,0,1-.51,15.95,12.36,12.36,0,0,1-15.6,3C954,533.09,948.65,529.25,942.35,525.12Z" transform="translate(-798.4 -423.84)"></path></svg>
+            {%- if shop.customer_accounts_enabled -%}
+              <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{% if customer %}{{ 'header.general.account' | t | escape }}{% else %}{{ 'header.general.login' | t | escape }}{% endif %}">
+                {%- render 'icon' with 'header-customer' -%}
               </a>
-            </div>
-          <a href="{{ routes.cart_url }}" {% unless settings.cart_type == 'page' or request.page_type == 'cart' %}is="toggle-link" aria-controls="mini-cart" aria-expanded="false"{% endunless %} class="header__icon-wrapper tap-area header__cart {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'header.general.cart' | t | escape }}" data-no-instant>
-            {%- case settings.cart_icon -%}
-              {%- when 'shopping_bag' -%}
-                {%- render 'icon' with 'header-cart' -%}
+            {%- endif -%}
 
-              {%- when 'shopping_cart' -%}
-                {%- render 'icon' with 'header-shopping-cart' -%}
+              <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
+              {%- render 'icon' with 'header-search' -%}
+            </a>
+      
+          <div class="gift-card-icon">
+            <a href="#0">
+              <img
+                loading="lazy"
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2.png?v=1662551049"
+                alt="gift card"
+                width="22"
+                height="22"
+                style="max-width:22px;"
+              >
+            </a>
+          </div>
+              {%- endcomment -%}
+          {% unless template.name == 'page' and template.suffix == 'quick-checkout' %}
+            <a
+              href="{{ routes.cart_url }}"
+              {% unless settings.cart_type == 'page' or request.page_type == 'cart' %}
+                is="toggle-link" aria-controls="mini-cart" aria-expanded="false"
+              {% endunless %}
+              class="header__icon-wrapper tap-area header__cart {% unless section.settings.show_icons %}hidden-desk{% endunless %}"
+              aria-label="{{ 'header.general.cart' | t | escape }}"
+              data-no-instant
+            >
+              {%- case settings.cart_icon -%}
+                {%- when 'shopping_bag' -%}
+                  {%- render 'icon' with 'header-cart' -%}
+                {%- when 'shopping_cart' -%}
+                  {%- render 'icon' with 'header-shopping-cart' -%}
+                {%- when 'tote_bag' -%}
+                  {%- render 'icon' with 'header-tote-bag' -%}
+              {%- endcase -%}
 
-              {%- when 'tote_bag' -%}
-                {%- render 'icon' with 'header-tote-bag' -%}
-            {%- endcase -%}
-
-            <cart-count class="header__cart-count header__cart-count--floating bubble-count">{{ cart.item_count }}</cart-count>
-          </a>
- 
+              <cart-count class="header__cart-count header__cart-count--floating bubble-count">
+                {{- cart.item_count -}}
+              </cart-count>
+            </a>
+          {% endunless %}
         </div>
 
         {%- unless section.settings.show_icons -%}
@@ -415,7 +609,9 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
 
             {%- if section.settings.header_layout != 'logo_center_search_open' -%}
               <li class="header__linklist-item">
-                <a href="{{ routes.search_url }}" is="toggle-link" aria-controls="search-drawer" aria-expanded="false">{{ 'search.general.title' | t | escape }}</a>
+                <a href="{{ routes.search_url }}" is="toggle-link" aria-controls="search-drawer" aria-expanded="false">
+                  {{- 'search.general.title' | t | escape -}}
+                </a>
               </li>
             {%- endif -%}
 
@@ -432,7 +628,13 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
             {%- endif -%}
 
             <li class="header__linklist-item">
-              <a href="{{ routes.cart_url }}" {% unless settings.cart_type == 'page' %}is="toggle-link" aria-controls="mini-cart" aria-expanded="false"{% endunless %} data-no-instant>
+              <a
+                href="{{ routes.cart_url }}"
+                {% unless settings.cart_type == 'page' %}
+                  is="toggle-link" aria-controls="mini-cart" aria-expanded="false"
+                {% endunless %}
+                data-no-instant
+              >
                 {%- render 'icon' with 'header-tote-bag' -%}
                 <cart-count class="header__cart-count bubble-count">{{ cart.item_count }}</cart-count>
               </a>
@@ -448,35 +650,70 @@ IMPLEMENTATION NOTE: the header in Focal is pretty complex as it allows a lot of
       </nav>
     {%- endif -%}
   </div>
-  {%comment%}Mobile Searchbox added by SearchTap team{%endcomment%}
-  {%render 'st-searchbox-mobile'%}
-
+<div class="algolia-header-custom-search hidden-desk">
+  <div class="algolia-header-search-input" aria-label="{{ 'search.general.title' | t | escape }}">
+      <div class="algolia-custom-search-input">   
+              <input
+                class="search__input predictive-search__input predictive-search__input_mobile"
+                type="text"
+                name="q"
+                autocomplete="off"
+                autocorrect="off"
+                aria-label="{{ 'search.general.title' | t }}"
+                placeholder="Search..."
+              >
+            <div class="search-clear-icon"><span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>      
+                  </span></div>
+    </div>   
+    <form class="algolia-search__form_mobile">
+      <input
+      type="text"
+      name="q"
+      autocomplete="off"
+      autocorrect="off"
+      aria-label="{{ 'search.general.title' | t }}"
+      placeholder="Search..."
+    >  
+    </form>
+    </div> 
+ <div class="search-popup-container" style=" display: none;">
+<ul class="algolia-trending-list">
+  {% for block in section.blocks %}
+   {% if block.type == 'algolia' %} 
+  <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
+     {% endif %}
+  {% endfor %}
+</ul>
+  </div>
+  </div>
 </store-header>
 
 {%- comment -%}
-------------------------------------------------------------------------------------
-  CART NOTIFICATION: it is used to show the notification when a product is added in message mode
-------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------
+    CART NOTIFICATION: it is used to show the notification when a product is added in message mode
+  ------------------------------------------------------------------------------------
 {%- endcomment -%}
 
-<cart-notification global hidden class="cart-notification {% unless section.settings.enable_sticky_header %}cart-notification--fixed{% endunless %}"></cart-notification>
+<cart-notification
+  global
+  hidden
+  class="cart-notification {% unless section.settings.enable_sticky_header %}cart-notification--fixed{% endunless %}"
+></cart-notification>
 
 {%- comment -%}
-------------------------------------------------------------------------------------
-MOBILE MENU DRAWER
-------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------
+  MOBILE MENU DRAWER
+  ------------------------------------------------------------------------------------
 {%- endcomment -%}
 
 {%- assign menu = section.settings.sidebar_navigation_menu | default: section.settings.navigation_menu -%}
 {%- render 'mobile-menu', menu: menu -%}
-
 {%- comment -%}
-------------------------------------------------------------------------------------
-SEARCH DRAWER
-------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------
+  SEARCH DRAWER
+  ------------------------------------------------------------------------------------
 {%- endcomment -%}
-
-{%- render 'predictive-search' -%}
 
 <script>
           $(".announce .announcement-bar__message p").each(function(ind,el){
@@ -486,9 +723,9 @@ SEARCH DRAWER
             "Message": announcementText,
             "userSource": userSource
         });
-      }); 
-    });  
-  
+      });
+    });
+
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
       headerHeight = headerElement.clientHeight,
@@ -570,6 +807,11 @@ SEARCH DRAWER
       "default": 100
     },
     {
+      "type": "image_picker",
+      "id": "mobmenu_logo",
+      "label": "banner for mob menu"
+    },
+    {
       "type": "header",
       "content": "Navigation"
     },
@@ -585,7 +827,7 @@ SEARCH DRAWER
       "label": "Mobile menu",
       "info": "Select a different menu for mobile sidebar. If none is set the main menu is used."
     },
-	{
+    {
       "type": "link_list",
       "id": "sidebar_navigation_menu_cat",
       "label": "Mobile menu categories",
@@ -871,7 +1113,18 @@ SEARCH DRAWER
           "label": "Link"
         }
       ]
+    },
+  	{
+	  "type": "algolia",
+      "name": "algolia search",
+      "settings": [
+	{
+      "type": "text",
+      "id": "suggestion",
+      "label": "suggestion"
     }
+	]
+  	}  
   ]
 }
 {% endschema %}

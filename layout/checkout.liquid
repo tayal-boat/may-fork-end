@@ -24,9 +24,7 @@
     {{
       checkout_scripts
     }}
-    {{
-      "jquery.min.js" | asset_url | script_tag
-    }}
+    {{ "checkout.starter.js" | asset_url | script_tag    }}
     <script src="https://boatfc-media.farziengineer.co/pincode/pincodes.js"></script>
     <!-- Google Tag Manager -->
 
@@ -50,9 +48,9 @@
 
     <!-- Single Checkout Page Styling Begins -->
     <style>
-      .new_checkout_step2 {
-         display: none;
-     }
+   .gstin_main_container, .new_checkout_step2 {
+        display: none;
+    }
       .loginup {
         color: white;
         background-color: #ea2126;
@@ -1141,15 +1139,148 @@
           transform: rotate(360deg);
         }
       }
+      input.gstin_input {
+    border: 1px transparent solid;
+    background-clip: padding-box;
+    border-radius: 5px;
+    display: block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.9285714286em 0.7857142857em;
+    word-break: normal;
+    line-height: inherit;
+    background-color: white;
+    color: #333333;
+    border-color: #d9d9d9;
+}
+    .gstin_container {
+    position: relative;
+    padding: 15px 0 10px 0;
+}
+.gstin_main_container {
+    position: relative;
+    padding: 15px 0 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(175,175,175,0.34);
+}
+.gstin_container .gst-button {
+    position: absolute;
+    right: 0;
+    color: #f44336;
+    padding: 10px;
+    font-weight: 600;
+    bottom: 0.7rem;
+    top: 15px;
+    font-size: 16px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gst-popup-details p {
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 12px;
+    color: #868686;
+}
+.gst-heading {
+    font-size: 18px;
+    font-weight: 600;
+}   
+
+.gstin_container details .gst-popup-container {
+    border: 2px solid #eee;
+    border-radius: 12px;
+    position: fixed;
+    width: 40%;
+    height: max-content;
+    min-width: 380px;
+    max-width: 410px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background: white;
+    z-index: 999;
+}
+
+.gstin_container details[open] .gst-popup-container::after {
+    content: "×";
+    font-size: 32pt;
+    position: absolute;
+    right: -4rem;
+    top: -2rem;
+    padding: 5pt 10pt;
+    z-index: 9;
+    color: #fff;
+}
+
+.gstin_container details[open] summary::before {
+  content: '';
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+  z-index: 3;
+}
+.gstin-confirm {
+    background: red;
+    color: #fff;
+    width: calc(100% - 40px);
+    padding: 11px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 5px;
+    margin: 10px 20px 20px;
+}
+.gst-popup-container h2 {
+    font-weight: 700;
+    font-size: 20px;
+    padding: 18px 18px 12px 18px;
+}
+.gst-popup-container header span {
+    font-size: 12px;
+    background: #eee;
+    padding: 5px;
+    color: #655c5c;
+    display: block;
+    margin-bottom: 10px;
+}
+.gst-popup-container .billing_name , .gst-popup-container .billing_address_container {
+    font-size: 16px;
+    padding: 5px 20px;
+    color: #000;
+    font-weight: 500;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+.gst-popup-container .billing_name p, .gst-popup-container .billing_address_container p {
+    padding: 0;
+}
+.gst_error {
+    margin: 0 3px;
+    padding: 0;
+    position: absolute;
+    bottom: 0;
+    color: red;
+    font-weight: 500;
+}
+      
     </style>
     <!-- Single Checkout Page Styling-2 Begins -->
 
     <!-- Single Checkout Page Script Begins -->
     <script>
-      setTimeout(() => {
-        $("#checkout_shipping_address_phone").val(
+      setTimeout(function(){
+        if($("#checkout_shipping_address_phone")){
           $("#checkout_shipping_address_phone").val().replaceAll(" ", "")
-        );
+        };
       }, 300);
 
       //       $('#checkout_billing_address_phone').val($('#checkout_billing_address_phone').val().replaceAll(" ",""))
@@ -1249,8 +1380,106 @@
 
       $(document).on(`page:load page:change`, function () {
         $("ol li").last().prev().hide();
-
         if (Shopify.Checkout.step == "contact_information") {
+          $('[data-address-fields]').append('<input class="gstin_number" id="GSTIN_yes" type="hidden" name="checkout[attributes][CustomerGSTIN]" value="">');                    
+          $('[data-order-summary-section="payment-lines"]').prepend(`<div class="gstin_main_container">
+          <h2 class="gst-heading">Your GST Information</h2>
+          <div class="gstin_container">
+            <input class="gstin_input" type="text" placeholder="GSTIN" name="GSTIN" value="">
+          <details>
+          <summary class="gst-button" gstAdded="false">Validate</summary>
+          <div class="gst-popup-container">
+            <header>
+            <h2>Your GST Details</h2>
+            <span> Your Invoice will have below details as billing name & billing address </span>
+            </header>
+            <div class="gst-details-container">
+              <div class="billing_name"><div><p>Name - </p></div><p class="name"></p></div>
+              <div class="billing_address_container"><div><p>Address - </p></div>
+              <p class="address"></p>
+              </div>
+            </div>
+          <button class="gstin-confirm" type="button"> CONFIRM</button>
+           </div>
+        </details>
+       
+          </div><div class="gst-popup-details"></div> <p class="gst_error"></p></div>
+            `);
+            function gstDetail(gst_buttom, gstIn, gstInVal){
+            if(sessionStorage.gstin && sessionStorage.gstin !== ''){
+              gst_buttom.text('Change');
+            gstIn.css('pointer-events','none');
+            gst_buttom.attr('gstadded','true');
+            $('.gstin_number').val(gstInVal);
+            $('.gstin_container details').removeAttr('open');
+            $('.gstin_main_container .gst-popup-details').html(`<p> ${sessionStorage.gst_billing_name} </p><p> ${sessionStorage.gst_billing_address} ${sessionStorage.gst_billing_city} ${sessionStorage.gst_billing_state} ${sessionStorage.gst_billing_pincode} </p>`);
+            }  
+            }
+
+          let gst_buttom = $('.gst-button');
+          let gstIn = $('.gstin_input');
+          let gstInVal = sessionStorage.getItem('gstin');
+          gstDetail(gst_buttom, gstIn, gstInVal);
+            gstIn.val(gstInVal);
+            $('.gstin_container .gst-button').click(function(e){
+              e.preventDefault();
+              let gstInput = $(this).parent().siblings('input').val();
+              if($(this).attr('gstadded') == 'true'){
+                $(this).parent().siblings('input').removeAttr('style');
+                $(this).text('Validate'); 
+                $(this).attr('gstadded','false');
+              }else{
+              
+              if($('.gstin_input').val().length < 15 || $('.gstin_input').val().length > 15 ){
+                $('.gst_error').html('GSTIN must be 15 characters')
+              }
+              else{
+                $.ajax({
+          type: "GET",
+          url: "https://api-gst.boat-lifestyle.com/api/checkgst",
+          data: {
+            "gstin": gstInput
+          },
+          success: function(data){
+            console.log(data, 'data');
+            if(data.message == 'The provided GST number is valid and here are the details'){
+              console.log('GST no valid');
+              sessionStorage.setItem('gstin', gstInput );
+              let res = data.response;
+              let address = res.pradr.addr;
+              $('.gstin_container details').attr('open','true');
+              $('.gst_error').html('');
+              $('.billing_name .name').html(res.tradeNam);
+              $('.billing_address_container .address').html(`<span>${address.bno}</span> <span>${address.flno}</span> <span>${address.bnm}</span> <span>${address.st}</span> <span>${address.dst}</span>
+              <span>${address.stcd}</span> - <span>${address.pncd}</span>`);
+              
+              sessionStorage.setItem('gst_billing_name', res.tradeNam ); 
+              sessionStorage.setItem('gst_billing_address', `${address.bno} ${address.flno} ${address.bnm} ${address.st}` );
+              sessionStorage.setItem('gst_billing_city', `${address.dst}` );
+              sessionStorage.setItem('gst_billing_state', `${address.stcd}` );
+              sessionStorage.setItem('gst_billing_pincode', `${address.pncd}` );
+            }else if(data.message == 'The provided GST number is invalid'){
+              console.log('GST no Invalid');
+              $('.gst_error').html(data.message);
+            }
+          },
+          error: function(){
+            console.log('error');
+          },
+          dataType: 'json',
+        });
+              }
+             
+            }  
+
+      });
+            $('.gstin_container .gstin-confirm').click(function(){
+          let gst_buttom = $(this).parent().siblings('.gst-button');
+          let gstIn = $(this).parent().parent().siblings('input');
+          let gstInVal = gstIn.val();
+          gstDetail(gst_buttom, gstIn, gstInVal);      
+      });
+
           var payment_div = `<div class="new_checkout_step2" style="position: relative;padding-top: 15px;margin-top: 20px;">
     <h1 style="font-weight: 500; color:#545454; font-size:20px; margin-top:17px; margin-left:0;margin-bottom: 20px;">CHOOSE PAYMENT METHOD
     </h1>
@@ -1620,14 +1849,7 @@
           );
           //                 $(document).on('click','.radio-wrapper.content-box__row', function(){
           //                   console.log('clicked')
-          setTimeout(function () {
-            console.log(
-              "billing phone change####################################"
-            );
-            $("#checkout_billing_address_phone").val(
-              $("#checkout_billing_address_phone").val().replaceAll(" ", "")
-            );
-          }, 300);
+
           //                 })
 
           if ($("#checkout_shipping_address_phone").val()) {
@@ -1657,6 +1879,7 @@
             "change, mouseleave",
             function () {
               if ($("#checkout_shipping_address_phone").val()) {
+                sessionStorage.setItem('phone_number',$("#checkout_shipping_address_phone").val());
                 var phoneno = /^\d{10}$/;
                 if (
                   $("#checkout_shipping_address_phone")
@@ -2050,6 +2273,35 @@
             }
           });
           //     }, 3000);
+
+          if(sessionStorage.gstin && sessionStorage.gstin !== ''){
+            function setSelectedIndex(s, v) {
+          for ( var i = 0; i < s.length; i++ ) {
+            if ( s[i].innerHTML == v ) {
+            s[i].selected = true;
+            return;
+            }
+          }
+          }
+
+            document.querySelector('[for="checkout_different_billing_address_true"]').click();
+            $('#section--billing-address__different').show();
+            const GSTName = sessionStorage.gst_billing_name;
+              const fisrtName = GSTName.slice(0, GSTName.indexOf(' '));
+              const lastName = GSTName.slice(GSTName.indexOf(' ') + 1);
+            $('#checkout_billing_address_first_name').val(fisrtName);
+            $('#checkout_billing_address_last_name').val(lastName);
+            $('#checkout_billing_address_address1').val(sessionStorage.gst_billing_address);
+            $('#checkout_billing_address_city').val(sessionStorage.gst_billing_city);
+            $('#checkout_billing_address_zip').val(sessionStorage.gst_billing_pincode);
+            setTimeout(function(){
+            $('#checkout_billing_address_phone').val(sessionStorage.phone_number);
+            }, 300);
+            let state_select = $('#checkout_billing_address_province option');
+            let value = sessionStorage.gst_billing_state;
+            setSelectedIndex(state_select , value);
+          $(".section--billing-address .radio-wrapper.content-box__row[data-same-billing-address]").remove();
+          }
         }
       });
 
@@ -2381,8 +2633,8 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       }
     </script>
     <script>
- $(document).ready(function(){$('[data-address-field="zip"]').insertBefore($('[data-address-field="city"]')) });
-         $('#checkout_shipping_address_zip').keyup(function () {
+$(document).ready(function(){$('[data-address-field="zip"]').insertBefore($('[data-address-field="city"]'))});
+       $('#checkout_shipping_address_zip').keyup(function () {
                           			var zip = $(this).val();
                           			if (zip.length == 6) {
                           				$.ajax({
@@ -2481,7 +2733,7 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
         "new-password"
       );
 
-      //                   if(Shopify.Checkout.step === "contact_information" ){
+                        if(Shopify.Checkout.step === "contact_information" ){
       setInterval(function () {
         if (
           $("#checkout_shipping_address_phone")
@@ -2513,7 +2765,7 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
           }
         }
       }, 100);
-      //                   }
+                        }
 
       setTimeout(() => {
         $("#checkout_shipping_address_province").on("change", function () {

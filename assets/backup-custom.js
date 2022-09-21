@@ -1170,3 +1170,169 @@ if (currentURL.indexOf(cartHashStr) != -1) {
     return this;
   };
 })(jQuery);
+
+
+   
+  $('.rock_india_gif').slick({
+    autoplay: true,
+    autoplaySpeed: 400,
+    arrows: false,
+    dots: false,
+    infinite: true,
+    fade: true,
+    speed: 400,
+    slidesToShow: 1,
+    adaptiveHeight: true
+});
+    
+    $('.rock_india_gif-scnds').slick({
+    autoplay: true,
+    autoplaySpeed: 400,
+    arrows: false,
+    dots: false,
+    infinite: true,
+    fade: true,
+    speed: 400,
+    slidesToShow: 1,
+    adaptiveHeight: true
+});
+
+$(window).scroll(function (event) {
+//   if(navigator.userAgent.match(/(iPhone|iPod|iPad)/i)) {
+//     var scroll = $(window).scrollTop();
+//     if(scroll >= 40) {
+//       $('.header ').addClass('sticky-header')
+//        $('#mobile-facet-toolbar ').addClass('sticky-toolbar')
+//     }
+//   	else {
+//       $('.header ').removeClass('sticky-header')
+//       $('#mobile-facet-toolbar ').removeClass('sticky-toolbar')
+//     }
+//   }
+  var scrollTop = $(window).scrollTop();
+  if(scrollTop >= 1000) {
+      $('#btn-back-to-top').css('display', 'flex');
+  }
+  else {
+      $('#btn-back-to-top').css('display', 'none');
+  }
+  
+    var scrollNav = $(window).scrollTop();
+  if(scrollNav >= 60) {
+      $('.fixed_nav.fixed_nav_mobile').css('display', 'block');
+  }
+  else {
+      $('.fixed_nav.fixed_nav_mobile').css('display', 'none');
+  }
+});
+$('button.press-list__logo-item.tap-area').hover(function(){  $(this).trigger('click');  }); 
+$('.product-item').each(function() {
+  if($(this).find('.meta-label-new-arrival').length) {
+    $(this).find('.lowest-price ').remove();
+  }
+})
+$(document).ready(function() {
+
+function DisCalculation(selectedVarient, i){
+selectedVarient = selectedVarient[i];
+
+let savePrice = selectedVarient.getAttribute('data-price');
+savePrice = parseInt(savePrice);
+let product_flas_sale = selectedVarient.parentElement.className;
+if(Shopify.enable_namagoo && product_flas_sale.includes("custom-product-card_namogoo")){
+if(localStorage.getItem('Namogoo')) { 
+  let NamogooDiscount = JSON.parse(localStorage.getItem('Namogoo'));
+  let discountValue = NamogooDiscount.discountValue;
+  let savePriceDis = savePrice / 100 * discountValue;
+  let comparePrice = selectedVarient.nextElementSibling.getAttribute('data-compare-price');
+  savePrice = savePrice - savePriceDis;
+  let custom_saved_price = comparePrice - savePrice;
+  let custom_saved_dis = Math.round(custom_saved_price * 100 / comparePrice);
+  let custom_saved_price_lable = selectedVarient.offsetParent.children[0];
+  let custom_save_price = selectedVarient.parentElement.nextElementSibling;
+  if(custom_saved_price_lable.className.includes("custom-saved-price-lable")){
+    custom_saved_price_lable.innerHTML = 'You Save ' + custom_saved_dis + '%';
+  }
+  if(custom_save_price.className.includes("custom-save-price")){
+    custom_save_price.innerHTML = 'You Save: '+Shopify.formatMoney(custom_saved_price,Shopify.money_format)+' ('+custom_saved_dis+'%) '
+  }
+  if(selectedVarient.className.includes("product-card-price-varies")){
+    selectedVarient.innerHTML = 'From ' + Shopify.formatMoney(savePrice,Shopify.money_format);
+  }else{
+    selectedVarient.innerHTML = Shopify.formatMoney(savePrice,Shopify.money_format);
+  }
+}   
+}    
+}
+if(Shopify.enable_flash_sale || Shopify.enable_namagoo){
+let selectedVarient = $('.product-card-price');
+for (let i = 0; i < selectedVarient.length; i++) {
+DisCalculation(selectedVarient, i);
+}
+};
+
+$(document).on('click', '.custom-search-cta', function(event) {
+  event.preventDefault();
+  var formData = $(this).parents('form').serialize();
+  $.ajax({
+  url: '/cart/add.js',
+  dataType: 'json',
+  cache: false,
+  type: 'post',
+  data: formData,
+  success: function (data) {
+    document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+      bubbles: true
+    }));
+    document.getElementById('mini-cart').open = true;
+    setTimeout(function(){
+    $('.header__cart-count').html($('#mini-cart input.cart--count').val())
+    },1500);
+  }
+  });
+});
+var observer = new IntersectionObserver(function(entries) {
+  if(entries[0].isIntersecting === true){
+    $('#shopify-section-announcement-bar').addClass('announcement-non-sticky');
+  }else{
+    $('#shopify-section-announcement-bar').removeClass('announcement-non-sticky');
+  }
+}, { threshold: [1] });
+if(document.querySelector('#shopify-section-announcement-bar') !== null){
+  observer.observe(document.querySelector('#shopify-section-announcement-bar'));
+}
+$('.algolia-header-search-input').click(function(){
+  $(this).hide();
+  // $('.algolia-custom-search-popup-container').css('opacity', '1');
+  let searchContainerHeight = $('.shopify-section--header .container').height();
+if($('#shopify-section-announcement-bar').hasClass('announcement-non-sticky')){
+  searchContainerHeight = searchContainerHeight + $('#shopify-section-announcement-bar').height();
+}
+
+  $('.search-popup-container').css({'top': searchContainerHeight - 3 +'px', 'opacity': '1', 'transform': 'translateY(0px) translateZ(0px)', 'position': 'fixed'});
+  $('body').addClass('noScroll');
+  document.getElementsByClassName('predictive-search__input')[0].focus();
+  setTimeout(function(){
+  $('.algolia-autocomplete .aa-dataset-products').show();
+  },1000);
+  $('.algolia-trending-label').click(function(){
+    document.querySelector('.predictive-search__input').value = $(this).text();
+    document.querySelector('.predictive-search__input').dispatchEvent(new Event('input', {bubbles:true}));
+    });
+});
+$('.search-clear-icon').click(function(){
+  $('.algolia-header-search-input').show();
+  // $('.algolia-custom-search-popup-container').css('opacity', '0');
+  $('body').removeClass('noScroll'); 
+  $('.search-popup-container').removeAttr('style');  
+  $('.algolia-autocomplete .aa-dataset-products').hide(); 
+  document.querySelector('.predictive-search__input').value = '';
+  document.querySelector('.predictive-search__input').dispatchEvent(new Event('input', {bubbles:true}));
+});
+$('.algolia-search__form').submit(function(e){
+  e.preventDefault();
+});
+let algolia_top_position = ($('#shopify-section-header').height() + $('.algolia-custom-search-popup-container').height() + 60);
+$('.algolia-autocomplete').css('top', algolia_top_position + 'px');
+});
+
