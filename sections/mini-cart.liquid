@@ -356,27 +356,17 @@
 
 
         button.checkout-button.button.button--primary.button--full {
-      background: #ff000000;
-          color: red;
-          width: 48%;
-          height: 50px;
+          background: #ff0000;
           padding: 0;
           border-radius: 4px;
           border: 2px solid;
           letter-spacing: normal;
       }
-        #mini-cart .loader-button__text {
-          text-transform: capitalize;
-        }
         header.drawer__header {
           background: red;    height: 40px;
       }
        .drawer__title {
           margin-left: -12px;
-      }
-       div#zestmoney-widget-control-cart {
-          margin-bottom: 12px!important;
-         display:none;
       }
       #mini-cart .drawer__footer--bordered {
            box-shadow: 0 0px 10px #878787b8; /* We use box-shadow due to the shadow */
@@ -642,7 +632,7 @@
               <input type="hidden" name="checkout">
 
               {%- for line_item in cart.items -%}
-                <line-item class="line-item">
+                <line-item class="line-item" data-item-id="{{ line_item.id }}">
                   <div class="line-item__content-wrapper">
                     <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
                       <span class="line-item__loader" hidden>
@@ -712,7 +702,8 @@
                           {%- endunless -%}
                         {%- endif -%}
 
-                        <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">{{ line_item.product.title | split: "|" | first }}</a>
+ <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">
+                {{ line_item.product.title | split: "|" | first | split: "," | first }}</a>
 
                         {%- capture line_item_properties -%}
                           {%- unless line_item.product.has_only_default_variant -%}
@@ -863,6 +854,9 @@
                 </line-item>
               {%- endfor -%}
             </form>
+          {% render 'freebie-cart_gift' %} 
+
+
 
 {% comment %}            {%- if section.settings.show_recommendations -%}
               <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
@@ -917,7 +911,80 @@
             {%- endif -%}
 {% endcomment %}            
           </div>
+             <div class="d-flex align-items-center">
+<style>
+/* for label giftcard/gst */
+.contain {
+    display: block;
+    position: relative;
+    padding-inline: 35px;
+    margin: 12px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
+/* Hide the browser's default checkbox */
+.contain input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #ccc;
+}
+
+/* On mouse-over, add a grey background color */
+.contain:hover input ~ .checkmark {
+  background-color: #9c9c9c;
+}
+
+/* When the checkbox is checked, add a blue background */
+.contain input:checked ~ .checkmark {
+  background-color: red;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.contain input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.contain .checkmark:after {
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+</style>
+<label class="contain">PAY VIA GIFT CARDS 
+  <input type="checkbox" id="gstbill" class="mx-3" onclick="giftcardcheck()" >
+  <span class="checkmark"></span>
+</label>
+          </div>
           <footer class="mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered">
             {%- capture shipping_tax_note -%}{{ 'cart.general.shipping_tax_note' | t }}{%- endcapture -%}
             {% comment %}
@@ -1059,9 +1126,7 @@
                     <div class=" checkout-buttons-div">
 
    {% render 'gokwik-checkout' %}
- 
-<!-- 						<button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
-                      Pay Via Card  </button> -->
+
          {%- if magic_ok == true -%}               
 					 <div class="razorpay-checkout">
                         <button type="button" onclick="openRzpCheckout(event)">
@@ -1071,7 +1136,10 @@
                                   </span>
                         </button>
                       </div>
-                {%- endif -%}                
+                {%- endif -%}   
+          <button is="loader-button" style="display:none;" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="checkout-button button button--primary button--full" name="checkout">
+                    checkout
+            </button>
                     </div>
                   {% else %}
                       <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
@@ -1096,6 +1164,19 @@
       </cart-drawer>
 
       <script>
+        // giftcard || 
+    function giftcardcheck(){      
+      $('.checkout-button').toggleClass("d-block");
+      $('.gokwik-checkout, .razorpay-checkout').toggleClass("d-none");
+    }
+        $(window).on("load", function() {
+          if ($("input#gstbill").is(":checked")){
+          $('.checkout-button').toggleClass("d-block");
+          $('.gokwik-checkout, .razorpay-checkout').toggleClass("d-none");
+          }   
+        })
+
+      // end giftcard || gst 
 		console.log('rerun')
 		function remove_function() {
             sessionStorage.setItem('coupon-remove', true);
@@ -1711,13 +1792,60 @@
         $( document ).ready(function() {
           console.log( "readyyyyy!" );
       });
-
-
-
-
-
       </script>
+<!--       freebie-offer -->
+{% assign gift-product = collections['freebie-offer'].products[0] %}
+{% assign gift-product_variant = gift-product.variants[0].id %}
+<script>
+let giftId = "{{ gift-product_variant }}";
+if(document.readyState === 'loading') {
+    console.log("loading");
+  $(".header__icon-list").css("pointer-events", "none");
+}
+$(window).on("load", function(){
+$(".header__icon-list").css("pointer-events", "auto");
+$('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
+});
 
+$(document).ready(function(){
+const targNode = document.getElementById('mini-cart');
+const config_ = { attributes: false, childList: true, subtree: false };
+const callback_ = (mutationList, observer) => {
+ for (const mutation of mutationList) {
+    console.log('mutation')
+    let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
+    console.log('price',total_price);
+    if ($('.custom-gift-button').length > 0) {
+      $('.custom-gift-button')[0].click();
+    }
+    
+ $('#mini-cart-form .line-item').each(function() {
+    let dataItemId = $(this).data('item-id');
+      if (dataItemId == giftId){
+        let remove_price = $(`.line-item[data-item-id="${dataItemId}"] .price.price--highlight`).text().replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3);
+            console.log(remove_price);
+            if(total_price - remove_price < 1000) {
+             $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+            }
+        }
+  });
+ }
+};
+const observer_ = new MutationObserver(callback_);
+observer_.observe(targNode, config_);
+
+const customer_id = "{{customer.id}}"
+   $('#mini-cart-form .line-item').each(function() {
+    let dataItemId = $(this).data('item-id');
+      if (dataItemId == giftId){
+            if(customer_id.trim().length == 0) {
+             $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+            }
+        }
+  });
+  
+});
+</script>
 			<script>
           function handleapplyclick(){
               applyCoupon();
@@ -1739,8 +1867,14 @@
               //                 console.log('Sheena' + discountAmount)
               //             }
               //                                     }, 5000)
-
             }
+          $(".razorpay-checkout").click(function () {
+             let productsincart = line_item.product;
+           clevertap.event.push("razor/magic Button Clicked",{
+           "cart products": productsincart,
+           "Amount": cart_total_price
+       });
+    });
 </script>
       <script>
         setInterval(function(){

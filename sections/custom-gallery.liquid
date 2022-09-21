@@ -5,9 +5,9 @@
 {%- endif -%}
 
 {%- comment -%}
-------------------------------------------------------------------------------------------------------------------------
-  CSS
-------------------------------------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------------------------
+    CSS
+  ------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
 <style>
@@ -88,7 +88,7 @@
       font-weight: 400;
       padding: 0px 0 36px;
     }
-  
+
   @media screen and (max-width: 767px) {
     .shopify-section--custom-gallery .gallery__item {
     	flex-direction: column-reverse;
@@ -102,84 +102,130 @@
       	width: 100%;
     }
   }
-  
 </style>
 
-<section class="section {% unless blends_with_background %}section--flush{% endunless %}">
-  <div class="section__color-wrapper {% unless blends_with_background %}vertical-breather{% endunless %}">
-    {%- if section.settings.subheading != blank or section.settings.title != blank -%}
-      <header class="section__header container text-container">
-        {%- if section.settings.subheading != blank -%}
-          <h2 class="heading heading--small">{{ section.settings.subheading | escape }}</h2>
-        {%- endif -%}
+<section class="section custom_gallery-main-container-{{section.id}} {% unless blends_with_background %}section--flush{% endunless %}">
+  {% capture custom_gallery %}
+    <div class="section__color-wrapper {% unless blends_with_background %}vertical-breather{% endunless %}">
+      {%- if section.settings.subheading != blank or section.settings.title != blank -%}
+        <header class="section__header container text-container">
+          {%- if section.settings.subheading != blank -%}
+            <h2 class="heading heading--small">{{ section.settings.subheading | escape }}</h2>
+          {%- endif -%}
 
-        {%- if section.settings.title != blank -%}
-          <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
-        {%- endif -%}
-      </header>
-    {%- endif -%}
+          {%- if section.settings.title != blank -%}
+            <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
+          {%- endif -%}
+        </header>
+      {%- endif -%}
 
-    {%- comment -%}
-    If we have more than 3 blocks we assume that by default the content may be scrollable. This may not be the case and
-    the JavaScript will fired up to remove it in case it is needed, but if it is indeed scrollable this will avoid
-    a reflow of the browser rendering engine. From our tests 3 is a sane default.
-    {%- endcomment -%}
-    <gallery-list class="gallery">
-      <scrollable-content {% unless section.settings.show_arrows %}draggable{% endunless %} class="gallery__list-wrapper {% if section.blocks.size >= 3 %}is-scrollable{% endif %} hide-scrollbar">
-        <div class="container">
-          <div class="gallery__list">
-            {%- for block in section.blocks -%}
-              <gallery-item class="gallery__item" {{ block.shopify_attributes }}>
-                <figure class="gallery__figure">
-                  {%- if block.settings.image -%}
-                    {%- assign mobile_size = 370 | times: block.settings.image.aspect_ratio | ceil -%}
-                    {%- assign tablet_size = 520 | times: block.settings.image.aspect_ratio | ceil -%}
-                    {%- assign desktop_size = 600 | times: block.settings.image.aspect_ratio | ceil -%}
-
-                    <img loading="lazy" sizes="(max-width: 740px) {{ mobile_size }}px, (max-width: 999px) {{ tablet_size }}px, {{ desktop_size }}px" class="gallery__image" {% render 'image-attributes', image: block.settings.image, sizes: '300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000' %}>
-                  {%- else -%}
-                    {{- 'image' | placeholder_svg_tag: 'gallery__image gallery__image placeholder-background' -}}
-                  {%- endif -%}
-
-                  {%- if block.settings.caption != blank -%}
-                    <figcaption class="gallery__caption rte">
-                      {{- block.settings.caption -}}
-                    </figcaption>
-                  {%- endif -%}
-                </figure>
-                <div class="section--content">
-                  <h2 class="block-heading text-white">Meet the bo<span class="text-red">A</span>theads</h2>
-                  <p class="boathead-name text-red text-uppercase">{{block.settings.short_caption}}</p>
-                  <p class="catchy-line text-white">{{block.settings.catchy_line}}</p>
-                  <p class="description text-white">{{block.settings.description}}</p>
-                </div>
-              </gallery-item>
-            {%- endfor -%}
-          </div>
-        </div>
-      </scrollable-content>
-
-      {%- if section.blocks.size > 1 and section.settings.show_arrows -%}
-        <prev-next-buttons class="gallery__prev-next-buttons prev-next-buttons">
-          <button class="gallery__arrow prev-next-button prev-next-button--prev">
-            <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
-            {%- include 'icon' with 'nav-arrow-left', direction_aware: true -%}
-          </button>
-
-          <button class="gallery__arrow prev-next-button prev-next-button--next">
-            <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
-            {%- include 'icon' with 'nav-arrow-right', direction_aware: true -%}
-          </button>
-        </prev-next-buttons>
-      {% endif %}
-	  {%- comment -%}
-      <div class="gallery__progress-bar-wrapper container">
-        <span class="gallery__progress-bar progress-bar" style="--divider: {{ section.blocks.size }}"></span>
-      </div>
+      {%- comment -%}
+        If we have more than 3 blocks we assume that by default the content may be scrollable. This may not be the case and
+        the JavaScript will fired up to remove it in case it is needed, but if it is indeed scrollable this will avoid
+        a reflow of the browser rendering engine. From our tests 3 is a sane default.
       {%- endcomment -%}
-    </gallery-list>
-  </div>
+      <gallery-list class="gallery">
+        <scrollable-content
+          {% unless section.settings.show_arrows %}
+            draggable
+          {% endunless %}
+          class="gallery__list-wrapper {% if section.blocks.size >= 3 %}is-scrollable{% endif %} hide-scrollbar"
+        >
+          <div class="container">
+            <div class="gallery__list">
+              {%- for block in section.blocks -%}
+                <gallery-item class="gallery__item" {{ block.shopify_attributes }}>
+                  <figure class="gallery__figure">
+                    {%- if block.settings.image -%}
+                      {%- assign mobile_size = 370 | times: block.settings.image.aspect_ratio | ceil -%}
+                      {%- assign tablet_size = 520 | times: block.settings.image.aspect_ratio | ceil -%}
+                      {%- assign desktop_size = 600 | times: block.settings.image.aspect_ratio | ceil -%}
+
+                      <img
+                        loading="lazy"
+                        sizes="(max-width: 740px) {{ mobile_size }}px, (max-width: 999px) {{ tablet_size }}px, {{ desktop_size }}px"
+                        class="gallery__image"
+                        {% render 'image-attributes', image: block.settings.image, sizes: '300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000' -%}
+                      >
+                    {%- else -%}
+                      {{- 'image' | placeholder_svg_tag: 'gallery__image gallery__image placeholder-background' -}}
+                    {%- endif -%}
+
+                    {%- if block.settings.caption != blank -%}
+                      <figcaption class="gallery__caption rte">
+                        {{- block.settings.caption -}}
+                      </figcaption>
+                    {%- endif -%}
+                  </figure>
+                  <div class="section--content">
+                    <h2 class="block-heading text-white">Meet the bo<span class="text-red">A</span>theads</h2>
+                    <p class="boathead-name text-red text-uppercase">{{ block.settings.short_caption }}</p>
+                    <p class="catchy-line text-white">{{ block.settings.catchy_line }}</p>
+                    <p class="description text-white">{{ block.settings.description }}</p>
+                  </div>
+                </gallery-item>
+              {%- endfor -%}
+            </div>
+          </div>
+        </scrollable-content>
+
+        {%- if section.blocks.size > 1 and section.settings.show_arrows -%}
+          <prev-next-buttons class="gallery__prev-next-buttons prev-next-buttons">
+            <button class="gallery__arrow prev-next-button prev-next-button--prev">
+              <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
+              {%- include 'icon' with 'nav-arrow-left', direction_aware: true -%}
+            </button>
+
+            <button class="gallery__arrow prev-next-button prev-next-button--next">
+              <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+              {%- include 'icon' with 'nav-arrow-right', direction_aware: true -%}
+            </button>
+          </prev-next-buttons>
+        {% endif %}
+        {%- comment -%}
+          <div class="gallery__progress-bar-wrapper container">
+            <span class="gallery__progress-bar progress-bar" style="--divider: {{ section.blocks.size }}"></span>
+          </div>
+        {%- endcomment -%}
+      </gallery-list>
+    </div>
+  {% endcapture %}
+  {% if section.settings.lazyload_section %}
+    <div class="custom_gallery-container custom_gallery-container-{{section.id}}">
+      <div class="loading_icon">
+        <img
+          class="lazyload"
+          src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765"
+          alt="Load More"
+          style="width: 50px;"
+        >
+      </div>
+    </div>
+  {% else %}
+    {{ custom_gallery }}
+  {% endif %}
 </section>
+
+{% if section.settings.lazyload_section %}
+  <script>
+    window.addEventListener("load", function(){
+      sessionStorage.setItem('custom_gallery-{{section.id}}','false');
+      function ScrollStart() {
+        if(sessionStorage.getItem('custom_gallery-{{section.id}}') == 'false'){
+        document.querySelector('.custom_gallery-container-{{section.id}}').innerHTML = `{{ custom_gallery | strip_newlines }}`;
+        sessionStorage.setItem('custom_gallery-{{section.id}}','true');
+        }
+      }
+      var observer = new IntersectionObserver(function(entries) {
+      if(entries[0].isIntersecting === true)
+        ScrollStart();
+    }, { threshold: [1] });
+    if(document.querySelector('.custom_gallery-main-container-{{section.id}}') !== null){
+      observer.observe(document.querySelector('.custom_gallery-main-container-{{section.id}}'));
+    }
+    });
+  </script>
+{% endif %}
 
 <script>
   $('.gallery__list .gallery__item').each(function(e) {
@@ -220,24 +266,30 @@
           "type": "text",
           "id": "short_caption",
           "label": "Short Caption",
-		  "default": "Lorem Ipsum Dolor Sit"
+          "default": "Lorem Ipsum Dolor Sit"
         },
         {
           "type": "text",
           "id": "catchy_line",
           "label": "Catchy Line",
-		  "default": "Lorem.Ipsum.Dolor.Sit"
+          "default": "Lorem.Ipsum.Dolor.Sit"
         },
         {
           "type": "text",
           "id": "description",
           "label": "Description",
-		  "default": "Lorem Ipsum Dolor Sit"
+          "default": "Lorem Ipsum Dolor Sit"
         }
       ]
     }
   ],
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "lazyload_section",
+      "label": "lazyload section",
+      "default": true
+    },
     {
       "type": "text",
       "id": "subheading",
@@ -250,11 +302,11 @@
       "label": "Heading",
       "default": "Gallery"
     },
-	{
-	  "type": "image_picker",
-	  "id": "bgimage",
-	  "label": "Background Image"
-	},
+    {
+      "type": "image_picker",
+      "id": "bgimage",
+      "label": "Background Image"
+    },
     {
       "type": "checkbox",
       "id": "show_arrows",

@@ -5,10 +5,8 @@
 {% assign products_description = shop.metafields.quinn_product_desc %}
 {% assign settings = shop.metafields.quinn_settings.global %}
 {% assign prepend_url = 'quinn_' %}
-
 {% assign page_type = template.name %}
 {% assign page_handle = '' %}
-
 {% if page_type == 'collection' %}
   {% assign page_handle = collection.handle %}
 {% elsif page_type == 'product' %}
@@ -17,21 +15,19 @@
   {% assign page_handle = page.handle %}
 {% elsif page_type == 'index' %}
   {% assign page_handle = 'index' %}
+{% elsif page_type == 'blog' %}
+  {% assign page_handle = blog.handle %}
 {% endif %}
-
 {{ shop.metafields.quinn_settings.custom_cart_update }}
 {{ shop.metafields.quinn_settings.custom_cart_open }}
 {{ shop.metafields.quinn_settings.currency_convertor }}
-
 {% assign story_playlist = nil %}
 {% assign card_playlists_ids = '' %}
 {% assign card_playlist_targets = '' %}
 {% assign floating_playlist = nil %}
-
 {% for current_playlist in quinn_playlists %}
   {% assign found_data_map = false %}
   {% assign exclude_page = false %}
-
   {% for page in current_playlist[1].exclude_pages %}
     {% if page.type == page_type and page.handle == page_handle %}
        {% assign exclude_page = true %}
@@ -42,11 +38,9 @@
        {% break %}
     {% endif %}
   {% endfor %}
-
   {% if exclude_page %}
     {% continue %}
   {% endif %}
-
   {% for page in current_playlist[1].pages %}
     {% if page.type == 'all' %}
        {% assign found_data_map = true %}
@@ -61,11 +55,9 @@
        {% break %}
     {% endif %}
   {% endfor %}
-
   {% if found_data_map %}
     {% if current_playlist[1].type == 'story' and story_playlist == nil %}
       {% assign story_playlist = current_playlist[1] %}
-
     {% elsif current_playlist[1].type == 'cards'  %}
       {% assign card_playlist_target = current_playlist[1].target %}
       {% if card_playlist_target == nil %}
@@ -76,7 +68,6 @@
         {% assign card_playlist_targets = card_playlist_targets | append: card_playlist_target | append: ',' %}
         {% assign card_playlists_ids = card_playlists_ids | append: current_playlist[1].id | append: ',' %}
       {% endunless %}
-
     {% elsif current_playlist[1].type == 'floating' and floating_playlist == nil %}
       {% assign floating_playlist = current_playlist[1] %}
     {% endif %}
@@ -84,7 +75,6 @@
 {% endfor %}
 {% assign all_handles = '' %}
 {% assign card_playlists_ids = card_playlists_ids | split: "," %}
-
 {% for media in story_playlist.media %}
   {% if media.type == 'group' %}
     {% for m in quinn_media_groups[media.key].media %}
@@ -106,7 +96,27 @@
     {% endfor %}
   {% endif %}
 {% endfor %}
-
+{% for media in floating_playlist.media %}
+  {% if media.type == 'group' %}
+    {% for m in quinn_media_groups[media.key].media %}
+      {% for product in quinn_media[m.key].products %}
+        {% if product.handle %}
+          {% assign all_handles = all_handles | append: product.handle | append: "," %}
+        {% else %}
+          {% assign all_handles = all_handles | append: product | append: "," %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% else %}
+    {% for product in quinn_media[media.key].products %}
+      {% if product.handle %}
+        {% assign all_handles = all_handles | append: product.handle | append: "," %}
+      {% else %}
+        {% assign all_handles = all_handles | append: product | append: "," %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
 {% for id in card_playlists_ids %}
   {% assign current_playlist = quinn_playlists[id] %}
   {% for media in current_playlist.media %}
@@ -131,16 +141,12 @@
     {% endif %}
   {% endfor %}
 {% endfor %}
-
 {% assign all_handles = all_handles | split: ',' %}
-
 <script>
   var all_products = {};
   if (Quinn.debug_logs) console.log("pre-rendering", {{quinn_playlists | json}});
-
   function render_playlist(playlist, settings) {
     if (!settings) return;
-
     function get_medias(medias) {
       return medias.map(media => {
         if (media.group?.length === 0) return null;
@@ -151,7 +157,6 @@
         return media.products.length ? media : null;
       }).filter(m => m);
     }
-
     playlist.medias = get_medias(playlist.medias);
     const props = {
       playlist,
@@ -166,20 +171,17 @@
       }
     }, 100)
   };
-
   function getMediaProducts(media) {
     if (!media) return [];
     return media.products.map(p => p.handle ? ({ ...p, product: all_products[p.handle] }) : ({ variant_id: null, product: all_products[p] })).filter(p => p.product);
   }
 </script>
-
 {% paginate collections.quinn-app-products.products by 1000 %}
   {% for product_object in collections.quinn-app-products.products %}
     {% if all_handles contains product_object.handle %}
       {% assign product_id = product_object.id %}
       {% assign product_handle = product_object.handle %}
       {% assign product_options = product_object.options_with_values %}
-
       {% assign color_options = '' | split: '' %}
       {% for option in product_options %}
         {% if option.name == 'Shade' or option.name == 'Color' %}
@@ -190,7 +192,6 @@
           {% endfor %}
         {% endif %}
       {% endfor %}
-
       <script>
         all_products[{{ product_handle | json }}] = {
           ...{{ product_object | json }},
@@ -244,14 +245,12 @@
     {% endif %}
   {% endfor %}
 {% endpaginate %}
-
 {% capture snippet_content %}{% render 'quinn-custom' %}{% endcapture %}
 {% if snippet_content contains "Could not find asset" %}
     {% comment %} do nothing {% endcomment %}
 {% else %}
     {% render 'quinn-custom' all_handles: all_handles, story_playlist: story_playlist, card_playlist: card_playlist %}
 {% endif %}
-
 <script>
 const story_playlist = {{ story_playlist | json }};
 if (story_playlist) {
@@ -304,7 +303,6 @@ if (story_playlist) {
   render_playlist(story_playlist_data, {{ settings | json }});
 }
 </script>
-
 {% for id in card_playlists_ids %}
 {% assign card_playlist = quinn_playlists[id] %}
 <script type="module">
@@ -314,7 +312,6 @@ if (story_playlist) {
       banner_image: {{ card_playlist.banner_image | file_url | json }},
       medias: [
         {% for media in card_playlist.media %}
-
           {% if media.hidden %}
             {% continue %}
           {% endif %}
@@ -359,7 +356,6 @@ if (story_playlist) {
     render_playlist(card_playlist_data, {{ settings | json }});
   </script>
 {% endfor %}
-
 <script>
 const floating_playlist = {{ floating_playlist | json }}
 if (floating_playlist) {
@@ -412,7 +408,6 @@ if (floating_playlist) {
   render_playlist(floating_playlist_data, {{ settings | json }});
 }
 </script>
-
 <div id="quinn-overlay"></div>
 <script>
   const quinnoverlayinterval = setInterval(() => {
