@@ -5,6 +5,15 @@
 {%- endif -%}
 
 <style>
+  .press-list__wrapper {
+    margin-left: 0;
+  }
+  .shopify-section--press .press_section{background: rgb(255 255 255);}
+  .rte blockquote:after, .rte blockquote:before, .shopify-section--press .blockquote:after, .shopify-section--press .blockquote:before{opacity: 0;}
+  split-lines {
+    color: white;
+  }
+  .press-list__logo-list-wrapper button.press-list__logo-item[aria-current=true]{background: #000;padding: 10px;}
   #shopify-section-{{ section.id }} {
     {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
       {%- assign section_background = settings.background -%}
@@ -22,17 +31,17 @@
 
     --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
     --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-    --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
+/*       background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }}); */
   }
     @media screen and (max-width: 767px) {
     	[dir=ltr] .blockquote:after, [dir=ltr] .rte blockquote:after {bottom: -32px;}
     }
 </style>
 
-<section class="section {% unless blends_with_background %}section--flush{% endunless %}">
-  <div class="section__color-wrapper {% unless blends_with_background %}vertical-breather{% endunless %}">
+<section class="press_section vertical-breather{% unless blends_with_background %}section--flush{% endunless %}">
+  <div style="border-top: 1px solid #343333;" class="section__color-wrapper {% unless blends_with_background %}vertical-breather{% endunless %}">
     <div class="container">
-                <h3 class="text-center heading h2"> In the Press</h3>
+                <h3 class=" heading h2 text-white"> In the Press</h3>
       <press-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="press-list">
         <div class="press-list__wrapper">
 
@@ -73,7 +82,7 @@ $('.shopify-section shopify-section--press').on('click', function(){
 {% schema %}
 {
   "name": "Press",
-  "class": "shopify-section--press",
+  "class": "shopify-section--press container",
   "max_blocks": 6,
   "blocks": [
     {
