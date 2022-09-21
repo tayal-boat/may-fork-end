@@ -1,6 +1,32 @@
 <!--     <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
 
-<script src="https://cdn.razorpay.com/static/shopify/modal.js" data-merchant-name="boAt"></script>
+<!-- <script src="https://cdn.razorpay.com/static/shopify/modal.js" data-merchant-name="boAt"></script> -->
+
+<script>
+  function script(url) {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = url;
+        s.setAttribute("data-merchant-name", "boAt");
+        var x = document.getElementsByTagName('head')[0];
+        x.appendChild(s);
+    }
+
+    window.addEventListener("load", function(){
+    sessionStorage.setItem('magicCheckout','false'); 
+    document.addEventListener("touchmove", ScrollStart, true);
+    document.addEventListener("scroll", ScrollStart, true);
+    document.querySelector('.header__icon-wrapper.header__cart[aria-controls="mini-cart"]').addEventListener("click", ScrollStart, true);
+    function ScrollStart() {
+    if(sessionStorage.getItem('magicCheckout') == 'false'){
+      script("https://cdn.razorpay.com/static/shopify/modal.js");
+      sessionStorage.setItem('magicCheckout','true');   
+    }
+    }
+  });
+    
+</script>
 
   <script>
 //      window.widgetIDForMagicCheckout = "main-cart-items";
@@ -44,11 +70,23 @@ document.addEventListener('DOMContentLoaded', function() {
     alert('Rzp key is missing.');
     return;
   }
-  if (delay) {
-    checkoutJsTimerId = setTimeout(injectCheckoutJsUrl, delay);
-  } else {
-    injectCheckoutJsUrl();
+  sessionStorage.setItem('magicCheckout1','false'); 
+  document.addEventListener("touchmove", CheckoutscrollStart, true);
+    document.addEventListener("touchstart", CheckoutscrollStart, true);
+    document.addEventListener("touchend", CheckoutscrollStart, true);
+    document.addEventListener("scroll", CheckoutscrollStart, true);
+    document.querySelector('.header__icon-wrapper.header__cart[aria-controls="mini-cart"]').addEventListener("click", CheckoutscrollStart, true);
+function CheckoutscrollStart() {
+  if(sessionStorage.getItem('magicCheckout1') == 'false'){
+if (delay) {
+  checkoutJsTimerId = setTimeout(injectCheckoutJsUrl, delay);
+} else {
+  injectCheckoutJsUrl();
+}
+sessionStorage.setItem('magicCheckout1','true');   
   }
+  }
+
   openAbandonedCheckout();
 });
 
@@ -419,7 +457,7 @@ async function openModal(params) {
 }
 </script>
 
- <script src="https://cdn.razorpay.com/static/shopify/analytics.js" ></script> 
+ <script src="https://cdn.razorpay.com/static/shopify/analytics.js" defer></script> 
 
 <input id="rzpKey" type="hidden" name="rzpKey" value="rzp_live_iCBWgJBHr7vDrd">
     
