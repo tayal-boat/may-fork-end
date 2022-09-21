@@ -1,0 +1,79 @@
+<!-- Algolia head -->
+  {% for tag in customer.tags %}
+  {% if tag == 'gst_added' %}
+  {% assign gst_added = true %}
+  {% break %}
+  {% else %}
+  {% assign gst_added = false %}
+  {% endif %}
+  {% endfor %} 
+<script>
+      function algolia_script(url) {
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.src = url;
+      var x = document.getElementsByTagName('body')[0];
+      x.appendChild(s);
+  }
+   algolia_script("{{ 'algolia_config.js' | asset_url }}");
+   algolia_script("{{ 'algolia_externals.js' | asset_url }}");
+    algolia_script("{{ 'algolia_init.js' | asset_url }}");
+document.addEventListener('DOMContentLoaded', (event) => {
+      AOS.init({
+        duration: 1200,
+      });
+      $(function () {
+        $(".video, .video-new").videoPopup();
+      }); 
+   
+  $('.algolia-header-search-input').css('pointer-events','all');
+ 
+  sessionStorage.setItem('algolia_scripts','false'); 
+  document.addEventListener("touchmove", algolia_ScrollStart, true);
+  document.addEventListener("scroll", algolia_ScrollStart, true);
+  $('.algolia-header-search-input').click(function(){
+    algolia_ScrollStart();
+  });
+  function algolia_ScrollStart() {
+  if(sessionStorage.getItem('algolia_scripts') == 'false'){
+    
+    setTimeout(function(){
+    algolia_script("{{ 'algolia_analytics.js' | asset_url }}");
+    algolia_script("{{ 'algolia_translations.js' | asset_url }}");
+    algolia_script("{{ 'algolia_helpers.js' | asset_url }}");
+    algolia_script("{{ 'algolia_autocomplete.js' | asset_url }}");
+    algolia_script("{{ 'algolia_facets.js' | asset_url }}");
+    algolia_script("{{ 'algolia_sort_orders.js' | asset_url }}");
+    },700);
+    sessionStorage.setItem('algolia_scripts','true');   
+  }
+  }
+     var _rmData = _rmData || [];
+    _rmData.push(['setStoreKey', 'Rm193om6']);
+    {% if customer %}
+    _rmData.push(['setCustomer', {{ customer.email | json }}]);
+    {% endif %}
+    
+     (function(d, t) {
+      var g = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+      g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
+      s.parentNode.insertBefore(g, s);
+      }(document, 'script'));
+    algolia_script("https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js");
+
+      {% if customer.metafields.custom.gst_address %}
+      Shopify.gst_added = {% if gst_added %} {{ gst_added }} {% else %} false {% endif %};
+      let address = {{ customer.metafields.custom.gst_address }};
+      
+      sessionStorage.setItem('gstin', address.gst );
+      sessionStorage.setItem('gst_billing_name', address.name ); 
+      sessionStorage.setItem('gst_billing_address', address.address1 );
+      sessionStorage.setItem('gst_billing_city', address.city );
+      sessionStorage.setItem('gst_billing_state', address.state );
+      sessionStorage.setItem('gst_billing_pincode', address.pincode );
+      {% endif %}
+      
+});  
+</script>
+<!-- /Algolia head -->
