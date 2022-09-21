@@ -1,5 +1,6 @@
 {
-    "title": "{{ product.title }}",
+    "title": "{{ product.title  | escape }}",
+    "available": "{{ product.available | json }}",
     "compare_at_price": "{{ product.compare_at_price | money  }}",
     "compare_at_price_max": "{{ product.compare_at_price_max | money  }}",
     "compare_at_price_min": "{{ product.compare_at_price_min | money  }}",
@@ -11,7 +12,6 @@
     "price": "{{ product.price | money  }}",
     "price_max": "{{ product.price_max | money  }}",
     "price_min": "{{ product.price_min | money  }}",
-    "title": "{{ product.title }}",
     "type": "{{ product.type }}",
     "url": "{{ product.url }}",
     "compare_at_price_number": "{{ product.compare_at_price   }}",
@@ -57,12 +57,12 @@
                     {
                         "name": "{{ value.name }}",
                         "position": "{{ value.position }}",
-                        "id": "{{ value.id }}",
+                        "id": "{{ value.id }}"
                     }{% unless forloop.last %},{% endunless %}
                         
                     {% endfor %}
-                ],
-            }
+                ]
+            }{% unless forloop.last %},{% endunless %}
         {% endfor %}
     ],
     "options": [
@@ -75,7 +75,7 @@
             {
                 "name": "{{ option.name }}",
                 "values": [
-                   {% for value in option %}
+                   {% for value in option.values %}
                      "{{ value }}"
                       {% unless forloop.last %},{% endunless %}
                   {% endfor %}
@@ -92,8 +92,7 @@
                     "variant_id": "{{ variant.id | json }}",
                     "value": {{ variant.option1 | json }},
                     "available": {{ variant.available | json }},
-                    "group": {{ variant.metafields.color.group | json }},
-                    "image": {{ variant.option1 | handle | append: '.png' | file_img_url: '50x50' | prepend: 'https:' | split: '?' | first | json }}
+                    "group": {{ variant.metafields.color.group | json }}
                 }{% unless forloop.last %},{% endunless %}
             {% endfor %}
         {% endif %}
