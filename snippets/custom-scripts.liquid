@@ -7,18 +7,7 @@
   {% assign gst_added = false %}
   {% endif %}
   {% endfor %} 
-<script>
-      function algolia_script(url) {
-      var s = document.createElement('script');
-      s.type = 'text/javascript';
-      s.src = url;
-      var x = document.getElementsByTagName('body')[0];
-      x.appendChild(s);
-  }
-   algolia_script("{{ 'algolia_config.js' | asset_url }}");
-   algolia_script("{{ 'algolia_externals.js' | asset_url }}");
-    algolia_script("{{ 'algolia_init.js' | asset_url }}");
-document.addEventListener('DOMContentLoaded', (event) => {
+<script type="deferjs">
       AOS.init({
         duration: 1200,
       });
@@ -27,27 +16,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }); 
    
   $('.algolia-header-search-input').css('pointer-events','all');
- 
-  sessionStorage.setItem('algolia_scripts','false'); 
-  document.addEventListener("touchmove", algolia_ScrollStart, true);
-  document.addEventListener("scroll", algolia_ScrollStart, true);
-  $('.algolia-header-search-input').click(function(){
-    algolia_ScrollStart();
-  });
-  function algolia_ScrollStart() {
-  if(sessionStorage.getItem('algolia_scripts') == 'false'){
-    
-    setTimeout(function(){
-    algolia_script("{{ 'algolia_analytics.js' | asset_url }}");
-    algolia_script("{{ 'algolia_translations.js' | asset_url }}");
-    algolia_script("{{ 'algolia_helpers.js' | asset_url }}");
-    algolia_script("{{ 'algolia_autocomplete.js' | asset_url }}");
-    algolia_script("{{ 'algolia_facets.js' | asset_url }}");
-    algolia_script("{{ 'algolia_sort_orders.js' | asset_url }}");
-    },700);
-    sessionStorage.setItem('algolia_scripts','true');   
-  }
-  }
+
      var _rmData = _rmData || [];
     _rmData.push(['setStoreKey', 'Rm193om6']);
     {% if customer %}
@@ -60,7 +29,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
       g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
       s.parentNode.insertBefore(g, s);
       }(document, 'script'));
-    algolia_script("https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js");
 
       {% if customer.metafields.custom.gst_address %}
       Shopify.gst_added = {% if gst_added %} {{ gst_added }} {% else %} false {% endif %};
@@ -73,7 +41,68 @@ document.addEventListener('DOMContentLoaded', (event) => {
       sessionStorage.setItem('gst_billing_state', address.state );
       sessionStorage.setItem('gst_billing_pincode', address.pincode );
       {% endif %}
-      
-});  
+   console.log('hii lazy script');   
+
 </script>
+
+{% unless template contains 'product' %}
+<script type="lazyScript">
+          console.log('hii sprChatSettings');
+            window.sprChatSettings = window.sprChatSettings || {};
+            window.sprChatSettings = {"appId":"621a05ac610f9e4bb89aaed7_app_600017531"};
+            (function(){var t=window,e=t.sprChat,a=e&&!!e.loaded,n=document,r=function(){r.m(arguments)};r.q=[],r.m=function(t){r.q.push(t)},t.sprChat=a?e:r;var o=function(){var e=n.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://prod4-live-chat.sprinklr.com/api/livechat/handshake/widget/"+t.sprChatSettings.appId,e.onerror=function(){t.sprChat.loaded=!1},e.onload=function(){t.sprChat.loaded=!0};var a=n.getElementsByTagName("script")[0];a.parentNode.insertBefore(e,a)};"function"==typeof e?a?e("update",t.sprChatSettings):o():"loading"!==n.readyState?o():n.addEventListener("DOMContentLoaded",o)})()
+
+</script>       
+ {% endunless %} 
+
+ <script>
+  var algolia_config = "{{ 'algolia_config.js' | asset_url }}";
+  var algolia_externals = "{{ 'algolia_externals.js' | asset_url }}";
+  var algolia_init = "{{ 'algolia_init.js' | asset_url }}";
+  var algolia_analytics = "{{ 'algolia_analytics.js' | asset_url }}";
+  var algolia_translations = "{{ 'algolia_translations.js' | asset_url }}";
+  var algolia_helpers = "{{ 'algolia_helpers.js' | asset_url }}";
+  var algolia_autocomplete = "{{ 'algolia_autocomplete.js' | asset_url }}";
+  var algolia_facets = "{{ 'algolia_facets.js' | asset_url }}";
+  var algolia_sort_orders = "{{ 'algolia_sort_orders.js' | asset_url }}";
+  var cloudfront = "https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js";
+  var loaded  = false;
+
+  Defer.js(algolia_config, 'algolia_config-js', 0, function() {
+    console.info('algolia_config is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_externals, 'algolia_externals-js', 0, function() {
+    console.info('algolia_externals is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_init, 'algolia_init-js', 300, function() {
+    console.info('algolia_init is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_analytics, 'algolia_analytics-js', 500, function() {
+    console.info('algolia_analytics is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_translations, 'algolia_translations-js', 600, function() {
+    console.info('algolia_translations is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_helpers, 'algolia_helpers-js', 700, function() {
+    console.info('algolia_helpers is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_autocomplete, 'algolia_autocomplete-js', 800, function() {
+    console.info('Algolia_autocomplete is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_facets, 'algolia_facets-js', 900, function() {
+    console.info('algolia_facets is loaded.'); // debug
+  }, true);
+  Defer.js(algolia_sort_orders, 'algolia_sort_orders-js', 1000, function() {
+    console.info('algolia_sort_orders is loaded.'); // debug
+  }, true);
+  
+  Defer.js(cloudfront, 'cloudfront-js', 1200, function() {
+    console.info('cloudfront is loaded.'); // debug
+  }, true);
+</script>
+
+ <script>
+  Defer.all('script[type="lazyScript"]', 0, true);
+</script>
+
 <!-- /Algolia head -->
