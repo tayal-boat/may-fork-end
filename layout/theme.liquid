@@ -128,10 +128,6 @@
       }, true);
     </script>
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
-    {%- if template == 'index' -%}
-      <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
-    {%- endif %}
     {%- render 'wizrocket_variables_generator' -%}
     {%- render 'ms-clarity' -%}
 
@@ -174,10 +170,8 @@
     <script type="text/template" id="template_algolia_autocomplete_footer">
       {% include 'algolia_autocomplete_footer.hogan' %}
     </script>
-    {% if template contains 'product' %}
-      {% render 'product-css' %}
-      {%- render 'product-js' -%}
-    {% elsif template contains 'page' %}
+
+    {% if template contains 'page' %}
       <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
     {% endif %}
   </head>
@@ -306,7 +300,15 @@
       {%- section 'footer' -%}
     {%- endif -%}
     {% render 'clevertap' %}
-
+    {%- if template contains 'index' or template contains 'product' or template contains 'collection'-%}
+    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
+   {% endif %} 
+    {%- if template contains 'index' -%}
+    <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
+    {% elsif template contains 'product' %}
+    {% render 'product-css' %}
+    {%- render 'product-js' -%}
+    {% endif %}
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
 
@@ -344,15 +346,6 @@
            "isEligibleForFreebie": isEligibleForFreebie
          }
         });
-      {% unless template contains 'product' %}
-          document.addEventListener("readystatechange", (event) => {
-            if (event.target.readyState === "complete") {
-              window.sprChatSettings = window.sprChatSettings || {};
-              window.sprChatSettings = {"appId":"621a05ac610f9e4bb89aaed7_app_600017531"};
-              (function(){var t=window,e=t.sprChat,a=e&&!!e.loaded,n=document,r=function(){r.m(arguments)};r.q=[],r.m=function(t){r.q.push(t)},t.sprChat=a?e:r;var o=function(){var e=n.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://prod4-live-chat.sprinklr.com/api/livechat/handshake/widget/"+t.sprChatSettings.appId,e.onerror=function(){t.sprChat.loaded=!1},e.onload=function(){t.sprChat.loaded=!0};var a=n.getElementsByTagName("script")[0];a.parentNode.insertBefore(e,a)};"function"==typeof e?a?e("update",t.sprChatSettings):o():"loading"!==n.readyState?o():n.addEventListener("DOMContentLoaded",o)})()
-            }
-          })
-        {% endunless %}
     </script>
   </body>
 </html>
