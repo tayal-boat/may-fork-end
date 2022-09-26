@@ -7,10 +7,13 @@
   {% assign gst_added = false %}
   {% endif %}
   {% endfor %} 
-<script type="deferjs">
-      AOS.init({
+  <script>
+       AOS.init({
         duration: 1200,
       });
+  </script>
+<script type="deferjs">
+
       $(function () {
         $(".video, .video-new").videoPopup();
       }); 
@@ -41,7 +44,7 @@
       sessionStorage.setItem('gst_billing_state', address.state );
       sessionStorage.setItem('gst_billing_pincode', address.pincode );
       {% endif %}
-   console.log('hii lazy script');   
+   console.log('hii lazy script');  
 
 </script>
 
@@ -51,7 +54,14 @@
             window.sprChatSettings = window.sprChatSettings || {};
             window.sprChatSettings = {"appId":"621a05ac610f9e4bb89aaed7_app_600017531"};
             (function(){var t=window,e=t.sprChat,a=e&&!!e.loaded,n=document,r=function(){r.m(arguments)};r.q=[],r.m=function(t){r.q.push(t)},t.sprChat=a?e:r;var o=function(){var e=n.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://prod4-live-chat.sprinklr.com/api/livechat/handshake/widget/"+t.sprChatSettings.appId,e.onerror=function(){t.sprChat.loaded=!1},e.onload=function(){t.sprChat.loaded=!0};var a=n.getElementsByTagName("script")[0];a.parentNode.insertBefore(e,a)};"function"==typeof e?a?e("update",t.sprChatSettings):o():"loading"!==n.readyState?o():n.addEventListener("DOMContentLoaded",o)})()
-
+            setTimeout(function(){
+            document.getElementsByClassName("chatbot")[0].addEventListener("click", function(){
+              var iframe = document.querySelector('[name="spr-chat__trigger-frame"]');
+              var iframeDoc = iframe.contentDocument || iframe.contentWindow;
+              var iframeHtml = iframeDoc.getElementsByTagName("html")[0];
+              iframeHtml.querySelector('.frame-content [data-testid="Open chat"]').click()   
+            });
+          },1000);
 </script>       
  {% endunless %} 
 
@@ -71,7 +81,7 @@
   Defer.js(algolia_config, 'algolia_config-js', 0, function() {
     console.info('algolia_config is loaded.'); // debug
   }, true);
-  Defer.js(algolia_externals, 'algolia_externals-js', 0, function() {
+  Defer.js(algolia_externals, 'algolia_externals-js', 100, function() {
     console.info('algolia_externals is loaded.'); // debug
   }, true);
   Defer.js(algolia_init, 'algolia_init-js', 300, function() {
@@ -105,4 +115,12 @@
   Defer.all('script[type="lazyScript"]', 0, true);
 </script>
 
+<style>
+  .spr-chat__trigger-box.spr-live-chat-frame {
+    display: none !important;
+}
+.spr-chat__box.spr-live-chat-frame {
+    z-index: 999;
+}
+</style>
 <!-- /Algolia head -->
