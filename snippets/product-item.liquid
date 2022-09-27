@@ -13,8 +13,16 @@
 {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
 {%- if settings.enable_flash_sale and product.tags contains 'flash-sale' -%}
-  {% assign cheapest_variant_discount_price = cheapest_variant.price | times: settings.flash_discount | divided_by: 100 %}
-  {% assign cheapest_variant_discounted_price = cheapest_variant.price | minus: cheapest_variant_discount_price | divided_by: 100 | round | times: 100 %}
+  {% assign cheapest_variant_discount_price = cheapest_variant.price
+    | times: settings.flash_discount
+    | divided_by: 100
+  %}
+  {% assign cheapest_variant_discounted_price = cheapest_variant.price
+    | minus: cheapest_variant_discount_price
+    | divided_by: 100
+    | round
+    | times: 100
+  %}
   {% assign discount_price = product.price | times: settings.flash_discount | divided_by: 100 %}
   {% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
 {%- else -%}
@@ -45,14 +53,7 @@
             loading="lazy"
             alt="thunder"
           >
-          {{
-            product.compare_at_price
-            | minus: discounted_price
-            | times: 100.0
-            | divided_by: product.compare_at_price
-            | round
-            | append: '%'
-          }}
+          Super Saver
         </span>
       {%- endif -%}
     {% else %}
@@ -132,7 +133,10 @@
           loading="lazy"
           data-media-id="{{ product.featured_media.id | escape }}"
           sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes', image: product.selected_or_first_available_variant.image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' -%}
+          {% render 'image-attributes',
+            image: product.selected_or_first_available_variant.image,
+            sizes: '200,300,400,500,600,700,800,900,1000,1100,1200'
+          -%}
         >
       {% else %}
         <img
@@ -140,7 +144,10 @@
           loading="lazy"
           data-media-id="{{ product.featured_media.id | escape }}"
           sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes', image: product.featured_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' -%}
+          {% render 'image-attributes',
+            image: product.featured_image,
+            sizes: '200,300,400,500,600,700,800,900,1000,1100,1200'
+          -%}
         >
       {% endif %}
       {%- if settings.product_color_display == 'swatch' -%}
@@ -161,8 +168,12 @@
       {%- endif -%}
 
       {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-        {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position] | plus: 1 -%}
-        {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position] | default: product.media[next_media_pos] -%}
+        {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position]
+          | plus: 1
+        -%}
+        {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position]
+          | default: product.media[next_media_pos]
+        -%}
         <img
           class="product-item__secondary-image"
           loading="lazy"
@@ -190,7 +201,7 @@
         {%- endunless -%}
       {%- endif -%}
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
-        {{- product.title | split: '|' | first -}}
+        {{- product.title | split: 'boAt' | last | split: '|' | first -}}
       </a>
       {% comment %}
         Start automatically added Judge.me widget
@@ -336,11 +347,16 @@
             </p>
           {% endif %}
         {% endunless %}
-        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
+        {%- if request.page_type != 'password'
+          and settings.product_add_to_cart
+          and product.available
+          and reduced_content != true
+          and show_cta != true
+        -%}
           {% assign available_variants = 0 %}
           {% for variant in product.variants %}
             {% if variant.available %}
-              {% assign available_variants = available_variants | plus : 1 %}
+              {% assign available_variants = available_variants | plus: 1 %}
             {% endif %}
           {% endfor %}
           {%- if available_variants == 1 -%}
@@ -495,13 +511,13 @@
       {%- endif -%}
 
       {% comment %}
-        		{%- if product.metafields.benefits.usp1 -%}
-                <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
-                  <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-                  <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-                  <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-                </div>
-              {%- endif -%}
+            		{%- if product.metafields.benefits.usp1 -%}
+          <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
+            <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
+            <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
+            <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+          </div>
+        {%- endif -%}
       {% endcomment %}
     </div>
 
