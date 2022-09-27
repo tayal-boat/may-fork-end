@@ -58,7 +58,9 @@
     button.tabs-nav__item.heading.heading--small[aria-expanded="false"]{color: #A8A7A7;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
       @media screen and (max-width: 768px) {
-     .flash-desk{margin-top: 0.2rem;}
+     .flash-desk{margin-top: 0.2rem;align-items: center;}
+     .view-all{right:40%!important}
+     .tabs-nav--edge2edge {margin-top: 12px!important;}
       }
     @media screen and (min-width: 741px) {
       #shopify-section-{{ section.id }} {
@@ -91,7 +93,7 @@
     <div class="container ">
       <header
         style="gap:42px"
-        class="section__header d-lg-flex align-items-lg-center justify-content-between pad-xl{% if section.settings.content != blank %}section__header--tight{% endif %}"
+        class="section__header pt-lg-5{% if section.settings.content != blank %}section__header--tight{% endif %}"
       >
         {%- if section.settings.title != blank -%}
           <div class="text-container">
@@ -104,15 +106,17 @@
             {%- endif -%}
           </div>
         {%- endif -%}
-        {% if section.settings.title-url and settings.enable_flash_sale %}
+        {% if section.settings['title-url'] and settings.enable_flash_sale %}
           <a
             style="display:flex;flex-direction: column;justify-content: left;"
             href="{{section.settings.title-url}}"
             class="align-items-lg-center flash-desk flex-lg-row-reverse"
           >
-<!--             <p class="text-black text-right mr-lg-5">
-              <b><u>View All</u></b>
-            </p> -->
+            <!--
+              <p class="text-black text-right mr-lg-5">
+                <b><u>View All</u></b>
+              </p>
+            -->
             <div class="flash_sale">
               <p class="m-0 text-uppercase flash_text">
                 <span class="thunder"
@@ -127,7 +131,7 @@
           </a>
         {% endif %}
         {%- if section.blocks.size > 1 -%}
-          <tabs-nav class="pt-lg-5 pt-3 tabs-nav tabs-nav--center tabs-nav--edge2edge">
+          <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
             <scrollable-content class="tabs-nav__scroller hide-scrollbar">
               <div class="tabs-nav__scroller-inner">
                 <div class="tabs-nav__item-list">
@@ -180,7 +184,10 @@
             >
               <div class="product-list__inner {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
                 {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
-                {%- assign gap_width = 24.0 | divided_by: section.settings.products_per_row | times: number_of_products_minus_one -%}
+                {%- assign gap_width = 24.0
+                  | divided_by: section.settings.products_per_row
+                  | times: number_of_products_minus_one
+                -%}
                 {%- capture sizes_attribute -%}
                   (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
                   {{ gap_width | ceil }}px)
@@ -188,20 +195,33 @@
 
                 {%- for product in collection.products limit: section.settings.products_count -%}
                   {%- if product.featured_media -%}
-                    {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio | at_least: product.featured_media.aspect_ratio -%}
+                    {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
+                      | at_least: product.featured_media.aspect_ratio
+                    -%}
                   {%- endif -%}
 
-                  {%- render 'product-item', product: product, collection: collection, show_cta: section.settings.show_cta, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
+                  {%- render 'product-item',
+                    product: product,
+                    collection: collection,
+                    show_cta: section.settings.show_cta,
+                    block: block,
+                    sizes_attribute: sizes_attribute,
+                    reveal: settings.stagger_products_apparition
+                  -%}
                 {%- else -%}
                   {%- assign smallest_image_aspect_ratio = 1 -%}
 
                   {%- for i in (1..section.settings.products_count) -%}
                     {%- capture product_image -%}product-{% cycle '1', '2', '3', '4', '5' %}{% endcapture %}
-                    {%- render 'product-item-placeholder', product_image: product_image, show_cta: section.settings.show_cta, reveal: settings.stagger_products_apparition -%}
+                    {%- render 'product-item-placeholder',
+                      product_image: product_image,
+                      show_cta: section.settings.show_cta,
+                      reveal: settings.stagger_products_apparition
+                    -%}
                   {%- endfor -%}
                 {%- endfor -%}
-                <p style="position: absolute;top: -2rem; right: 0;">
-                  <a style="text-decoration:none; color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
+                <p style="position: absolute;top: -2rem; right: 0;" class="view-all">
+                  <a style="color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
                 </p>
               </div>
             </div>
@@ -210,7 +230,10 @@
               {%- if collection.products_count == 0 -%}
                 {%- assign products_shown = section.settings.products_count -%}
               {%- else -%}
-                {%- assign products_shown = collection.products_count | default: section.settings.products_count | at_most: section.settings.products_count -%}
+                {%- assign products_shown = collection.products_count
+                  | default: section.settings.products_count
+                  | at_most: section.settings.products_count
+                -%}
               {%- endif -%}
 
               {%- if products_shown > section.settings.products_per_row -%}
