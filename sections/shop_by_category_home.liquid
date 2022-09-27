@@ -13,29 +13,20 @@
     {%- endif -%}
     <div class="shop_by_collection-row px-lg-5 mx-lg-5 ">
         <div class="row owl-carousel owl-theme shop-by-category-slider {{ section.id }} ">
-            {%- assign total_cat = section.blocks.size | modulo:2 -%}
             {% for block in section.blocks %}
-                {% assign slide_no = forloop.index | modulo:2 %}
-                {%- if slide_no != 0 -%}
-                    <div class="item">
-                {%- endif -%}
-                <a href="{{ block.settings.imageUrl }}" class="collection-block ">
-                    <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
-                        <span class="collection-image">
-                            <img loading="eager" src="{{block.settings.image | img_url: '150x'}}" alt="{{ block.settings.collection_Title }}">
+                <div class="">
+                    <a href="{{ block.settings.imageUrl }}" class="collection-block">
+                        <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
+                            <span class="collection-image">
+                                <img loading="eager" src="{{block.settings.image | img_url: '150x'}}" alt="{{ block.settings.collection_Title }}">
+                            </span>
+                        </div>
+                        <span class="collection-text text-center text-white">
+                            <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
                         </span>
-                    </div>
-                    <span class="collection-text text-center text-white">
-                        <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
-                    </span>
-                </a>
-                {%- if slide_no == 0 -%}
-                    </div>
-                {%- endif -%}
-                {%- if total_cat != 0 and forloop.index == section.blocks.size -%}
-                    </div>
-                {%- endif -%}
-            {% endfor %}   
+                    </a>
+              </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -53,29 +44,37 @@
 
 <script>
     $(document).ready(function() {
-        var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
-        $owl.on('initialized.owl.carousel', function(event){ 
-            $('.temp-slide').remove();
-        });
-        $('.owl-carousel').owlCarousel({
-            loop:false,
-            margin:10,
-            autoplay:false,
-            nav:false,
-            dots:true,
-            responsive:{
-                0:{
-                    items:3
-                },
-                600:{
-                    items:5
-                },
-                1000:{
-                    items:7
-                }
-            }
-        })
-    });
+      var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
+      $owl.on('initialized.owl.carousel', function(event){ 
+         $('.temp-slide').remove();
+      });
+      $('.shop-by-category-slider.{{ section.id }}').owlCarousel({
+        loop: false,
+        responsiveClass: true,
+        autoplay:false,
+        items: 5,
+        slideBy: 3,
+        nav: false,
+        dots: true,
+        merge:true,
+        dragBeforeAnimFinish: false,
+        responsive: {
+          300: {
+            items: {{section.settings.slides_no}},
+            loop: false
+          },
+          800: {
+            items: 5,
+            loop: false,
+            mergeFit:true
+          },
+          1000: {
+            items:{{ section.settings.deskslides_no}},
+            loop: false
+          }
+        }
+      })
+    })
 </script>
 
 {% schema %}
