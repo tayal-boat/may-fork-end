@@ -1,25 +1,14 @@
 <div id="homepage-carousel" class="container c-new">
   <!-- The slideshow -->
   {% for block in section.blocks limit: 1 %}
-    <a href="{{block.settings.slide_url}}" class="slide-url temp-slide">
-      <picture>
-        <source
-          media="(min-width: 769px)"
-          {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}
-        >
-        <source
-          media="(max-width: 768px)"
-          {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}
-        >
-        <img
-          style="width: 100%;"
-          class="image-overlay__image_"
-          {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}
-          alt="{{block.settings.desktop_image.alt}}"
-        >
-      </picture>
-    </a>
-  {% endfor %}
+    	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide">
+          <picture>
+            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
+            <source media="(max-width: 768px)" {% render 'image-attributes', image: block.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}>
+            <img style="width: 100%;" loading="eager" fetchpriority="high" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.desktop_image.alt}}" />
+          </picture>
+        </a>
+    {% endfor %}
   <div class="carousel-inner owl-carousel main_banner_slider" id="main_banner_slider">
     {% for block in section.blocks %}
       <div class="carousel--item slide_{{forloop.index}}">
@@ -270,6 +259,7 @@
 </script>
 
 <script>
+  Defer.dom('#main_banner_slider picture');
   	$(document).ready(function(){
           var $owl = $( '.owl-carousel' );
           $owl.on('initialized.owl.carousel', function(event){
@@ -504,14 +494,27 @@
 }
 {% endschema %}
 
-{% stylesheet %}
-{% if template contains 'index' %}
-  #main { background: #Fff!important; } .shopify-section h3.heading { font-size: 16px; text-align: left; font-weight:
-  700; letter-spacing: normal; color: #000; text-transform: uppercase; } @media(min-width:991px){ .shopify-section
-  h3.heading { font-size: 20px; } } .section__header { max-width: 100%; }
-{% endif %}
-{% endstylesheet %}
 
-{% javascript %}
-
-{% endjavascript %}
+  {% if template contains 'index' %}
+  <style>
+  #main {
+background: #Fff!important;
+}
+.shopify-section h3.heading {
+    font-size: 16px;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: normal;
+    color: #000;
+    text-transform: uppercase;
+}
+@media(min-width:991px){
+.shopify-section h3.heading {
+    font-size: 20px;
+}
+}
+.section__header {
+    max-width: 100%;
+}
+</style>
+  {% endif %}
