@@ -170,7 +170,13 @@
     <script type="text/template" id="template_algolia_autocomplete_footer">
       {% include 'algolia_autocomplete_footer.hogan' %}
     </script>
-
+    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
+   {%- if template contains 'index' -%}
+   <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
+   {% elsif template contains 'product' %}
+   {% render 'product-css' %}
+   {%- render 'product-js' -%}
+   {% endif %}
     {% if template contains 'page' %}
       <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
     {% endif %}
@@ -300,15 +306,6 @@
       {%- section 'footer' -%}
     {%- endif -%}
     {% render 'clevertap' %}
-    {%- if template contains 'index' or template contains 'product' or template contains 'collection'-%}
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
-   {% endif %} 
-    {%- if template contains 'index' -%}
-    <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
-    {% elsif template contains 'product' %}
-    {% render 'product-css' %}
-    {%- render 'product-js' -%}
-    {% endif %}
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
 

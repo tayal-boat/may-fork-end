@@ -5298,6 +5298,8 @@
       if (!productPrices) {
         let customPriceSelector = document.querySelector('.custom-product-price');
         if(customPriceSelector){
+          sessionStorage.setItem('varientID',variant[id]);
+          sessionStorage.setItem('varientSku',variant[sku]);
           if(window.innerWidth > 990){
             productPrices = document.querySelector('.custom-product-price [data-product-price-list]');
           }else{productPrices = document.querySelector('.custom-product-price-mobile [data-product-price-list]')}
