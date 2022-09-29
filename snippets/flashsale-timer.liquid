@@ -3,7 +3,7 @@
     <h4 class="timer__title">{{ title }}:</h4>
   {%- endif %}
   <div class="timer-display">
-    <div class="timer-block">
+    <div class="timer-block" style="display:none;">
       <span class="timer-block__num js-timer-days">00</span>
     </div>
     <div class="timer-block">
@@ -34,7 +34,7 @@
     x = setInterval(function () {
       var now = new Date().getTime(),
         distance = countDown - now;
-      if (distance < 0) {
+      if (distance < 1) {
       var hr = 23;
   var min = 59;
   var sec = 60;
@@ -47,8 +47,9 @@
       document.querySelector('.flashtimer .js-timer-seconds').innerText = sec - curr.getSeconds() + 's';
   }, second);
       } else {
+         document.querySelector('.flashtimer .js-timer-days').style.display = "block",
         document.querySelector('.flashtimer .js-timer-days').innerText = Math.floor(distance / (_day)) + 'd',
-        document.querySelector('.flashtimer .js-timer-hours').innerText = (Math.floor(distance / (_day))) * 24 + 'h',
+        document.querySelector('.flashtimer .js-timer-hours').innerText = ( Math.floor((distance % (_day)) / (hour)) + 'h',
           document.querySelector('.flashtimer .js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)) + 'm',
           document.querySelector('.flashtimer .js-timer-seconds').innerText = Math.floor((distance % (minute)) / second) + 's';
       }
