@@ -44,36 +44,47 @@
 
 <script>
     $(document).ready(function() {
-      var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
-      $owl.on('initialized.owl.carousel', function(event){ 
-         $('.temp-slide').remove();
-      });
-      $('.shop-by-category-slider.{{ section.id }}').owlCarousel({
-        loop: false,
-        responsiveClass: true,
-        autoplay:false,
-        items: 5,
-        slideBy: 3,
-        nav: false,
-        dots: true,
-        merge:true,
-        dragBeforeAnimFinish: false,
-        responsive: {
-          300: {
-            items: {{section.settings.slides_no}},
-            loop: false
-          },
-          800: {
-            items: 5,
+      var $owl = $('#shopify-section-{{ section.id }}.owl-carousel');
+        $owl.on('initialized.owl.carousel', function(event) {
+            $('.temp-slide').remove();
+        });
+
+        $('.shop-by-category-slider.{{ section.id }}').owlCarousel({
             loop: false,
-            mergeFit:true
-          },
-          1000: {
-            items:{{ section.settings.deskslides_no}},
-            loop: false
-          }
+            responsiveClass: true,
+            autoplay: false,
+            items: 5,
+            slideBy: 3,
+            nav: false,
+            dots: true,
+            merge: true,
+            dragBeforeAnimFinish: false,
+            responsive: {
+                300: {
+                    items: {{section.settings.slides_no}},
+                    loop: false
+                },
+                800: {
+                    items: 5,
+                    loop: false,
+                    mergeFit: true
+                },
+                1000: {
+                    items: {{ section.settings.deskslides_no}},
+                    loop: false
+                }
+            }
+        }).on("dragged.owl.carousel", function(event) {
+            slide_item_on_drag( '.shop-by-category-slider.{{ section.id }}', event.relatedTarget['_drag']['direction'] );
+        });
+
+        function slide_item_on_drag(section_id, drag_direction) {
+            if( drag_direction == 'left' ){
+                $(section_id + ' .owl-dots .owl-dot.active').next().click();
+            }else{
+                $(section_id + ' .owl-dots .owl-dot.active').prev().click();
+            }
         }
-      })
     })
 </script>
 
