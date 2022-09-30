@@ -159,7 +159,7 @@ const getInputClass = () => {
     this.defaultPlaceholder = this.input.getAttribute('placeholder');
     this.texts = texts;
     this.curTextNum = 0;
-    this.curPlaceholder = '';
+    this.curPlaceholder = 'Search';
     this.blinkCounter = 0;
     this.animationFrameId = 0;
     this.animationActive = false;
@@ -222,7 +222,8 @@ const getInputClass = () => {
 
   document.addEventListener('DOMContentLoaded', () => {
     let aw = new animationWorker(input, texts).start();
-    input.addEventListener('focus', (e) => aw.stop());
+    input.addEventListener('focusin', (e) => aw.stop());
+    input.addEventListener('focusout', (e) => aw.start());
     input.addEventListener('blur', (e) => {
       aw = new animationWorker(input, texts);
       if (e.target.value == '') setTimeout(aw.start, 500);
