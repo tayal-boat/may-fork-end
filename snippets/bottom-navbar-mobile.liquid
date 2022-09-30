@@ -48,7 +48,7 @@
   }
   .fixed_nav_mobile span.icon_name {
     font-size: 12px !important;
-    margin-top: 0px !important;
+    margin-top: 6px !important;
     font-weight: 500;
     color: #000;
   }
@@ -62,8 +62,8 @@
     position: relative;
   }
   .fixed_nav_mobile.fixed_nav cart-count.header__cart-count {
-    right: 1px;
-    top: -4px;
+    right: -1px;
+    top: -6px;
     height: 16px;
     width: 16px;
     line-height: inherit;
@@ -83,7 +83,7 @@
     display: block;
   }
 </style>
-<div class="fixed_nav fixed_nav_mobile hidden-tablet-and-up" style="display:none;">
+<div class="fixed_nav fixed_nav_mobile hidden-tablet-and-up">
   <div class="row row-nav justify-content-around">
     <div class="col-2 fixed-nav-item">
       <div class="item--box boat_icon_footer">
@@ -124,8 +124,8 @@
     <div class="col-2 fixed-nav-item">
       <div class="item--box">
         <a
-          class="fixed_nav--link cat__link {% if request.page_type == 'collection' %}{% unless handle contains 'daily-deals' %} active_url{% endunless %}{% endif %}"
-          href="#"
+          class="fixed_nav--link"
+          id="data-hamburger"
         >
           <img
             src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Category-1.png?v=1663762989"
@@ -139,6 +139,7 @@
         </a>
       </div>
     </div>
+
     <div class="col-2 fixed-nav-item">
       <div class="item--box">
         <a
@@ -166,21 +167,29 @@
         </a>
       </div>
     </div>
+
     <div class="col-2 fixed-nav-item">
-      <div class="item--box {% if request.page_type == 'account' %} active_url{% endif %}">
-        <a class="fixed_nav--link" href="/account">
+      <div class="item--box">
+        <a class="fixed_nav--link chatbot">
           <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile-1.png?v=1663762989"
-            class="footer_nav_icon"
+            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2_085646be-d961-4e85-9b6b-92eb8c02beb3.png?v=1663918129"
+            style="width: 20px;"
           >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile.png?v=1663762989"
-            class="footer_nav_icon_filled"
-          >
-          <span class="icon_name"> Me </span>
+          <span class="icon_name"> Chat </span>
         </a>
       </div>
     </div>
+    {% comment %}
+       <div class="col-2 fixed-nav-item">
+        <div class="item--box {% if request.page_type == 'account' %} active_url{% endif %}">
+          <a class="fixed_nav--link" href="/account">
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile-1.png?v=1663762989" class="footer_nav_icon" >
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile.png?v=1663762989" class="footer_nav_icon_filled" >
+              <span class="icon_name"> Me </span>
+          </a>
+        </div>
+      </div>
+    {% endcomment %}
     <!--
       <div class="col-2 fixed-nav-item">
         <div class="item--box">
@@ -202,8 +211,13 @@
   </div>
 </div>
 <script>
-  $('.cat__link').click((e) => {
-    $('button[aria-controls="mobile-menu-drawer"]')[0].click();
-    e.preventDefault();
+  $('#data-hamburger').click(function () {
+    $('button.header__icon-wrapper.tap-area.hidden-desk').click();
   });
+  $("input.search__input.predictive-search__input.predictive-search__input_mobile").focus(function(){
+  $(".fixed_nav").fadeOut();
+});
+    $("input.search__input.predictive-search__input.predictive-search__input_mobile").blur(function(){
+  $(".fixed_nav").fadeIn();
+});
 </script>
