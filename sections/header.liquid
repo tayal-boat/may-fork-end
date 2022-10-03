@@ -510,13 +510,34 @@
                   </form>
                 </div>
                 <div class="search-popup-container" style=" display: none;">
-                  <ul class="algolia-trending-list">
+                  <div class="algolia-recently-search">
+                  <div class="algolia-recently-search-header">
+                  <h4>Recently searched</h4>
+                  <span class="clear-recent-search">Clear</span>           
+                  </div>
+                   <div class="algolia-recently-search-container"></div>  
+                  </div>
+                  <div class="algolia-trending-search">      
+                  <div class="algolia-trending-search-header">
+                  <h4>Trending searches</h4>
+                  </div>
+                  <div class="algolia-trending-list">
                     {% for block in section.blocks %}
-                      {% if block.type == 'algolia' %}
-                        <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
+                    {% if block.type == 'algolia' %}
+                      <div class="algolia-trending-item">
+                       {% if block.settings.image != blank %}
+                       <div class="algolia-trending-image">  
+                        <img src="{{ block.settings.image | img_url: 'small' }}"> 
+                       </div>
+                       {% endif %} 
+                      <div class="algolia-trending-label">
+                      <span>{{ block.settings.suggestion }}</span>
+                      </div>
+                      </div>
                       {% endif %}
                     {% endfor %}
-                  </ul>
+                  </div>
+                  </div>      
                 </div>
               </div>
             </div>
@@ -705,13 +726,34 @@
       </form>
     </div>
     <div class="search-popup-container" style=" display: none;">
-      <ul class="algolia-trending-list">
-        {% for block in section.blocks %}
-          {% if block.type == 'algolia' %}
-            <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
-          {% endif %}
-        {% endfor %}
-      </ul>
+    <div class="algolia-recently-search">
+    <div class="algolia-recently-search-header">
+    <h4>Recently searched</h4>
+    <span class="clear-recent-search">Clear</span>           
+    </div>
+     <div class="algolia-recently-search-container"></div>  
+    </div>            
+                  <div class="algolia-trending-search">      
+                  <div class="algolia-trending-search-header">
+                  <h4>Trending searches</h4>
+                  </div>
+                  <div class="algolia-trending-list">
+                    {% for block in section.blocks %}
+                    {% if block.type == 'algolia' %}
+                      <div class="algolia-trending-item">
+                       {% if block.settings.image != blank %}
+                       <div class="algolia-trending-image">  
+                        <img src="{{ block.settings.image | img_url: 'small' }}"> 
+                       </div>
+                       {% endif %} 
+                      <div class="algolia-trending-label">
+                      <span>{{ block.settings.suggestion }}</span>
+                      </div>
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+            </div>
     </div>
   </div>
 </store-header>
@@ -1152,6 +1194,11 @@
           "type": "text",
           "id": "suggestion",
           "label": "suggestion"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
         }
       ]
     }

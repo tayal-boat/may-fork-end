@@ -56,7 +56,25 @@
 for (var i=0; i<searchPopupContainer.length; i++) {
     searchPopupContainer[i].removeAttribute("style");
 }
-document.querySelector("body").classList.add("noScroll");          
+document.querySelector("body").classList.add("noScroll");  
+let queryList = [];
+let storedQuery = sessionStorage.queryList;
+if(sessionStorage.queryList){
+storedQuery = storedQuery.split(',');
+if( Array.isArray(storedQuery)){
+queryList = storedQuery;
+}else{
+queryList.push(storedQuery);
+}
+}
+if(!queryList.includes(query)){
+queryList.unshift(query);
+if(queryList.length > 5){
+queryList.pop();
+}  
+}          
+console.log(queryList);
+sessionStorage.setItem('queryList', queryList);           
       };
     }
     
