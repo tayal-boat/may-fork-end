@@ -12,12 +12,34 @@
   <ul class="algolia-trending-list">
     {% for block in section.blocks %}
     {% if block.settings.text %}
-    <li class="algolia-trending-label">{{ block.settings.text }}</li>
+    <li class="algolia-trending-label">{{- block.settings.text -}}</li>
     {% endif %}
     {% endfor %}
   </ul>
   </div> 
-
+  <div id="algoinput">
+    <div class="d-flex justify-content-center mb-3"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765" style="width: 50px;"></div><p class="text-center">Type in 3 characters to see the magic...</p>
+  </div>
+ 
+<script>
+  $("input.search__input.predictive-search__input.predictive-search__input_mobile, input.search__input.predictive-search__input.predictive-search__input_desk.is-filled").keyup(function (){
+    let [...algoInput] = $(this).val();
+    var searchPopupContainer = document.querySelectorAll(".algolia-custom-search-popup-container");
+    if(algoInput.length <3 && algoInput.length !=0){
+      console.log(algoInput.length);
+      $('#algoinput').css("display", "block");
+      for (var i = 0; i < searchPopupContainer.length; i++) {
+        searchPopupContainer[i].css("display", "none");
+      }
+    }else{
+      console.log(algoInput.length);
+      $('#algoinput').css("display", "none");
+      for (var i = 0; i < searchPopupContainer.length; i++) {
+        searchPopupContainer[i].css("display", "block");
+      }
+    }
+  });
+</script>
   {% schema %}
   {
     "name": "algolia search suggestion",
