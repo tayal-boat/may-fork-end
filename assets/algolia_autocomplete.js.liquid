@@ -74,6 +74,23 @@
 
       };
     }
+    $(".algolia-custom-search-input").click(function() {      
+      $('.algoinput').css("display", "none");
+      $(".algolia-recently-search, .algolia-trending-search").css("display", "block");
+    });
+    $("input.search__input.predictive-search__input.predictive-search__input_mobile, input.search__input.predictive-search__input.predictive-search__input_desk.is-filled").keyup(function (){
+      let [...algoInput] = $(this).val();
+      if(algoInput.length <=3 && algoInput.length !=0){
+        console.log(algoInput.length);
+        $('.algoinput').css("display", "block");
+        $(".algolia-recently-search, .algolia-trending-search").css("display", "none");
+        if ($(".algoinput").length < 1){$(".search-popup-container").append('  <div class="algoinput"><div class="d-flex justify-content-center mb-3"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765" style="width: 50px;"></div><p class="text-center">Type in 3 characters to see the magic...</p></div>');}
+      }else{
+        console.log("else",algoInput.length);
+        $('.algoinput').css("display", "none");
+        $(".algolia-recently-search, .algolia-trending-search").css("display", "block");
+      }
+    });
 
     var multiQuerySource = createMultiQuerySource();
 
