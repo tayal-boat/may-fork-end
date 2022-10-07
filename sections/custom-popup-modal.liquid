@@ -74,19 +74,22 @@
   </div>
 </div>
 <script>
+  {% if section.settings.landing_based  %}
   $(document).ready(function () {
       let camp = {{ request.path | split: '/' | last }}
       if (
         window.location.href.indexOf(camp) > -1 &&
         sessionStorage.getItem("popUpPoped") === null
       ) {
-        $("#campModal").modal("show");
+        $(".custom_Popup #saleModal").modal("show");
         sessionStorage.setItem("popUpPoped", "poped");
       }
     });
+  {% else %}
       $("{{ section.settings.popup_id }}").click(function(e){
         $(".custom_Popup #saleModal").modal("show");
       });
+  {% endif %}
      $(".custom_Popup .sale-btn").click(function () {
       var e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
@@ -107,7 +110,12 @@
     "name": "section custom Popup",
     "class": "custom_Popup",
     "settings": [
-              {
+         {
+          "type": "text",
+          "id": "landing_based",
+          "label": "popup on landing"
+        },
+        {
           "type": "text",
           "id": "popup_id",
           "label": "class/id of <a> to target"
