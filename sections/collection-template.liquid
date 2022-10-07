@@ -1,0 +1,556 @@
+<!-- <script src="https://unpkg.com/@webcreate/infinite-ajax-scroll@^3.0.0-beta.6/dist/infinite-ajax-scroll.min.js"></script> -->
+<script src="{{ 'infinite-scroll.min.js' | asset_url }}"></script>
+{%- include 'collection-banners' -%}
+<div data-section-type="collection-template">
+  {% if section.blocks.size > 0 %}
+    <div class="slideshow-row section-id-{{ section.id }}" data-section-type="slideshow">
+    {% unless settings.use_fullwidth_layout %}<div class="container uncontain-desktop-down">{% endunless %}
+      <div class="slideshow auto-play scaled-text-base">
+        {% for block in section.blocks %}
+
+        <div class="slide slide-{{ forloop.index }}" {{ block.shopify_attributes }}>
+          {% if block.settings.link_url != blank %}<a href="{{ block.settings.link_url }}">{% endif %}
+
+          {% if block.settings.image == blank %}
+          <div class="placeholder-image placeholder--banner {% if block.settings.heading != blank or block.settings.text != blank %}dark{% endif %}">
+            {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+            {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          {% elsif block.settings.mobile_image == blank %}
+            {% include 'responsive-image', image: block.settings.image, manual_image_load: true, no_max_width: true %}
+          {% else %}
+            <div class="desktop-only">
+              {% include 'responsive-image', image: block.settings.image, manual_image_load: true, no_max_width: true %}
+            </div>
+            <div class="mobile-only">
+              {% include 'responsive-image', image: block.settings.mobile_image, manual_image_load: true, no_max_width: true %}
+            </div>
+          {% endif %}
+          {% if block.settings.link_url != blank %}</a>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    {% unless settings.use_fullwidth_layout %}</div>{% endunless %}
+  	</div>
+  {% endif %}
+{% paginate collection.products by 6 %}
+  
+  
+<div style="width: 100%;padding-top:20px"></div>
+ 
+<div class="container brc-container">
+	<nav class="breadcrumb" role="navigation" aria-label="breadcrumb">
+  		<a href="/">Home</a>
+    	<span aria-hidden="true" class="slash">/</span>
+        {% if current_tags %}
+          {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+          {{ collection.title | link_to: url }}
+          <span aria-hidden="true" class="slash">/</span>
+          <span>{{ current_tags | join: " + " }}</span>
+        {% else %}
+      	  <span>{{ collection.title }}</span>
+    	{% endif %}
+	</nav>
+</div> 
+<div class="page-header mb-0">
+      {% if section.settings.coll_desc_pos == 'below' %}
+      	<h1 class="majortitle">{{ collection.title | escape }}</h1>
+      {% endif %}
+
+      {% if section.settings.coll_desc_pos == 'above' %}
+      	<h1 class="majortitle">{{ collection.title | escape }}</h1>
+      {% endif %}
+  	{% if collection.handle == 'pro-it-up' %}
+<!--   		<h2 style="text-align: center;"><span style="color: #ffffff;">Pro It Up!</span></h2> -->
+<h2 style="text-align: center;margin: 20px 0"><span style="color: #ffffff;">Apply code : </span><span style="color: #ff0000;">PRO150</span> <span style="color: #ffffff;">and get </span><span style="color: #ff0000;">flat ₹150 off</span> <span style="color: #ffffff;">on&nbsp;your</span> <span style="color: #ffffff;">favourites.</span></h2>
+    {% endif %}
+      </div>
+<div class="container">
+  <div class="page-header cf">
+    {% comment %}
+    {% if section.settings.coll_desc_pos == 'below' %}
+    <h1 class="majortitle">{{ collection.title | escape }}</h1>
+    {% endif %}
+
+    {% if section.settings.coll_desc_pos == 'above' %}
+    <h1 class="majortitle">{{ collection.title | escape }}</h1>
+    {% endif %}
+	{% endcomment %}
+    {% comment %} Which tags should we show, and group them into categories {% endcomment %}
+    {% assign show_normal_filter = false %}
+    {% assign show_custom_filter_1 = false %}
+    {% assign show_custom_filter_2 = false %}
+
+    {% if section.settings.show_tagfilt_custom1 %}
+    {%- assign custom_tag_arr1 = section.settings.tagfilt_custom1_tags | downcase | replace: ', ',',' | split: ',' -%}
+    {%- capture filter1_html -%}
+    {%- for tag in collection.all_tags -%}
+      {%- unless tag contains 'meta-' -%}
+      {%- assign tag_lower = tag | downcase -%}
+      {%- if custom_tag_arr1 contains tag_lower -%}
+        {%- assign show_custom_filter_1 = true -%}
+        {%- if current_tags contains tag -%}
+        <li class="active" data-tag="{{tag | handleize}}">{{ tag | append: ' <span class="x">&times;</span>' | link_to_remove_tag: tag }}</li>
+        {%- else -%}
+        <li data-tag="{{tag | handleize}}">{{ tag | link_to_add_tag: tag }}</li>
+        {%- endif -%}
+      {%- endif -%}
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- endcapture -%}
+    {% endif %}
+
+    {% if section.settings.show_tagfilt_custom2 %}
+    {%- assign custom_tag_arr2 = section.settings.tagfilt_custom2_tags | downcase | replace: ', ',',' | split: ',' -%}
+    {%- capture filter2_html -%}
+    {%- for tag in collection.all_tags -%}
+      {%- unless tag contains 'meta-' -%}
+      {%- assign tag_lower = tag | downcase -%}
+      {%- if custom_tag_arr2 contains tag_lower -%}
+        {%- assign show_custom_filter_2 = true -%}
+        {%- if current_tags contains tag -%}
+        <li class="active" data-tag="{{tag | handleize}}">{{ tag | append: ' <span class="x">&times;</span>' | link_to_remove_tag: tag }}</li>
+        {%- else -%}
+        <li data-tag="{{tag | handleize}}">{{ tag | link_to_add_tag: tag }}</li>
+        {%- endif -%}
+      {%- endif -%}
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- endcapture -%}
+    {% endif %}
+
+    {% if section.settings.coll_show_tags %}
+    {%- capture filter_html -%}
+    {%- for tag in collection.all_tags -%}
+      {%- unless tag contains 'meta-' or custom_tag_arr1 contains tag or custom_tag_arr2 contains tag -%}
+        {%- assign show_normal_filter = true -%}
+        {%- if current_tags contains tag -%}
+        <li class="active" data-tag="{{tag | handleize}}">{{ tag | append: ' <span class="x">&times;</span>' | link_to_remove_tag: tag }}</li>
+        {%- else -%}
+        <li data-tag="{{tag | handleize}}">{{ tag | link_to_add_tag: tag }}</li>
+        {%- endif -%}
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- endcapture -%}
+    {% endif %}
+
+
+    <div class="filters">
+      {% if show_normal_filter %}
+      <a href="#" class="tags" data-toggle-target=".tags.nav-row.cat-normal">{{ 'collections.filtering.filter' | t }} <span class="state">+</span></a>
+      {% endif %}
+
+      {% if show_custom_filter_1 %}
+      <a href="#" class="tags" data-toggle-target=".tags.nav-row.cat-custom-1">{{ section.settings.tagfilt_custom1_name | escape }} <span class="state">+</span></a>
+      {% endif %}
+
+      {% if show_custom_filter_2 %}
+      <a href="#" class="tags" data-toggle-target=".tags.nav-row.cat-custom-2">{{ section.settings.tagfilt_custom2_name | escape }} <span class="state">+</span></a>
+      {% endif %}
+
+      {% if section.settings.coll_show_sort %}
+      <span class="sort tags">
+        <label for="sort-by">{{ 'collections.sorting.title' | t }}</label>
+        <span class="styled-select styled-select--inline">
+          {% assign current_sort = collection.sort_by | default: collection.default_sort_by %}
+          <select id="sort-by">
+            <option value="price-ascending" {% if current_sort == 'price-ascending' %}selected{% endif %}>{{ 'collections.sorting.price_ascending' | t }}</option>
+            <option value="price-descending" {% if current_sort == 'price-descending' %}selected{% endif %}>{{ 'collections.sorting.price_descending' | t }}</option>
+<!--             <option value="title-ascending" {% if current_sort == 'title-ascending' %}selected{% endif %}>{{ 'collections.sorting.az' | t }}</option> -->
+<!--             <option value="title-descending" {% if current_sort == 'title-descending' %}selected{% endif %}>{{ 'collections.sorting.za' | t }}</option> -->
+<!--             <option value="created-ascending" {% if current_sort == 'created-ascending' %}selected{% endif %}>{{ 'collections.sorting.date_ascending' | t }}</option> -->
+<!--             <option value="created-descending" {% if current_sort == 'created-descending' %}selected{% endif %}>{{ 'collections.sorting.date_descending' | t }}</option> -->
+<!--             <option value="best-selling" {% if current_sort == 'best-selling' %}selected{% endif %}>{{ 'collections.sorting.best_selling' | t }}</option> -->
+            {% if section.settings.coll_show_feat or collection.default_sort_by == 'manual' %}<option value="manual" {% if current_sort == 'manual' %}selected{% endif %}>{{ 'collections.sorting.featured' | t }}</option>{% endif %}
+          </select>
+        </span>
+      </span>
+      {% endif %}
+    </div><!-- /.filters -->
+
+    <div class="social-area desktop-only">
+      {% if section.settings.coll_gridstream_toggle %}
+        <span class="view-as">
+          <span class="view-as-label">{{ 'collections.general.view' | t }}</span>
+          <a id="view-as-tiles" {% if section.settings.coll_gridstream_mode == 'grid' %}class="active"{% endif %} href="#">{{ 'collections.general.grid' | t }} <div class="fluff1"></div><div class="fluff2"></div><div class="fluff3"></div><div class="fluff4"></div></a>
+          <a id="view-as-stream" {% if section.settings.coll_gridstream_mode == 'stream' %}class="active"{% endif %} href="#">{{ 'collections.general.list' | t }} <div class="fluff1"></div><div class="fluff2"></div></a>
+        </span>
+      {% endif %}
+    </div>
+  </div><!-- /.page-header -->
+</div><!-- /.container -->
+
+<div class="multi-tag-row">
+  {% if show_normal_filter %}
+  <div class="tags nav-row cat-normal {% unless filter_html contains 'class="active"' %}hidden{% endunless %}">
+    <ul>
+      {{ filter_html }}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if show_custom_filter_1 %}
+  <div class="tags nav-row cat-custom-1 {% unless filter1_html contains 'class="active"' %}hidden{% endunless %}">
+    <ul>
+      {{ filter1_html }}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if show_custom_filter_2 %}
+  <div class="tags nav-row cat-custom-2 {% unless filter2_html contains 'class="active"' %}hidden{% endunless %}">
+    <ul>
+      {{ filter2_html }}
+    </ul>
+  </div>
+  {% endif %}
+</div><!-- /.multi-tag-row -->
+
+{% if collection.products.size == 0 %}
+    <div class="container"><h5 class="align-centre fully-spaced-row">{{ 'collections.general.no_matches' | t }}</h5></div>
+{% else %}
+    {% unless settings.use_fullwidth_layout %}<div class="container">{% endunless %}
+
+    {%- if section.settings.coll_gridstream_toggle or section.settings.coll_gridstream_mode == 'stream' -%}
+      {%- assign include_quick_buy_markup = true -%}
+    {%- else -%}
+      {%- assign include_quick_buy_markup = false -%}
+    {%- endif -%}
+
+    <div class="collection-listing{% if section.settings.coll_gridstream_mode == 'stream' %}-stream{% endif %} cf">
+      <div class="product-list">
+        {% for product in collection.products %}
+			{%- include 'bold-product' with product, hide_action: 'skip' -%}
+        	{% include 'product-block' with product, include_quick_buy_markup: include_quick_buy_markup %}
+        {% endfor %}
+      </div>
+      <div id="spinner1" class="spinner text-white">
+      	<img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Spinner-0.9s-60px.gif?v=1630394416" alt="Load More" />
+      </div>
+    </div>
+
+    {% unless settings.use_fullwidth_layout %}</div>{% endunless %}
+{% endif %}
+
+<div class="container pagination-row">{% include 'pagination-control' %}</div>
+
+{% endpaginate %}
+
+  {% if collection.title == "boAt Big Surprise" %}
+<div class="text-center">
+<a class="surprise_more" href="https://www.boat-lifestyle.com/collections"> Explore more</a>
+</div>
+{% endif %}
+  
+  {% if collection.description != blank %}
+      <div class="user-content lightly-spaced-row collection-desc" style="max-width: 1114px;margin: 10px auto;width: 100%;">
+        {{ collection.description }}
+      </div>
+  {% endif %}
+{%- include 'collection-related-blogs' -%}
+</div>
+
+{%comment%}
+{% if collection.handle == 'boat-x-marvel' %}
+<button type="button" hidden class="btn btn-info btn-lg" data-toggle="modal" id="saleModalBtn" data-target="#saleModal">Open Modal</button>
+<div id="saleModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-body-content">
+          <div class="modal-image">
+            <img src='https://cdn.shopify.com/s/files/1/0057/8938/4802/files/pop-up.jpg?v=1637931056' alt="Sale Alert" />
+          </div>
+          <div class="modal-form p-3">
+          	<div class="sale-pop-form">
+            <div class="form-group" style="margin: 0;">
+              <div class="myform" style="display: flex;margin: 0;justify-content: center;">
+              	<input style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;" type="email" autocomplete="sale" name="email" id="sale_email" placeholder="Email Address">
+              <button style="border-radius: 5px;background: transparent;border-color: #ff0000;color: #fff;" class="button sale-btn" type="submit">YES</button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+#saleModal {z-index: 9999;background: #00000096;padding: 0 !important;}
+  #saleModal .modal-dialog{top: 20%;}
+  #saleModal .close {
+  	position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: #EB1C24;
+    color: #fff;
+    line-height: 30px;
+    font-weight: normal;
+    opacity: 1;
+  }
+  .error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale {
+  	text-align: center;
+    margin: 0;
+    font-size: 12px;
+    color: #fff;
+    opacity: .8;
+  }
+  #saleModal .close:focus {outline: none;border:0;}
+  #saleModal img {display:block;}
+  #saleModal .modal-content {border:0;}
+  .modal-form {background: #000;}
+  #saleModal input {
+  	border: 1px solid #ccc;
+    background: transparent;
+    color: #ccc;
+    margin-right: 4px;
+  }
+  #saleModal input::-webkit-input-placeholder {color: #ccc;}
+  #saleModal .sale-btn:hover {background: #EB1C24!important;}
+  body.modal-open {padding-right: 0!important;}
+  .diwali {cursor:pointer;position: relative;}
+  .diwali .top---text.text-center {
+    position: absolute;
+    top: 24%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+   
+}
+  .diwali .bottom---text.text-center {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+   
+}
+  .diwali.only-desktop .top---text.text-center, .diwali.only-desktop .bottom---text.text-center { font-size: 30px;}
+  
+  @media screen and (max-width: 600px) {
+  	#saleModal .modal-dialog{top: 25%;}
+    .diwali .top---text.text-center {top: 20%;}
+  }
+</style>
+<script>
+		$(".collection-banner-image-row").click(function(e){
+      e.preventDefault();
+      $("#saleModalBtn").trigger("click");
+  	  $('body').css('padding-right', '0!important')
+    });
+    {% if customer %}
+    	document.getElementById("sale_email").value = '{{customer.email}}'
+    {% endif %}
+    $(".sale-btn").click(function () {
+    var e = document.getElementById("sale_email").value;
+    "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+        ? localStorage.getItem("userEmailIdSale") === e
+            ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+            : (localStorage.setItem("userEmailIdSale", e),
+              clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+              clevertap.event.push("Subscribed for Marvel", { Email: e, Source: "Collection Banner Popup" }),
+              $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+        : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+    setTimeout(function () {
+        $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+    }, 5e3);
+});
+  		
+</script>
+{% endif %}
+{% endcomment %}
+
+<script>
+  
+  	var userSource = '';
+  	if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+  	else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+  	else userSource = 'Desktop';
+	clevertap.event.push("Category Viewed", {
+      "Category Name": '{{collection.title}}',
+      "Category Id": {{collection.id}},
+      "userSource": userSource
+    });
+   {% unless collection.title=="Trending in sports" or collection.title=="Trending in Travel" or collection.title=="Trending in Fashion" or collection.title=="Trending in Affordable" or collection.title=="Trending in Lifestyle" %}
+    clevertap.profile.push({
+      "Site": {
+          "Category Name": '{{collection.title}}' 
+      }
+    });
+  {% endunless %}
+  let ias = new InfiniteAjaxScroll('.product-list', {
+    item: '.product-block',
+    next: '.next',
+    pagination: '.pagination',
+    spinner: {
+      element: '.spinner',
+      delay: 300,
+      show: function(element) {
+        element.style.display = 'block';
+      },
+      hide: function(element) {
+        element.style.display = 'none';
+      }
+    }
+  });
+</script>
+<!-- 		<script>
+          var setint1 = setInterval(function(){
+            if($('.cart--img').length != 0){
+              $('.cart--img').on('click', function(){
+                fetchCart(false);
+              });
+              clearInterval(setint1);
+            }
+          },500)
+          
+		</script> -->
+
+
+
+{% schema %}
+  {
+    "name": "Collection pages",
+	"max_blocks": 8,
+    "settings": [
+      {
+        "type": "select",
+        "id": "coll_desc_pos",
+        "label": "Description position",
+        "options": [
+          {
+            "value": "below",
+            "label": "Below collection title"
+          },
+          {
+            "value": "above",
+            "label": "Above collection title"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "coll_show_sort",
+        "label": "Show 'sort by' dropdown",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "coll_show_feat",
+        "label": "Show 'Featured' in sort by",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "coll_show_tags",
+        "label": "Show ungrouped tags",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Tag group 1"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tagfilt_custom1",
+        "label": "Show",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "tagfilt_custom1_name",
+        "label": "Name"
+      },
+      {
+        "type": "text",
+        "id": "tagfilt_custom1_tags",
+        "label": "Tags to include",
+        "info": "Separate with commas"
+      },
+      {
+        "type": "header",
+        "content": "Tag group 2"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tagfilt_custom2",
+        "label": "Show",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "tagfilt_custom2_name",
+        "label": "Name"
+      },
+      {
+        "type": "text",
+        "id": "tagfilt_custom2_tags",
+        "label": "Tags to include",
+        "info": "Separate with commas"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "range",
+        "id": "coll_num_per_page_int",
+        "min": 16,
+        "max": 40,
+        "step": 8,
+        "label": "Number of products to show per page",
+        "default": 16
+      },
+      {
+        "type": "select",
+        "id": "coll_gridstream_mode",
+        "label": "Show products in a grid or a list",
+        "options": [
+          {
+            "value": "grid",
+            "label": "Grid"
+          },
+          {
+            "value": "stream",
+            "label": "List"
+          }
+        ],
+        "default": "grid"
+      },
+      {
+        "type": "checkbox",
+        "id": "coll_gridstream_toggle",
+        "label": "Show toggle for grid and list views",
+        "default": true
+      }
+    ],
+	"blocks": [
+      {
+        "type": "image",
+        "name": "Slide",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Primary image",
+            "info": "1200px wide minimum"
+          },
+          {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile image"
+          },
+          {
+            "type": "url",
+            "id": "link_url",
+            "label": "Slide link"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

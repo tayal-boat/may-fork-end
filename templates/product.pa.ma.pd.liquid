@@ -1,0 +1,49 @@
+<style>
+ #shopify-section-header, .buynowbutton, .product-detail, .ch_prompt_container, .product-meta, #pagefooter, .videopopupjs, .bis-edge-right {display:none!important}
+  
+  .ac-tabs input:checked ~ .ac-tab-content{
+  	max-height: initial !important;
+  }
+</style>
+
+{% comment %}
+  The contents of the product.liquid template can be found in /sections/product-template.liquid
+{% endcomment %}
+
+{% section 'product-template' %}
+<!-- {% section 'product-recommendations' %} -->
+
+{{ 'customproduct.css' | asset_url | stylesheet_tag }}
+{{ 'responsive.css' | asset_url | stylesheet_tag }}
+<script type="application/json" id="ProductJson-{{ product.id }}">
+  {%- include 'bold-product', output: 'json' -%}
+</script>
+
+{% assign current_variant = bold_selected_or_first_available_variant %}
+{%- include 'bold-variant' with current_variant, output: 'none' -%}
+<script src="https://script.plobalapps.com/js/PlobalBridge.js?v=4.5"></script>
+<script>
+  window.onload = function(){
+    setTimeout(function(){
+          PlobalBridge.adjustWebViewHeight();
+    },1000);
+    
+    setTimeout(function(){ 
+    
+      var videTagElements = document.querySelectorAll('.ac-tabs a[video-url]');
+      for(var i=0;i<videTagElements.length;i++){
+          var link = videTagElements[i].getAttribute('video-url');
+          var title = videTagElements[i].innerText;
+          videTagElements[i].setAttribute('onclick',"event.preventDefault();PlobalBridge.openURLNew({'url':'"+link+"','title':'"+title+"','type':'in_app','request_method':'GET'});")
+      }
+      
+      var aTagElements = document.querySelectorAll('.ac-tabs a[href]');
+      for(var i=0;i<aTagElements.length;i++){
+          var link = aTagElements[i].href;
+          var title = aTagElements[i].innerText;
+          aTagElements[i].setAttribute('onclick',"PlobalBridge.openURLNew({'url':'"+link+"','title':'"+title+"','type':'browser','request_method':'GET'});")
+          aTagElements[i].href = '#';
+      }
+    }, 2000);
+  }
+</script>

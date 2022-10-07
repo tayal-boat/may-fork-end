@@ -1,0 +1,355 @@
+    {{ 'products-main.js' | asset_url | script_tag }}
+    <!-- <script src="https://boat.farziengineer.com/function-product.js?v=78.16"></script> -->
+    {% if product.available %}
+    <script type="text/javascript" defer>
+      $(document).on('stickyCartLoaded', function(){
+        var userSource = '';
+        if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+        else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+        else userSource = 'Desktop';
+        $("#sticky_add_to_cart").click(function(){
+        var variant_title = $(".activevar").attr("title");
+        {%- assign product__price = bold_price | plus: 0 | divided_by: 100 -%}
+            clevertap.event.push("Added to Cart", {
+              "Product Name": '{{product.title}}' + ' - ' + variant_title,
+              "Product Id": {{product.id}},
+              "Product Category": '{{product.type}}',
+              "Amount": {{product__price}},
+              "Quantity": 1,
+              "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+              "Source": "Sticky Bar",
+              "userSource": userSource
+            });
+            clevertap.profile.push({
+              "Site": {
+                  "A2C Product Name": '{{product.title}}' + ' - ' + variant_title,
+                  "A2C Amount": {{product__price}},
+                  "A2C Quantity": 1,
+                  "A2C Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+              }
+            });
+        });         
+      })
+
+    </script>
+    {% endif %}
+
+    <script type="text/javascript">
+      $(".description img").each(function(){
+       $(this).addClass("lazyload");
+       $(this).attr("data-src", $(this).attr('src'));
+       $(this).removeAttr('src');
+    })
+      if($(".only-desktop.usp_section").length && $(".mobile-only.usp_section").length) {
+        $(".usp_section").css({
+            "background-size": "cover",
+            "background-repeat": "no-repeat",
+            "background-position": "center",
+            "width": "100%",
+            "height": ""
+        });
+      }
+        $(".usp_section, .productDescriptions1").attr("data-aos", "");
+
+        function usp_height(height, source) {
+            if (source == "web") {
+                $(".only-desktop.usp_section").css({
+                    "display": "block",
+                    "height": height,
+                });
+                $(".mobile-only.usp_section").css("display", "none");
+            }
+            else if (source == "mobile") {
+                $(".mobile-only.usp_section").css({
+                    "display": "block",
+                    "height": height,
+                });
+                $(".only-desktop.usp_section").css("display", "none");
+            }
+        };
+
+        function update_usp_height(source) {
+            if (source == "web") {
+                if ($(window).width() >= 1250) {
+                    usp_height("150px", source);
+                }
+                else if ($(window).width() > 766 && $(window).width() < 1250) {
+                    usp_height("100px", source);
+                }
+            }
+            else if (source == "mobile") {
+                if ($(window).width() > 620 && $(window).width() <= 766) {
+                    usp_height("830px", source);
+                }
+                else if ($(window).width() > 450 && $(window).width() <= 620) {
+                    usp_height("650px", source);
+                }
+                else if ($(window).width() <= 450) {
+                    usp_height("510px", source);
+                }
+            }
+        };
+        if($(".only-desktop.usp_section").length && $(".mobile-only.usp_section").length) {
+          update_usp_height("web");
+          update_usp_height("mobile");
+
+          $(window).resize(function () {
+              update_usp_height("web");
+              update_usp_height("mobile");
+          });
+        }
+      if($(".product-unavailable").length > 0) {
+        $(".product-form.section ").css("padding-bottom", "50px");
+      }
+      if(navigator.userAgent.indexOf('NativeMobileApp')==-1){
+        $('#content').css('background', '#000');
+      $(window).scroll(function(){
+        $("#content").css("background", "#fff");
+      })
+      } 
+      {% if product.available %}
+      {% else %}
+        {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
+          {% if product.tags contains "two year warranty" %}
+          $(".detail").append(`<div class="img-strip">
+           <img class="lazyload only-desktop" data-src="{{section.settings.warranty_web2 | img_url: '' }}" alt="image" />
+           <img class="lazyload mobile-only" data-src="{{section.settings.warranty_mob2 | img_url: '' }}" alt="image" />
+          </div>`);
+          {% else %}
+          $(".detail").append(`<div class="img-strip">
+           <img class="lazyload only-desktop" data-src="{{section.settings.warranty_web1 | img_url: '' }}" alt="image" />
+           <img class="lazyload mobile-only" data-src="{{section.settings.warranty_mob1 | img_url: '' }}" alt="image" />
+          </div>`);
+          {% endif %}
+        {% endunless %}
+      {% endif %}
+      var userSource = '';
+      if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+      else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+      else userSource = 'Desktop';
+      clevertap.event.push("Product Viewed", {
+        {%- assign product__price = bold_price | plus: 0 | divided_by: 100 -%}
+          "Product Name": '{{product.title}}',
+          "Product Id": {{product.id}},
+          "Product Category": '{{product.type}}',
+          "Product Price": {{product__price}},
+          "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+          "IsProductAvailable": {{product.available}},
+          "userSource": userSource
+        });
+      clevertap.profile.push({
+        "Site": {
+            "Product Name": '{{product.title}}' 
+        }
+      });
+      $('#zestmoney-widget-control').click(function() {
+        clevertap.event.push("ZestMoney Widget Clicked", {
+           "Product Name": '{{product.title}}',
+           "Product Id": {{product.id}},
+           "Product Category": '{{product.type}}',
+           "Product Price": {{product__price}},
+           "userSource": userSource
+        });
+      })
+      $(document).ready(function(){
+          var variant_title = $(".activevar").attr("title");
+          dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+          dataLayer.push({
+          'event': 'view_item_list',
+          'ecommerce': {
+            'items': [
+             {
+               'item_name': '{{product.title}}',
+               'item_id': {{product.id}},
+               'price': {{bold_price | plus: 0 | divided_by: 100}},
+               'item_category': '{{product.type}}',
+               'item_variant': 'variant_title'
+             }]
+          }
+        });
+      });
+      $("#add_to_cart").click(function(){
+        var variant_title = $(".activevar").attr("title");
+          {%- assign product__price = bold_price | plus: 0 | divided_by: 100 -%}
+          clevertap.event.push("Added to Cart", {
+            "Product Name": '{{product.title}}' + ' - ' + variant_title,
+            "Product Id": {{product.id}},
+            "Product Category": '{{product.type}}',
+            "Amount": {{product__price}},
+            "Quantity": 1,
+            "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+            "userSource": userSource
+          });
+          clevertap.profile.push({
+            "Site": {
+                "A2C Product Name": '{{product.title}}' + ' - ' + variant_title,
+                "A2C Amount": {{product__price}},
+                "A2C Quantity": 1,
+                "A2C Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+            }
+          });
+          dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+          dataLayer.push({
+            'event': 'add_to_cart',
+            'ecommerce': {
+              'items': [{
+                'item_name': '{{product.title}}',
+               'item_id': {{product.id}},
+               'price': {{bold_price | plus: 0 | divided_by: 100}},
+               'item_category': '{{product.type}}',
+               'item_variant': 'variant_title',
+                'quantity': '1'
+              }]
+            }
+          });
+      });
+      var productTitle = $(".product-title").text();
+      productTitle = productTitle + ' - boAt';
+      $(".description.user-content ").find("img").attr("alt", productTitle);
+
+      $(".veriant_sect").click(function(){ 
+        var variantTitle = $(this).attr("data-title");
+        var discount = "discount-saved-" + variantTitle;
+        $("p." + discount).show().siblings().hide();
+      })
+      $(".veriant_sect").on('touchstart', function(){ 
+         var variantTitle = $(this).attr("data-title");
+         var discount = "discount-saved-" + variantTitle;
+         $("p." + discount).show().siblings().hide();
+     })
+      $(".shopify-payment-button").click(function(){
+        {%- assign product__price = bold_price | plus: 0 | divided_by: 100 -%}
+        var qty = parseInt($("#quantity").val());
+        var variant_title = $(".activevar").attr("title");
+        clevertap.event.push("Buy Now", {
+            "Product Name": '{{product.title}}' + ' - ' + variant_title,
+            "Product Id": {{product.id}},
+            "Product Category": '{{product.type}}',
+            "Amount": {{product__price}},
+            "Quantity": qty,
+            "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+            "userSource": userSource
+          });
+        clevertap.profile.push({
+          "Site": {
+            "BN Product Name": '{{product.title}}' + ' - ' + variant_title,
+            "BN Amount": {{product__price}},
+            "BN Quantity": qty,
+            "BN Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}'
+          }
+        });
+      })
+      $("#credModal img").click(function() {
+        $(".shopify-payment-button__button").trigger('click');
+      })
+    </script>
+    <!-- Script for New FAQs -->
+    <script type="text/javascript">
+      if($('.new-productpart-footer-content').length) {
+        document.querySelector('.new-productpart-footer-content h3').textContent = 'FAQs';
+      }
+
+      $(document).ready(function(){
+        $("p.product-ques").append(`<span class="expand icon-faq"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down-arrow_1.png?v=1616067880" /></span>`)
+        $("p.product-ques").click(function(){
+          $(this).next(".product-ans").slideToggle("fast");
+          $(this).find(".icon-faq").toggleClass("collapsed").removeClass("expand");
+          $(this).closest(".ac-tab-new").siblings(".ac-tab-new").find(".product-ans").slideUp("fast");
+          $(this).closest(".ac-tab-new").siblings(".ac-tab-new").find(".icon-faq").removeClass("collapsed").addClass("expand");
+        })
+        if($(".new-productpart-footer-content .ac-tab-new").length > 7) {
+            $(".new-productpart-footer-content .ac-col").append('<div class="view-more-faqs"><span class="outer-text"><span class="more-text">View More</span><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down-arrow.png?v=1611821970" /></span></div>')
+        }
+        $('.new-productpart-footer-content .ac-tab-new:gt(6)').hide();
+        $('.view-more-faqs span.outer-text').click(function() {
+            $('.view-more-faqs span.more-text').text(function(i, text){
+                return text === "View More" ? "View Less" : "View More";
+            })
+            $('.new-productpart-footer-content .ac-tab-new:gt(6)').slideToggle(200);
+            if($('.view-more-faqs span.more-text').text() == "View Less") {
+              $('.view-more-faqs img').addClass("rotated");
+            }
+            else {
+              $('.view-more-faqs img').removeClass("rotated");
+            }
+        });
+        $(".video-new img, .manual-new img").attr("alt", "");
+        $('[data-toggle="tooltip"]').tooltip();
+        $(".productPart-two-new .productpart-two-content, .productPart-third-new .productpart-third-content, .productPart-fourthA-new .productpart-fourth-contentA").attr("data-aos", "");
+        $(".manual-new").click(function(e) {
+          if($(".manual-new").attr("href") == "") {
+            e.preventDefault();
+             $(this).attr("data-target", "#manualModal");
+             $(this).attr("data-toggle", "modal");
+          }
+        })
+      });
+window.isaddingtocart = false
+$("#add_to_cart").on('click', function (event) {
+    event.preventDefault()
+    if(window.isSubmitting===true){return null}
+    var _items = []
+    $( "#cart__drawer_items .cart__item" ).each(function(i,obj){
+            var variant_id = $("."+$(this).attr("class").replaceAll(" ",".")+" .variant_id").text()
+            var product_id = $("."+$(this).attr("class").replaceAll(" ",".")+" .product_id").text()
+            var quantity = $("."+$(this).attr("class").replaceAll(" ",".")+" .quantity").text()
+            var item = {
+                      'variant_id': parseInt(variant_id),
+                      'quantity': quantity,
+                      'product_id': parseInt(product_id)
+                    }
+            _items.push(item)
+        })
+    var _allowed_addtocart = true
+    var _variant_id = $(".prodct_variant .veriant_sect.activevar").attr("id")
+    for (var i = 0; i < _items.length; i++) {     
+    	if (_items[i]['variant_id'] == _variant_id){
+          if(_items[i]['quantity'] >= 7){
+          	_allowed_addtocart = false
+          }
+        };
+      	if (_items[i]['variant_id'] == 39409317871714){
+              		 _allowed_addtocart = false;
+        }
+      	
+      if ({{product.id}} == 6628949229666 && _items[i]['product_id'] == 6628949229666){
+          if(_items[i]['quantity'] >= 2){
+          	_allowed_addtocart = false
+          }
+        };
+    }
+    var _data = {
+        id: _variant_id,
+        quantity: 1,
+    };
+  	if (_allowed_addtocart && !window.isaddingtocart){
+      window.isaddingtocart = true
+      $("#drawer-overlay").fadeIn();
+      $.ajax({
+          type: "POST",
+          url: '/cart/add.js',
+          data: _data,
+          success: function (response) {
+              var json_response = JSON.parse(response)
+              	window.isaddingtocart = false
+                var open_slider_cart = true
+                fetchCart(open_slider_cart)
+                 
+          }
+      });
+    }
+})
+
+        setInterval(function(){
+          if($('#BIS_trigger').length>0){
+            if($('#BIS_trigger')[0].style.display == ''){
+            $('.quick-buy-wrap').hide();
+            }
+        else{
+                $('.quick-buy-wrap').show();
+            }
+          }
+        },100)
+
+
+    </script>

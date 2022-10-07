@@ -1,0 +1,76 @@
+<div id="template" class="small-form">
+  <div id="customer">
+	  <!-- Create Customer -->
+	  <div id="create-customer">
+	    <div class="template_header">
+	      <h2 class="title">{{ 'customer.register.title' | t }}</h2>
+	    </div>
+
+	    {% form 'create_customer' %}
+	      {{ form.errors | default_errors }}
+
+	      <div class="input-row">
+	        <label for="first_name" class="login">{{ 'customer.register.first_name' | t }}</label>
+	        <input type="text" value="" name="customer[first_name]" id="first_name" class="large" size="30" />
+	      </div>
+
+	      <div class="input-row">
+	        <label for="last_name" class="login">{{ 'customer.register.last_name' | t }}</label>
+	        <input type="text" value="" name="customer[last_name]" id="last_name" class="large" size="30" />
+	      </div>
+
+	      <div class="input-row">
+	        <label for="email" class="login">{{ 'customer.register.email' | t }}</label>
+	        <input type="email" value="" name="customer[email]" id="email" class="large" size="30" />
+	      </div>
+
+	      <div class="input-row">
+	        <label for="password" class="login">{{ 'customer.register.password' | t }}</label>
+	        <input type="password" value="" name="customer[password]" id="password" class="large password" size="30" />
+	      </div>
+
+	      <div class="action_bottom text-center">
+	        <input class="btn" id="create" type="submit" value="{{ 'customer.register.submit' | t }}" />
+	        <span class="note">
+						<a href="/account/login">{{ 'customer.register.log_in' | t }}</a>
+						{{ 'customer.general.or' | t }}
+						<a href="{{ shop.url }}">{{ 'customer.register.cancel' | t }}</a>
+					</span>
+	      </div>
+	    {% endform %}
+	  </div><!-- /#create-customer -->
+  </div>
+</div>
+
+<script>
+  $("#create_customer").submit(function(){
+    var userEmail = document.getElementById("email").value;
+    var firstName = document.getElementById("first_name").value;
+    var lastName = document.getElementById("last_name").value;
+    clevertap.onUserLogin.push({
+     "Site": {
+      "Email": userEmail ,
+      "First Name": firstName,
+      "Last Name": lastName        // Email address of the user
+     }
+    });
+    clevertap.event.push("Sign Up", {
+      "Email": userEmail,
+      "First Name": firstName,
+      "Last Name": lastName
+    });
+    
+    smartech('contact', '5', {
+        'pk^email': userEmail ,
+        'FIRST_NAME': firstName ,
+        'LAST_NAME': lastName
+        }, function() {
+        smartech('identify', userEmail );
+        smartech('dispatch', 'Website_Registered', {
+        'email': userEmail ,
+        'first_name': firstName ,
+        'last_name': lastName
+        });
+      })
+  })
+</script>

@@ -1,0 +1,45 @@
+<h2 class="collection-heading text-white">{{link.object.title}}</h2>
+    	  <div class="featured-collections row" data-collection={{link.object.title}}>
+    		{% for product in link.object.products%}
+    			<div class="collection-thumb col-md-4 my-3 col-xs-6 col-sm-6" data-product-id="{{ product.id }}" data-product-available="{{product.available}}">
+                  <a href="{{product.url}}">
+                  <div class="thumb-image">
+                   <img class="collection-thumb-img" src="{{product.featured_image | img_url: 'medium' }}">
+                  </div>
+                  <div class="thumb-info">
+                    <p class="collection-thumb-title">
+                      {{product.title | escape }}
+                    </p>
+                    <p class="thumb-price">
+                      <span class="current-price">Rs {{product.price | divided_by: 100 }}.00</span>
+                      <span class="was-price">{{ product.compare_at_price | money }}</span>
+                    </p>
+                    <div class="_shop hide">
+                      <span>Shop Now</span>
+                    </div>
+                    </div></a>
+    </div>
+    {% endfor %}
+    </div>
+
+<style>
+  .thumb-info {
+      min-height: 87px!important;
+  	}
+  .featured-collections {justify-content: center;}
+  span.was-price {display: inline-block;}
+  @media screen and (max-width: 1024px) {
+    .collection-thumb {
+    	width: 46%;
+        padding: 0;
+        margin: 5px;
+    }
+    .thumb-info {
+      min-height: 170px!important;
+  	}
+    .thumb-image img {
+        max-width: 100%!important;
+    }
+    span.was-price {font-size: 11px!important}
+  }
+</style>

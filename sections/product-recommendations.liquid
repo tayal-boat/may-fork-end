@@ -1,190 +1,89 @@
-{%- if section.settings.background != settings.background and section.settings.background != 'rgba(0,0,0,0)' -%}
-  {%- assign blends_with_background = false -%}
-{%- else -%}
-  {%- assign blends_with_background = true -%}
-{%- endif -%}
+{%- include 'bold-product' with product, hide_action: 'break', output: 'none' -%}
+{% if section.settings.show_recommendations %}
+  <div class="product-recommendations" data-product-id="{{ product.id }}" data-limit="{{ section.settings.products_per_row }}">
+    {% if recommendations.performed and recommendations.products_count > 0%}
+      <div class="{% unless settings.use_fullwidth_layout %}container{% endunless %} padded-row">
+        <h4 class="align-center">{{ section.settings.recommendations_title }}</h4>
 
-{%- assign use_recommendations = true -%}
-{%- assign hand_picked_count = 0 -%}
-
-{%- for block in section.blocks -%}
-  {%- if block.settings.product != blank -%}
-    {%- assign use_recommendations = false -%}
-    {%- assign hand_picked_count = hand_picked_count | plus: 1 -%}
-  {%- endif -%}
-{%- endfor -%}
-
-<style>
-  #shopify-section-{{ section.id }} {
-    {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
-      {%- assign section_background = settings.background -%}
-    {%- else -%}
-      {%- assign section_background = section.settings.background -%}
-    {%- endif -%}
-
-    {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
-      {%- assign heading_color = settings.heading_color -%}
-      {%- assign text_color = settings.text_color -%}
-    {%- else -%}
-      {%- assign heading_color = section.settings.text_color -%}
-      {%- assign text_color = section.settings.text_color -%}
-    {%- endif -%}
-
-    --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
-    --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-    --prev-next-button-background: {{ settings.background.red }}, {{ settings.background.green }}, {{ settings.background.blue }};
-    --prev-next-button-color: {{ settings.text_color.red }}, {{ settings.text_color.green }}, {{ settings.text_color.blue }};
-
-    --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
-    --section-products-per-row: 2;
-  }
-
-  @media screen and (min-width: 741px) {
-    #shopify-section-{{ section.id }} {
-      --section-products-per-row: 3;
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    #shopify-section-{{ section.id }} {
-      --section-products-per-row: 4;
-    }
-  }
-</style>
-
-<product-recommendations section-id="{{ section.id }}" product-id="{{ product.id }}" {% if use_recommendations %}use-automatic-recommendations recommendations-count="{{ section.settings.recommendations_count }}"{% endif %} class="section {% unless blends_with_background %}section--flush{% endunless %}">
-  {%- if hand_picked_count > 0 or recommendations.performed and recommendations.products.size > 0 -%}
-    <div class="section__color-wrapper">
-      <div class="container {% unless blends_with_background %}vertical-breather{% endunless %}">
-        {%- if section.settings.title != blank or section.settings.subheading != blank -%}
-          <header class="section__header">
-            <div class="text-container">
-              {%- if section.settings.subheading != blank -%}
-                <h2 class="heading heading--small">{{ section.settings.subheading }}</h2>
-              {%- endif -%}
-
-              {%- if section.settings.title != blank -%}
-                <h3 class="heading h3">{{ section.settings.title }}</h3>
-              {%- endif -%}
-            </div>
-          </header>
-        {%- endif -%}
-
-        <product-list {% if settings.stagger_products_apparition %}stagger-apparition{% endif %} class="product-list product-list--center">
-          {%- assign smallest_image_aspect_ratio = 0 -%}
-  
-          {{ section.settings.excluded_id }}
-          <div class="scroller">
-            <div class="product-list__inner product-list__inner--scroller hide-scrollbar">
-              {%- if use_recommendations -%}
-                {%- for product in recommendations.products -%}
-                 {% unless product.tags contains 'not-recommended' %}
-                  {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio | at_least: product.featured_media.aspect_ratio -%}
-
-                  {%- capture sizes_attribute -%}(max-width: 740px) 75vw, min({{ 100.0 | divided_by: 4 | ceil }}vw, {{ 1520.0 | divided_by: 4 | ceil }}px){%- endcapture -%}
-                  {%- render 'product-item', product: product, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
-                   {% endunless %}
-              {%- endfor -%}
-              {%- else -%}
-                {%- for block in section.blocks -%}
-                  {%- if block.settings.product != blank -%}
-                    {%- assign largest_image_aspect_ratio = largest_image_aspect_ratio | at_most: block.settings.product.featured_media.aspect_ratio -%}
-
-                    {%- capture sizes_attribute -%}(max-width: 740px) 75vw, min({{ 100.0 | divided_by: 4 | ceil }}vw, {{ 1520.0 | divided_by: 4 | ceil }}px){%- endcapture -%}
-                    {%- render 'product-item', product: block.settings.product, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endif -%}
-            </div>
+        <div class="collection-listing related-collection cf row-spacing">
+          <div class="product-list">
+            {%- for product in recommendations.products -%}
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+              {% include 'product-block' product: product %}
+            {%- endfor -%}
           </div>
+        </div>
 
-          {%- if recommendations.products_count > 4 or hand_picked_count > 4 -%}
-            <prev-next-buttons class="product-list__prev-next hidden-pocket" style="--smallest-image-aspect-ratio: {{ smallest_image_aspect_ratio }}">
-              <button class="product-list__arrow prev-next-button prev-next-button--prev" disabled data-action="prev">
-                <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
-                {%- include 'icon' with 'nav-arrow-left', block: true, direction_aware: true -%}
-              </button>
-
-              <button class="product-list__arrow prev-next-button prev-next-button--next" data-action="next">
-                <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
-                {%- include 'icon' with 'nav-arrow-right', block: true, direction_aware: true -%}
-              </button>
-            </prev-next-buttons>
-          {%- endif -%}
-        </product-list>
       </div>
-    </div>
-  {%- endif -%}
-</product-recommendations>
+    {% endif %}
+  </div>
+{% endif %}
+
+
+{% javascript %}
+var loadProductRecommendationsIntoSection = function() {
+  // Look for an element with class 'product-recommendations'
+  var productRecommendationsSection = document.querySelector(".product-recommendations");
+  if (productRecommendationsSection === null) { return; }
+  // Read product id from data attribute
+  var productId = productRecommendationsSection.dataset.productId;
+  // Read limit from data attribute
+  var limit = productRecommendationsSection.dataset.limit;
+  // Build request URL
+  var requestUrl = "/recommendations/products?section_id=product-recommendations&limit="+limit+"&product_id="+productId;
+  // Create request and submit it using Ajax
+  var request = new XMLHttpRequest();
+  request.open("GET", requestUrl);
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 300) {
+      var container = document.createElement("div");
+      container.innerHTML = request.response;
+      productRecommendationsSection.innerHTML = container.querySelector(".product-recommendations").innerHTML;
+      theme.ProductBlockManager.loadImages(productRecommendationsSection);
+      theme.runMultiCurrency();
+    }
+  };
+  request.send();
+};
+// If your section has theme settings, the theme editor
+// reloads the section as you edit those settings. When that happens, the
+// recommendations need to be fetched again.
+// See https://help.shopify.com/en/themes/development/sections#understand-the-interaction-between-theme-javascript-and-the-theme-editor
+document.addEventListener("shopify:section:load", function(event) {
+  if (event.detail.sectionId === "product-recommendations") {
+    loadProductRecommendationsIntoSection();
+  }
+});
+// Fetching the recommendations on page load
+loadProductRecommendationsIntoSection();
+{% endjavascript %}
+
 
 {% schema %}
-{
-  "name": "Product recommendations",
-  "class": "shopify-section--product-recommendations",
-  "templates": ["product"],
-  "max_blocks": 10,
-  "blocks": [
-    {
-      "type": "product",
-      "name": "Product",
-      "settings": [
-        {
-          "type": "paragraph",
-          "content": "Dynamic recommendations are not shown if products are explicitly selected."
-        },
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
-        }
-      ]
-    }
-  ],
-  "settings": [
-    {
-      "type": "paragraph",
-      "content": "Dynamic recommendations change and improve with time. [Learn more](https://help.shopify.com/en/themes/development/recommended-products). You can manually select products by adding content."
-    },
-    {
-      "type": "text",
-      "id": "subheading",
-      "label": "Subheading"
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "You may also like"
-    },
-    {
-      "type": "range",
-      "id": "recommendations_count",
-      "min": 4,
-      "max": 10,
-      "label": "Recommendations count",
-      "default": 4
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "background",
-      "label": "Background",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text",
-      "default": "rgba(0,0,0,0)"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Product recommendations"
-    }
-  ]
-}
+  {
+    "name": "Product recommendations",
+    "settings": [
+      {
+        "type": "text",
+        "id": "recommendations_title",
+        "label": "Heading",
+        "default": "You may also like"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_recommendations",
+        "label": "Show recommendations",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "products_per_row",
+        "min": 2,
+        "max": 6,
+        "step": 1,
+        "label": "Maximum number of recommended products",
+        "default": 4
+      }
+    ]
+  }
 {% endschema %}

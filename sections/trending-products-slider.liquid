@@ -1,0 +1,173 @@
+<div class="container-fluid cf mt-4 section-id-{{ section.id }} trending-products-slider" data-section-type="custom-row">
+  <div class="trending-slider">
+    <div class="row trending-row">
+      {% if section.settings.title!= blank %}
+      <div class="col-12 trending-products-headings launch-head trendsetter">
+        <h2 class="text-white text-center sectTitle">{{ section.settings.title }}</h2>
+      </div>
+      {% endif %}
+      <div class="col-12 products-sliders">
+        {% for block in section.blocks %}
+        <div class="products-slides slide-{{ forloop.index }}">
+          <a href="{% if block.settings.imageUrl %}{{ block.settings.imageUrl }}{% else %}javascript:void(0){% endif %}">
+            <span class="slide-image">
+              {% include 'responsive-image', image: block.settings.image %}
+            </span>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  #shopify-section-1633612563883328b6 {opacity: 0;}
+.products-sliders  {
+  max-width: calc(100vw - 10%);
+  margin: 0 auto;
+}
+.products-sliders .slick-slide {
+  margin: 0 5px;
+}
+.products-sliders .slick-list {
+  margin: 0px -5px 0px -5px;
+}
+  .products-sliders .slick-track {padding-bottom: 30px;}
+  .products-sliders .slick-prev, .products-sliders .slick-next {
+    font-size: 0;
+    position: absolute;
+    bottom: 20px;
+    color: #ea2127;
+    border: 0;
+    background: none;
+    z-index: 1;
+}
+  .products-sliders .slick-prev {
+    left: -48px;
+}
+  .products-sliders .slick-prev:after {
+    content: "\f104";
+    font: 60px/1 'FontAwesome';
+    font-weight: bold;
+}
+  .products-sliders .slick-next {
+    right: -16px;
+    text-align: right;
+}
+  .products-sliders .slick-next:after {
+    content: "\f105";
+    font: 60px/1 'FontAwesome';
+    font-weight: bold;
+}
+  .products-slides {transition: all .5s ease-in-out;}
+/*   .products-slides:hover {transform: scale(1.06);} */
+  @media screen and (max-width: 767px) {
+    .products-sliders .slick-list {padding-left: 0!important;}
+  }
+</style>
+<script type="text/javascript">
+	$(document).ready(function($) {
+      $('.products-sliders').slick({
+        dots: false,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        autoplay: false,
+        autoplaySpeed: 2000,
+        arrows: true,
+        responsive: [
+          {
+          breakpoint: 3000,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+          
+          {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+           breakpoint: 767,
+           settings: {
+              arrows: false,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              centerMode: true,
+			  centerPadding: '20%'
+           }
+        }]
+    });
+      $('#shopify-section-1633612563883328b6').css('opacity', 1)
+    var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+    let sectTitle = $('.sectTitle').text();
+    $('.trending-slider').on('click', function(){
+      clevertap.event.push("Homepage Cards section clicked", {
+        "userSource": userSource,
+        "secttion Title": sectTitle
+      });
+    });
+});
+</script>
+
+
+{% schema %}
+  {
+    "name": "Trending Products Slider",
+	"max_blocks": 28,
+    "settings": [
+		{
+                  "type": "text",
+                  "id": "title",
+                  "label": "Section Title"
+              }
+	],
+	"blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image",
+                  "info": "300px wide minimum"
+              },
+              {
+                  "type": "url",
+                  "id": "imageUrl",
+                  "label": "Image URL"
+              }
+              
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Trending Products Slider",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

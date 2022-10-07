@@ -1,0 +1,190 @@
+<div class="container cf p-0">
+  <div class="page-header cf p-0">
+  </div>
+  <div class="user-content row-spacing">
+    <div class="prebookingform" style="background: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/AD511v2.jpg?v=1592311660)">
+      <h1 class="majortitle text-uppercase preorder-title text-white text-center m-0">Pre-register NOW & get set to rise to the next 🎧</h1>
+      <div class="form-inner">
+        <div class="form-group">
+        	<input type="text" id="user_name" placeholder="Name*">
+          <p class="error-msg-name" style="color: #fff;display: none;font-size:12px;">Name field can't be empty!</p>
+        </div>
+        <div class="form-group">
+        	<input type="email" id="user_email" placeholder="Email address*">
+          	<p class="error-msg-email" style="color: #fff;display: none;font-size:12px;">Please enter a valid email id!</p>
+        </div>
+        <div class="form-group">
+        	<input type="tel" id="user_phone" placeholder="Phone number*">
+          <p class="error-msg-phone" style="color: #fff;display: none;font-size:12px;">Please enter a valid phone number!</p>
+        </div>
+        <button type="submit" class="register_here text-uppercase text-white">Register Now</button>
+        <p class="aluser-msg-book" style="color: #fff;display: none;font-size:12px;">You are already subscribed with us!</p>
+        <p class="thankyou-msg-book" style="color: #fff;display: none;font-size:12px;">Thank You!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="book-overlay"></div>
+
+<div class="discountcode-pop">
+	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/WhatsApp_Image_2020-06-16_at_6.45.34_PM.jpeg?v=1592313386" alt="Airdopes Discount" style="display: block;jeight: 100%;" />
+</div>
+
+
+
+<style>
+  #store-messages-mobile {padding: 0;}
+  .prebookingform {
+  	height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-repeat: no-repeat!important;
+    width: 100%;
+    flex-direction: column;
+  }
+.prebookingform .form-inner {
+	max-width: 400px;
+    padding: 50px 20px 20px 20px;
+  	width: 100%;
+/*   	background: rgba(0,0,0,.4); */
+}
+
+.prebookingform .form-inner input {
+	width: 100%;
+  	border-radius: 4px;
+    font-size: 12px;
+  	color: #000;
+}
+.prebookingform .form-inner input:focus::-webkit-input-placeholder {
+	color: transparent;
+}
+.prebookingform .form-inner button {
+	width: 200px;
+    box-sizing: border-box;
+    margin: 20px auto;
+    display: block;
+  	font-weight: bold;
+}
+.prebookingform .form-inner .brochure__form__captcha {
+	max-width: 300px;
+  	margin: auto;
+}
+  .discount-code {
+  	display: none;
+    max-width: 500px;
+    margin: auto;
+  }
+  .discount-code h3 {
+  	margin-bottom: 0;
+  }
+  .discount-code p {
+  	text-align: right;
+    font-size: 13px;
+    padding-right: 32px;
+  }
+  .text-red {
+  	color: #ea2127;
+    border: 1px dashed;
+    padding: 0 10px;
+  }
+  body {position: relative;}
+  .book-overlay {
+  	position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffffbf;
+    display: none;
+  }
+  .discountcode-pop {
+  	position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    z-index: 99;
+    display: none;
+    background-size: cover;
+    box-shadow: 0 0 10px #000;
+  }
+  .preorder-title {
+  	padding: 0 15px;
+  }
+  #content {padding: 0;margin:0;}
+  .container {max-width: 100%;}
+</style>
+
+
+<script>
+  
+  $(".register_here").click(function(){
+    var customerName = $("#user_name").val();
+    var customerEmail = $("#user_email").val();
+    var customerPhone = $("#user_phone").val();
+    var phoneNum = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+    function validateEmail($email) {
+      var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+      return emailReg.test( $email );
+    }
+    if(customerName !== "") {
+      if(customerEmail !== "" && validateEmail(customerEmail)) {
+        var localValueBook = localStorage.getItem('customerEmailId');
+        if(localValueBook === customerEmail) {
+            $(".aluser-msg-book").show();
+        }
+        else {
+          if ((customerPhone !== "") && (customerPhone.match(phoneNum))) {
+           if(customerPhone.length > 10) {
+             $(".error-msg-phone").show();
+           }
+           else {
+             localStorage.setItem('customerEmailId', customerEmail);
+             $(".discountcode-pop").fadeIn();
+             $(".book-overlay").fadeIn();
+             fbq('track', 'CompleteRegistration');
+//              $(".discount-code").fadeIn();
+             smartech('contact', '8', {
+              'pk^email': customerEmail ,
+              'FIRST_NAME': customerName ,
+              'PHONE': customerPhone
+              }, function() {
+              smartech('identify', customerEmail );
+              smartech('dispatch', 'Airdopes_registration', {
+              'email': customerEmail ,
+              'first_name': customerName ,
+              'phone': customerPhone
+              });
+              })
+           }
+         }
+          else {
+            $(".error-msg-phone").show();
+          }
+        }
+
+      }
+      else {
+          $(".error-msg-email").show();
+      }
+    }
+    else {
+    	$(".error-msg-name").show();
+    }
+    setTimeout(function(){
+    	$(".thankyou-msg-book, .error-msg-email, .error-msg-phone, .aluser-msg-book, .error-msg-name").fadeOut();
+    }, 5000);
+    
+    
+  	
+  })
+  $(".book-overlay").click(function(){
+  	$(".discountcode-pop").fadeOut();
+    $(".book-overlay").fadeOut();
+  });
+
+</script>

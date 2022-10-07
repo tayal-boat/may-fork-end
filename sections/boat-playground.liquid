@@ -1,0 +1,135 @@
+<div class="container-fluid cf mt-4 section-id-{{ section.id }} boat-playground-section" data-section-type="custom-row">
+  <div class="boat-playground">
+    <div class="row playground-row">
+      <div class="col-md-5 section-text pos-relative">
+        <div class="text-wrap">
+          <p class="">this is your playground.<br>welcome to boAt</p>
+        </div>
+      </div>
+      <div class="col-md-7 products-slider">
+        {% for block in section.blocks %}
+        <div class="products-slide slide-{{ forloop.index }}">
+          <a href="{{ block.settings.imageUrl }}">
+            <span class="slide-image">
+              {% include 'responsive-image', image: block.settings.image %}
+            </span>
+          </a>
+            <span class="shop-now">
+              <a href="{{ block.settings.imageUrl }}">{{ block.settings.buttonText }}</a>
+            </span>
+          
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="only-desktop section-2-line">
+  	{{ 'horizontal-red-line.png' | asset_url | img_tag }}
+  </div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function($) {
+      $('.products-slider').slick({
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        autoplay: false,
+        autoplaySpeed: 2000,
+        arrows: true,
+        responsive: [
+          {
+          breakpoint: 3000,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+          
+          {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+        {
+           breakpoint: 767,
+           settings: {
+              arrows: true,
+              slidesToShow: 1,
+              slidesToScroll: 1
+           }
+        }]
+    });
+      
+    $(window).scroll(function(){
+      var docViewTop = $(window).scrollTop();
+      var docViewBottom = docViewTop + $(window).height();
+      var elemTop = $('.boat-playground').offset().top;
+      if ((elemTop <= docViewBottom) && (elemTop >= docViewTop)) {
+          $('.text-wrap').addClass('bounceInDown animated');
+          $('.products-slider').addClass('slideLeft');
+          $('.section-2-line').addClass('slideRight');
+      }
+    });
+    
+    
+      
+});
+</script>
+
+
+{% schema %}
+  {
+    "name": "Boat Playground",
+	"max_blocks": 28,
+    "settings": [],
+	"blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image",
+                  "info": "300px wide minimum"
+              },
+			  {
+                  "type": "url",
+                  "id": "imageUrl",
+                  "label": "Image URL"
+              },
+			  {
+                  "type": "text",
+                  "id": "buttonText",
+                  "label": "Button Text",
+				  "default": "SHOP NOW"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Boat Playground",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

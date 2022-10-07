@@ -1,0 +1,45 @@
+{%- unless settings.prod_block_label_loc == 'hide' -%}
+
+  {%- if show_sold_out -%}
+    <span class="productlabel soldout"><span>{{ 'products.labels.sold_out' | t }}</span></span>
+  {%- endif -%}
+
+  {%- if product.available == false -%}
+    {%- for tag in product.tags -%}
+        {%- if tag contains 'meta-label-' -%}
+          <span class="productlabel general q {{ tag | remove: 'meta-label-sold' }}"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+        {%- endif -%}
+      {%- endfor -%}
+  {%- endif -%}
+
+  {%- if show_sold_out == blank and product.available == false -%}
+    <span class="productlabel soldout"><span>{{ 'products.labels.sold_out' | t }}</span></span>
+  {%- else -%}
+    {%- assign inv_mngmt_size = bold_selected_or_first_available_variant.inventory_management | size -%}
+    {%- assign limit_as_int = settings.prod_stock_warn_limit_int | plus: 0 -%}
+    {%- if settings.prod_sale_show and bold_compare_at_price > bold_price -%}
+      <span class="productlabel sale"><span>{{ 'products.labels.sale' | t }}</span></span>
+    {%- elsif settings.prod_stock_warn_show and bold_variants_size == 1 and inv_mngmt_size > 0 and bold_selected_or_first_available_variant.inventory_quantity > 0 and bold_selected_or_first_available_variant.inventory_quantity <= limit_as_int -%}
+      <span class="productlabel general"><span>{{ 'products.labels.only_x_left' | t: quantity: bold_selected_or_first_available_variant.inventory_quantity }}</span></span>
+    {%- else -%}
+      {%- for tag in product.tags -%}
+        {%- if tag contains 'meta-label-' -%}
+          <span class="productlabel general  {{ tag | remove: 'meta-label-sold' }} r"><span>{{ tag | remove: 'meta-label-' }}</span></span>
+        {%- endif -%}
+		{%- if tag contains 'meta-label-lowest-price' -%}
+		  <span class="productlabel general lowest-price">
+			{%-if bold_compare_at_price_max > bold_price -%}
+          			<span class="text-uppercase discount-saved-{{variant.option1 | split: " " | join: "-"}}" data-title="{{ variant.option1 | split: " " | join: "-" }}"><span style="color:#ff0000;font-weight: bold;">You Save {{ bold_compare_at_price_max |minus: bold_price | times: 100.0 | divided_by: bold_compare_at_price_max | floor | money_without_currency | times: 100 | remove: ".0"}}%</span></span>
+      	  	{%- endif -%}
+		  </span>
+		{%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endif -%}
+
+{%- endunless -%}
+<style>
+{% if product.available %}
+.productlabel.general.-out-click-to-notify.r {display: none;}
+{% endif %}
+</style>

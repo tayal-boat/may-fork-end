@@ -1,0 +1,85 @@
+<div class="ppsaletimer" id="ppsaleTimer">
+  <div class="ppsaletimer-inner">
+  	<p class="mb-0" style="font-size:11px;line-height: normal;">{{ section.settings.timer_text }}</p>
+    <p id="ppdemo" class="m-0">
+      <span class="flex-span colon">
+        <span id="ppdays"></span>
+        <span class="timer-text">days</span>
+      </span>
+      <span class="flex-span colon">
+          <span id="pphours"></span>
+          <span class="timer-text">hours</span>
+      </span>
+      <span class="flex-span colon">
+        <span id="ppmins"></span>
+        <span class="timer-text">mins</span>
+      </span>
+      <span class="flex-span">
+        <span id="ppsecs" style="color:#ea2127;"></span>
+        <span class="timer-text">secs</span>
+      </span>
+    </p>
+  </div>
+</div>
+
+<style>
+  .ppsaletimer {
+    color: #d9d9d9 !important;
+    background: #2c2c2c;
+    display: inline-block;
+    padding: 6px;
+    border-radius: 5px;
+    margin-top: 10px;
+  } 
+  .flex-span {
+  	display: inline-flex;
+    flex-flow: column;
+    line-height: normal;
+    align-items: center;
+    margin: 0px 10px 0 0;
+    font-size: 14px;
+    position: relative;
+  }
+  span.flex-span.colon:after {
+    content: ":";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-59%);
+    font-size: 15px;
+  }
+  .timer-text {
+  	font-size: 10px;
+    text-transform: uppercase;
+  }
+</style>
+<script>
+	$('.zest-container, .inclusive').hide();
+    var countdown_date = '{{section.settings.timer}}';
+	var countDownDate = new Date(countdown_date).getTime();
+    var now, distance;
+	var x = setInterval(function() {
+      now = new Date().getTime();
+      distance = countDownDate - now;
+      if(distance <= 0) {
+        $(".ppsaletimer").hide();
+        $('.detail .zest-container, .detail .inclusive').show();
+      }
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      days = pad2(days);
+      hours = pad2(hours);
+      minutes = pad2(minutes);
+      seconds = pad2(seconds);
+      document.getElementById("ppdays").textContent = days;
+      document.getElementById("pphours").innerHTML = hours;
+      document.getElementById("ppmins").innerHTML = minutes;
+      document.getElementById("ppsecs").innerHTML = seconds;
+	}, 1000);
+  
+  function pad2(number) {
+    return (number < 10 ? '0' : '') + number
+  }
+</script>

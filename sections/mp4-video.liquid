@@ -1,0 +1,80 @@
+<div class="container-fluid cf mt-4 section-id-{{ section.id }} mp4-video" data-section-type="custom-row">
+  <div class="mp4-video-inner">
+    <div class="row mp4-video-row">
+      <div class="col-12 mp4-video-headings launch-head trendsetter hide">
+        <h2 class="text-white">ilyinoatd</h2>
+      </div>
+      <div class="col-12 myVideoSection">
+        <div class="video_section">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  #myVideoSection {
+  	margin: auto;
+    float: none;
+    display: block;
+    max-width: 1900px;
+    width: 100%;
+  }
+  #myVideoSection:focus {
+    border:0;
+    outline: none;
+  }
+  video::-webkit-media-controls-fullscreen-button {display: none !important;}
+  @media screen and (max-width:600px) {
+    #myVideoSection {height: auto; margin: 20px auto;}
+  }
+</style>
+<script type="text/javascript">
+ $(document).ready(function($) {
+   	$('.video_section').html(`<video id="myVideoSection" height="650" playsinline loop controls preload="none" muted autoplay>
+      <source src="{{ section.settings.video_url }}" type="video/mp4"></video>`
+    )
+    var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+    $('.mp4-video').on('click', function(){
+      clevertap.event.push("Homepage Video clicked", {
+        "userSource": userSource
+      });
+    });
+});
+</script>
+{% schema %}
+  {
+    "name": "MP4 Video",
+    "settings": [
+		  {
+			"type": "url",
+            "id": "video_url",
+            "label": "Video URL"
+		  },
+		  {
+            "type": "image_picker",
+            "id": "video_poster_image",
+            "label": "Video Thumbnail Image"
+          }
+	],
+	"presets": [
+      {
+        "name": "MP4 Video",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": []
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+	
+
+{% endjavascript %}

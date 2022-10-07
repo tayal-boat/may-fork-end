@@ -1,0 +1,249 @@
+{%- assign product_limit = 20 -%}
+{%- assign collection = collections[section.settings.collection] -%}
+{%- assign bg_alpha = section.settings.background_color | color_extract: 'alpha' -%}
+<div class="{% if section.settings.use_carousel %}collection-slider-row{% else %}padded-row{% endif %} {% if section.settings.background_color == settings.bg_col or bg_alpha == 0 %}no-bg{% endif %} section-id-{{ section.id }}" data-section-type="featured-collection">
+  {% unless settings.use_fullwidth_layout %}<div class="container {% unless section.settings.use_carousel %}uncontain-desktop-down{% endunless %}">{% endunless %}
+
+  <div class="{% if section.settings.use_carousel %}collection-slider{% endif %}">
+    <h2 class="hometitle h4-style align-center has-paging">
+      {% if section.settings.use_carousel %}<a class="prev" href="#">{% include 'svg-chevron-left' %}</a>{% endif %}
+      <a class="text-white" href="{{ collection.url }}"><span>{{ section.settings.title | escape }}</span></a>
+      {% if section.settings.use_carousel %}<a class="next" href="#">{% include 'svg-chevron-right' %}</a>{% endif %}
+    </h2>
+
+    <div class="view-all align-center hide">
+      <a href="{{ collection.url }}">{{ 'home_page.products.see_all' | t }}</a>
+    </div>
+
+    <div class="collection-listing">
+      <div class="product-list {% if section.settings.use_carousel %}carousel {% unless settings.use_fullwidth_layout %}fixed-mode{% endunless %}{% endif %}">
+        {% if section.settings.collection == blank %}
+
+        {% for i in (1..6) %}
+        {% include 'onboarding-product-block' %}
+        {% endfor %}
+
+        {% else %}
+
+        {% for product in collection.products limit: product_limit %}
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+        {% include 'product-block' with product, manual_image_load: section.settings.use_carousel %}
+        {% endfor %}
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% unless settings.use_fullwidth_layout %}</div>{% endunless %}
+
+  {% if settings.prod_thumb_detail_show and section.settings.use_carousel %}
+  <div class="collection-listing slider-collection-listing">
+    <div class="product-detail"></div>
+  </div>
+  {% endif %}
+</div>
+
+<style type="text/css">
+  .section-id-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    padding-top:1rem!important;
+  }
+  .collection-listing .rimage-wrapper {background: transparent;}
+  .collection-listing .slick-prev, .collection-listing .slick-next {
+    font-size: 0;
+    position: absolute;
+    bottom: 20px;
+    color: #ea2127;
+    border: 0;
+    background: none;
+    z-index: 1;
+}
+  .collection-listing .slick-prev {
+    left: -68px;
+}
+  .collection-listing .slick-prev:after {
+    content: "\f104";
+    font: 60px/1 'FontAwesome';
+    font-weight: bold;
+    color: #ff0000;
+}
+  .collection-listing .slick-next {
+    right: -36px;
+    text-align: right;
+}
+  .collection-listing .slick-next:after {
+    content: "\f105";
+    font: 60px/1 'FontAwesome';
+    font-weight: bold;
+    color: #ff0000;
+	}
+  .collection-listing  {
+    max-width: calc(100vw - 10%);
+    margin: 0 auto;
+  }
+  .collection-listing .slick-slide {
+    margin: 0 5px;
+  }
+  .collection-listing .slick-list {
+    margin: 0px -5px 0px -5px;
+  }
+  .collection-listing .slick-track {padding-bottom: 30px;}
+  .collection-listing {transition: all .5s ease-in-out;}
+  .product-feature {font-size:12px!important;margin-top:5px!important;}
+  .collection-listing .innerer .title {margin-bottom: 5px;font-size: 14px;}
+  .collection-listing .innerer .price, .collection-listing .innerer .reducedfrom span {font-size: 14px;}
+  .collection-listing .product-block .product-info {padding: 5px 10px 0;}
+  .jdgm-preview-badge .jdgm-star.jdgm-star, .jdgm-prev-badge__text{font-size:10px!important;}
+  .jdgm-preview-badge[data-template="index"] {display:block!important;}
+  .product-feature span {
+  	position:relative;
+    padding-left:10px;
+  }
+  .product-feature span::before {
+  	content:"";
+    width: 5px;
+    height: 5px;
+    background: #ff0000;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-59%);
+  }
+  .addCart input {font-size:13px;background: black;border: 0;border-radius: 2em;}
+  .addCart input:hover {color:#fff;}
+  .addCart input:focus {outline:none;box-shadow: none;} 
+  .collection-listing .product-block .product-info {min-height:180px}
+  .addCart {
+   	position: absolute;
+    bottom: 13px;
+    z-index: 99;
+    margin: 10px auto 0;
+  }
+  @media screen and (max-width: 767px) {
+    .collection-listing .slick-list {padding-left: 0!important;}
+    .collection-listing .slick-track {display: flex;}
+    .collection-listing .product-block .product-info .reducedfrom {display:inline-block;}
+    .collection-listing .rimage-wrapper img {
+    	width: 100%;
+    	height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+   
+    .collection-listing .product-block .product-info {min-height:200px}
+    .addCart {
+      bottom: 15px;
+    }
+    .template-index h2.hometitle, .launch-head h2 {
+      font-size: 35px !important;
+      line-height: 1em !important;
+      font-weight: 600 !important;
+      padding: 0 10px!important;
+    }
+  }
+  
+  @media screen and (min-width: 1101px) {
+  	.collection-listing .slick-slide {
+      min-width: 300px !important;
+      max-width: initial;
+    }
+  }
+</style>
+<script type="text/javascript">
+	$(document).ready(function($) {
+      $('.product-list').slick({
+        dots: false,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        autoplay: false,
+        autoplaySpeed: 2000,
+        arrows: true,
+        responsive: [
+          {
+          breakpoint: 3000,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3
+          }
+        },
+          
+          {
+          breakpoint: 1920,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3
+          }
+        },
+        {
+           breakpoint: 767,
+           settings: {
+              arrows: false,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              centerMode: true,
+			  centerPadding: '20%'
+           }
+        }]
+    });
+      $(".product-feature span").each(function(){
+      	var feature = $(this).text();
+        feature = feature.replace("✓" , "");
+        $(this).text(feature);
+      });
+//       const sectionTitle = '{{ section.settings.title | escape }}'
+	  var userSource = '';
+      if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+      else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+      else userSource = 'Desktop';
+      $('.product-list').on('click', function(){
+        const sectionTitle = $(this).closest('.shopify-section').find('h2').text();
+        clevertap.event.push("Homepage Cards section clicked", {
+          "userSource": userSource,
+          "secttion Title": sectionTitle
+        });
+    });
+});
+</script>
+{% schema %}
+  {
+    "name": "Featured collection",
+    "settings": [
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Heading",
+			"default": "Best selling"
+		},
+		{
+			"type": "collection",
+			"id": "collection",
+			"label": "Collection"
+		},
+		{
+			"type": "checkbox",
+			"id": "use_carousel",
+			"label": "Enable carousel"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background color",
+			"default": "#f5f5f5"
+		}
+	],
+	"presets": [
+	  {
+		"name": "Featured collection",
+        "category": "Collection",
+        "settings": {
+          "title": "Featured collection",
+		  "collection": "",
+          "use_carousel": true
+        }
+	  }
+	]
+  }
+{% endschema %}

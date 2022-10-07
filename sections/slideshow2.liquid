@@ -1,0 +1,171 @@
+<div class="slideshow-row section-id-{{ section.id }}" data-section-type="slideshow">
+  <div class="new-launches-headings">
+  <h2>New launches</h2>
+  <h6>Explore the exciting new audio products and accessories lined up to enthral your senses.</h6>
+  </div>
+  {% unless settings.use_fullwidth_layout %}<div class="container uncontain-desktop-down">{% endunless %}
+  <div class="slideshow auto-play scaled-text-base">
+    {% for block in section.blocks %}
+
+    <div class="slide slide-{{ forloop.index }}" {{ block.shopify_attributes }}>
+      {% if block.settings.link_url != blank %}<a href="{{ block.settings.link_url }}">{% endif %}
+
+      {% if block.settings.image == blank %}
+      <div class="placeholder-image placeholder--banner {% if block.settings.heading != blank or block.settings.text != blank %}dark{% endif %}">
+        {% capture current %}{% cycle 1, 2 %}{% endcapture %}
+        {{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+      {% elsif block.settings.mobile_image == blank %}
+        {% include 'responsive-image', image: block.settings.image, manual_image_load: true, no_max_width: true %}
+      {% else %}
+        <div class="desktop-only">
+          {% include 'responsive-image', image: block.settings.image, manual_image_load: true, no_max_width: true %}
+        </div>
+        <div class="mobile-only">
+          {% include 'responsive-image', image: block.settings.mobile_image, manual_image_load: true, no_max_width: true %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.heading != blank or block.settings.text != blank or block.settings.button_text != blank %}
+      <div class="overlay-text overlay-{{ block.settings.position }} {% if block.settings.mobile_image != blank %}overlay-text--no-mobile-stack{% endif %}">
+        <div class="inner">
+          <div class="text">
+            <div class="scaled-text">
+              {% if block.settings.heading != blank %}
+                <div>{{ block.settings.heading | escape }}</div>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div class="second-line">{{ block.settings.text | escape }}</div>
+              {% endif %}
+              {% if block.settings.button_text != blank %}
+                <span class="button altcolour">{{ block.settings.button_text }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if block.settings.link_url != blank %}</a>{% endif %}
+    </div>
+
+    {% endfor %}
+  </div>
+  {% unless settings.use_fullwidth_layout %}</div>{% endunless %}
+</div>
+
+<style type="text/css">
+  {% for block in section.blocks %}
+  {%- assign background_alpha = block.settings.overlay_bg | color_extract: 'alpha' -%}
+  .section-id-{{ section.id }} .slide-{{ forloop.index }} .overlay-text .text > div {
+    color: {{ block.settings.overlay_color }};
+    background: {% if background_alpha == 0 %}transparent{% else %}{{ block.settings.overlay_bg | color_modify: 'alpha', 0.8 }}{% endif %};
+  }
+  {% endfor %}
+</style>
+
+
+{% schema %}
+  {
+    "name": "Slideshow",
+    "max_blocks": 8,
+    "settings": [
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Slide",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Primary image",
+            "info": "1200px wide minimum"
+          },
+          {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile image"
+          },
+          {
+            "type": "url",
+            "id": "link_url",
+            "label": "Slide link"
+          },
+          {
+            "type": "header",
+            "content": "Overlay"
+          },
+          {
+            "type": "paragraph",
+            "content": "Without a mobile image, overlay text will show underneath the image on mobile screens."
+          },
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Slideshow"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Subheading",
+            "default": "Tell your story with images"
+          },
+          {
+            "type": "text",
+            "id": "button_text",
+            "label": "Button text"
+          },
+          {
+            "type": "select",
+            "id": "position",
+            "label": "Text alignment for large screens",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "centre",
+                "label": "Center"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ],
+            "default": "centre"
+          },
+          {
+            "type": "color",
+            "id": "overlay_color",
+            "label": "Text color",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "overlay_bg",
+            "label": "Background color",
+            "default": "#464654"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Slideshow",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          },
+           {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

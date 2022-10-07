@@ -1,0 +1,100 @@
+<div class="ppsaletimer">
+  <div class="ppsaletimer-inner">
+  	<p class="timer-title" style="font-size:16px;line-height: normal;margin-bottom: 0px;">{{ block.settings.timer_text }}</p>
+    <p class="m-0 ppdemo">
+      <span class="flex-span colon">
+        <span class="ppdays"></span>
+        <span class="timer-text">days</span>
+      </span>
+      <span class="flex-span colon">
+          <span class="pphours"></span>
+          <span class="timer-text">hours</span>
+      </span>
+      <span class="flex-span colon">
+        <span class="ppmins"></span>
+        <span class="timer-text">mins</span>
+      </span>
+      <span class="flex-span">
+        <span class="ppsecs" style="color:#ea2127;"></span>
+        <span class="timer-text">secs</span>
+      </span>
+    </p>
+  </div>
+</div>
+
+<style>
+  .ppsaletimer {
+    color: #d9d9d9 !important;
+    background: transparent;
+    display: inline-block;
+    padding: 6px;
+    border-radius: 5px;
+    margin-top: 10px;
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: max-content;
+    z-index: 9999;
+  } 
+  .flex-span {
+  	display: inline-flex;
+    flex-flow: column;
+    line-height: normal;
+    align-items: center;
+    margin: 0px 10px 0 0;
+    font-size: 14px;
+    position: relative;
+    min-width: 90px;
+  }
+  span.flex-span.colon:after {
+    content: ":";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-59%);
+    font-size: 15px;
+  }
+  .ppdays, .pphours, .ppmins, .ppsecs {font-size: 55px;font-weight: 700;}
+  .timer-text {
+  	font-size: 15px!important;
+    text-transform: uppercase;
+  }
+  @media screen and (max-width: 500px) {
+    .flex-span {min-width: 30px;}
+  	.ppdays, .pphours, .ppmins, .ppsecs {font-size: 15px;}
+    .timer-text {font-size: 12px!important;}
+  }
+</style>
+<script>
+  $(document).ready(function($) {
+  	var countdown_date = '{{block.settings.timer}}';
+	var countDownDate = new Date(countdown_date).getTime();
+    var now, distance;
+	var x = setInterval(function() {
+      now = new Date().getTime();
+      distance = countDownDate - now;
+      if(distance <= 0) {
+        $(".ppsaletimer").hide();
+      }
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      days = pad2(days);
+      hours = pad2(hours);
+      minutes = pad2(minutes);
+      seconds = pad2(seconds);
+      document.querySelector(".ppdays").textContent = days;
+      document.querySelector(".pphours").innerHTML = hours;
+      document.querySelector(".ppmins").innerHTML = minutes;
+      document.querySelector(".ppsecs").innerHTML = seconds;
+	}, 1000);
+  
+  function pad2(number) {
+    return (number < 10 ? '0' : '') + number
+  }
+  });
+    
+</script>

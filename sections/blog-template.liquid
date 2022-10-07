@@ -1,0 +1,269 @@
+<script src="{{ 'infinite-scroll.min.js' | asset_url }}"></script>
+{% capture chevron_right %}<span class="icon-small icon-natcol">{% include 'svg-chevron-right' %}</span>{% endcapture %}
+<div data-section-type="blog-template">
+  {% paginate blog.articles by 6 %}
+  <div class="main-banner-img">
+  	<div class="page-header cf desktop-only">
+      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-desktop.jpg?v=1604480765" alt="Blogs" />
+    </div>
+    <div class="page-header cf mobile-only">
+      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-Mobile.jpg?v=1604480761" alt="Blogs" />
+    </div>
+    {% comment %}
+    {% if blog.url == "/blogs/blog" %}
+      <h1 class="majortitle text-white">the boAt blog</h1>
+    {% else %}
+      <h1 class="majortitle text-white">Trending News at boAt</h1>
+    {% endif %}
+    {% endcomment %}
+  </div>
+  {% assign show_tags = false %}
+      {% for tag in blog.all_tags %}
+      {% unless tag contains 'meta-' %}{% assign show_tags = true %}{% endunless %}
+      {% endfor %}
+  {% if show_tags %}
+  {% assign current_tags_size = current_tags | size %}
+  <div class="tags nav-row spaced-row">
+    <ul>
+      {% for tag in blog.all_tags %}
+      {% unless tag contains 'meta-' %}
+      {% if current_tags contains tag %}
+      <li class="active">{{ tag | append: ' <span class="x">&times;</span>' | link_to_remove_tag: tag }}</li>
+      {% else %}
+      <li>{{ tag | link_to_tag: tag }}</li>
+      {% endif %}
+      {% endunless %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  <div class="container">
+    <div class="page-header cf">
+      
+      
+	  {% comment %}
+      <div class="filters">
+        {% if show_tags %}
+        <a href="#" data-toggle-target=".tags.nav-row">{{ 'blogs.filtering.filter' | t }} <span class="state">+</span></a>
+        {% endif %}
+      </div><!-- /.filters -->
+      {% endcomment %}
+      <div class="social-area">
+        {% include 'social-sharing' with blog %}
+        {% comment %}
+        <a class="rsslink" href="{{ blog.url }}.atom" title="{{ blog.title | escape }} RSS">
+        	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/rss.png?v=1608279567" alt="rss" style="height: 30px;"/>
+        </a>
+        {% endcomment %}
+      </div>
+    </div>
+  </div><!-- /.pagetitle -->
+
+  
+
+  {% if section.settings.layout == 'columns' %}<div class="container">{% endif %}
+
+  {% if section.settings.crop_image and section.settings.layout == 'columns' %}
+    {% assign aspect_ratio_split = section.settings.crop_style | split: '-' %}
+    {% assign aspect_ratio = 1.0 | times: aspect_ratio_split[0] | divided_by: aspect_ratio_split[1] %}
+  {% else %}
+    {% assign aspect_ratio = false %}
+  {% endif %}
+
+  <div class="article-list article-layout--{{ section.settings.layout }}">
+
+    {% for article in blog.articles %}
+
+    <div class="article">
+      <div class="article__inner {% if section.settings.layout != 'columns' %}container{% endif %}">
+
+        {% if article.image %}
+        <div class="article-image">
+          <a href="{{ article.url }}">
+            {% include 'responsive-image', image: article.image, aspect_ratio: aspect_ratio %}
+          </a>
+        </div>
+        {% endif %}
+		<div class="meta">
+          <span class="iconmeta time">
+            {% if section.settings.show_date %}
+              {{ article.published_at | date: format: 'month_date_year' }}
+            {% endif %}
+            {% if section.settings.show_author %}
+              {% if section.settings.show_date %}{% endif %}
+            {% comment %}
+              <span class="author">{{ article.author }}</span>
+            {% endcomment %}
+            {% endif %}
+          </span>
+		  {% comment %}
+          {% if section.settings.show_article_tags %}
+          {% capture tag_markup %}
+          <div class="iconmeta tags">
+            <span class="label">{{ 'blogs.article.tags' | t }}:</span>
+            {% for tag in article.tags %}
+            {% unless tag contains 'meta-' %}
+            {{ tag | link_to_tag: tag }}
+            {% endunless %}
+            {% endfor %}
+          </div>
+          {% endcapture %}
+          {% if tag_markup contains '</a>' %}{{ tag_markup }}{% endif %}
+          {% endif %}
+          {% endcomment %}
+        </div>
+        <h2>{{ article.title | link_to: article.url }}</h2>
+
+        <div class="user-content">
+          {{ article.excerpt_or_content }}
+        </div>
+        {% if section.settings.show_article_tags %}
+        <div class="meta-tags">
+          {% capture tag_markup %}
+          <div class="iconmeta tags">
+            <span class="label hide">{{ 'blogs.article.tags' | t }}:</span>
+            {% for tag in article.tags %}
+            {% unless tag contains 'meta-' %}
+            {{ tag | link_to_tag: tag }}
+            {% endunless %}
+            {% endfor %}
+          </div>
+          {% endcapture %}
+          {% if tag_markup contains '</a>' %}{{ tag_markup }}{% endif %}
+        </div>
+        {% endif %}
+
+      </div><!-- /.container -->
+    </div><!-- /.article -->
+
+    {% else %}
+
+    <div class="container"><h5 class="align-centre fully-spaced-row">{{ 'blogs.general.no_matches' | t }}</h5></div>
+
+    {% endfor %}
+  </div>
+  <div id="spinner1" class="spinner text-center">
+  	<img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Spinner-0.9s-60px.gif?v=1630394416" alt="Load More" />
+  </div>
+  {% if section.settings.layout == 'columns' %}</div>{% endif %}
+  <div class="article-newsletter" style="background: #1c1c1c;padding: 20px;margin:20px auto;max-width:750px;">
+      <div class="row">
+        <div class="col-md-6 text-on-left">
+          <p style="font-size: 13px;margin: 0;color:#999;font-style: italic;">Liked our articles? Subscribe for more quirky reads.</p>
+        </div>
+        <div class="col-md-6 form-on-right">
+          <div class="article-news-form">
+            <div class="form-group" style="margin: 0;">
+              <div class="myform" style="display: flex;margin: 0;">
+              	<input autocomplete="new-email" style="max-width: 200px;font-size: 12px;" type="email" name="email" id="article_email" placeholder="Email Address">
+              <button style="border-radius: 5px;background: transparent;border-color: #ff0000;color: #fff;" class="button news-btn" type="submit">SUBSCRIBE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="container pagination-row">{% include 'pagination-control' %}</div>
+
+  {% endpaginate %}
+</div>
+<style>
+  .thankyou-msg-news,
+  .error-msg-news, 
+  .aluser-msg-news {color:#ff0000;font-size:12px;}
+  #content {margin-top:0;}
+  input#article_email:focus::-webkit-input-placeholder {color:transparent!important;}
+  @media screen and (max-width:767px) {
+    .article-newsletter {text-align:center;}
+    .myform {justify-content: center;}
+  }
+</style>
+<script>
+$(".news-btn").click(function(){var e=document.getElementById("article_email").value;""!==e&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)?localStorage.getItem("userEmailIdNews")===e?$(".form-group").append('<p class="aluser-msg-news">You are already subscribed!!</p>'):(localStorage.setItem("userEmailIdNews",e),clevertap.onUserLogin.push({Site:{Email:e,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:e,Source:"Articles Page"}),$(".form-group").append('<p class="thankyou-msg-news">Thank You for subscribing. Please check your inbox!</p>')):$(".form-group").append('<p class="error-msg-news">Please enter a valid email Id!</p>');setTimeout(function(){$(".error-msg-news, .thankyou-msg-news, .aluser-msg-news").remove()},5e3)});
+let ias = new InfiniteAjaxScroll('.article-list', {
+    item: '.article',
+    next: '.next',
+    pagination: '.pagination',
+    spinner: {
+      element: '.spinner',
+      delay: 300,
+      show: function(element) {
+        element.style.display = 'block';
+      },
+      hide: function(element) {
+        element.style.display = 'none';
+      }
+    }
+  });
+</script>
+{% schema %}
+  {
+    "name": "Blog pages",
+    "settings": [
+      {
+        "type": "select",
+        "id": "layout",
+        "label": "Layout",
+        "default": "list",
+        "options": [
+          {
+            "label": "List",
+            "value": "list"
+          },
+          {
+            "label": "Grid",
+            "value": "columns"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_date",
+        "label": "Show date",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_author",
+        "label": "Show author",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_article_tags",
+        "label": "Show tags underneath articles",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Grid layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "crop_image",
+        "label": "Crop featured images",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "crop_style",
+        "label": "Crop style",
+        "options": [
+          {
+            "value": "1-1",
+            "label": "Square"
+          },
+          {
+            "value": "3-4",
+            "label": "Portrait"
+          },
+          {
+            "value": "16-9",
+            "label": "Landscape"
+          }
+        ],
+        "default": "16-9"
+      }
+    ]
+  }
+{% endschema %}

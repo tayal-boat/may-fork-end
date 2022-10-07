@@ -1,0 +1,181 @@
+{% layout none %}
+
+<!DOCTYPE html>
+<html class="no-js" lang="{{ shop.locale }}">
+<head>
+
+  <!-- Symmetry 4.6.2 -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="theme-color" content="{{ settings.btn_col }}">
+
+  {% if settings.favicon != blank and settings.favicon contains '.png' %}
+  <link rel="shortcut icon" href="{{ settings.favicon | img_url: 'master' }}" type="image/png" />
+  {% elsif settings.favicon != blank and settings.favicon contains '.ico' %}
+  <link rel="shortcut icon" href="{{ settings.favicon | img_url: 'master' }}" type="image/x-icon" />
+  {% endif %}
+  
+  <link rel="canonical" href="{{ canonical_url }}" />
+
+  {{ 'styles.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'animation.css' | asset_url | stylesheet_tag }}
+
+
+  {{ 'https://code.jquery.com/jquery-3.3.1.min.js' | script_tag }}
+  <script>
+    window.theme = window.theme || {};
+    theme.jQuery = jQuery;
+    theme.money_format = {{ shop.money_format | json }};
+    theme.money_container = '.theme-money';
+    theme.strings = {
+      previous: {{ 'general.accessibility_labels.previous' | t | json }},
+      next: {{ 'general.accessibility_labels.next' | t | json }}
+    };
+    document.documentElement.className = document.documentElement.className.replace('no-js', '');
+  </script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+ 
+<!--   <script type="text/javascript" src="https://sdk.qikify.com/tmenu/app-v5.js?token=zglT1wgEYgk5QY3uksUVJpnOhZVSKb34&shop=boat-nirvana.myshopify.com" defer="defer"></script> -->
+<!--   <script src="//staticxx.s3.amazonaws.com/aio_stats_lib_v1.min.js?v=1.0"></script> -->
+<!--   <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0091/3912.js" async="async"></script> -->
+	
+  <style>
+    .productDescriptions1, .productDescriptions1 h1{
+    	color: #ffffff !important;
+    }
+    .ac-tabs input:checked ~ .ac-tab-content{
+      max-height: initial !important;
+    }
+    #content{
+    margin-top: 15px;
+    }
+  
+  </style>
+</head>
+
+<body class="template-{{ template | split: '.' | first }}">
+  <a class="skip-link visually-hidden" href="#content">{{ 'general.accessibility_labels.skip_to_content' | t }}</a>
+
+  <main id="content" role="main">
+    <div class="container cf">
+
+{%- assign variant = bold_selected_or_first_available_variant -%}
+{%- include 'bold-variant' with variant, output: 'none' -%}
+
+
+<div data-section-type="product-template">
+<!--   <div class="loading" style="display:block;">
+    <div class="spinner">
+    	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/t/11/assets/286.gif?11553">
+  	</div>
+  </div> -->
+
+  {%- assign inv_mngmt_size = bold_selected_or_first_available_variant.inventory_management | size -%}
+  {%- assign limit_as_int = settings.prod_stock_warn_limit_int | plus: 0 -%}
+  {%- assign meta_label = false -%}
+  {%- for tag in product.tags -%}
+    {%- if tag contains 'meta-label-' -%}
+      {%- assign meta_label = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if variant.available != true -%}
+    {%- assign label_status = 'variant-status--unavailable' -%}
+  {%- else -%}
+    {%- if meta_label == true -%}
+      {%- assign label_status = 'has-custom-label' -%}
+    {%- elsif variant.compare_at_price > bold_variant_price -%}
+      {%- assign label_status = 'variant-status--on-sale' -%}
+    {%- elsif settings.prod_stock_warn_show and bold_variants_size == 1 and inv_mngmt_size > 0 and bold_selected_or_first_available_variant.inventory_quantity > 0 and bold_selected_or_first_available_variant.inventory_quantity <= limit_as_int -%}
+      {%- assign label_status = 'has-inventory-label' -%}
+    {%- else -%}
+      {%- assign label_status = 'no-label' -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- assign lightbox_size = 'master' -%}
+
+    <div class="container-fluid">
+    <div class="description user-content padded-row">{{ product.description }}</div>
+
+    {% comment %} Add code to show under the description on the line below this one, if full-width underneath the image {% endcomment %}
+    <!-- Underneath the description -->
+
+  </div><!-- /.product-detail -->
+  
+</div>
+
+<style>
+.loading{position: fixed;background-color: #fff;opacity: .9;top: 0;left: 0;width: 100%;    height: 100%;display: none;z-index: 999999;}
+.spinner{width: 40px;height: 40px;position: relative;margin: 25% auto;}
+.double-bounce1, .double-bounce2 {width: 100%;height: 100%;border-radius: 50%;background-color: red;opacity: 0.6;position: absolute;top: 0;left: 0;-webkit-animation: sk-bounce 2.0s infinite ease-in-out;animation: sk-bounce 2.0s infinite ease-in-out;}
+.double-bounce2 {-webkit-animation-delay: -1.0s;animation-delay: -1.0s;background-color: yellow;}
+.productSpecificationbox table{ color:#FFF}
+.productPart-fourth .productSpecificationbox table td p[style]{ color:#FFF!important}
+@-webkit-keyframes sk-bounce { 0%, 100% { -webkit-transform: scale(0.0) } 50% { -webkit-transform: scale(1.0) }}
+@keyframes sk-bounce { 0%, 100% { transform: scale(0.0); -webkit-transform: scale(0.0); } 50% { transform: scale(1.0); -webkit-transform: scale(1.0); }}
+</style>
+<style>
+.prodct_variant {padding: 0; display: flex;flex-wrap: wrap;margin: 0 0 -10px;list-style: none;}
+.prodct_variant li {overflow: hidden;box-sizing: border-box;display: inline-block;padding: 0 15px;margin: 0 10px 10px 0;min-width: 4.5em;height: 48px;line-height: 46px;border: 1px solid #262626; background: #000; color: #fff; position: relative;	text-align: center;	cursor: pointer;}
+.prodct_variant li.activevar, .prodct_variant li.activevar:hover {border-color: #fff;}
+.product_section {height: 967px;background-size: 100% 100%;}
+.styled-select.has-clickyboxes {display: none;}
+</style>
+
+
+{{ 'customproduct.css' | asset_url | stylesheet_tag }}
+{{ 'responsive.css' | asset_url | stylesheet_tag }}
+<script type="application/json" id="ProductJson-{{ product.id }}">
+  {%- include 'bold-product', output: 'json' -%}
+</script>
+
+{% assign current_variant = bold_selected_or_first_available_variant %}
+{%- include 'bold-variant' with current_variant, output: 'none' -%}
+
+
+
+    </div><!-- /.container -->
+  </main><!-- /#content -->
+
+
+  
+  {{ 'aos.js'  | asset_url | script_tag }}
+
+  {{ 'booster-page-speed-optimizer.js' | asset_url | script_tag }}
+  <script>
+    AOS.init({
+      duration: 1200,
+    })
+  </script>
+  <script src="https://script.plobalapps.com/js/PlobalBridge.js?v=4.5"></script>
+  <script>
+    window.onload = function(){
+      setTimeout(function(){
+           PlobalBridge.adjustWebViewHeight();
+      },1000);
+    
+      setTimeout(function(){ 
+    
+      var videTagElements = document.querySelectorAll('.ac-tabs a[video-url]');
+      for(var i=0;i<videTagElements.length;i++){
+          var link = videTagElements[i].getAttribute('video-url');
+          var title = videTagElements[i].innerText;
+          videTagElements[i].setAttribute('onclick',"event.preventDefault();PlobalBridge.openURLNew({'url':'"+link+"','title':'"+title+"','type':'in_app','request_method':'GET'});")
+      }
+      
+      var aTagElements = document.querySelectorAll('.ac-tabs a[href]');
+      for(var i=0;i<aTagElements.length;i++){
+          var link = aTagElements[i].href;
+          var title = aTagElements[i].innerText;
+          aTagElements[i].setAttribute('onclick',"PlobalBridge.openURLNew({'url':'"+link+"','title':'"+title+"','type':'browser','request_method':'GET'});")
+          aTagElements[i].href = '#';
+      }
+    }, 2000);
+  }
+</script>
+</body>
+</html>

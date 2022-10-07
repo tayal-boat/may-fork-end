@@ -1,13 +1,15 @@
-{{ 'st.css' | asset_url | stylesheet_tag }}
+<!-- {{ 'st.css' | asset_url | stylesheet_tag }} -->
+<link rel="alternate stylesheet" href="{{ 'st.css' | asset_url }}" title="styles" as="style" onload="this.title='';this.rel='stylesheet'">
 <script src="{{ 'st.js' | asset_url }}" defer></script>
 
 
 {% raw %}
-
-	<div class="st-autocomplete-container"></div>
     <div class="st-search-container"></div>
-{% endraw %}
+	<div class="st-autocomplete-container"></div>
 
+{% endraw %}
+ 
+<!-- End of SearchTap -->
 {% if template contains 'search' %}
 <script type="text/javascript">
   let url = window.location.href;
@@ -16,18 +18,15 @@
     "Page Url": url,
     "Search Term": term
   });
+  
+  if($('.st-no-results').length) {
+  	console.log('TRUE')
+  }
 </script>
 {% endif %}
-
 {% schema %}
   {
-    "name": "Section name",
+    "name": "searchtap",
     "settings": []
   }
 {% endschema %}
-
-{% stylesheet %}
-{% endstylesheet %}
-
-{% javascript %}
-{% endjavascript %}

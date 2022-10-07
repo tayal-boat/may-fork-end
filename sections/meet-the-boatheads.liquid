@@ -1,0 +1,159 @@
+<div class="container-fluid pos-relative cf mt-4 section-id-{{ section.id }}" data-section-type="custom-row">
+  <div class="boatheads">
+    {% for block in section.blocks %}
+    <div class="boatheads-row row">
+      <div class="boathead-text col-md-7">
+        <div class="content-wrapper boathead-content-wrapper">
+          <h3 class="boatheads-heading-normal"><a href="https://www.boat-lifestyle.com/pages/boat-head-experince" style="display: block;">Meet the boAtheads</a></h3>
+          <hr class="boatheads-hor-row" />
+          <div class="description">
+            <div class="boathead-name">
+              <a href="https://www.boat-lifestyle.com/pages/boat-head-experince" style="display: block;"><span class="text-uppercase">{{ block.settings.firstName }}</span><span class="text-uppercase">&nbsp;<span><strong>{{ block.settings.lastName }}</strong></span></span></a>
+            </div>
+            <div class="boathead-description">
+              {% if block.settings.catchyLine1 %}
+              <h4 class="catchy-line">
+                <a href="https://www.boat-lifestyle.com/pages/boat-head-experince" style="display: block;">
+                  <span class="catchy-word">{{ block.settings.catchyLine1 }}.</span>
+                  <span class="catchy-word">{{ block.settings.catchyLine2 }}.</span>
+                  <span class="catchy-word">{{ block.settings.catchyLine3 }}.</span>
+                </a>
+              </h4>
+              {% endif %}
+            </div>
+          </div>
+          <div class="description--content">
+              <p class="text-silver"><a href="https://www.boat-lifestyle.com/pages/boat-head-experince" style="display: block;">{{ block.settings.description }}</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="boathead-image col-md-5">
+        <div class="rimage-wrapper boathead-image-wrapper text-center">
+          <a href="https://www.boat-lifestyle.com/pages/boat-head-experince" style="display: block;">
+          	{% include 'responsive-image', image: block.settings.image %}
+          </a>
+        </div>
+      </div>
+      
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+ <script type="text/javascript"> 
+   $(document).ready(function(){
+      $('.boatheads').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: false,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        fade: true,
+        accessibility: true,
+        centerMode: true,
+        dots: false,
+        pauseOnFocus: false,
+        pauseOnHover: false,
+        cssEase: 'linear'
+      });
+    });
+
+   $(window).scroll(function(){
+	var docViewTop = $(window).scrollTop();
+    var docViewBottom = docViewTop + $(window).height();
+    var elemTop = $('.boatheads').offset().top;
+    var elemTop2 = $('.boathead-text').offset().top;
+    if ((elemTop <= docViewBottom) && (elemTop >= docViewTop)) {
+      	$('.boathead-image').addClass('fadeInLeft animated');
+    }
+     if ((elemTop2 <= docViewBottom) && (elemTop2 >= docViewTop)) {
+    	$('.boathead-text').addClass('fadeInLeft animated');
+    }
+     
+    
+  })
+   var userSource = '';
+    if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+    else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+    else userSource = 'Desktop';
+   $('.boatheads').on('click', function(){
+     clevertap.event.push("Meet the boAtheads section clicked", {"userSource": userSource});
+    });
+  </script>
+
+{% schema %}
+  {
+    "name": "Meet the Boatheads",
+	"max_blocks": 8,
+	"settings": [
+    ],
+    "blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image",
+                  "info": "1200px wide minimum"
+              },
+			  {
+                  "type": "text",
+                  "id": "alt",
+                  "label": "Image Alt Text"
+              },
+              {
+                  "type": "text",
+                  "id": "firstName",
+                  "label": "Boathead First Name"
+              },
+			  {
+                  "type": "text",
+                  "id": "lastName",
+                  "label": "Boathead Last Name"
+              },
+  			  {
+                  "type": "text",
+                  "id": "catchyLine1",
+                  "label": "Catchy Line 1"
+              },
+			  {
+                  "type": "text",
+                  "id": "catchyLine2",
+                  "label": "Catchy Line 2"
+              },
+			  {
+                  "type": "text",
+                  "id": "catchyLine3",
+                  "label": "Catchy Line 3"
+              },
+              {
+                  "type": "text",
+                  "id": "description",
+                  "label": "Boathead Description"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Meet the Boatheads",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,71 @@
+<div class="app-banner hide">
+  <div class="close-app-banner text-right">
+    <span class="btn-close text-white">&times;</span>
+  </div>
+  <div class="row">
+    <div class="col-3">
+      <div class="app-img">
+      	<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Boat-Logo_200x.png?v=1600753267" alt="logo" />
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="app-info">
+        <p class="text-white"><small>Download our App Now!</small></p>
+        <a class="text-white btn-dwnld" href="">GET NOW</a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .app-banner {padding: 10px;}
+  .app-info {
+  	display: flex;
+    line-height: normal;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .app-info p {
+  	margin: 0;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  .app-info a {
+  	background: #ff0000;
+    display: inline-block;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+  span.btn-close {
+  	font-size: 22px;
+    display: block;
+    margin-top: -10px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+</style>
+<script>
+  const userAgent = navigator.appVersion;
+  const appBanner = document.querySelector('.app-banner');
+  const btnDownload = document.querySelector('.btn-dwnld');
+  const btnClose = document.querySelector('.btn-close');
+  if (document.cookie.indexOf('AppBanner') == -1) {
+    if (userAgent.includes('Android')) {
+      appBanner.classList.remove('hide');
+      btnDownload.href = 'https://play.google.com/store/apps/details?id=boatlifestylein.android.app';
+      clevertap.event.push('App Banner Clicked', {
+        "Device": 'Android'
+      });
+    }
+    if (userAgent.includes('iPhone')) {
+      appBanner.classList.remove('hide');
+      btnDownload.href = 'https://apps.apple.com/us/app/id1521646593';
+      clevertap.event.push('App Banner Clicked', {
+        "Device": 'iPhone'
+      });
+    }
+  }
+  btnClose.addEventListener('click', function() {
+  	appBanner.classList.add('hide');
+    document.cookie = "AppBanner=Shown; max-age=86400; path=/;";
+  })
+</script>
