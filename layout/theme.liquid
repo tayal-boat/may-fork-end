@@ -195,6 +195,7 @@
     ></script>
     <!-- END CHEQ INVOCATION TAG -->
     {% render 'clevertap' %}
+    
   </head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
     {%- assign feature_classes = '' -%}
@@ -335,7 +336,7 @@
         document.addEventListener('scroll', scrollLoad);
       </script>
     {% endif %}
-    {%- render 'multiple-a2c' -%}
+    {% comment %} {%- render 'multiple-a2c' -%} {% endcomment %}
     {% unless template contains 'product' or template contains 'customers' %}
       {%- render 'bottom-navbar-mobile' -%}
     {% endunless %}
@@ -357,5 +358,16 @@
        }
       });
     </script>
+    {% if settings.enable_mob_bg and template == 'index' %}
+      <style>
+        @media screen and (max-width: 767px) {
+          #main {
+            background: url({{ settings.home_bg_image }}) !important;
+            background-repeat: no-repeat;
+            background-size: cover !important;
+          }
+        }
+      </style>
+    {% endif %}
   </body>
 </html>
