@@ -638,16 +638,18 @@
 
 
 
-{% comment %}            {%- if section.settings.show_recommendations -%}
+           {%- if section.settings.show_recommendations -%}
             <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
               {%- assign acceptable_recommendations_count = 0 -%}
 
               {%- for product in recommendations.products -%}
+         
                 {%- assign matching_product = cart.items | where: 'product_id', product.id | first -%}
 
                 {%- if matching_product == blank -%}
                   {%- assign acceptable_recommendations_count = acceptable_recommendations_count | plus: 1 -%}
                 {%- endif -%}
+    
               {%- endfor -%}
 
               {%- if recommendations.performed -%}
@@ -663,7 +665,8 @@
                         <div class="mini-cart__recommendations-list">
                           {%- assign shown_products_count = 0 -%}
 
-                          {%- for product in recommendations.products -%}
+                          {%- for product in collections['gift-box'].products -%}
+            
                             {%- if shown_products_count >= 6 -%}
                               {%- break -%}
                             {%- endif -%}
@@ -671,9 +674,11 @@
                             {%- assign matching_product = cart.items | where: 'product_id', product.id -%}
 
                             {%- if matching_product.size == 0 -%}
+            
                               {%- assign shown_products_count = shown_products_count | plus: 1 -%}
                               {%- render 'product-item', product: product, reduced_content: true, reduced_font_size: true, hide_secondary_image: true, sizes_attribute: '(max-width: 740px) 65px, 92px' -%}
                             {%- endif -%}
+               
                           {%- endfor -%}
                         </div>
                       </div>
@@ -689,7 +694,7 @@
               {%- endif -%}
             </cart-drawer-recommendations>
           {%- endif -%}
-{% endcomment %}            
+       
         </div>
            <div class="d-flex align-items-center">
 <style>
@@ -880,7 +885,7 @@ display: block;
           </div>
 
       {%- if section.settings.show_checkout_button -%}
-            {% if cart.total_price <= 4900000 %}
+            {% if cart.total_price <= 4700000 %}
                 {%- assign magic_ok = true -%}
                 {%- assign only_gk = false -%}
                 {%- assign is_validation_ok = true -%}
