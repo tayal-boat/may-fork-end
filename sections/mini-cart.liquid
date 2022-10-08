@@ -1005,24 +1005,33 @@ $(".header__icon-list").css("pointer-events", "none");
 $(window).on("load", function(){
 $(".header__icon-list").css("pointer-events", "auto");
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
-var freepqnty;
-document.addEventListener('cart:updated', function(event) {
-  let cart = event.detail.cart.items; // Get the updated content of the cart
-  for (let i=0; i <= cart.length-1; i++){
-   if (cart[i].properties.Free){
-     let freenpqnty = Number(cart[i].quantity);
-     console.log(freenpqnty.type)
-     if (freenpqnty > freepqnty){
-      console.log("add free product");
-    }else if (freenpqnty < freepqnty){
-      console.log("remove free product");
-    }else{
-      console.log("no change");
-    }
-    freepqnty = freenpqnty 
+var cartItem;
+let qnty;
+jQuery.getJSON('/cart.js', function(cart) {
+  cartItem = cart.items;
+  for (let i=0; i <= cartItem.length-1; i++){
+    if (cartItem[i].properties.Free){
+      qnty = cartItem[i].quantity
     }
   }
-});
+} );
+
+  document.addEventListener('cart:updated', function(event) {
+  let cart = event.detail.cart.items; // Get the updated content of the cart
+    for (let i=0; i <= cart.length-1; i++){
+     if (cart[i].properties.Free){
+     let freenpqnty = cart[i].quantity;
+     if (freenpqnty > qnty){
+      console.log("add free product");
+     }else if (freenpqnty < qnty){
+      console.log("remove free product");
+     }else{
+      console.log("no change");
+    }
+    qnty = freenpqnty
+    }
+  }
+ });
 });
 
 $(document).ready(function(){
