@@ -1004,7 +1004,25 @@ $(".header__icon-list").css("pointer-events", "none");
 }
 $(window).on("load", function(){
 $(".header__icon-list").css("pointer-events", "auto");
-$('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
+// $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
+var freepqnty;
+document.addEventListener('cart:updated', function(event) {
+  let cart = event.detail.cart.items; // Get the updated content of the cart
+  for (let i=0; i <= cart.length-1; i++){
+   if (cart[i].properties.Free){
+     let freenpqnty = Number(cart[i].quantity);
+     console.log(freenpqnty.type)
+     if (freenpqnty > freepqnty){
+      console.log("add free product");
+    }else if (freenpqnty < freepqnty){
+      console.log("remove free product");
+    }else{
+      console.log("no change");
+    }
+    freepqnty = freenpqnty 
+    }
+  }
+});
 });
 
 $(document).ready(function(){
@@ -1013,11 +1031,11 @@ const config_ = { attributes: false, childList: true, subtree: false };
 const callback_ = (mutationList, observer) => {
 for (const mutation of mutationList) {
   console.log('mutation')
-  let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
-  console.log('price',total_price);
-  if ($('.custom-gift-button').length > 0) {
-    $('.custom-gift-button')[0].click();
-  }
+  // let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
+  // console.log('price',total_price);
+ // if ($('.custom-gift-button').length > 0) {
+  //  $('.custom-gift-button')[0].click();
+  //}
   
 $('#mini-cart-form .line-item').each(function() {
   let dataItemId = $(this).data('item-id');
@@ -1034,7 +1052,7 @@ $('#mini-cart-form .line-item').each(function() {
 const observer_ = new MutationObserver(callback_);
 observer_.observe(targNode, config_);
 
-const customer_id = "{{customer.id}}"
+{%- comment -%} const customer_id = "{{customer.id}}"
  $('#mini-cart-form .line-item').each(function() {
   let dataItemId = $(this).data('item-id');
     if (dataItemId == giftId){
@@ -1042,7 +1060,7 @@ const customer_id = "{{customer.id}}"
            $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
           }
       }
-});
+}); {%- endcomment -%}
 
 });
 </script>
