@@ -102,7 +102,7 @@
         {{- content_for_header -}}
     {% endcase %}
     <!-- content for header -->
-
+    
     {% # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer %}
     <script>
       /*!@shinsenter/defer.js@3.3.0*/
@@ -132,14 +132,8 @@
         true
       );
     </script>
-    <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
-    {%- if template == 'index' -%}
-      <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
-    {%- endif %}
-    {%- render 'wizrocket_variables_generator' -%}
-    {%- render 'ms-clarity' -%}
 
+    {{ 'algolia_config.js' | asset_url | script_tag }}
     <script type="text/template" id="template_algolia_money_format">
       {% include 'algolia_money_format' %}
     </script>
@@ -179,6 +173,24 @@
     <script type="text/template" id="template_algolia_autocomplete_footer">
       {% include 'algolia_autocomplete_footer.hogan' %}
     </script>
+    
+    <script src="{{ 'algolia_externals.js' | asset_url }}" defer></script>
+    {{ 'algolia_init.js' | asset_url | script_tag }}
+    <script src="{{ 'algolia_analytics.js' | asset_url }}" defer></script>
+    <script src="{{ 'algolia_translations.js' | asset_url }}" defer></script>
+    <script src="{{ 'algolia_helpers.js' | asset_url }}" defer></script>
+    <script src="{{ 'algolia_autocomplete.js' | asset_url }}" defer></script>
+    <script src="{{ 'algolia_facets.js' | asset_url }}" defer></script>
+    <script src="{{ 'algolia_sort_orders.js' | asset_url }}" defer></script>
+    <script src="{{ 'algolia_instant_search.js' | asset_url }}" defer></script>
+    <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
+    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
+    {%- if template == 'index' -%}
+      <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
+    {%- endif %}
+    {%- render 'wizrocket_variables_generator' -%}
+    {%- render 'ms-clarity' -%}
+
     {% if template contains 'product' %}
       {% render 'product-css' %}
       {%- render 'product-js' -%}
