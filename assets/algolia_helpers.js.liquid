@@ -138,6 +138,7 @@
     },
     badge: function badge() {
       var res = '';
+      var res_class = '';
       // console.log(this);
       var tags = this.tags;
       var price_ratio = this.price_ratio;
@@ -152,7 +153,19 @@
         res = '<div class="aa-product-badge flash-sale-badge">' + res + '</div>';
     }else{
       for (var i = 0; i < tags.length ; i++) {
-        if(tags[i].includes('meta-label-lowest-price') && comparing){
+
+        if( tags[i].includes('Coupon-') ){
+          var temp_res = tags[i].split('-')[1].split('|');
+          res = '₹ '+temp_res[0]+' OFF ON '+temp_res[1];
+          res_class = 'coupon-label';
+          break;
+        }
+        else if( tags[i].includes('Free-') ){
+          res = tags[i].replace('-',' ');
+          res_class = 'free-label';
+          break;
+        }
+        else if(tags[i].includes('meta-label-lowest-price') && comparing){
             res = 'You Save: ' + Math.floor(discount_ratio * 100) + '%';
         }
         else if(tags[i].includes('meta-label-sold')) {
@@ -162,7 +175,7 @@
           res = tags[i].replace('meta-label-','').replace('-',' ');
         }
       }
-      res = '<div class="aa-product-badge">' + res + '</div>';
+      res = '<div class="aa-product-badge '+res_class+' ">' + res + '</div>';
     } 
     }
       return res;
