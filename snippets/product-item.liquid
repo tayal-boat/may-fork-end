@@ -45,11 +45,7 @@
     <span class="label label--highlight custom-label coming-soon">COMING SOON</span>
   {% endif %}
   {%- if product.available == true -%}
-    {% if product.tags contains 'Free-Earphones' %}
-      <span class="label label--highlight custom-label free-label ">
-        🎁 Free Earphones
-      </span>
-    {% elsif product.tags contains 'flash-sale' and settings.enable_flash_sale %}
+    {% if product.tags contains 'flash-sale' and settings.enable_flash_sale %}
       {%- if product.price < product.compare_at_price -%}
         <span class="label label--highlight custom-label lowest-price flash">
           <img
@@ -57,31 +53,22 @@
             loading="lazy"
             alt="thunder"
           >
-          
-              {{
-                product.compare_at_price
-                | minus: discounted_price
-                | times: 100.0
-                | divided_by: product.compare_at_price
-                | round
-                | append: '%'
-              }}
+          {{ settings.flash_products_label }}
         </span>
       {%- endif -%}
     {% else %}
       {%- for tag in product.tags -%}
-
         {%- if tag contains 'Coupon-' -%}
           <span class="label label--highlight custom-label coupon-label {{ tag | remove: 'meta-label-sold' }}">
             ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
           </span>
           {%- break -%}
 
-        {% comment %} {%- elsif tag contains 'Free-' -%}
+        {%- elsif tag contains 'Free-' -%}
         <span class="label label--highlight custom-label free-label {{ tag | remove: 'meta-label-sold' }}">
           🎁 {{ tag | split: '-' | first }} {{ tag | split: '-' | last }}
         </span>
-        {%- break -%} {% endcomment %}
+        {%- break -%}
 
         {%- else -%}
           {%- if tag contains 'meta-label-lowest-price' -%}
@@ -160,7 +147,10 @@
           loading="lazy"
           data-media-id="{{ product.featured_media.id | escape }}"
           sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes', image: product.selected_or_first_available_variant.image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' -%}
+          {% render 'image-attributes',
+            image: product.selected_or_first_available_variant.image,
+            sizes: '200,300,400,500,600,700,800,900,1000,1100,1200'
+          -%}
         >
       {% else %}
         <img
@@ -168,7 +158,10 @@
           loading="lazy"
           data-media-id="{{ product.featured_media.id | escape }}"
           sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes', image: product.featured_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' -%}
+          {% render 'image-attributes',
+            image: product.featured_image,
+            sizes: '200,300,400,500,600,700,800,900,1000,1100,1200'
+          -%}
         >
       {% endif %}
       {%- if settings.product_color_display == 'swatch' -%}
@@ -189,8 +182,12 @@
       {%- endif -%}
 
       {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-        {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position] | plus: 1 -%}
-        {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position] | default: product.media[next_media_pos] -%}
+        {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position]
+          | plus: 1
+        -%}
+        {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position]
+          | default: product.media[next_media_pos]
+        -%}
         <img
           class="product-item__secondary-image"
           loading="lazy"
@@ -218,7 +215,7 @@
         {%- endunless -%}
       {%- endif -%}
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
-        {{- product.title | split: '|' | first -}}
+        {{- product.title  | split: '|' | first | split: 'boAt' | last -}}
       </a>
       {% comment %}
         Start automatically added Judge.me widget
@@ -364,11 +361,16 @@
             </p>
           {% endif %}
         {% endunless %}
-        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
+        {%- if request.page_type != 'password'
+          and settings.product_add_to_cart
+          and product.available
+          and reduced_content != true
+          and show_cta != true
+        -%}
           {% assign available_variants = 0 %}
           {% for variant in product.variants %}
             {% if variant.available %}
-              {% assign available_variants = available_variants | plus : 1 %}
+              {% assign available_variants = available_variants | plus: 1 %}
             {% endif %}
           {% endfor %}
           {%- if available_variants == 1 -%}
@@ -378,6 +380,9 @@
             {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
               <input type="hidden" name="quantity" value="1">
               <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+              {%- if product.tags contains 'Free-Earphones' -%}
+                <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+              {%- endif -%}
               <button
                 is="loader-button"
                 type="submit"
@@ -523,13 +528,13 @@
       {%- endif -%}
 
       {% comment %}
-        		{%- if product.metafields.benefits.usp1 -%}
-                <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
-                  <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-                  <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-                  <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-                </div>
-              {%- endif -%}
+            		{%- if product.metafields.benefits.usp1 -%}
+          <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
+            <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
+            <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
+            <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+          </div>
+        {%- endif -%}
       {% endcomment %}
     </div>
 
@@ -542,6 +547,9 @@
           {%- form 'product', product, is: 'product-form', id: form_id -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+            {%- if product.tags contains 'Free-Earphones' -%}
+              <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+            {%- endif -%}
             <button
               type="submit"
               {% if show_cta %}
