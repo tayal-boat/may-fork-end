@@ -1065,12 +1065,13 @@
   const callback_ = (mutationList, observer) => {
    for (const mutation of mutationList) {
     let updatedqnty = 0;
-     jQuery.getJSON('/cart.js', function(cart) {
+     jQuery.getJSON('/cart.js', async function(cart) {
       cartI = cart.items;
        let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
        $(updatedfreeitems).each(function(ind, el){
         updatedqnty += el.quantity;
        })
+     })
        console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty",updatedqnty)
      if(updatedqnty > onloadfreeqnty) {
       console.log("add free product");  $('.custom-gift-button')[0].click();  onloadfreeqnty += 1;
@@ -1084,7 +1085,7 @@
       });
        onloadfreeqnty -= 1;
       }
-    })
+
 
   $(`.line-item[data-item-id="${giftId}"] ul, .line-item[data-item-id="${giftId}"] span.price.price--compare.line-through, .line-item[data-item-id="${giftId}"] a.line-item__remove-button.link.text--subdued.text--xxsmall`).each(function() {$(this).css("display", "none") })
   $(`#mini-cart-form  .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css({'pointer-events' : 'none' ,'cursor' : 'no-drop', 'color': 'grey' , 'opacity' : '0.5'}) })   
