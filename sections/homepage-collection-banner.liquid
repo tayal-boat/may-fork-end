@@ -1,6 +1,7 @@
 <section class="homepage-collection-banner container">
-  
-    <div id="banner-{{ section.id }}"
+  {%- capture hp_collection_banner -%}
+    <div
+      id="banner-{{ section.id }}"
       class="carousel slide carousel-fade collection-banners collection-banners-{{section.id}}"
       data-ride="carousel"
     >
@@ -43,6 +44,7 @@
         {%- endfor -%}
       </div>
     </div>
+  {%- endcapture -%}
 </section>
 
 {% schema %}
@@ -88,16 +90,16 @@
 .collection-banners { display: flex; flex-direction: column-reverse; } .collection-banners .carousel-indicators {
 position: static; margin-top: 1rem !important; }
 </style>
-<script type="deferjs">
-  /*if($('.collection-banners .carousel-inner .carousel-item').length <= 1) $('.collection-banners .carousel-indicators').hide();
-      $('.homepage-collection-banner').html(`{{ hp_collection_banner }}`); */
-      const collection_banners_slides = document.querySelectorAll('.collection-banners .carousel-inner .carousel-item');
-      collection_banners_slides.forEach((slide, i) => {
+<script>
+  if($('.collection-banners .carousel-inner .carousel-item').length <= 1) $('.collection-banners .carousel-indicators').hide();
+      $('.homepage-collection-banner').html(`{{ hp_collection_banner }}`);
+      const slides = document.querySelectorAll('.collection-banners .carousel-inner .carousel-item');
+      slides.forEach((slide, i) => {
           slide.addEventListener('click', function() {
               {% comment %} let imageTitle = slide.querySelector('.image_alt').innerText; {% endcomment %}
               let slideNum = `${i+1}`
               clevertap.event.push("Deals Banner clicked", {
-              
+              "Banner Number": 'Banner ' + slideNum,
               "Banner Title": imageTitle,
               "userSource": userSource
               })
