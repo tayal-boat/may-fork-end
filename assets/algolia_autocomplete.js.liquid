@@ -52,26 +52,11 @@
           return cb(extendedHits, res);
         })
           .catch((err) => cb([], err));       
-
-document.querySelector("body").classList.add("noScroll");  
-let queryList = [];
-let storedQuery = sessionStorage.queryList;
-if(sessionStorage.queryList){
-storedQuery = storedQuery.split(',');
-if( Array.isArray(storedQuery)){
-queryList = storedQuery;
-}else{
-queryList.push(storedQuery);
+ var searchPopupContainer = document.querySelectorAll(".search-popup-container");
+for (var i=0; i<searchPopupContainer.length; i++) {
+    searchPopupContainer[i].removeAttribute("style");
 }
-}
-if(!queryList.includes(query)){
-queryList.unshift(query);
-if(queryList.length > 5){
-queryList.pop();
-}  
-}          
-
-sessionStorage.setItem('queryList', queryList);           
+document.querySelector("body").classList.add("noScroll");          
       };
     }
     
@@ -218,11 +203,7 @@ sessionStorage.setItem('queryList', queryList);
     $node.style.top = top + height + 2 + 'px';
     $node.style[align] = dist + 'px';
     $node.style.width = newWidth + 'px';
-     var searchPopupContainer = document.querySelectorAll(".search-popup-container");
-for (var i=0; i<searchPopupContainer.length; i++) {
-    searchPopupContainer[i].removeAttribute("style");
     
-}
     var suffix = 'lg';
     if (newWidth < 300) suffix = 'xs';
     else if (newWidth < 600) suffix = 'sm';

@@ -58,25 +58,39 @@
       {%- endif -%}
     {% else %}
       {%- for tag in product.tags -%}
-        {%- if tag contains 'meta-label-lowest-price' -%}
-          {%- if product.price < product.compare_at_price -%}
-            <span class="label label--highlight custom-label lowest-price custom-saved-price-lable">
-              You Save
-              {{
-                product.compare_at_price
-                | minus: product.price
-                | times: 100.0
-                | divided_by: product.compare_at_price
-                | round
-                | append: '%'
-              }}
-            </span>
-          {%- endif -%}
-        {% else %}
-          {%- if tag contains 'meta-label-' -%}
-            <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"
-              ><span>{{ tag | remove: 'meta-label-' }}</span></span
-            >
+        {%- if tag contains 'Coupon-' -%}
+          <span class="label label--highlight custom-label coupon-label {{ tag | remove: 'meta-label-sold' }}">
+            ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
+          </span>
+          {%- break -%}
+
+        {%- elsif tag contains 'Free-' -%}
+        <span class="label label--highlight custom-label free-label {{ tag | remove: 'meta-label-sold' }}">
+          🎁 {{ tag | split: '-' | first }} {{ tag | split: '-' | last }}
+        </span>
+        {%- break -%}
+
+        {%- else -%}
+          {%- if tag contains 'meta-label-lowest-price' -%}
+            {%- if product.price < product.compare_at_price -%}
+              <span class="label label--highlight custom-label lowest-price custom-saved-price-lable">
+                You Save
+                {{
+                  product.compare_at_price
+                  | minus: product.price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '%'
+                }}
+              </span>
+            {%- endif -%}
+          {% else %}
+            {%- if tag contains 'meta-label-' -%}
+              <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"
+                ><span>{{ tag | remove: 'meta-label-' }}</span></span
+              >
+            {%- endif -%}
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
@@ -366,6 +380,9 @@
             {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
               <input type="hidden" name="quantity" value="1">
               <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+              {%- if product.tags contains 'Free-Earphones' -%}
+                <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+              {%- endif -%}
               <button
                 is="loader-button"
                 type="submit"
@@ -530,6 +547,9 @@
           {%- form 'product', product, is: 'product-form', id: form_id -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+            {%- if product.tags contains 'Free-Earphones' -%}
+              <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+            {%- endif -%}
             <button
               type="submit"
               {% if show_cta %}
