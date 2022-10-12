@@ -94,26 +94,27 @@ position: static; margin-top: 1rem !important; }
   var test = '';
   if (window.jQuery) {  
         console.log("Jquery loaded");
+        $(document).ready(function(){
+          debugger;
+          var html_content = 'Test Content';
+          console.log("HTML Content", html_content);
+            $('.homepage-collection-banner').html(html_content);
+            let collection_slides = document.querySelectorAll(.collection-banners .carousel-inner .carousel-item');
+            collection_slides.forEach((slide, i) => {
+                slide.addEventListener('click', function() {
+                    {% comment %} let imageTitle = slide.querySelector('.image_alt').innerText; {% endcomment %}
+                    const slideNum = `${i+1}`
+                    clevertap.event.push("Deals Banner clicked", {
+                    "Banner Number": 'Banner ' + slideNum,
+                    "Banner Title": imageTitle,
+                    "userSource": userSource
+                    })
+                })
+            });
+      
+          });
     } else {
         console.log("Jquery not loaded");
     }
-  $(document).ready(function(){
-    debugger;
-    var html_content = 'Test Content';
-    console.log("HTML Content", html_content);
-      $('.homepage-collection-banner').html(html_content);
-      let collection_slides = document.querySelectorAll(.collection-banners .carousel-inner .carousel-item');
-      collection_slides.forEach((slide, i) => {
-          slide.addEventListener('click', function() {
-              {% comment %} let imageTitle = slide.querySelector('.image_alt').innerText; {% endcomment %}
-              const slideNum = `${i+1}`
-              clevertap.event.push("Deals Banner clicked", {
-              "Banner Number": 'Banner ' + slideNum,
-              "Banner Title": imageTitle,
-              "userSource": userSource
-              })
-          })
-      });
-
-    });
+  
 </script>
