@@ -184,5 +184,28 @@ document.addEventListener("DOMContentLoaded", addPropertiesToProductForm);
 </script>
 
 {% if load_script or settings.ab_testing %}
-  <script src="{{ 'quinn-live.bundle.js' | asset_url }}" async></script>
+  {% comment %}   <script src="{{ 'quinn-live.bundle.js' | asset_url }}" async></script> {% endcomment %}
+<script>
+  function script(url) {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = url;
+        var x = document.getElementsByTagName('head')[0];
+        x.appendChild(s);
+    }
+
+    window.addEventListener("load", function(){
+    sessionStorage.setItem('quinn-live.bundle','false'); 
+    document.addEventListener("touchmove", ScrollStart);
+    document.addEventListener("scroll", ScrollStart);
+    function ScrollStart() {
+    if(sessionStorage.getItem('quinn-live.bundle') == 'false'){
+      script("{{ 'quinn-live.bundle.js' | asset_url }}");
+      sessionStorage.setItem('quinn-live.bundle','true'); 
+    }
+    }
+  });
+    
+</script>
 {% endif %}

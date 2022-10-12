@@ -1,0 +1,138 @@
+<style>
+  .deal-of-the_day.{{ section.id }}{
+    padding-top: 20px; padding-bottom: {{section.settings.sectionpadding}}px;
+  }
+  @media(max-width:768px){
+    .deal-of-the_day.{{ section.id }}{
+    padding-right: {{section.settings.sectionpaddingright}}px;
+    }}
+</style>
+
+<div class="container deal-of-the_day {{ section.id }} ">
+  <div class="row">
+    <div class="col-md-12 section__header text-container d-flex justify-content-between">
+      <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+    </div>
+  </div>
+  <div class="row">
+    	<a href="#0" class="slide-url temp-slide w-100 d-flex justify-content-center">
+          <div class="loading_icon">
+            <img
+              loading="lazy"
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765"
+              alt="Load More"
+              style="width: 50px;"
+            >
+          </div>
+        </a>
+    <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
+      {% for block in section.blocks %}
+    <a href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}" class="slide-url">
+      <div class="item">
+        <img src="{{block.settings.image | img_url: ''}}">
+      </div>
+    </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+      var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
+      $owl.on('initialized.owl.carousel', function(event){ 
+         $('.temp-slide').hide();
+      });
+      $('.deal-slider.{{ section.id }}').owlCarousel({
+        loop: true,
+        responsiveClass: true,
+        autoplay:true,
+        items: 4,
+        nav: false,
+        dots: true,
+        responsive: {
+          300: {
+            items: {{section.settings.slides_no}}
+          },
+          800: {
+            items: 2
+          },
+          1000: {
+            items:{{ section.settings.deskslides_no}},
+            loop: true,
+            margin: 10
+          }
+        }
+      })
+    })
+  </script>
+
+{% schema %}
+  {
+    "name": "Image Slider",
+	"max_blocks": 28,
+    "settings": [
+		{
+             "type": "text",
+             "id": "sectionHeading",
+             "label": "Section Heading"
+        },
+       {
+             "type": "text",
+             "id": "sectionpadding",
+             "label": "padding bottom",
+             "default": "0"
+        },
+        {
+             "type": "text",
+             "id": "sectionpaddingright",
+             "label": "mob-padding right"
+        },
+         {
+             "type": "number",
+             "id": "slides_no",
+             "label": "mobile slides",
+           "default": 1
+        },
+        {
+             "type": "number",
+             "id": "deskslides_no",
+             "label": "desk slides",
+           "default": 3
+        }
+
+	],
+	"blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image",
+                  "info": "300px wide minimum"
+              },
+              {
+                  "type": "url",
+                  "id": "imageUrl",
+                  "label": "Image URL"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Image Slider",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
