@@ -200,7 +200,7 @@ const getInputClass = () => {
             .split('')
             .slice(0, this.curPlaceholder.length + 1)
             .join('') + '|';
-        timeout = 150;
+        timeout = 300;
       }
       this.input.setAttribute('placeholder', this.curPlaceholder);
       setTimeout(() => {
@@ -224,9 +224,12 @@ const getInputClass = () => {
     let aw = new animationWorker(input, texts).start();
     input.addEventListener('focusin', (e) => aw.stop());
     input.addEventListener('focusout', (e) => {
-      aw = new animationWorker(input, texts);
-      setTimeout(aw.start, 500);
+      aw.stop();
+      $('.search-clear-icon')[0].click();
     });
+    $('.search-clear-icon').click(function() {
+      setTimeout(aw.start, 500);
+    })
     input.addEventListener('blur', (e) => {
       aw = new animationWorker(input, texts);
       if (e.target.value == '') setTimeout(aw.start, 500);
