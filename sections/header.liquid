@@ -272,17 +272,8 @@
       <!-- LOGO PART -->
       {%- capture logo -%}
         <a class="header__logo-link" href="{{ routes.root_url }}">
-            {%- if section.settings.video_logo != blank -%}
-              <video controls  style="height: 70px;">
-                <source src="{{ section.settings.video_logo }}" type="video/mp4">
-              </video>
-            {%- elsif section.settings.gif_logo != blank -%}
-                <span class="visually-hidden">{{ shop.name }}</span>
-                <img class="header__logo-image" loading="eager" fetchpriority="high" width="{{ section.settings.logo.width }}"
-                height="{{ section.settings.logo.height }}" src="{{ section.settings.logo | img_url: logo_size }}"
-                alt="{{ section.settings.logo.alt | escape }}" >
-            {%- elsif section.settings.logo != blank -%}
-              {%- capture logo_size -%}
+
+            {%- capture logo_size -%}
                 {{
                   section.settings.logo_max_width
                   | at_least: section.settings.mobile_logo_max_width
@@ -290,6 +281,18 @@
                   | append: 'x'
                 }}
               {%- endcapture -%}
+          
+            {%- if section.settings.video_logo != blank -%}
+              <video controls  style="height: 70px;">
+                <source src="{{ section.settings.video_logo }}" type="video/mp4">
+              </video>
+            {%- elsif section.settings.gif_logo != blank -%}
+                <span class="visually-hidden">{{ shop.name }}</span>
+                <img class="header__logo-image gif_logo" loading="eager" fetchpriority="high" width="{{ section.settings.logo.width }}"
+                height="{{ section.settings.logo.height }}" src="{{ section.settings.gif_logo | img_url: logo_size }}"
+                alt="{{ section.settings.logo.alt | escape }}" >
+            {%- elsif section.settings.logo != blank -%}
+              
               <span class="visually-hidden">{{ shop.name }}</span>
               <img
                 class="header__logo-image"
@@ -815,7 +818,7 @@
       "label": "Video Logo"
     },
     {
-      "type": "text",
+      "type": "image_picker",
       "id": "gif_logo",
       "label": "GIF Logo"
     },
