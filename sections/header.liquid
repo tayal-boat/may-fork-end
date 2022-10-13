@@ -42,18 +42,10 @@
       z-index: 100;
      }
      {%- if request.page_type == 'index' -%}
-      .shopify-section h3.heading {
-       font-size: 16px;    text-align: left;
-       font-weight: 700;    color: black;    text-transform: uppercase;
-      }
        .section__header {
          max-width: 100%;
        }
-       @media (min-width: 991px){
-       .shopify-section h3.heading {
-        font-size: 20px;
-       }
-     }
+
      {%- endif -%}
      {%- if request.page_type == 'index' and section.settings.enable_transparent_header -%}
        #shopify-section-{{ section.id }} {
@@ -221,7 +213,11 @@
           role="navigation"
         {% endunless %}
       >
-        {%- if menu.links.size > 0 and section.settings.header_layout == 'logo_left_navigation_inline' or section.settings.header_layout == 'logo_left_navigation_center' or section.settings.header_layout == 'logo_center_navigation_inline' -%}
+        {%- if menu.links.size > 0
+          and section.settings.header_layout == 'logo_left_navigation_inline'
+          or section.settings.header_layout == 'logo_left_navigation_center'
+          or section.settings.header_layout == 'logo_center_navigation_inline'
+        -%}
           {%- render 'desktop-menu', menu: menu -%}
         {%- endif -%}
 
@@ -266,7 +262,7 @@
                 aria-controls="search-drawer"
                 aria-expanded="false"
                 aria-label="{{ 'search.general.title' | t }}"
-                placeholder="{{ 'search.general.search_placeholder' | t }}"
+                placeholder=""
               >
             </form>
           </div>
@@ -277,13 +273,7 @@
       {%- capture logo -%}
         <a class="header__logo-link" href="{{ routes.root_url }}">
 
-          {%- if section.settings.video_logo != blank -%}
-            <video controls  style="height: 70px;">
-              <source src="{{ section.settings.video_logo }}" type="video/mp4">
-            </video>
-          {%- else -%}
-            {%- if section.settings.logo != blank -%}
-              {%- capture logo_size -%}
+            {%- capture logo_size -%}
                 {{
                   section.settings.logo_max_width
                   | at_least: section.settings.mobile_logo_max_width
@@ -291,6 +281,18 @@
                   | append: 'x'
                 }}
               {%- endcapture -%}
+          
+            {%- if section.settings.video_logo != blank -%}
+              <video controls  style="height: 70px;">
+                <source src="{{ section.settings.video_logo }}" type="video/mp4">
+              </video>
+            {%- elsif section.settings.gif_logo != blank -%}
+                <span class="visually-hidden">{{ shop.name }}</span>
+                <img class="header__logo-image gif_logo" style="max-width: unset!important;" loading="eager" fetchpriority="high" width="{{ section.settings.logo.width }}"
+                height="{{ section.settings.logo.height }}" src="{{ section.settings.gif_logo | img_url: logo_size }}"
+                alt="{{ section.settings.logo.alt | escape }}" >
+            {%- elsif section.settings.logo != blank -%}
+              
               <span class="visually-hidden">{{ shop.name }}</span>
               <img
                 class="header__logo-image"
@@ -301,8 +303,11 @@
                 src="{{ section.settings.logo | img_url: logo_size }}"
                 alt="{{ section.settings.logo.alt | escape }}"
               >
-
-              {%- if request.page_type == 'index' and section.settings.enable_transparent_header and section.settings.transparent_logo != blank -%}
+  
+              {%- if request.page_type == 'index'
+                and section.settings.enable_transparent_header
+                and section.settings.transparent_logo != blank
+              -%}
                 <img
                   class="header__logo-image header__logo-image--transparent"
                   loading="eager"
@@ -316,7 +321,6 @@
             {%- else -%}
               <span class="header__logo-text heading h5">{{ shop.name }}</span>
             {%- endif -%}
-          {%- endif -%}
         </a>
       {%- endcapture -%}
 
@@ -490,7 +494,7 @@
                       autocomplete="off"
                       autocorrect="off"
                       aria-label="{{ 'search.general.title' | t }}"
-                      placeholder="Search..."
+                      placeholder=""
                     >
                     <div class="search-clear-icon">
                       <span>
@@ -517,15 +521,7 @@
                     >
                   </form>
                 </div>
-                <div class="search-popup-container" style=" display: none;">
-                  <ul class="algolia-trending-list">
-                    {% for block in section.blocks %}
-                      {% if block.type == 'algolia' %}
-                        <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
-                      {% endif %}
-                    {% endfor %}
-                  </ul>
-                </div>
+                {% render 'algolia-search-popup' %}
               </div>
             </div>
           {%- endif -%}
@@ -588,6 +584,21 @@
               </a>
             </div>
           {%- endcomment -%}
+          <div class="chatbot hidden-pocket">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2_085646be-d961-4e85-9b6b-92eb8c02beb3.png?v=1663918129"
+              style="width: 20px;"
+            >
+          </div>
+          <div class="me hidden-desk">
+            <a class="fixed_nav--link" href="/account">
+              <img
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile.png?v=1663762989"
+                width="22"
+                height="22"
+              >
+            </a>
+          </div>
           {% unless template.name == 'page' and template.suffix == 'quick-checkout' %}
             <a
               href="{{ routes.cart_url }}"
@@ -676,7 +687,7 @@
           autocomplete="off"
           autocorrect="off"
           aria-label="{{ 'search.general.title' | t }}"
-          placeholder="Search..."
+          placeholder=""
         >
         <div class="search-clear-icon">
           <span>
@@ -697,15 +708,7 @@
         >
       </form>
     </div>
-    <div class="search-popup-container" style=" display: none;">
-      <ul class="algolia-trending-list">
-        {% for block in section.blocks %}
-          {% if block.type == 'algolia' %}
-            <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
+    {% render 'algolia-search-popup' %}
   </div>
 </store-header>
 
@@ -736,15 +739,15 @@
 {%- endcomment -%}
 
 <script>
-          $(".announce .announcement-bar__message p").each(function(ind,el){
-              $(el).on('click',function(e){
-          var announcementText = $(this).text();
-        clevertap.event.push("Announcement bar clicked", {
-            "Message": announcementText,
-            "userSource": userSource
-        });
+  $('.announce .announcement-bar__message p').each(function (ind, el) {
+    $(el).on('click', function (e) {
+      var announcementText = $(this).text();
+      clevertap.event.push('Announcement bar clicked', {
+        Message: announcementText,
+        userSource: userSource,
       });
     });
+  });
 
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
@@ -752,7 +755,10 @@
       headerHeightWithoutBottomNav = headerElement.querySelector('.header__wrapper').clientHeight;
 
     document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
-    document.documentElement.style.setProperty('--header-height-without-bottom-nav', headerHeightWithoutBottomNav + 'px');
+    document.documentElement.style.setProperty(
+      '--header-height-without-bottom-nav',
+      headerHeightWithoutBottomNav + 'px'
+    );
   })();
 </script>
 
@@ -770,7 +776,7 @@
 </script>
 
 {%- if request.page_type == 'index' -%}
-  {% assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" %}
+  {% assign potential_action_target = shop.url | append: routes.search_url | append: '?q={search_term_string}' %}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -805,6 +811,16 @@
       "id": "logo",
       "label": "Image",
       "info": "280 x 80px .png recommended"
+    },
+    {
+      "type": "text",
+      "id": "video_logo",
+      "label": "Video Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "gif_logo",
+      "label": "GIF Logo"
     },
     {
       "type": "range",
@@ -1147,6 +1163,11 @@
           "type": "text",
           "id": "suggestion",
           "label": "suggestion"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
         }
       ]
     }
