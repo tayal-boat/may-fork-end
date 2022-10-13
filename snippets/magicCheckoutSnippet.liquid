@@ -1,0 +1,529 @@
+<!--     <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+
+<!-- <script src="https://cdn.razorpay.com/static/shopify/modal.js" data-merchant-name="boAt"></script> -->
+
+<script>
+  function script(url) {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = url;
+        s.setAttribute("data-merchant-name", "boAt");
+        var x = document.getElementsByTagName('head')[0];
+        x.appendChild(s);
+    }
+
+    window.addEventListener("load", function(){
+    sessionStorage.setItem('magicCheckout','false'); 
+    document.addEventListener("touchmove", ScrollStart, true);
+    document.addEventListener("scroll", ScrollStart, true);
+    document.querySelector('.header__icon-wrapper.header__cart[aria-controls="mini-cart"]').addEventListener("click", ScrollStart, true);
+    function ScrollStart() {
+    if(sessionStorage.getItem('magicCheckout') == 'false'){
+      script("https://cdn.razorpay.com/static/shopify/modal.js");
+      sessionStorage.setItem('magicCheckout','true');   
+    }
+    }
+  });
+    
+</script>
+
+  <script>
+//      window.widgetIDForMagicCheckout = "main-cart-items";
+//    window.widgetClassForMagicCheckout = "cart__contents critical-hidden";
+   window.configForMagicCheckout = {
+    display: {
+        sequence: ["upi"]
+    }
+  };
+   window.nameForMagicCheckout = "boAt";
+  // window.onDismissMagiCheckout = () => {
+  // 		location.reload();
+  // }
+  
+  </script>
+
+
+<script> 
+var inProgress = false;
+var rzpMerchantKey = null;
+var delay = document.currentScript.getAttribute('data-delay');
+var checkoutJsTimerId;
+var MagicAnalytics = window.MagicAnalytics;
+
+function injectCheckoutJsUrl() {
+  return new Promise(resolve => {
+    var script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.id = 'checkout-js';
+    script.onload = function() {
+      resolve();
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  rzpMerchantKey = document.getElementById('rzpKey')?.value;
+  if (!rzpMerchantKey) {
+    alert('Rzp key is missing.');
+    return;
+  }
+  sessionStorage.setItem('magicCheckout1','false'); 
+  document.addEventListener("touchmove", CheckoutscrollStart, true);
+    document.addEventListener("touchstart", CheckoutscrollStart, true);
+    document.addEventListener("touchend", CheckoutscrollStart, true);
+    document.addEventListener("scroll", CheckoutscrollStart, true);
+    document.querySelector('.header__icon-wrapper.header__cart[aria-controls="mini-cart"]').addEventListener("click", CheckoutscrollStart, true);
+function CheckoutscrollStart() {
+  if(sessionStorage.getItem('magicCheckout1') == 'false'){
+if (delay) {
+  checkoutJsTimerId = setTimeout(injectCheckoutJsUrl, delay);
+} else {
+  injectCheckoutJsUrl();
+}
+sessionStorage.setItem('magicCheckout1','true');   
+  }
+  }
+
+  openAbandonedCheckout();
+});
+
+function openAbandonedCheckout() {
+  if (window.location.pathname == '/cart') {
+    var urlString = window.location.href;
+    var url = new URL(urlString);
+    var id = url.searchParams.get('magic_order_id');
+    if (id) {
+      toggleLoader(true);
+      window
+        .fetch('/apps/rzp_1cc/checkout_options?order_id=' + id)
+        .then(function(response) {
+          if (!response.ok) {
+            return Promise.reject('Error fetching order details');
+          }
+          return response.json();
+        })
+        .then(data => {
+          toggleLoader(false);
+          openModal(data);
+        })
+        .catch(function(e) {
+          alert(
+            'This link has expired, please visit store to place a fresh order'
+          );
+          toggleLoader(false);
+        });
+    }
+  }
+}
+
+window.openRzpCheckout = function openRzpCheckout(e) {
+  if (window.widgetIDForMagicCheckout && document.getElementById(window.widgetIDForMagicCheckout)) {
+    document.getElementById(window.widgetIDForMagicCheckout).style.zIndex = "100";
+  }
+  if (window.widgetClassForMagicCheckout && document.getElementsByClassName(window.widgetClassForMagicCheckout).length > 0) {
+    document.getElementsByClassName(window.widgetClassForMagicCheckout)[0].style.zIndex = "100";
+  }
+  if (e && e.preventDefault) {
+    e.preventDefault();
+  }
+  if (!rzpCanCheckout()) {
+    return;
+  }
+  if (window.MagicCheckout) {
+    window.MagicCheckout.showModal();
+  } else {
+    toggleLoader(true);
+  }
+  window
+    .fetch('/cart.js') // https://shopify.dev/api/ajax/reference/cart#get-locale-cart-js
+    .then(function(cartRes) {
+      if (!cartRes.ok) {
+        return Promise.reject('Error fetching cart');
+      }
+      return cartRes.json();
+    })
+    .then(function(cart) {
+      if (cart.total_price === 0 || cart.items.length === 0) {
+        return Promise.reject('Your cart is empty, add an item to continue');
+      }
+        return window.fetch("https://api.razorpay.com/v1/1cc/shopify/checkout?key_id=" + rzpMerchantKey, {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "text/plain"
+            },
+            body: JSON.stringify({ cart: cart, key: rzpMerchantKey }),
+        });
+    })
+    .then(function(checkRes) {
+      if (!checkRes.ok) {
+        return Promise.reject('There was an issue while creating your order. Please try after some time.');
+      }
+      return checkRes.json();
+    })
+    .then(function(params) {
+      if (params.customer_cart) {
+        params.customer_cart.content_ids = params.customer_cart.contents.map(
+          item => item.variant_id
+        );
+        params.customer_cart.num_items = params.customer_cart.contents.length;
+      }
+      var couponCookieValue = getDiscountCodeFromCookie();
+      if (couponCookieValue) {
+        params.prefill = params.prefill || {};
+        params.prefill.coupon_code = couponCookieValue;
+      }
+      openModal(params);
+    })
+    .catch(function(e) {
+      if (window.MagicCheckout) {
+        window.MagicCheckout.hideModal();
+      } else {
+        toggleLoader(false);
+      }
+      if (typeof e === 'string') {
+        alert(e);
+      } else {
+        alert('Something went wrong, please try again after some time.');
+      }
+    });
+};
+
+function getDiscountCodeFromCookie() { 
+  var value = "; " + document.cookie;
+  var parts = value.split('; discount_code=');
+  if (parts.length == 2) return parts.pop().split(";").shift();
+}
+
+function toggleLoader(flag) {
+  if (flag) {
+    document.getElementById('rzp-spinner-backdrop').classList.add('show');
+    document.getElementById('rzp-spinner').classList.add('show');
+    inProgress = true;
+  } else {
+    document.getElementById('rzp-spinner-backdrop').classList.remove('show');
+    document.getElementById('rzp-spinner').classList.remove('show');
+    inProgress = false;
+  }
+}
+
+function rzpCanCheckout() {
+  return !inProgress;
+}
+
+function handlePaymentRes(handlerRes) {
+  var finalRes;
+  toggleLoader(true);
+  window
+    .fetch("https://api.razorpay.com/v1/1cc/shopify/complete?key_id="+ rzpMerchantKey , {
+        method: "POST",
+        headers: {
+        "Accept": "application/json",
+        "Content-Type": "text/plain"
+        },
+        body: JSON.stringify({ ...handlerRes, key: rzpMerchantKey }),
+    })
+    .then(function(res) {
+      if (res.status !== 200) {
+        return Promise.reject(res);
+      }
+      return res.json();
+    })
+    .then(function(res) {
+      finalRes = res;
+      return window.fetch('/cart/clear.js', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+    })
+    .then(function() {
+      window.location = finalRes.order_status_url;
+    })
+    .catch(async function(err) {
+      if (finalRes && finalRes.order_status_url) {
+        window.location = finalRes.order_status_url;
+        return;
+      }
+      if (err.status == 500) {
+        alert("There was a problem processing your order. If any amount was deducted, please contact the seller to confirm your order");
+      }
+      else {
+        let e = await err.json();
+        if (e.hasOwnProperty('error') && e.error.hasOwnProperty('description')) {
+          switch(e.error.description) {
+            case "INSUFFICIENT_INVENTORY":
+            case "RETRY_FAILED":
+            case "DELEGATED_TO_SQS":
+              alert("Order confirmation is pending. Please wait for a while as we confirm your order. In case the transaction fails, the amount will be credited to your account.");
+              break;
+            case "SQS_ORDER_PLACE_ERROR":
+              alert("Your order could not be placed as the item went out of stock. If any amount was deducted, it will be credited to your account.");
+              break;
+            default:
+              alert("There was a problem processing your order. If any amount was deducted, please contact the seller to confirm your order");
+         }
+        }
+        else {
+          alert("There was a problem processing your order. If any amount was deducted, please contact the seller to confirm your order");
+        }
+      }
+      toggleLoader(false);
+    });
+}
+
+function formSerialize(myDocument) {
+  var obj = {};
+  var elements = myDocument.querySelectorAll('input, select, textarea');
+  for (var i = 0; i < elements.length; ++i) {
+    var element = elements[i];
+    var name = element.name;
+    var value = element.value;
+    if (name) {
+      obj[name] = value;
+    }
+  }
+  return JSON.stringify(obj);
+}
+
+window.onBuyNowClickzp = function onBuyNowClick(event) {
+  // it will call when someone click on BuyNow button
+  toggleLoader(true);
+  window
+    .fetch('/cart/clear.js', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    })
+    .then(function() {
+      if (window.location.href.includes('/products/') == false) {
+        var productForm = formSerialize(event.target.form);
+      } else {
+        var productForm = formSerialize(
+          document.querySelector(`[action="/cart/add"]`)
+        );
+      }
+      var cartItems = JSON.parse(productForm);
+      var isQtyCheck = document.getElementsByName('quantity');
+      if (isQtyCheck.length) {
+        cartItems['quantity'] = document.getElementsByName('quantity')[0].value
+          ? document.getElementsByName('quantity')[0].value
+          : 1;
+      }
+      // sending cart items to the Add API according to the format
+      let addToCartItems = {
+        items: [
+          {
+            id: cartItems.id,
+            quantity: cartItems['quantity'],
+          },
+        ],
+      };
+      window
+        .fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(addToCartItems),
+        })
+        .then(async function(res) {
+          if (res.status !== 200) {
+            return Promise.reject('Can not able to add product to the Cart');
+          }
+          var cartRes = await res.json();
+          const {
+            sku,
+            variant_id,
+            final_price,
+            quantity,
+            product_title,
+            variant_title,
+            product_type,
+          } = cartRes.items[0];
+          MagicAnalytics?.buyNowClicked({
+            id: sku || variant_id,
+            price: final_price / 100, // convert from paise to rupee
+            quantity: quantity,
+            name: product_title,
+            variant: variant_title,
+            category: product_type,
+          });
+          return cartRes;
+        })
+        .then(function() {
+          toggleLoader(false);
+          openRzpCheckout();
+        })
+        .catch(function() {
+          toggleLoader(false);
+          alert(
+            'Getting Error from BuyNow, Please contact the merchant to confirm your order'
+          );
+        });
+    })
+    .catch(function() {
+      toggleLoader(false);
+      alert(
+        'We are unable to process this order at the moment. Please contact the seller to confirm your order'
+      );
+    });
+};
+
+async function openModal(params) {
+  var checkoutJs = document.querySelector(`script[id="checkout-js"]`);
+  if (!checkoutJs) {
+    clearInterval(checkoutJsTimerId);
+    await injectCheckoutJsUrl();
+  }
+
+  if (window.configForMagicCheckout) {
+    params.config = window.configForMagicCheckout;
+  }
+
+  if (window.nameForMagicCheckout) {
+    params.name = window.nameForMagicCheckout;
+  }
+  var razorpayCheckout = new Razorpay({
+    ...params,
+    modal: {
+      animation: false,
+      ondismiss: function() {
+        Promise.all([
+        window.
+          fetch("https://api.razorpay.com/v1/1cc/shopify/abandon_checkout?key_id="+ rzpMerchantKey , { // update magic checkout url
+            method: "POST",
+            headers: {
+            "Accept": "application/json",
+            "Content-Type": "text/plain"
+            },
+            body: JSON.stringify({ "order_id": params.order_id }),
+        }),
+        window.
+          fetch("https://api.razorpay.com/v1/1cc/shopify/checkout/url?key_id="+ rzpMerchantKey , { // update magic checkout url
+            method: "POST",
+            headers: {
+            "Accept": "application/json",
+            "Content-Type": "text/plain"
+            },
+            body: JSON.stringify({ "order_id": params.order_id }),
+          })
+        ])
+        .then(() => {
+          if (window.onDismissMagiCheckout) {
+            window.onDismissMagiCheckout();
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      },
+    },
+    handler: function(handlerRes) {
+      try {
+        if (window && window.fbq) {
+          window.fbq('track', 'Purchase', params.customer_cart);
+        }
+      } catch (e) {}
+      handlePaymentRes(handlerRes);
+    },
+  });
+  razorpayCheckout.open();
+  razorpayCheckout.on('render', () => {
+    if (window.MagicCheckout) {
+      window.MagicCheckout.hideModal();
+    } else {
+      toggleLoader(false);
+    }
+  });
+
+  razorpayCheckout.on('fault.close', () => {
+    if (window.MagicCheckout) {
+      window.MagicCheckout.hideModal();
+    } else {
+      toggleLoader(false);
+    }
+  });
+}
+</script>
+
+ <script src="https://cdn.razorpay.com/static/shopify/analytics.js" defer></script> 
+
+<input id="rzpKey" type="hidden" name="rzpKey" value="rzp_live_iCBWgJBHr7vDrd">
+    
+  
+    
+<div id="rzp-spinner-backdrop">
+	<div id="rzp-spinner">
+      <div id="loading-indicator"></div>
+	</div>
+</div>
+
+
+<style>
+  
+  
+    #rzp-spinner-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999999999;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0);
+    visibility: hidden;
+    opacity: 0;
+  }
+  #rzp-spinner-backdrop.show {
+    visibility: visible;
+    opacity: 0.4;
+  }
+  #rzp-spinner {
+    visibility: hidden;
+    opacity: 0;
+    /* positioning and centering */
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    z-index: 10000;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  #rzp-spinner.show {
+    visibility: visible;
+    opacity: 1;
+  }
+  @keyframes rotate {
+    0% {
+      transform: rotate(0);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  #loading-indicator {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    border: 4px solid;
+    border-color: rgb(59, 124, 245) transparent rgb(59, 124, 245) rgb(59, 124, 245) !important;
+    animation: 1s linear 0s infinite normal none running rotate;
+    margin-top: 2px;
+    box-sizing: content-box;
+  }
+  
+</style>
