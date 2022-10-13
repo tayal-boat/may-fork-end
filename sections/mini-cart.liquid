@@ -817,7 +817,7 @@
   }
   </style>
      <label class="contain">PAY VIA GIFT CARDS 
-       <input type="checkbox" id="gstbill" class="mx-3" onclick="giftcardcheck()" >
+       <input type="checkbox" id="gstbill" class="mx-3" >
        <span class="checkmark"></span>
       </label>
           </div>
@@ -1015,19 +1015,27 @@
         {%- endif -%}
       </cart-drawer>
   
-      <script>
-        // giftcard || gst
-      function giftcardcheck(){        
-       $('.checkout-button').toggleClass("d-block");
-       $('.gokwik-checkout, .razorpay-checkout').toggleClass("d-none");
+  <script>
+      function updateCheckoutBtn() {
+        if ($("input#gstbill").is(":checked")) {
+          $('.checkout-button').removeClass("d-none");
+          $('.gokwik-checkout').removeClass("d-block");
+          $('.checkout-button').addClass("d-block");
+          $('.gokwik-checkout').addClass("d-none");
+        } else {
+          $('.checkout-button').removeClass("d-block");
+          $('.gokwik-checkout').removeClass("d-none");
+          $('.checkout-button').addClass("d-none");
+          $('.gokwik-checkout').addClass("d-block");
+        }
       }
-
-        if ($("input#gstbill").is(":checked")){
-            $('.checkout-button').addClass("d-block");
-            $('.gokwik-checkout, .razorpay-checkout').addClass("d-none");
-        }   
-
-      // end giftcard || gst 
+      $(window).bind("load", function() {
+        $('input#gstbill').prop('checked', false);
+        updateCheckoutBtn();
+      });
+      $("input#gstbill").on('change', function() {
+        updateCheckoutBtn();
+      });
   </script>
   <!--       freebie-offer -->
   {% assign gift-product = collections['freebie-offer'].products[0] %}
