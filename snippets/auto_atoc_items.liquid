@@ -1,0 +1,42 @@
+<script>
+
+    $(document).ready(function(){
+        
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        
+        let var_ids = params.var_id.split(" ");
+        
+        var final_arr = [];
+        var_ids.forEach(function (variant_id, index){
+            var obj = {};
+        
+            if( !isNaN( variant_id ) ){
+                
+                obj["id"] = variant_id;
+                obj["quantity"] = 1;
+                final_arr.push(obj);
+            }
+        });
+
+        add_items_to_cart(final_arr);
+        
+        function add_items_to_cart(variant_items){
+            var fonalObj = {};
+            var data_items = 
+                { 
+                    'items' : variant_items
+                };
+
+            console.log(data_items);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/cart/add.js', true);
+            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            xhr.send(JSON.stringify(data_items));
+        }
+
+    });
+
+</script>

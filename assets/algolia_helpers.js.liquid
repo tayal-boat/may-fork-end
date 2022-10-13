@@ -146,35 +146,35 @@
       Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
     var discount_ratio = 1.0 - price_ratio;
     if(this.inventory_available){
-      if(tags.includes('flash-sale') && comparing){
-        res = '<img class="flash-sale-thunder" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" /> ' + Math.floor(discount_ratio * 100) + '%';
-        res = '<div class="aa-product-badge flash-sale-badge">' + res + '</div>';
-    }else{
-      for (var i = 0; i < tags.length ; i++) {
+          for (let i = 0; i < tags.length ; i++) {
 
-        if( tags[i].includes('Coupon-') ){
-          var temp_res = tags[i].split('-')[1].split('|');
-          res = '₹ '+temp_res[0]+' OFF ON '+temp_res[1];
-          res_class = 'coupon-label';
-          break;
-        }
-        else if( tags[i].includes('Free-') ){
-          res = tags[i].replace('-',' ');
-          res_class = 'free-label';
-          break;
-        }
-        else if(tags[i].includes('meta-label-lowest-price') && comparing){
-            res = 'You Save: ' + Math.floor(discount_ratio * 100) + '%';
-        }
-        else if(tags[i].includes('meta-label-sold')) {
-          res = '';
-        }
-        else if(tags[i].includes('meta-label-')) {
-          res = tags[i].replace('meta-label-','').replace('-',' ');
-        }
-      }
-      res = '<div class="aa-product-badge '+res_class+' ">' + res + '</div>';
-    } 
+            if( tags.includes( 'Free-Earphones' ) ){
+              res = 'Free Earphones';
+              res_class = 'free-label';
+              break;
+            }
+            else if( tags.includes('Coupon-100|AD100') ){
+              var temp_res = tags[i].split('-')[1].split('|');
+              res = '₹ 100 OFF ON AD100';
+              res_class = 'coupon-label';
+              break;
+            }
+            else if(tags.includes('flash-sale') && comparing){
+              res = '<img class="flash-sale-thunder" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" /> ' + Math.floor(discount_ratio * 100) + '%';
+              res = '<div class="aa-product-badge flash-sale-badge">' + res + '</div>';
+              break;
+            }
+            else if(tags[i].includes('meta-label-lowest-price') && comparing){
+                res = 'You Save: ' + Math.floor(discount_ratio * 100) + '%';
+            }
+            else if(tags[i].includes('meta-label-sold')) {
+              res = '';
+            }
+            else if(tags[i].includes('meta-label-')) {
+              res = tags[i].replace('meta-label-','').replace('-',' ');
+            }
+          }
+          res = '<div class="aa-product-badge '+res_class+' ">' + res + '</div>';
     }
       return res;
     },

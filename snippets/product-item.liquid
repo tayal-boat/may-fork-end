@@ -37,7 +37,11 @@
     <span class="label label--highlight custom-label coming-soon">COMING SOON</span>
   {% endif %}
   {%- if product.available == true -%}
-    {% if product.tags contains 'flash-sale' and settings.enable_flash_sale %}
+    {% if product.tags contains 'Free-Earphones' %}
+      <span class="label label--highlight custom-label free-label ">
+        🎁 Free Earphones
+      </span>
+    {% elsif product.tags contains 'flash-sale' and settings.enable_flash_sale %}
       {%- if product.price < product.compare_at_price -%}
         <span class="label label--highlight custom-label lowest-price flash">
           <img
@@ -45,14 +49,15 @@
             loading="lazy"
             alt="thunder"
           >
-          {{
-            product.compare_at_price
-            | minus: discounted_price
-            | times: 100.0
-            | divided_by: product.compare_at_price
-            | round
-            | append: '%'
-          }}
+          
+              {{
+                product.compare_at_price
+                | minus: discounted_price
+                | times: 100.0
+                | divided_by: product.compare_at_price
+                | round
+                | append: '%'
+              }}
         </span>
       {%- endif -%}
     {% else %}
@@ -64,11 +69,11 @@
           </span>
           {%- break -%}
 
-        {%- elsif tag contains 'Free-' -%}
+        {% comment %} {%- elsif tag contains 'Free-' -%}
         <span class="label label--highlight custom-label free-label {{ tag | remove: 'meta-label-sold' }}">
-          {{ tag | split: '-' | first }} {{ tag | split: '-' | last }}
+          🎁 {{ tag | split: '-' | first }} {{ tag | split: '-' | last }}
         </span>
-        {%- break -%}
+        {%- break -%} {% endcomment %}
 
         {%- else -%}
           {%- if tag contains 'meta-label-lowest-price' -%}
