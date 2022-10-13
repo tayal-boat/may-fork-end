@@ -1037,15 +1037,21 @@
         }   
       })
       // end giftcard || gst 
-  </script>
+  
+   </script>
   <!--       freebie-offer -->
   {% assign gift-product = collections['freebie-offer'].products[0] %}
   {% assign gift-product_variant = gift-product.variants[0].id %}
   <script>
+    let giftId = "{{ gift-product_variant }}";
+    sessionStorage.setItem('giftId', giftId );
+  </script>
+  {%- comment -%}
+  <script>
   let giftId = "{{ gift-product_variant }}";
   if(document.readyState === 'loading') {console.log("loading");$(".header__icon-list").css("pointer-events", "none");}
   $(`.line-item[data-item-id="${giftId}"] ul, .line-item[data-item-id="${giftId}"] span.price.price--compare.line-through, .line-item[data-item-id="${giftId}"] a.line-item__remove-button.link.text--subdued.text--xxsmall`).each(function() {$(this).css("display", "none") })
-  $(`#mini-cart-form .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css("pointer-events", "none" ,"cursor" , "no-drop", "color", "grey" , "opacity" , "0.5") })    
+  $(`#mini-cart-form  .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css({'pointer-events' : 'none' ,'cursor' : 'no-drop', 'color': 'grey' , 'opacity' : '0.5'}) })
   $(window).on("load", function(){
    $(".header__icon-list").css("pointer-events", "auto");
    // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
@@ -1087,7 +1093,7 @@
     })
 
   $(`.line-item[data-item-id="${giftId}"] ul, .line-item[data-item-id="${giftId}"] span.price.price--compare.line-through, .line-item[data-item-id="${giftId}"] a.line-item__remove-button.link.text--subdued.text--xxsmall`).each(function() {$(this).css("display", "none") })
-  $(`#mini-cart-form  .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css("pointer-events", "none" ,"cursor" , "no-drop", "color", "grey" , "opacity" , "0.5") })       
+  $(`#mini-cart-form  .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css({'pointer-events' : 'none' ,'cursor' : 'no-drop', 'color': 'grey' , 'opacity' : '0.5'}) })   
    {% comment %} 
      let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
      console.log('price',total_price);
@@ -1124,7 +1130,7 @@
   
   });
   
-  </script>
+  </script> {%- endcomment -%}
             <script>
           function handleapplyclick(){
               applyCoupon();
