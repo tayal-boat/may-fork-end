@@ -157,25 +157,33 @@ $(document).on("click", ".custom-search-cta", function (e) {
       type: "post",
       data: t,
       success: function (e) {
-              console.log(freeSale);
               document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
               (document.getElementById("mini-cart").open = !0);
               if(freeSale.length == 1){ 
-                console.log('hii cart'); 
                 let freeGiftId = sessionStorage.giftId ? sessionStorage.giftId : '';
-                console.log(freeGiftId); 
                 if(freeGiftId){
-                $.ajax({
-                  url: '/cart/update.js',
-                  dataType: 'json',
-                  type: 'post',      
-                  data: 'updates['+freeGiftId+']='+1,   
-                  success: function(cart) {
-                    console.log(cart);
-                    document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+                let freebieQt = 0;
+                $.getJSON('/cart.js', function(cart) {
+                  for (let i = 0; i < cart.items.length; i++) {
+                    let properties = cart.items[i].properties;
+                    if(properties !== null && Object.keys(properties).includes("Free")){
+                      freebieQt += cart.items[i].quantity; 
+                    }              
                   }
-                });
-              }
+                    if(freeGiftId){
+                      $.ajax({
+                        url: '/cart/update.js',
+                        dataType: 'json',
+                        type: 'post',      
+                        data: 'updates['+freeGiftId+']='+freebieQt,   
+                        success: function(cart) {
+                          console.log(cart);
+                          document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+                        }
+                      });
+                    }
+              })
+            }
               };
              
               setTimeout(function () {
@@ -323,7 +331,46 @@ $(window).resize(function(){
 }
 });
 
-Shopify.customUpdate = function(cart){
-  console.log(cart);
-  console.log('hii');
+Shopify.cartFreebie = function(cartJson){
+  let freebieQt = 0;
+  let freeGiftId = sessionStorage.giftId ? sessionStorage.giftId : '';
+  let freeGiftKey = [];
+  if(cartJson){
+    for (let i = 0; i < cartJson.items.length; i++) {
+      let properties = cartJson.items[i].properties;
+      if(properties !== null && Object.keys(properties).includes("Free")){
+          freebieQt += cartJson.items[i].quantity ;
+        }
+        if(cartJson.items[i].id == freeGiftId){
+          freeGiftKey.push(cartJson.items[i].key)
+        }
+      }
+    
+        if(freeGiftId){
+          $.ajax({
+            url: '/cart/update.js',
+            dataType: 'json',
+            type: 'post',      
+            data: 'updates['+freeGiftId+']='+freebieQt,   
+            success: function(cart) {
+              console.log(cart);
+              if(freeGiftKey.length > 1){
+                $.ajax({
+                  url: '/cart/change.js',
+                  dataType: 'json',
+                  type: 'post',      
+                  data: {'id':freeGiftKey[0], 'quantity': 0},   
+                  success: function(cart) {
+                    console.log(cart);
+                    document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+                  }
+                });
+              }else{
+                document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+              }
+            }
+          });
+        }
+
+  }
 }
