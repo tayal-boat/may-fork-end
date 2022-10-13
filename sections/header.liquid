@@ -273,43 +273,62 @@
       <!-- LOGO PART -->
       {%- capture logo -%}
         <a class="header__logo-link" href="{{ routes.root_url }}">
-          {%- if section.settings.logo != blank -%}
-            {%- capture logo_size -%}
-              {{
-                section.settings.logo_max_width
-                | at_least: section.settings.mobile_logo_max_width
-                | times: 2
-                | append: 'x'
-              }}
-            {%- endcapture -%}
-            <span class="visually-hidden">{{ shop.name }}</span>
-            <img
-              class="header__logo-image"
-              loading="eager"
-              fetchpriority="high"
-              width="{{ section.settings.logo.width }}"
-              height="{{ section.settings.logo.height }}"
-              src="{{ section.settings.logo | img_url: logo_size }}"
-              alt="{{ section.settings.logo.alt | escape }}"
-            >
 
+<<<<<<< HEAD
             {%- if request.page_type == 'index'
               and section.settings.enable_transparent_header
               and section.settings.transparent_logo != blank
             -%}
+=======
+            {%- capture logo_size -%}
+                {{
+                  section.settings.logo_max_width
+                  | at_least: section.settings.mobile_logo_max_width
+                  | times: 2
+                  | append: 'x'
+                }}
+              {%- endcapture -%}
+          
+            {%- if section.settings.video_logo != blank -%}
+              <video controls  style="height: 70px;">
+                <source src="{{ section.settings.video_logo }}" type="video/mp4">
+              </video>
+            {%- elsif section.settings.gif_logo != blank -%}
+                <span class="visually-hidden">{{ shop.name }}</span>
+                <img class="header__logo-image gif_logo" style="max-width: unset!important;" loading="eager" fetchpriority="high" width="{{ section.settings.logo.width }}"
+                height="{{ section.settings.logo.height }}" src="{{ section.settings.gif_logo | img_url: logo_size }}"
+                alt="{{ section.settings.logo.alt | escape }}" >
+            {%- elsif section.settings.logo != blank -%}
+              
+              <span class="visually-hidden">{{ shop.name }}</span>
+>>>>>>> origin/sheena
               <img
-                class="header__logo-image header__logo-image--transparent"
+                class="header__logo-image"
                 loading="eager"
                 fetchpriority="high"
-                width="{{ section.settings.transparent_logo.width }}"
-                height="{{ section.settings.transparent_logo.height }}"
-                src="{{ section.settings.transparent_logo | img_url: logo_size }}"
-                alt="{{ section.settings.transparent_logo.alt | escape }}"
+                width="{{ section.settings.logo.width }}"
+                height="{{ section.settings.logo.height }}"
+                src="{{ section.settings.logo | img_url: logo_size }}"
+                alt="{{ section.settings.logo.alt | escape }}"
               >
+  
+              {%- if request.page_type == 'index'
+                and section.settings.enable_transparent_header
+                and section.settings.transparent_logo != blank
+              -%}
+                <img
+                  class="header__logo-image header__logo-image--transparent"
+                  loading="eager"
+                  fetchpriority="high"
+                  width="{{ section.settings.transparent_logo.width }}"
+                  height="{{ section.settings.transparent_logo.height }}"
+                  src="{{ section.settings.transparent_logo | img_url: logo_size }}"
+                  alt="{{ section.settings.transparent_logo.alt | escape }}"
+                >
+              {%- endif -%}
+            {%- else -%}
+              <span class="header__logo-text heading h5">{{ shop.name }}</span>
             {%- endif -%}
-          {%- else -%}
-            <span class="header__logo-text heading h5">{{ shop.name }}</span>
-          {%- endif -%}
         </a>
       {%- endcapture -%}
 
@@ -510,6 +529,7 @@
                     >
                   </form>
                 </div>
+<<<<<<< HEAD
                 <div class="search-popup-container" style=" display: none;">
                   <ul class="algolia-trending-list">
                     {% for block in section.blocks %}
@@ -519,6 +539,9 @@
                     {% endfor %}
                   </ul>
                 </div>
+=======
+                {% render 'algolia-search-popup' %}
+>>>>>>> origin/sheena
               </div>
             </div>
           {%- endif -%}
@@ -705,6 +728,7 @@
         >
       </form>
     </div>
+<<<<<<< HEAD
     <div class="search-popup-container" style=" display: none;">
       <ul class="algolia-trending-list">
         {% for block in section.blocks %}
@@ -714,6 +738,9 @@
         {% endfor %}
       </ul>
     </div>
+=======
+    {% render 'algolia-search-popup' %}
+>>>>>>> origin/sheena
   </div>
 </store-header>
 
@@ -816,6 +843,16 @@
       "id": "logo",
       "label": "Image",
       "info": "280 x 80px .png recommended"
+    },
+    {
+      "type": "text",
+      "id": "video_logo",
+      "label": "Video Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "gif_logo",
+      "label": "GIF Logo"
     },
     {
       "type": "range",
@@ -1153,6 +1190,14 @@
           "type": "text",
           "id": "suggestion",
           "label": "suggestion"
+<<<<<<< HEAD
+=======
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+>>>>>>> origin/sheena
         }
       ]
     }
