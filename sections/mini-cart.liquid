@@ -241,49 +241,6 @@
   
       {% endif %}
         
-              
-      .razorpay-checkout {
-  /*         width: 48%; */
-        margin-bottom: 10px;
-      }
-      .razorpay-checkout button {
-          max-width: 100%;
-          width: 100%;
-          border: 1px solid transparent;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background: white;
-          border: 2px solid red; 	
-          position: relative;
-          margin: 0;
-          border-radius: 4px;
-          padding: 0;
-          text-align: center;
-          height: 50px;
-      }
-      #razorpay-buy-now.disabled{
-        opacity:0.5;
-        cursor: not-allowed;
-        }
-        .razorpay-checkout button:focus {
-        outline: none;
-      }
-      .razorpay-checkout button > span {
-        display: flex;color: red;
-      }
-  
-      .razorpay-checkout button > span.btn-text > span:last-child {
-          padding-top: 3px;
-          font-size: 12px;
-          line-height: 10px;
-      }
-      .razorpay-checkout button > span.pay-opt-icon img:first-child {
-        margin-right: 10px;
-        margin-left: 10px;
-      }
-  
-  
       {% if settings.goBuynowEnable %}
        #gokwik-buy-now {
          background: {{ settings.btnBClr }};
@@ -817,7 +774,7 @@
   }
   </style>
      <label class="contain">PAY VIA GIFT CARDS 
-       <input type="checkbox" id="gstbill" class="mx-3" onclick="giftcardcheck()" >
+       <input type="checkbox" id="gstbill" class="mx-3" >
        <span class="checkmark"></span>
       </label>
           </div>
@@ -989,15 +946,6 @@
                   {% elsif is_validation_ok == true and product_limit_ok == true and only_gk == false %}
                     <div class=" checkout-buttons-div">
                       {% render 'gokwik-checkout' %}
-                      {% comment %} {%- if magic_ok == true -%}               
-                        <div class="razorpay-checkout">
-                          <button type="button" onclick="openRzpCheckout(event)">
-                              <span class="btn-text">
-                                  <span>PAY VIA CARD/OTHERS</span>
-                               </span>
-                          </button>
-                        </div>
-                      {%- endif -%}    {% endcomment %}
                     </div>
                   {% else %}
               <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
@@ -1024,19 +972,27 @@
         {%- endif -%}
       </cart-drawer>
   
-      <script>
-        // giftcard || gst
-      function giftcardcheck(){        
-       $('.checkout-button').toggleClass("d-block");
-       $('.gokwik-checkout, .razorpay-checkout').toggleClass("d-none");
+  <script>
+      function updateCheckoutBtn() {
+        if ($("input#gstbill").is(":checked")) {
+          $('.checkout-button').removeClass("d-none");
+          $('.gokwik-checkout').removeClass("d-block");
+          $('.checkout-button').addClass("d-block");
+          $('.gokwik-checkout').addClass("d-none");
+        } else {
+          $('.checkout-button').removeClass("d-block");
+          $('.gokwik-checkout').removeClass("d-none");
+          $('.checkout-button').addClass("d-none");
+          $('.gokwik-checkout').addClass("d-block");
+        }
       }
-
-        if ($("input#gstbill").is(":checked")){
-            $('.checkout-button').addClass("d-block");
-            $('.gokwik-checkout, .razorpay-checkout').addClass("d-none");
-        }   
-
-      // end giftcard || gst 
+      $(window).bind("load", function() {
+        $('input#gstbill').prop('checked', false);
+        updateCheckoutBtn();
+      });
+      $("input#gstbill").on('change', function() {
+        updateCheckoutBtn();
+      });
   </script>
   <!--       freebie-offer -->
   {% assign gift-product = collections['freebie-offer'].products[0] %}
@@ -1147,13 +1103,6 @@
               //             }
               //                                     }, 5000)
             }
-          $(".razorpay-checkout").click(function () {
-             let productsincart = line_item.product;
-           clevertap.event.push("razor/magic Button Clicked",{
-           "cart products": productsincart,
-           "Amount": cart_total_price
-       });
-    });
   </script>
       <script>
         setInterval(function(){
