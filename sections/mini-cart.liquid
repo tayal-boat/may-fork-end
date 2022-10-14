@@ -986,12 +986,21 @@
           $('.gokwik-checkout').addClass("d-block");
         }
       }
+
+      function checkInputChange() {
+        $('body').on('change', 'input#gstbill',function () {
+          updateCheckoutBtn();
+        });
+      }
+
       $(window).bind("load", function() {
         $('input#gstbill').prop('checked', false);
         updateCheckoutBtn();
+        checkInputChange();
       });
-      $("input#gstbill").on('change', function() {
-        updateCheckoutBtn();
+      
+      document.addEventListener('cart:updated', function(event) {
+        checkInputChange();
       });
   </script>
   <!--       freebie-offer -->
