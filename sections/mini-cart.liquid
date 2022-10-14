@@ -448,7 +448,7 @@
               <input type="hidden" name="checkout">
   
               {%- for line_item in cart.items -%}
-                <line-item class="line-item" data-item-id="{{ line_item.id }}">
+                <line-item class="line-item" data-item-id="{{ line_item.id }}" data-item-key="{{ line_item.key }}">
                   <div class="line-item__content-wrapper">
                     <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
                       <span class="line-item__loader" hidden>
@@ -1040,10 +1040,15 @@
   
    </script>
   <!--       freebie-offer -->
-  {% assign gift-product = collections['freebie-offer'].products[0] %}
-  {% assign gift-product_variant = gift-product.variants[0].id %}
+ 
+  {% assign gift_product = settings.giftProduct.selected_or_first_available_variant.id %}
+  <style>
+.line-item[data-item-id="{{gift_product}}"] .line-item__quantity .line-item__remove-button {
+    display: none;
+}
+  </style>
   <script>
-    let giftId = "{{ gift-product_variant }}";
+    let giftId = "{{ gift_product }}";
     sessionStorage.setItem('giftId', giftId );
   </script>
   {%- comment -%}
