@@ -6,37 +6,62 @@
             get: (searchParams, prop) => searchParams.get(prop),
         });
         
-        let var_ids = params.var_id.split(" ");
+        let var_ids = params.var_id;
         
-        var final_arr = [];
-        var_ids.forEach(function (variant_id, index){
-            var obj = {};
-        
-            if( !isNaN( variant_id ) ){
-                
-                obj["id"] = variant_id;
-                obj["quantity"] = 1;
-                final_arr.push(obj);
-            }
-        });
-
-        add_items_to_cart(final_arr);
+        add_items_to_cart(var_ids);
         
         function add_items_to_cart(variant_items){
-            var fonalObj = {};
-            var data_items = 
-                { 
-                    'items' : variant_items
-                };
 
-            console.log(data_items);
+            Shopify.queue = [];
+            var quantity = {{ cart.item_count }};
+            var newArray = variant_items.split(' ');
+            
+            for (var i = 0; i < newArray.length; i++) {
+                product = newArray[i]
+                Shopify.queue.push({
+                    variantId: product,
+                });
+            }
 
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/cart/add.js', true);
-            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-            xhr.send(JSON.stringify(data_items));
+            Shopify.moveAlong = function() {
+                if (Shopify.queue.length) {
+                    var request = Shopify.queue.shift().variantId.trim();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/cart/add.js',
+                        dataType: 'json',
+                        data: {
+                            quantity: 1,
+                            id: request
+                        },
+                        success: function(res){
+                            Shopify.moveAlong();
+                            quantity += 1;
+                        },
+                        error: function(){
+                            
+                        }
+                    });
+                    
+                    if(Shopify.queue.length == 0){
+                        setTimeout(
+                            function() {
+                                Shopify.moveAlong();
+                                quantity += 1;
+                                document.getElementById('mini-cart').open = true;
+                                document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+                                    bubbles: true
+                                }));
+                                $('cart-count.header__cart-count').html(newArray.length);
+                            }, 
+                        500);
+                    }
+                } else {
+                    
+                }
+            };
+            Shopify.moveAlong();
         }
-
     });
 
 </script>
