@@ -78,7 +78,8 @@
 <section class="section {% unless is_boxed or section.settings.text_position contains 'overlap' %}section--flush{% endunless %}">
   <div {% if is_boxed %}class="container"{% endif %}>
 <!--     <image-with-text-block {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="image-with-text-block {% if section.settings.text_position contains 'overlap' %}image-with-text-block--overlap-{{ section.settings.text_position | split: '_' | last }}{% endif %}"> -->
-      <div class="image-with-text-block__image-wrapper">
+  <a href="{% if section.settings.button_link %}{{ section.settings.button_link }}{% else %}javascript:void(0){% endif %}}">   
+    <div class="image-with-text-block__image-wrapper">
         {%- if section.settings.image != blank -%}
           <img alt="{{section.settings.alt_text}}" class="image-with-text-block__image  {% if section.settings.mobile_image != blank %}hidden-pocket{% endif %}" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="(max-width: 999px) 100vw, {% if section.settings.text_position contains 'overlap' %}72vw{% elsif section.settings.background_type == 'boxed' %}min(1520px, 100vw){% else %}100vw{% endif %}" {% render 'image-attributes', image: section.settings.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000' %}>
 
@@ -95,7 +96,7 @@
           {%- endif -%}
         {%- endif -%}
       </div>
-
+  </a>
       {%- capture section_content -%}
         {%- assign text_position = section.settings.text_position | split: '_' | last -%}
 
