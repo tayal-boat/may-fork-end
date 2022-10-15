@@ -79,12 +79,12 @@
   <div {% if is_boxed %}class="container"{% endif %}>
     <image-with-text-block {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="image-with-text-block {% if section.settings.text_position contains 'overlap' %}image-with-text-block--overlap-{{ section.settings.text_position | split: '_' | last }}{% endif %}">
       <div class="image-with-text-block__image-wrapper">
-        {%- if section.settings.image != blank -%}
-    	<a href="{{block.settings.button_link}}" class="slide-url temp-slide">
+        {%- if section.settings.desk_image -%}
+    	<a href="{{section.settings.button_link}}" class="slide-url temp-slide">
           <picture>
-            <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
+            <source media="(min-width: 769px)" {% render 'image-attributes', image: section.settings.desk_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', ignore_src: true %}>
             <source media="(max-width: 768px)" {% render 'image-attributes', image: section.settings.mobile_image, sizes: '400,500,600,700,800,900,1000', crop: 'center', ignore_src: true %}>
-            <img style="width: 100%;" loading="eager" fetchpriority="high" {% render 'image-attributes', image: block.settings.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{block.settings.image.alt}}" />
+            <img style="width: 100%;" loading="eager" fetchpriority="high" {% render 'image-attributes', image: section.desk_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="{{section.settings.image.alt}}" />
           </picture>
         </a>
 
@@ -154,7 +154,7 @@
     },
     {
       "type": "image_picker",
-      "id": "image",
+      "id": "desk_image",
       "label": "Image",
       "info": "2800 x 1400px .jpg recommended. Image may be cut based on screen size."
     },
