@@ -276,36 +276,34 @@ var settings = {
 };
 
 $.ajax(settings).done(function (response) {
-console.log(response);
 if(response.success){
 let delivery = '';
 let order_cutoff = '';
+sessionStorage.setItem('pincode_serviceable','true');
 for (let i = 0; i < response.data.length; i++) {
-if(response.data[i].service_name == 'Super Delivery'){
+if(response.data[i].service_code == 'SR_QUICK'){
   let super_delivery = response.data[i].max_delivery_date;
   delivery = express_delivery;
   order_cutoff = response.data[i].order_cutoff;
 }
-else if(response.data[i].service_name == 'Express'){
+else if(response.data[i].service_code == 'SR_EXPRESS'){
   let express_delivery = response.data[i].max_delivery_date;
   delivery = express_delivery;
   order_cutoff = response.data[i].order_cutoff;
-}else{
+}else if(response.data[i].service_code == 'SR_STANDARD'){
   let standard_delivery = response.data[i].max_delivery_date;
   delivery = standard_delivery;
   order_cutoff = response.data[1].order_cutoff; 
+}else if(response.data[i].service_code == 'STD'){
+sessionStorage.setItem('pincode_serviceable','false');
 }   
   }
-
+delivery = delivery.split(' ')[0];
 const delivery_date = new Date(delivery);
 let delivery_day = delivery_date.getDate();
 let today = new Date();
-console.log(delivery_date);
-console.log(today);
-
 const diffTime = Math.abs(delivery_date - today);
 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-console.log(diffDays);
 var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 let day = days[ delivery_date.getDay() ];
 const monthList = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
@@ -314,10 +312,11 @@ let year = delivery_date.getFullYear();
 if(order_cutoff == undefined){
   order_cutoff = '';
 }
-console.log(order_cutoff);
+
 Shopify.pincodeDetail();
 $('.pincode_error').html('');
 let pincodeDeliveryText = '';
+
 if(diffDays == 0){
   pincodeDeliveryText = 'Free delivery by today';
 }else if(diffDays == 1){
@@ -325,12 +324,17 @@ if(diffDays == 0){
 }else{
   pincodeDeliveryText = 'Free delivery by '+ day + ', ' + delivery_day + ' ' + month ;
 }
+if( sessionStorage.pincode_serviceable == 'false'){
+   pincodeDeliveryText = 'Pincode is not serviceable';
+    order_cutoff = '';
+}
 $('.pincode_details h6').html(pincodeDeliveryText);
 sessionStorage.setItem('pincode_delivery_text',pincodeDeliveryText);
   $('.pincode_details p').html(order_cutoff);
   sessionStorage.setItem('order_cutoff', order_cutoff);
 
 }
+
 })
 .fail(function() {
   $('.pincode_error').html('Not a valid pincode');
@@ -379,7 +383,7 @@ if($(this).attr('pincodeAdded') == 'true'){
  if(pincodeIn.val().length < 6 || pincodeIn.val().length > 6 ){
  $('.pincode_error').html('Not a valid pincode')
    }
-  else{
+else{
 let pincode = sessionStorage.pincode;
 let product_id = sessionStorage.product_id;
 let sku = sessionStorage.sku;
