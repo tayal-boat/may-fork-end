@@ -315,6 +315,7 @@ if(order_cutoff == undefined){
 
 Shopify.pincodeDetail();
 $('.pincode_error').html('');
+sessionStorage.setItem('pincode_error','');
 let pincodeDeliveryText = '';
 
 if(diffDays == 0){
@@ -325,8 +326,10 @@ if(diffDays == 0){
   pincodeDeliveryText = 'Free delivery by '+ day + ', ' + delivery_day + ' ' + month ;
 }
 if( sessionStorage.pincode_serviceable == 'false'){
-   pincodeDeliveryText = 'Pincode is not serviceable';
+   pincodeDeliveryText = '';
     order_cutoff = '';
+    sessionStorage.setItem('pincode_error','Pincode not servicable. Try another one.');
+     $('.pincode_error').html('Pincode not servicable. Try another one.');
 }
 $('.pincode_details h6').html(pincodeDeliveryText);
 sessionStorage.setItem('pincode_delivery_text',pincodeDeliveryText);
@@ -337,7 +340,7 @@ sessionStorage.setItem('pincode_delivery_text',pincodeDeliveryText);
 
 })
 .fail(function() {
-  $('.pincode_error').html('Not a valid pincode');
+  $('.pincode_error').html('Pincode not valid. Try another one.');
   })
 };
 
@@ -368,7 +371,11 @@ Shopify.pincodeDetail();
 let pincode_buttom = $('.pincode_checker_btn');
 let pincodeIn = $('.pincode_checker_input');
 $('.pincode_details h6').html(sessionStorage.pincode_delivery_text );
-$('.pincode_details p').html(sessionStorage.order_cutoff);    
+$('.pincode_details p').html(sessionStorage.order_cutoff);
+if(sessionStorage.pincode_error && sessionStorage.pincode_error !== ''){
+$('.pincode_error').html(sessionStorage.pincode_error); 
+}
+   
 
 $(document).on('click', '.pincode_checker_btn', function(event) {
 event.preventDefault();
@@ -381,7 +388,7 @@ if($(this).attr('pincodeAdded') == 'true'){
   $('.quick-delivery-icon svg .cls-2').removeAttr('style');
 }else{              
  if(pincodeIn.val().length < 6 || pincodeIn.val().length > 6 ){
- $('.pincode_error').html('Not a valid pincode')
+ $('.pincode_error').html('Pincode not valid. Try another one.')
    }
 else{
 let pincode = sessionStorage.pincode;
