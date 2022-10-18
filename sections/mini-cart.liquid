@@ -638,7 +638,26 @@
               {%- endfor -%}
             </form>
           {% render 'freebie-cart_gift' %} 
-  
+
+          
+  {% for item in cart.items %}
+  {% if item.product.tags contains 'gift-box' %}
+  {% assign gift-box_quantity = item.quantity | minus: cart.item_count %}
+  {% endif %}
+  {% endfor %}
+  {% if gift-box_quantity >= 0 %}
+  <style>
+    .gift-box {
+      display: block !important
+    }
+  </style>
+  {% else %}
+  <style>
+    .gift-box {
+      display: none !important
+    }
+  </style>
+  {% endif %}  
   
   
              {%- if section.settings.show_recommendations -%}
