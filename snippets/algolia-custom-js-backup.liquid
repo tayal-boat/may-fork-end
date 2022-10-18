@@ -39,22 +39,6 @@ if (window.innerWidth < 1200) {
 null !== document.querySelector("#shopify-section-announcement-bar") && n.observe(document.querySelector("#shopify-section-announcement-bar")), 
 $(".algolia-header-search-input .predictive-search__input").click(function() {
     $('body').addClass('noScroll');
-    $(".algolia-trending-item , .algolia-recently-search-container div").click(function() {
-        if (null !== this.offsetParent && document.querySelectorAll('.aa-dataset-products.container.aa-right-column').length > 0) {
-            document.querySelectorAll('.aa-dataset-products.container.aa-right-column')[1].scrollTop = 0;
-            document.querySelectorAll('.aa-dataset-products.container.aa-right-column')[0].scrollTop = 0;
-            let e = this.offsetParent.previousElementSibling.firstElementChild.querySelector(".predictive-search__input");
-            let algolia_trending = '';
-            if ($(this) == $('.algolia-trending-item')) {
-                algolia_trending = $(this).children('.algolia-trending-label').text();
-            } else {
-                algolia_trending = $(this).text()
-            };
-            e.value = algolia_trending.trim(), e.dispatchEvent(new Event("input", {
-                bubbles: !0
-            }))
-        }
-    });
     $('.clear-recent-search').click(function() {
         sessionStorage.setItem('queryList', '');
         $(".algolia-recently-search").removeAttr("style");
@@ -75,6 +59,23 @@ $(".algolia-header-search-input .predictive-search__input").click(function() {
         $('.algolia-recently-search-header').hide()
     }
     $('.algolia-recently-search-container').html(recentSearchHtml);
+
+    $(".algolia-trending-item , .algolia-recently-search-container div").click(function() {
+      console.log('hiiiiii');
+        if (null !== this.offsetParent) {
+            let e = this.offsetParent.previousElementSibling.firstElementChild.querySelector(".predictive-search__input");
+            let algolia_trending = '';
+            if ($(this) == $('.algolia-trending-item')) {
+                algolia_trending = $(this).children('.algolia-trending-label').text();
+            } else {
+                algolia_trending = $(this).text()
+            };
+            e.value = algolia_trending.trim(), e.dispatchEvent(new Event("input", {
+                bubbles: !0
+            }))
+        }
+    });
+    
     let e = $(".shopify-section--header .container").height();
     $("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") && (e += $("#shopify-section-announcement-bar").height()), $(".search-popup-container").css({
         opacity: "1",
