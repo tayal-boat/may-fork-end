@@ -152,7 +152,7 @@ const getInputClass = () => {
     return document.querySelector('.predictive-search__input_desk');
   };
 
-  const texts = ['Search Earphones', 'Search Smartwatches', 'Search Speakers', 'Search Neckbands'];
+  const texts = ['Earphones', 'Smartwatches', 'Speakers', 'Neckbands'];
   const input = getInputClass();
   const animationWorker = function (input, texts) {
     this.input = input;
@@ -181,7 +181,7 @@ const getInputClass = () => {
  
     this.animate = () => {
       if (!this.animationActive) return;
-      let curPlaceholderFullText = this.texts[this.curTextNum];
+      let curPlaceholderFullText = 'Search ' + this.texts[this.curTextNum];
       let timeout = 500;
       if (this.curPlaceholder == curPlaceholderFullText + '|' && this.blinkCounter == 1) {
         this.blinkCounter = 0;
@@ -224,10 +224,14 @@ const getInputClass = () => {
     let aw = new animationWorker(input, texts).start();
     input.addEventListener('focusin', (e) => aw.stop());
     input.addEventListener('focusout', (e) => {
+      this.setAttribute('placeholder', '');
       setTimeout(aw.start, 500);
     });
-    $('.search-clear-icon').click(function() {
-      setTimeout(aw.start, 500);
+    $('.search-clear-icon').each(function() {
+      $(this).click(function(e) {
+        $(this).siblings('.search__input').attr('placeholder', '');
+        setTimeout(aw.start, 500);
+      })
     })
     input.addEventListener('blur', (e) => {
       aw = new animationWorker(input, texts);
