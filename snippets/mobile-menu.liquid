@@ -62,7 +62,7 @@
   id="mobile-menu-drawer"
   class="drawer {% if direction == 'ltr' %}drawer--from-left{% endif %}"
 >
-  {% capture mobile_menu_custom %}
+
     <span class="drawer__overlay"></span>
 
     <div class="drawer__header drawer__header--shadowed">
@@ -89,9 +89,10 @@
             </a>
 
              <img
-              class="w-100"
+              class="w-100 custom_lazy"
               loading="lazy"
-              src="{{ section.settings.mobmenu_logo| img_url: "" }}"
+              src="{{ section.settings.mobmenu_logo| img_url: "10x10" }}"
+              data-src="{{ section.settings.mobmenu_logo| img_url: "" }}"
               alt="{{ section.settings.mobmenu_logo.alt | escape }}"
             >
     <ul class="mobile-nav list--unstyled overflow-auto" role="list" style="padding: 16px;">
@@ -99,8 +100,8 @@
               <li class="mobile-nav__item" data-level="1">
                 <a class="mobile-nav__link heading h5" href="{{link.url}}">
                   <img
-                    loading="lazy" width="75px"
-                    {% render 'image-attributes', image: link.object.image, sizes: '240,480,720' %}
+                    loading="lazy" width="75px" class="custom_lazy"
+                    {% render 'custom-image-attribute', image: link.object.image, sizes: '240,480,720' %}
                     alt="{{- sub_link.title -}}"
                   >
               <p class="pl-3"><b>{{ link.object.title }}</b></p>
@@ -654,13 +655,17 @@
   </div>
 
 
-  {% endcapture %}
 </mobile-navigation>
-<script>
-  window.addEventListener('load', function() {
-    let mobile_menu_custom = `{{ mobile_menu_custom | strip_newlines }}`;
-    if(window.innerWidth < 1200){
-      $('mobile-navigation').html(mobile_menu_custom)
+
+<script type="lazyScript">
+  Shopify.customLazy = function() {
+    let selector = document.querySelectorAll('.custom_lazy'); 
+    if(selector.length > 0){
+    for (let i = 0; i < selector.length; i++) {
+    let src = selector[i].getAttribute('data-src');
+    selector[i].setAttribute('src',src) 
+    }    
     }
-  })
+  } 
+  Shopify.customLazy();
 </script>

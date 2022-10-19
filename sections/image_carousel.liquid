@@ -1,6 +1,8 @@
 <style>
   .deal-of-the_day.{{ section.id }}{
     padding-top: 20px; padding-bottom: {{section.settings.sectionpadding}}px;
+    background: {{ section.settings.bg_color }};
+    margin:{{section.settings.sectionmargin}}px;
   }
   @media(max-width:768px){
     .deal-of-the_day.{{ section.id }}{
@@ -9,11 +11,13 @@
 </style>
 
 <div class="container deal-of-the_day {{ section.id }} ">
-  <div class="row">
-    <div class="col-md-12 section__header text-container d-flex justify-content-between">
-      <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
-    </div>
-  </div>
+  {% if section.settings.sectionHeading != blank %}
+      <div class="row">
+        <div class="col-md-12 section__header text-container d-flex justify-content-between">
+          <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+        </div>
+      </div>
+  {% endif %}
   <div class="row">
     	<a href="#0" class="slide-url temp-slide w-100 d-flex justify-content-center">
           <div class="loading_icon">
@@ -27,7 +31,12 @@
         </a>
     <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
       {% for block in section.blocks %}
-    <a href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}" class="slide-url">
+        {% assign popup_class = "" %}
+        {% if block.settings.popup_class != blank %}
+          {% assign popup_class = block.settings.popup_class %}
+        {% endif %}
+        
+    <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
       <div class="item">
         <img src="{{block.settings.image | img_url: ''}}">
       </div>
@@ -52,12 +61,14 @@
         dots: true,
         responsive: {
           300: {
+            dots: {{ section.settings.show_dots_on_mobile }},
             items: {{section.settings.slides_no}}
           },
           800: {
             items: 2
           },
           1000: {
+            dots: {{ section.settings.show_dots_on_desktop }},
             items:{{ section.settings.deskslides_no}},
             loop: true,
             margin: 10
@@ -76,6 +87,12 @@
              "type": "text",
              "id": "sectionHeading",
              "label": "Section Heading"
+        },
+        {
+             "type": "text",
+             "id": "sectionmargin",
+             "label": "sectionmargin",
+             "default": "0"
         },
        {
              "type": "text",
@@ -98,7 +115,25 @@
              "type": "number",
              "id": "deskslides_no",
              "label": "desk slides",
-           "default": 3
+             "default": 3
+        },
+        {
+            "type": "checkbox",
+            "id": "show_dots_on_mobile",
+            "label": "Show Dots on Mobile",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_dots_on_desktop",
+            "label": "Show Dots on Desktop",
+            "default": true
+        },
+        {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color",
+            "default": "#FFFFFF"
         }
 
 	],
@@ -117,6 +152,11 @@
                   "type": "url",
                   "id": "imageUrl",
                   "label": "Image URL"
+              },
+              {
+                  "type": "text",
+                  "id": "popup_class",
+                  "label": "Add class name for popup"
               }
 			]
 		}

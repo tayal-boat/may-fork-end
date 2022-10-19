@@ -38,22 +38,14 @@
        {%- endif -%}
 
        // top: {% if section.settings.enable_sticky_header %}calc(var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)){% else %}0{% endif %};
-       top: 0; 
-      z-index: 10;
+       top: 0;
+      z-index: 100;
      }
      {%- if request.page_type == 'index' -%}
-      .shopify-section h3.heading {
-       font-size: 16px;    text-align: left;
-       font-weight: 700;    color: black;    text-transform: uppercase;
-      }
        .section__header {
          max-width: 100%;
        }
-       @media (min-width: 991px){
-       .shopify-section h3.heading {
-        font-size: 20px;
-       }
-     }
+
      {%- endif -%}
      {%- if request.page_type == 'index' and section.settings.enable_transparent_header -%}
        #shopify-section-{{ section.id }} {
@@ -221,7 +213,11 @@
           role="navigation"
         {% endunless %}
       >
-        {%- if menu.links.size > 0 and section.settings.header_layout == 'logo_left_navigation_inline' or section.settings.header_layout == 'logo_left_navigation_center' or section.settings.header_layout == 'logo_center_navigation_inline' -%}
+        {%- if menu.links.size > 0
+          and section.settings.header_layout == 'logo_left_navigation_inline'
+          or section.settings.header_layout == 'logo_left_navigation_center'
+          or section.settings.header_layout == 'logo_center_navigation_inline'
+        -%}
           {%- render 'desktop-menu', menu: menu -%}
         {%- endif -%}
 
@@ -266,7 +262,7 @@
                 aria-controls="search-drawer"
                 aria-expanded="false"
                 aria-label="{{ 'search.general.title' | t }}"
-                placeholder="{{ 'search.general.search_placeholder' | t }}"
+                placeholder=""
               >
             </form>
           </div>
@@ -276,40 +272,55 @@
       <!-- LOGO PART -->
       {%- capture logo -%}
         <a class="header__logo-link" href="{{ routes.root_url }}">
-          {%- if section.settings.logo != blank -%}
-            {%- capture logo_size -%}
-              {{
-                section.settings.logo_max_width
-                | at_least: section.settings.mobile_logo_max_width
-                | times: 2
-                | append: 'x'
-              }}
-            {%- endcapture -%}
-            <span class="visually-hidden">{{ shop.name }}</span>
-            <img
-              class="header__logo-image"
-              loading="eager"
-              fetchpriority="high"
-              width="{{ section.settings.logo.width }}"
-              height="{{ section.settings.logo.height }}"
-              src="{{ section.settings.logo | img_url: logo_size }}"
-              alt="{{ section.settings.logo.alt | escape }}"
-            >
 
-            {%- if request.page_type == 'index' and section.settings.enable_transparent_header and section.settings.transparent_logo != blank -%}
+            {%- capture logo_size -%}
+                {{
+                  section.settings.logo_max_width
+                  | at_least: section.settings.mobile_logo_max_width
+                  | times: 2
+                  | append: 'x'
+                }}
+              {%- endcapture -%}
+          
+            {%- if section.settings.video_logo != blank -%}
+              <video controls  style="height: 70px;">
+                <source src="{{ section.settings.video_logo }}" type="video/mp4">
+              </video>
+            {%- elsif section.settings.gif_logo != blank -%}
+                <span class="visually-hidden">{{ shop.name }}</span>
+                <img class="header__logo-image gif_logo" style="max-width: unset!important;" loading="eager" fetchpriority="high" width="{{ section.settings.logo.width }}"
+                height="{{ section.settings.logo.height }}" src="{{ section.settings.gif_logo | img_url: '160x40' }}"
+                alt="{{ section.settings.logo.alt | escape }}" >
+            {%- elsif section.settings.logo != blank -%}
+              
+              <span class="visually-hidden">{{ shop.name }}</span>
               <img
-                class="header__logo-image header__logo-image--transparent"
+                class="header__logo-image"
                 loading="eager"
                 fetchpriority="high"
-                width="{{ section.settings.transparent_logo.width }}"
-                height="{{ section.settings.transparent_logo.height }}"
-                src="{{ section.settings.transparent_logo | img_url: logo_size }}"
-                alt="{{ section.settings.transparent_logo.alt | escape }}"
+                width="{{ section.settings.logo.width }}"
+                height="{{ section.settings.logo.height }}"
+                src="{{ section.settings.logo | img_url: logo_size }}"
+                alt="{{ section.settings.logo.alt | escape }}"
               >
+  
+              {%- if request.page_type == 'index'
+                and section.settings.enable_transparent_header
+                and section.settings.transparent_logo != blank
+              -%}
+                <img
+                  class="header__logo-image header__logo-image--transparent"
+                  loading="eager"
+                  fetchpriority="high"
+                  width="{{ section.settings.transparent_logo.width }}"
+                  height="{{ section.settings.transparent_logo.height }}"
+                  src="{{ section.settings.transparent_logo | img_url: logo_size }}"
+                  alt="{{ section.settings.transparent_logo.alt | escape }}"
+                >
+              {%- endif -%}
+            {%- else -%}
+              <span class="header__logo-text heading h5">{{ shop.name }}</span>
             {%- endif -%}
-          {%- else -%}
-            <span class="header__logo-text heading h5">{{ shop.name }}</span>
-          {%- endif -%}
         </a>
       {%- endcapture -%}
 
@@ -473,43 +484,45 @@
               class="header__icon-wrapper tap-area hidden-pocket hidden-lap{% unless section.settings.show_icons %} hidden-desk{% endunless %}"
               aria-label="{{ 'search.general.title' | t | escape }}"
             >
-            <div class="algolia-header-custom-search">
-             <div class="algolia-header-search-input">   
-             
-      <div class="algolia-custom-search-input">   
-              <input
-                class="search__input predictive-search__input predictive-search__input_desk"
-                type="text"
-                name="q"
-                autocomplete="off"
-                autocorrect="off"
-                aria-label="{{ 'search.general.title' | t }}"
-                placeholder="Search..."
-              >
-            <div class="search-clear-icon"><span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>
-            </span></div>
-    </div> 
-    <form id="predictive-search-form" class="algolia-search__form">
-      <input
-      type="text"
-      name="q"
-      autocomplete="off"
-      autocorrect="off"
-      aria-label="{{ 'search.general.title' | t }}"
-      placeholder="Search..."
-    >  
-    </form>
-    </div> 
- <div class="search-popup-container" style=" display: none;">
-<ul class="algolia-trending-list">
-  {% for block in section.blocks %}
-   {% if block.type == 'algolia' %} 
-  <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
-     {% endif %}
-  {% endfor %}
-</ul>
-</div>  </div>
+              <div class="algolia-header-custom-search">
+                <div class="algolia-header-search-input">
+                  <div class="algolia-custom-search-input">
+                    <input
+                      class="search__input predictive-search__input predictive-search__input_desk"
+                      type="text"
+                      name="q"
+                      autocomplete="off"
+                      autocorrect="off"
+                      aria-label="{{ 'search.general.title' | t }}"
+                      placeholder=""
+                    >
+                    <div class="search-clear-icon">
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="#000000"
+                          viewBox="0 0 50 50"
+                          width="15px"
+                          height="15px"
+                        >
+                          <path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                  <form id="predictive-search-form" class="algolia-search__form">
+                    <input
+                      type="text"
+                      name="q"
+                      autocomplete="off"
+                      autocorrect="off"
+                      aria-label="{{ 'search.general.title' | t }}"
+                      placeholder="Search..."
+                    >
+                  </form>
+                </div>
+                {% render 'algolia-search-popup' %}
+              </div>
             </div>
           {%- endif -%}
 
@@ -548,29 +561,44 @@
             </div>
           </div>
           {%- comment -%}
-            {%- if shop.customer_accounts_enabled -%}
-              <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{% if customer %}{{ 'header.general.account' | t | escape }}{% else %}{{ 'header.general.login' | t | escape }}{% endif %}">
-                {%- render 'icon' with 'header-customer' -%}
-              </a>
-            {%- endif -%}
+              {%- if shop.customer_accounts_enabled -%}
+                <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon-wrapper tap-area hidden-phone {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{% if customer %}{{ 'header.general.account' | t | escape }}{% else %}{{ 'header.general.login' | t | escape }}{% endif %}">
+                  {%- render 'icon' with 'header-customer' -%}
+                </a>
+              {%- endif -%}
 
-              <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
-              {%- render 'icon' with 'header-search' -%}
-            </a>
-      
-          <div class="gift-card-icon">
-            <a href="#0">
+                <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area visually-hidden {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
+                {%- render 'icon' with 'header-search' -%}
+              </a>
+
+            <div class="gift-card-icon">
+              <a href="#0">
+                <img
+                  loading="lazy"
+                  src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2.png?v=1662551049"
+                  alt="gift card"
+                  width="22"
+                  height="22"
+                  style="max-width:22px;"
+                >
+              </a>
+            </div>
+          {%- endcomment -%}
+          <div class="chatbot hidden-pocket">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2_085646be-d961-4e85-9b6b-92eb8c02beb3.png?v=1663918129"
+              style="width: 20px;"
+            >
+          </div>
+          <div class="me hidden-desk">
+            <a class="fixed_nav--link" href="/account">
               <img
-                loading="lazy"
-                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2.png?v=1662551049"
-                alt="gift card"
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile.png?v=1663762989"
                 width="22"
                 height="22"
-                style="max-width:22px;"
               >
             </a>
           </div>
-              {%- endcomment -%}
           {% unless template.name == 'page' and template.suffix == 'quick-checkout' %}
             <a
               href="{{ routes.cart_url }}"
@@ -649,42 +677,38 @@
       </nav>
     {%- endif -%}
   </div>
-<div class="algolia-header-custom-search hidden-desk">
-  <div class="algolia-header-search-input" aria-label="{{ 'search.general.title' | t | escape }}">
-      <div class="algolia-custom-search-input">   
-              <input
-                class="search__input predictive-search__input predictive-search__input_mobile"
-                type="text"
-                name="q"
-                autocomplete="off"
-                autocorrect="off"
-                aria-label="{{ 'search.general.title' | t }}"
-                placeholder="Search..."
-              >
-            <div class="search-clear-icon"><span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>      
-                  </span></div>
-    </div>   
-    <form class="algolia-search__form_mobile">
-      <input
-      type="text"
-      name="q"
-      autocomplete="off"
-      autocorrect="off"
-      aria-label="{{ 'search.general.title' | t }}"
-      placeholder="Search..."
-    >  
-    </form>
-    </div> 
- <div class="search-popup-container" style=" display: none;">
-<ul class="algolia-trending-list">
-  {% for block in section.blocks %}
-   {% if block.type == 'algolia' %} 
-  <li class="algolia-trending-label">{{ block.settings.suggestion }}</li>
-     {% endif %}
-  {% endfor %}
-</ul>
-  </div>
+  <div class="algolia-header-custom-search hidden-desk">
+    <div class="algolia-header-search-input" aria-label="{{ 'search.general.title' | t | escape }}">
+      <div class="algolia-custom-search-input">
+        <input
+          class="search__input predictive-search__input predictive-search__input_mobile"
+          type="text"
+          name="q"
+          autocomplete="off"
+          autocorrect="off"
+          aria-label="{{ 'search.general.title' | t }}"
+          placeholder=""
+        >
+        <div class="search-clear-icon">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px">
+              <path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+      <form class="algolia-search__form_mobile">
+        <input
+          type="text"
+          name="q"
+          autocomplete="off"
+          autocorrect="off"
+          aria-label="{{ 'search.general.title' | t }}"
+          placeholder="Search..."
+        >
+      </form>
+    </div>
+    {% render 'algolia-search-popup' %}
   </div>
 </store-header>
 
@@ -715,15 +739,15 @@
 {%- endcomment -%}
 
 <script>
-          $(".announce .announcement-bar__message p").each(function(ind,el){
-              $(el).on('click',function(e){
-          var announcementText = $(this).text();
-        clevertap.event.push("Announcement bar clicked", {
-            "Message": announcementText,
-            "userSource": userSource
-        });
+  $('.announce .announcement-bar__message p').each(function (ind, el) {
+    $(el).on('click', function (e) {
+      var announcementText = $(this).text();
+      clevertap.event.push('Announcement bar clicked', {
+        Message: announcementText,
+        userSource: userSource,
       });
     });
+  });
 
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
@@ -731,7 +755,10 @@
       headerHeightWithoutBottomNav = headerElement.querySelector('.header__wrapper').clientHeight;
 
     document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
-    document.documentElement.style.setProperty('--header-height-without-bottom-nav', headerHeightWithoutBottomNav + 'px');
+    document.documentElement.style.setProperty(
+      '--header-height-without-bottom-nav',
+      headerHeightWithoutBottomNav + 'px'
+    );
   })();
 </script>
 
@@ -749,7 +776,7 @@
 </script>
 
 {%- if request.page_type == 'index' -%}
-  {% assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" %}
+  {% assign potential_action_target = shop.url | append: routes.search_url | append: '?q={search_term_string}' %}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -784,6 +811,16 @@
       "id": "logo",
       "label": "Image",
       "info": "280 x 80px .png recommended"
+    },
+    {
+      "type": "text",
+      "id": "video_logo",
+      "label": "Video Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "gif_logo",
+      "label": "GIF Logo"
     },
     {
       "type": "range",
@@ -1113,17 +1150,22 @@
         }
       ]
     },
-  	{
-	  "type": "algolia",
+    {
+      "type": "algolia",
       "name": "algolia search",
       "settings": [
-	{
-      "type": "text",
-      "id": "suggestion",
-      "label": "suggestion"
+        {
+          "type": "text",
+          "id": "suggestion",
+          "label": "suggestion"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
     }
-	]
-  	}  
   ]
 }
 {% endschema %}
