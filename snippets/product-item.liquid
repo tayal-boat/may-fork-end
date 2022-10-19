@@ -198,6 +198,11 @@
         >
       {%- endif -%}
     </a>
+    {% if product.tags contains 'Super Quick Delivery' %}
+    <div class="quick-delivery-lable">
+      {% render 'icon' with 'quick-delivery' %}<span>Super Quick Delivery</span>
+    </div>
+    {% endif %}
   </div>
 
   <div class="product-item__info {% if show_cta %}product-item__info--with-button{% endif %} {% if reduced_font_size %}text--small{% endif %}">
@@ -363,12 +368,17 @@
             </p>
           {% endif %}
         {% endunless %}
-        {%- if request.page_type != 'password'
-          and settings.product_add_to_cart
-          and product.available
-          and reduced_content != true
-          and show_cta != true
-        -%}
+        
+        {% if product.metafields.custom.delivery != blank %}
+        {% assign delivery_date = product.metafields.custom.delivery %}
+        {% else %}
+        {% assign delivery_date = '2 days' %}
+        {% endif %}
+
+        <div class="pincode_details">
+          <h6>Fastest delivery in {{delivery_date}}</h6>
+        </div>
+        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
           {% assign available_variants = 0 %}
           {% for variant in product.variants %}
             {% if variant.available %}
