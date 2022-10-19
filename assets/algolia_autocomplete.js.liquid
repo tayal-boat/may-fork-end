@@ -377,43 +377,6 @@ document.querySelector('.predictive-search__input').dispatchEvent(new Event('inp
        * local storage for conversion tracking
        */
       algolia.saveForConversionTracking(clickData);
-        /**
- * Try to get the details from local storage for conversion tracking.
- * We're using a try...catch here to handle any possible exceptions resulting
- * from local storage or JSON parsing.
- */
-function trackConversion() {
-  try {
-    // Get any previously stored data.
-    const previousClickItemsString = localStorage.getItem(localStorageKey)
-    // If data was found, send a conversion event for those products.
-    if (!!previousClickItemsString) {
-      const previousClickItems = JSON.parse(previousClickItemsString)
-      previousClickItems.forEach((data) => {
-        aa('convertedObjectIDsAfterSearch', data)
-      })
-    }
-  } catch (error) {
-    // No need to do anything in this scenario.
-  }
-
-  // Try to remove the items from local storage.
-  try {
-    localStorage.removeItem(localStorageKey)
-  } catch (error) {
-    // No need to do anything in this scenario.
-  }
-}
-// console.log(event);
-// Track a conversion event when clicking the 'add to cart' button.
-// Change the query selector to be the correct one for your theme.
-const addToCartBtn = document.querySelector('.custom-search-cta')
-
-if (addToCartBtn) {
-  addToCartBtn.addEventListener('click', function (e) {
-    trackConversion()
-  })
-}
     }
     switch (name) {
       case 'products': {
@@ -484,5 +447,6 @@ input[i].addEventListener('click', function(e) {
 }
 });   
 } 
-  
+
+
 })(window.algoliaShopify);
