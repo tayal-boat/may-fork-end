@@ -47,7 +47,9 @@
   #saleModal .modal-content {
     border: 0;
   }
-  .modal-form {background: {{ section.settings.popup_backgroung }} !important;}
+  .modal-form {
+    background: {{ section.settings.popup_backgroung }} !important;
+  }
   #saleModal input {
     background: transparent;
     color: #ccc;
@@ -65,7 +67,7 @@
     transform: translateY(0%);
   }
 
-  {{ section.settings.popup_id }} 
+  {{ section.settings.popup_id }}
   @media screen and (max-width: 600px) {
     #saleModal .modal-dialog,
     #saleModals-1 .modal-dialog,
@@ -98,7 +100,7 @@
                   <button style="border-radius: 5px;background: red;margin: 2px;color: white;padding:0 1rem;height:45px;line-height:normal;" class="button sale-btn" type="submit">
                     {% if section.settings.button_id %}
                       {{ section.settings.button_id }}
-                      {% else %}
+                    {% else %}
                       YES
                     {% endif %}
                   </button>
@@ -123,18 +125,17 @@
       $("{{ section.settings.popup_id }}").click(function(e) {
         e.preventDefault();
         $(".custom_Popup #saleModal").modal("show");
-      });{% endif %}
-    $(".custom_Popup .sale-btn").click(function() {
+      });{% endif %}$(".custom_Popup .sale-btn").click(function() {
       var e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
-        ? localStorage.getItem("userEmailIdSale {{ section.settings.clevertap_id }}") === e
+        ? localStorage.getItem("userEmailIdSale  {{ section.settings.clevertap_id }}") === e
           ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
-          : (localStorage.setItem("userEmailIdSale {{ section.settings.clevertap_id }}", e), clevertap.onUserLogin.push({
+          : (localStorage.setItem("userEmailIdSale  {{ section.settings.clevertap_id }}", e), clevertap.onUserLogin.push({
             Site: {
               Email: e,
               "MSG-email": !0
             }
-          }), clevertap.event.push("Notify Me  {{ section.settings.clevertap_id }}", {
+          }), clevertap.event.push("Notify Me   {{ section.settings.clevertap_id }}", {
             Email: e,
             Source: camp
           }), $(".custom_Popup #saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
@@ -169,8 +170,7 @@
         "type": "image_picker",
         "id": "popup_image",
         "label": "Popup Image"
-      },
-      {
+      }, {
         "type": "color",
         "id": "popup_backgroung",
         "label": "Popup Background",
