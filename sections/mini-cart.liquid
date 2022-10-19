@@ -1,8 +1,6 @@
 <style>
-  .mini-cart__recommendations-heading{
-    padding-left:0px;
-  }
-   .line-item__remove-button{
+
+      .line-item__remove-button{
         top: unset;
         bottom: 10px;
       }
@@ -250,7 +248,7 @@
         margin-right: 10px;
         margin-left: 10px;
       }
-      /* aditionl */
+      /* additionl */
   
       {% endif %}
         
@@ -350,7 +348,6 @@
   
       <cart-drawer section="{{ section.id }}" id="mini-cart" class="mini-cart drawer drawer--large">
         <span class="drawer__overlay"></span>
-  
         <header class="drawer__header">
           <p class="drawer__title heading h6">
             Your Cart
@@ -587,7 +584,7 @@
                             </a>
                           {% else %}
                             {%- if allow_more -%}
-                              <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                              <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6 %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                                 {%- render 'icon' with 'plus' -%}
                               </a>
   
@@ -618,7 +615,7 @@
                       {% elsif line_item.product.metafields.set.quantity_limit == 6 and line_item.quantity > 6 %}
                           <small class="qty-error-msg text-red mt-2">Not more than 6 units are allowed for this item.</small>
                       {% else %}
-                        {% if line_item.quantity > 66666 %}
+                        {% if line_item.quantity > 6 %}
                           <small class="qty-error-msg text-red mt-2">Not more than 7 units are allowed for this item.</small>
                         {% endif %}  
                       {% endif %}
@@ -638,9 +635,7 @@
               {%- endfor -%}
             </form>
           {% render 'freebie-cart_gift' %} 
-
-          
-  {% for item in cart.items %}
+    {% for item in cart.items %}
   {% if item.product.tags contains 'gift-box' %}
   {% assign gift-box_quantity = item.quantity | minus: cart.item_count %}
   {% endif %}
@@ -657,7 +652,7 @@
       display: none !important
     }
   </style>
-  {% endif %}  
+  {% endif %}
   
   
              {%- if section.settings.show_recommendations -%}
@@ -694,8 +689,7 @@
   
                               {%- assign matching_product = cart.items | where: 'product_id', product.id -%}
   
-
-              {%- if matching_product.size == 0 -%}
+                  {%- if matching_product.size == 0 -%}
               <span class="mini-cart__recommendations-heading heading heading--small hidden-pocket">
                 {{ section.settings.recommendations_title | escape }}
                 <span class="gst-container">
@@ -725,11 +719,8 @@
               {%- assign shown_products_count = shown_products_count | plus: 1 -%}
               {%- render 'product-item', product: product, reduced_content: true, reduced_font_size: true,
               hide_secondary_image: true, sizes_attribute: '(max-width: 740px) 65px, 92px' -%}
-              {%- else -%}
-
-              <p class="gift-box" style="display:none;">Gift box in your cart is the outer packaging box that can be
+               <p class="gift-box" style="display:none;">Gift box in your cart is the outer packaging box that can be
                 used for gifting purposes. It does not contain any boAt product inside it.</p>
-
               {%- endif -%}
                             {%- endfor -%}
                           </div>
@@ -937,7 +928,7 @@
             </div>
   
         {%- if section.settings.show_checkout_button -%}
-              {% if cart.total_price <= 4900000 %}
+              {% if cart.total_price <= 4700000 %}
                   {%- assign magic_ok = true -%}
                   {%- assign only_gk = false -%}
                   {%- assign is_validation_ok = true -%}
@@ -973,7 +964,7 @@
                       {%- if line_item.product.metafields.set.quantity_limit == 6 and line_item.quantity > 6 -%}
                           {%- assign product_limit_ok = false -%}
                       {% endif %}
-                     {% if line_item.quantity > 777777 %}
+                     {% if line_item.quantity > 7 %}
                           {%- assign is_validation_ok = false -%}
                       {% endif %}
                   {% endfor %}
@@ -995,7 +986,7 @@
               <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
                   {% endif %}
               {%- else -%}
-              <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.49000/-!</strong> Modify your cart to proceed.</p>
+              <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.47000/-!</strong> Modify your cart to proceed.</p>
               {% endif %}
             {%- else -%}
               <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
@@ -1014,9 +1005,11 @@
             <button type="button" data-action="close" class="form__submit form__submit--closer button button--secondary">{{ 'cart.general.order_note_save' | t }}</button>
           </openable-element>
         {%- endif -%}
+        
       </cart-drawer>
-  
+
   <script>
+
       function updateCheckoutBtn() {
         if ($("input#gstbill").is(":checked")) {
           $('.checkout-button').removeClass("d-none");
@@ -1050,13 +1043,11 @@
   <!--       freebie-offer -->
   {% assign gift-product = collections['freebie-offer'].products[0] %}
   {% assign gift-product_variant = gift-product.variants[0].id %}
-   <style>  
- .line-item[data-item-id="{{ gift-product_variant }}"] ul, .line-item[data-item-id="{{ gift-product_variant }}"] span.price.price--compare.line-through, .line-item[data-item-id="{{ gift-product_variant }}"] a.line-item__remove-button.link.text--subdued.text--xxsmall {display: none;}
-  #mini-cart-form  .line-item[data-item-id="{{ gift-product_variant }}"] .quantity-selector__button{pointer-events:none;cursor:no-drop;color: grey; opacity : 0.5;}  
- </style>
   <script>
   let giftId = "{{ gift-product_variant }}";
   if(document.readyState === 'loading') {console.log("loading");$(".header__icon-list").css("pointer-events", "none");}
+  $(`.line-item[data-item-id="${giftId}"] ul, .line-item[data-item-id="${giftId}"] span.price.price--compare.line-through, .line-item[data-item-id="${giftId}"] a.line-item__remove-button.link.text--subdued.text--xxsmall`).each(function() {$(this).css("display", "none") })
+  $(`#mini-cart-form  .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css({'pointer-events' : 'none' ,'cursor' : 'no-drop', 'color': 'grey' , 'opacity' : '0.5'}) })
   $(window).on("load", function(){
    $(".header__icon-list").css("pointer-events", "auto");
    // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
@@ -1097,6 +1088,8 @@
       }
     })
 
+  $(`.line-item[data-item-id="${giftId}"] ul, .line-item[data-item-id="${giftId}"] span.price.price--compare.line-through, .line-item[data-item-id="${giftId}"] a.line-item__remove-button.link.text--subdued.text--xxsmall`).each(function() {$(this).css("display", "none") })
+  $(`#mini-cart-form  .line-item[data-item-id="${giftId}"] .quantity-selector__button`).each(function() {$(this).css({'pointer-events' : 'none' ,'cursor' : 'no-drop', 'color': 'grey' , 'opacity' : '0.5'}) })   
    {% comment %} 
      let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
      console.log('price',total_price);

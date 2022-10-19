@@ -47,7 +47,7 @@
   #saleModal .modal-content {
     border: 0;
   }
-  /*   .modal-form {background: #000;} */
+  .modal-form {background: {{ section.settings.popup_backgroung }} !important;}
   #saleModal input {
     background: transparent;
     color: #ccc;
@@ -64,6 +64,8 @@
   .modal {
     transform: translateY(0%);
   }
+
+  {{ section.settings.popup_id }} 
   @media screen and (max-width: 600px) {
     #saleModal .modal-dialog,
     #saleModals-1 .modal-dialog,
@@ -119,6 +121,7 @@
       }
     {% else %}
       $("{{ section.settings.popup_id }}").click(function(e) {
+        e.preventDefault();
         $(".custom_Popup #saleModal").modal("show");
       });{% endif %}
     $(".custom_Popup .sale-btn").click(function() {
@@ -166,6 +169,12 @@
         "type": "image_picker",
         "id": "popup_image",
         "label": "Popup Image"
+      },
+      {
+        "type": "color",
+        "id": "popup_backgroung",
+        "label": "Popup Background",
+        "default": "#000000"
       }, {
         "type": "html",
         "id": "popup_text",
