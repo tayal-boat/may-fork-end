@@ -110,11 +110,15 @@
     inventory: function inventory() {
       var res = this.inventory_available;
       var flashSale = '';
+      var free = '';
       if(this.tags.includes('flash-sale')){
         flashSale = 'flash-sale';
       }
+      if(this.tags.includes('Free-Earphones')){
+      free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
+      }
       if(this.inventory_available) {
-        res = '<input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + flashSale + '" />';
+        res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
       }else{
       if(this.tags.includes('Coming-Soon')){
         res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
@@ -143,6 +147,7 @@
     },
     badge: function badge() {
       var res = '';
+      var res_class = '';
       // console.log(this);
       var tags = this.tags;
       var price_ratio = this.price_ratio;
@@ -315,7 +320,7 @@
   var i = helpersNames.length;
   var helpersArray = new Array(i);
   while (i--) helpersArray[i] = [helpersNames[i], helpers[helpersNames[i]]];
-
+  
   algolia.hoganHelpers = helpersArray.reduce(function(res, options) {
     var name = options[0];
     var helper = options[1];
@@ -331,7 +336,7 @@
         return helper.call(this, text, render);
       }.bind(this);
     };
-
     return newRes;
+
   }, {});
 })(window.algoliaShopify);

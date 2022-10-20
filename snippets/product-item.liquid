@@ -45,38 +45,54 @@
     <span class="label label--highlight custom-label coming-soon">COMING SOON</span>
   {% endif %}
   {%- if product.available == true -%}
-    {% if product.tags contains 'flash-sale' and settings.enable_flash_sale %}
+    {% if product.tags contains 'Free-Earphones' %}
+      <span class="label label--highlight custom-label free-label ">
+        🎁 Free Earphones
+      </span>
+    {% elsif product.tags contains 'flash-sale' and settings.enable_flash_sale %}
       {%- if product.price < product.compare_at_price -%}
         <span class="label label--highlight custom-label lowest-price flash">
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798"
-            loading="lazy"
-            alt="thunder"
-          >
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+</svg>
           {{ settings.flash_products_label }}
         </span>
       {%- endif -%}
     {% else %}
       {%- for tag in product.tags -%}
-        {%- if tag contains 'meta-label-lowest-price' -%}
-          {%- if product.price < product.compare_at_price -%}
-            <span class="label label--highlight custom-label lowest-price custom-saved-price-lable">
-              You Save
-              {{
-                product.compare_at_price
-                | minus: product.price
-                | times: 100.0
-                | divided_by: product.compare_at_price
-                | round
-                | append: '%'
-              }}
-            </span>
-          {%- endif -%}
-        {% else %}
-          {%- if tag contains 'meta-label-' -%}
-            <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"
-              ><span>{{ tag | remove: 'meta-label-' }}</span></span
-            >
+        {%- if tag contains 'Coupon-' -%}
+          <span class="label label--highlight custom-label coupon-label {{ tag | remove: 'meta-label-sold' }}">
+            ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
+          </span>
+          {%- break -%}
+
+        {% comment %} {%- elsif tag contains 'Free-' -%}
+        <span class="label label--highlight custom-label free-label {{ tag | remove: 'meta-label-sold' }}">
+          🎁 {{ tag | split: '-' | first }} {{ tag | split: '-' | last }}
+        </span>
+        {%- break -%} {% endcomment %}
+
+        {%- else -%}
+          {%- if tag contains 'meta-label-lowest-price' -%}
+            {%- if product.price < product.compare_at_price -%}
+              <span class="label label--highlight custom-label lowest-price custom-saved-price-lable">
+                You Save
+                {{
+                  product.compare_at_price
+                  | minus: product.price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '%'
+                }}
+              </span>
+            {%- endif -%}
+          {% else %}
+            {%- if tag contains 'meta-label-' -%}
+              <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"
+                ><span>{{ tag | remove: 'meta-label-' }}</span></span
+              >
+            {%- endif -%}
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
@@ -183,10 +199,9 @@
       {%- endif -%}
     </a>
     {% if product.tags contains 'Super Quick Delivery' %}
-      <div class="quick-delivery-lable">
-        {% render 'icon' with 'quick-delivery' -%}
-        <span>Super Quick Delivery</span>
-      </div>
+    <div class="quick-delivery-lable">
+      {% render 'icon' with 'quick-delivery' %}<span>Super Quick Delivery</span>
+    </div>
     {% endif %}
   </div>
 
@@ -353,21 +368,17 @@
             </p>
           {% endif %}
         {% endunless %}
+        
         {% if product.metafields.custom.delivery != blank %}
-          {% assign delivery_date = product.metafields.custom.delivery | append: ' day' %}
+        {% assign delivery_date = product.metafields.custom.delivery %}
         {% else %}
-          {% assign delivery_date = '2 days' %}
+        {% assign delivery_date = '2 days' %}
         {% endif %}
 
         <div class="pincode_details">
-          <h6>Fastest delivery in {{ delivery_date }}</h6>
+          <h6>Fastest delivery in {{delivery_date}}</h6>
         </div>
-        {%- if request.page_type != 'password'
-          and settings.product_add_to_cart
-          and product.available
-          and reduced_content != true
-          and show_cta != true
-        -%}
+        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
           {% assign available_variants = 0 %}
           {% for variant in product.variants %}
             {% if variant.available %}
@@ -381,6 +392,9 @@
             {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
               <input type="hidden" name="quantity" value="1">
               <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+              {%- if product.tags contains 'Free-Earphones' -%}
+                <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+              {%- endif -%}
               <button
                 is="loader-button"
                 type="submit"
@@ -545,6 +559,9 @@
           {%- form 'product', product, is: 'product-form', id: form_id -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+            {%- if product.tags contains 'Free-Earphones' -%}
+              <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+            {%- endif -%}
             <button
               type="submit"
               {% if show_cta %}
@@ -598,10 +615,10 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-    {% unless template contains 'index' %}
+
       {% if product.available and product.tags contains 'flash-sale' -%}
         {%- render 'inventory-bar' with product -%}
       {%- endif %}
-    {% endunless %}
+
   </div>
 </product-item>
