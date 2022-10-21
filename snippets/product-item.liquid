@@ -36,6 +36,7 @@
     reveal
   {% endif %}
 >
+<div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
   {% unless product.tags contains 'Coming-Soon' %}
     {%- if product.available == false -%}
       <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
@@ -52,9 +53,9 @@
     {% elsif product.tags contains 'flash-sale' and settings.enable_flash_sale %}
       {%- if product.price < product.compare_at_price -%}
         <span class="label label--highlight custom-label lowest-price flash">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+ <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
   <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
-</svg>
+ </svg>
           {{ settings.flash_products_label }}
         </span>
       {%- endif -%}
@@ -199,7 +200,7 @@
       {%- endif -%}
     </a>
   </div>
-
+</div>
   <div class="product-item__info {% if show_cta %}product-item__info--with-button{% endif %} {% if reduced_font_size %}text--small{% endif %}">
     <div class="product-item-meta">
       {%- if settings.show_vendor -%}
@@ -231,6 +232,18 @@
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
+            {% if product.compare_at_price > product.price %}
+              <p class="m-0 pr-2" style="font-size: 14px; color:#05A143; font-weight:500;">
+                {{-
+                  product.compare_at_price
+                  | minus: discounted_price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '% off'
+                -}} 
+              </p>
+            {% endif %}
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
@@ -241,14 +254,6 @@
               {%- endcapture -%}
 
               {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
-                <span
-                  class="price price--highlight product-card-price-varies product-card-price"
-                  data-price="{{ cheapest_variant.price }}"
-                >
-                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
-                </span>
-
                 <span
                   class="price price--compare line-through"
                   data-compare-price="{{ cheapest_variant.compare_at_price }}"
@@ -266,6 +271,15 @@
                     {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
+                <span
+                  class="price price--highlight product-card-price-varies product-card-price"
+                  data-price="{{ cheapest_variant.price }}"
+                >
+                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
+                </span>
+
+
               {%- else -%}
                 <span
                   class="price product-card-price product-card-price-varies"
@@ -276,6 +290,14 @@
                 </span>
               {%- endif -%}
             {%- elsif product.price < product.compare_at_price -%}
+              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
               <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -286,14 +308,7 @@
                 {%- endif -%}
               </span>
 
-              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
+
             {%- elsif product.price_varies -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
@@ -362,6 +377,9 @@
               )
             </p>
           {% endif %}
+          {% if product.available and product.tags contains 'flash-sale' -%}
+            {%- render 'inventory-bar' with product -%}
+          {%- endif %}
         {% endunless %}
         {%- if request.page_type != 'password'
           and settings.product_add_to_cart
@@ -605,10 +623,6 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-
-      {% if product.available and product.tags contains 'flash-sale' -%}
-        {%- render 'inventory-bar' with product -%}
-      {%- endif %}
 
   </div>
 </product-item>
