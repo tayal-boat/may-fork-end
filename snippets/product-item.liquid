@@ -377,9 +377,7 @@
               )
             </p>
           {% endif %}
-          {% if product.available and product.tags contains 'flash-sale' -%}
-            {%- render 'inventory-bar' with product -%}
-          {%- endif %}
+
         {% endunless %}
         {%- if request.page_type != 'password'
           and settings.product_add_to_cart
@@ -430,8 +428,8 @@
             {%- comment -%}
               IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
             {%- endcomment -%}
-
-            <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
+          <div class ="d-flex align-items-center">
+            <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash mr-2{% endif %}">
               <button
                 is="toggle-button"
                 loader
@@ -473,7 +471,12 @@
                 {% endif %}
               </button>
             </div>
-
+            {% if template contains 'collection' %}
+             {% if product.available and product.tags contains 'flash-sale' -%}
+              {%- render 'inventory-bar' with product -%}
+             {%- endif %}
+            {%- endif %}
+          </div>
             <quick-buy-popover
               id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
               href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover"
