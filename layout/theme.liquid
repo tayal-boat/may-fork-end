@@ -114,7 +114,7 @@
     </script>
 
         <!-- Google Tag Manager -->
-    <script>
+    <script type="deferjs">
       (function (w, d, s, l, i) {
         w[l] = w[l] || [];
         w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -129,11 +129,11 @@
     <!-- Google Tag Manager Ends -->
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 -->
     <script
-      async
+      async type="deferjs"
       src="https://www.googletagmanager.com/gtag/js?id=AW-816285276"
     >
     </script>
-    <script>
+    <script type="deferjs">
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
@@ -148,8 +148,8 @@
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6LGXJKGVE2"></script>
-    <script>
+    <script async type="deferjs" src="https://www.googletagmanager.com/gtag/js?id=G-6LGXJKGVE2"></script>
+    <script type="deferjs">
       window.dataLayer = window.dataLayer || [];
       function gtag(){window.dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -198,20 +198,19 @@
     <script type="text/template" id="template_algolia_autocomplete_footer">
       {% include 'algolia_autocomplete_footer.hogan' %}
     </script>
-    
-    <script src="{{ 'algolia_externals.js' | asset_url }}" defer></script>
-    {{ 'algolia_init.js' | asset_url | script_tag }}
-    <script src="{{ 'algolia_analytics.js' | asset_url }}" defer></script>
-    <script src="{{ 'algolia_translations.js' | asset_url }}" defer></script>
-    <script src="{{ 'algolia_helpers.js' | asset_url }}" defer></script>
-    <script src="{{ 'algolia_autocomplete.js' | asset_url }}" defer></script>
-    <script src="{{ 'algolia_facets.js' | asset_url }}" defer></script>
-    <script src="{{ 'algolia_sort_orders.js' | asset_url }}" defer></script>
-    <script src="{{ 'algolia_instant_search.js' | asset_url }}" defer></script>
+<script src="{{ 'algolia_externals.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_init.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_analytics.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_translations.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_helpers.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_autocomplete.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_facets.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_sort_orders.js' | asset_url }}" type="deferjs"></script>
+<script src="{{ 'algolia_instant_search.js' | asset_url }}" type="deferjs"></script>
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
     <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
     {%- if template == 'index' -%}
-      <link rel="stylesheet" href="{{ 'homepage.css' | asset_url }}">
+      <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
     {%- endif %}
     {%- render 'wizrocket_variables_generator' -%}
     {%- render 'ms-clarity' -%}
@@ -235,6 +234,7 @@
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
       {%- section 'announcement-bar' -%}
       {%- section 'header' -%}
+      {% render 'algolia-custom-js'%}
     {%- endif -%}
     <div id="main" role="main" class="anchor">
       {%- comment -%}
@@ -333,10 +333,10 @@
     {%- endif -%}
 
 
-    <script src="{{ 'theme.min-backup.js' | asset_url }}" defer></script>
+    <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
 
-    {% if template contains 'product' %}
+    {% if template contains 'product' or template contains 'index' %}
       {% render 'back-in-stock-helper' %}
     {% endif %}
 
@@ -354,14 +354,9 @@
         document.addEventListener('scroll', scrollLoad);
       </script>
     {% endif %}
-    {%- render 'multiple-a2c' -%}
     {% unless template contains 'product' or template contains 'customers' %}
       {%- render 'bottom-navbar-mobile' -%}
     {% endunless %}
-
-    <!-- Magic Checkout Code Starts -->
-    {% comment %} {% render 'magicCheckoutSnippet' %} {% endcomment %}
-    <!-- Magic Checkout Code Ends -->
     {%- render 'custom-scripts' -%}
     {%- render 'invitereferrals' -%}
 
@@ -386,5 +381,9 @@
         }
       </style>
     {% endif %}
+
+    
+    {%- render 'auto_atoc_items' -%}
+
   </body>
 </html>

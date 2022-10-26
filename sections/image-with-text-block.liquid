@@ -1,7 +1,3 @@
-<style>
-  .image-with-text-block img.image-with-text-block__image{object-fit: cover;}
-</style>
-
 {%- if section.settings.background_type == 'boxed' -%}
   {%- assign is_boxed = true -%}
 {%- else -%}
@@ -55,7 +51,11 @@
 
     --section-block-background: {{ section_block_background.red }}, {{ section_block_background.green }}, {{ section_block_background.blue }};
   }
-
+@media screen and (min-width: 1000px){
+.image-with-text-block__image, .image-with-text-block__image-wrapper {
+    position: relative!important;
+  }
+}
   @media screen and (max-width: 999px) {
     {%- if blends_with_background -%}
       #shopify-section-{{ section.id }} .section {
@@ -77,23 +77,16 @@
 
 <section class="section {% unless is_boxed or section.settings.text_position contains 'overlap' %}section--flush{% endunless %}">
   <div {% if is_boxed %}class="container"{% endif %}>
-    <image-with-text-block {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="image-with-text-block {% if section.settings.text_position contains 'overlap' %}image-with-text-block--overlap-{{ section.settings.text_position | split: '_' | last }}{% endif %}">
-      <div class="image-with-text-block__image-wrapper">
+<!--     <image-with-text-block {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="image-with-text-block {% if section.settings.text_position contains 'overlap' %}image-with-text-block--overlap-{{ section.settings.text_position | split: '_' | last }}{% endif %}"> -->
+  <a href="{% if section.settings.button_link %}{{ section.settings.button_link }}{% else %}javascript:void(0){% endif %}">   
+    <div class="image-with-text-block__image-wrapper">
+        {%- if section.settings.mobile_image != blank -%}
+            <img class="image-with-text-block__image hidden-lap-and-up" alt="{{section.settings.alt_text}}"{% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="100vw" {% render 'image-attributes', image: section.settings.mobile_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400' %}>
         {%- if section.settings.image != blank -%}
-        {% comment %}
           <img alt="{{section.settings.alt_text}}" class="image-with-text-block__image  {% if section.settings.mobile_image != blank %}hidden-pocket{% endif %}" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="(max-width: 999px) 100vw, {% if section.settings.text_position contains 'overlap' %}72vw{% elsif section.settings.background_type == 'boxed' %}min(1520px, 100vw){% else %}100vw{% endif %}" {% render 'image-attributes', image: section.settings.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000' %}>
 
-          {%- if section.settings.mobile_image != blank -%}
-            <img class="image-with-text-block__image hidden-lap-and-up" alt="{{section.settings.alt_text}}"{% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="100vw" {% render 'image-attributes', image: section.settings.mobile_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400' %}>
-          {%- endif -%}
-        {% endcomment %}
-          <picture>
-            {% if section.settings.mobile_image != blank %}
-            <source media="(max-width: 768px)" {% render 'image-attributes', image: section.settings.mobile_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400', ignore_src: true %}>
-            {% endif %}
-            <img alt="{{section.settings.alt_text}}" class="image-with-text-block__image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="(max-width: 999px) 100vw, {% if section.settings.text_position contains 'overlap' %}72vw{% elsif section.settings.background_type == 'boxed' %}min(1520px, 100vw){% else %}100vw{% endif %}" {% render 'image-attributes', image: section.settings.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000' %}>
-          </picture>
 
+          {%- endif -%}
         {%- else -%}
           {%- capture image_classes -%}image-with-text-block__image image-with-text-block__image--placeholder placeholder-background{%- endcapture -%}
 
@@ -104,7 +97,7 @@
           {%- endif -%}
         {%- endif -%}
       </div>
-
+  </a>
       {%- capture section_content -%}
         {%- assign text_position = section.settings.text_position | split: '_' | last -%}
 
@@ -142,10 +135,10 @@
           {{- section_content -}}
         </div>
       {% endif %}
-    </image-with-text-block>
+<!--     </image-with-text-block> -->
   </div>
 </section>
- 
+
 {% schema %}
 {
   "name": "Image with text block",
@@ -155,8 +148,7 @@
       "type": "checkbox",
       "id": "reveal_on_scroll",
       "label": "Reveal on scroll",
-      "info": "Show animation when section becomes visible.",
-      "default": true
+      "info": "Show animation when section becomes visible."
     },
     {
       "type": "image_picker",
