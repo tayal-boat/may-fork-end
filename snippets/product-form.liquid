@@ -487,11 +487,15 @@
             </quantity-selector>
                      <span class="product-form__quantity-label">{{ 'product.form.quantity' | t }}</span>
           </div>
-          {% if product.metafields.custom.delivery != blank %}
-          {% assign delivery_date = product.metafields.custom.delivery %}
+          {% for variant in product.variants %}
+          {% if variant.id == product.selected_or_first_available_variant.id %}
+          {% if variant.metafields.custom.delivery != blank %}
+          {% assign delivery_date = variant.metafields.custom.delivery %}
           {% else %}
           {% assign delivery_date = '2 days' %}
           {% endif %}
+          {% endif %}
+          {% endfor %}
 
           <div class="pincode_checker_container">
             <h5 class="pincode_heading">Delivery:</h5>
@@ -718,3 +722,23 @@ IMPLEMENTATION NOTE: if during the iteration of the options we have found an opt
     </div>
   </popover-content>
 {%- endif -%}
+
+{% capture variantDelivery %}
+{ {% for variant in product.variants %}
+"{{ variant.id }}":"{{ variant.metafields.custom.delivery }}"
+{% unless forloop.last %},{% endunless %}
+{% endfor %} }
+{%- endcapture -%}
+
+
+<script>
+  let variantDelivery = {{ variantDelivery }};
+  Shopify.variantDelivery = function(varientID){
+  let variantDeliveryTime = variantDelivery[varientID];
+  if((!sessionStorage.pincode_delivery_text || sessionStorage.pincode_delivery_text == '') && (!sessionStorage.pincode_error || sessionStorage.pincode_error == '')){
+  if(variantDeliveryTime !== ''){
+  $('.pincode_details h6').html('Fastest delivery in ' + variantDeliveryTime );
+  }else{$('.pincode_details h6').html('Fastest delivery in 2 days');}
+  }
+  }
+</script>
