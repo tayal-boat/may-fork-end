@@ -30,67 +30,72 @@
   {% assign discounted_price = product.price %}
 {%- endif -%}
 
-<product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}" {% if reveal %}reveal
-  {% endif %}><div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
-    {%- if product.available -%}
-      {%- for tag in product.tags -%}
-        {%- if tag contains 'Free-' -%}
-          <span class="label label--highlight custom-label free-label bg-green">
-            🎁 Free&nbsp; {{- tag | remove: 'Free-' -}}
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'Coupon-' -%}
-          <span class="label label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
-            ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }}
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
-          <span class="label label--highlight custom-label lowest-price flash">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
-            </svg>
-            {{ settings.flash_products_label }}
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'meta-label-Bestseller' -%}
-          <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-            🚀 {{ tag | remove: 'meta-label-' }}
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'meta-label-trending' -%}
-          <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;"/> TRENDING
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'meta-label-exclusive' -%}
-          <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-            💝 LIMITED EDITION
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'meta-label-just launched' -%}
-          <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-            🎉 NEW LAUNCH
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'Feature|' -%}
-          <span class="label label--highlight custom-label bg-black {{ tag }}">
-            {{- tag | remove: 'Feature|'  -}}
-          </span>
-          {%- break -%}
-        {%- elsif tag contains 'meta-label-' -%}
-          <span class="label label--highlight custom-label bg-white {{ tag }}">
-            {{- tag | remove: 'meta-label-'  -}}
-          </span>
-          {%- break -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- else -%}
-      <span class="label label--highlight custom-label q -out-click-to-notify">
-        <span>SOLD OUT</span>
-      </span>
-    {%- endif -%}
-    {%- comment -%}
-      {%- capture product_labels -%}
+
+<product-item
+  class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}"
+  {% if reveal %}
+    reveal
+  {% endif %}
+>
+<div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
+  {%- if product.available -%}
+    {%- for tag in product.tags -%}
+      {%- if tag contains 'Free-' -%}
+        <span class="label label--highlight custom-label free-label bg-green">
+          🎁 Free&nbsp; {{- tag | remove: 'Free-' -}}
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'Coupon-' -%}
+        <span class="label label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
+          ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
+        <span class="label label--highlight custom-label lowest-price flash">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+          <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+          </svg>
+          {{ settings.flash_products_label }}
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'meta-label-Bestseller' -%}
+        <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
+          🚀 {{ tag | remove: 'meta-label-' }} 
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'meta-label-trending' -%}
+        <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
+          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> TRENDING
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'meta-label-exclusive' -%}
+        <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
+        💝 LIMITED EDITION
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'meta-label-just launched' -%}
+        <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
+          🎉 NEW LAUNCH
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'Feature|' -%}
+        <span class="label label--highlight custom-label bg-black {{ tag }}">
+          {{- tag | remove: 'Feature|'  -}}
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'meta-label-' -%}
+        <span class="label label--highlight custom-label bg-white {{ tag }}">
+          {{- tag | remove: 'meta-label-'  -}}
+        </span>
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- else -%}
+    <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
+  {%- endif -%}
+  {%- comment -%}
+    {%- capture product_labels -%}
+
       {%- for tag in product.tags -%}
       {%- if tag contains '__label' -%}
       <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
