@@ -562,8 +562,9 @@ header.drawer__header {
               {%- endfor -%}
             </form>
           {% render 'freebie-cart_gift' %} 
-
-             {% for item in cart.items %}
+  
+            {%- if section.settings.show_recommendations -%}
+              {% for item in cart.items %}
                 {% if item.product.tags contains 'gift-box' %}
                   {% assign gift-box_quantity = item.quantity | minus: cart.item_count %}
                 {% endif %}
@@ -573,8 +574,6 @@ header.drawer__header {
              {% else %}
               <style>.gift-box {display: none !important}</style>
              {% endif %}  
-  
-            {%- if section.settings.show_recommendations -%}
               <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
                 {%- assign acceptable_recommendations_count = 0 -%}
   
@@ -644,14 +643,14 @@ header.drawer__header {
                     </div>
                   {%- endif -%}
                 {%- else -%}
-              <div class="mini-cart__recommendations-inner">
-                <div class="spinner">
+                 <div class="mini-cart__recommendations-inner">
+                 <div class="spinner">
                   {%- render 'icon' with 'spinner', stroke_width: 3, width: 40, height: 40 -%}
-                </div>
-              </div>
-            {%- endif -%}
-      </cart-drawer-recommendations>
-  {%- endif -%}
+                 </div>
+                 </div>
+               {%- endif -%}
+             </cart-drawer-recommendations>
+           {%- endif -%} 
          
 </div>
 {% comment %}
