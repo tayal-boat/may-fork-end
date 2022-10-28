@@ -39,12 +39,12 @@
   {%- if product.available -%}
     {%- for tag in product.tags -%}
       {%- if tag contains 'Free-' -%}
-        <span class="label label--highlight custom-label free-label ">
+        <span class="label label--highlight custom-label free-label bg-green">
           🎁 Free&nbsp; {{- tag | remove: 'Free-' -}}
         </span>
         {%- break -%}
       {%- elsif tag contains 'Coupon-' -%}
-        <span class="label label--highlight custom-label coupon-label {{ tag | remove: 'meta-label-sold' }}">
+        <span class="label label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
           ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
         </span>
         {%- break -%}
@@ -56,29 +56,34 @@
           {{ settings.flash_products_label }}
         </span>
         {%- break -%}
-      {%- elsif tag contains 'meta-label-Best Seller' -%}
+      {%- elsif tag contains 'meta-label-Bestseller' -%}
         <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-          BEST SELLER 
+          🚀 {{ tag | remove: 'meta-label-' }} 
         </span>
         {%- break -%}
       {%- elsif tag contains 'meta-label-trending' -%}
         <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-          TRENDING
+          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> TRENDING
         </span>
         {%- break -%}
       {%- elsif tag contains 'meta-label-exclusive' -%}
         <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-          LIMITED EDITION
+        💝 LIMITED EDITION
         </span>
         {%- break -%}
       {%- elsif tag contains 'meta-label-just launched' -%}
         <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-          NEW LAUNCH
+          🎉 NEW LAUNCH
         </span>
         {%- break -%}
       {%- elsif tag contains 'Feature|' -%}
         <span class="label label--highlight custom-label bg-black {{ tag }}">
           {{- tag | remove: 'Feature|'  -}}
+        </span>
+        {%- break -%}
+      {%- elsif tag contains 'meta-label-' -%}
+        <span class="label label--highlight custom-label bg-white {{ tag }}">
+          {{- tag | remove: 'meta-label-'  -}}
         </span>
         {%- break -%}
       {%- endif -%}
