@@ -1,0 +1,176 @@
+<style>
+  .deal-of-the_day .item{
+    height: 375px;
+  }
+  .deal-of-the_day .item img{
+    height: 100%;
+  }
+  .deal-of-the_day.{{ section.id }}{
+    padding-top: 40px;     padding-bottom: {{section.settings.sectionpadding}}px; 
+  }
+  .deal-of-the_day .section__header {margin: 20px 0px;}
+  .deal-of-the_day .heading.h3{
+    font-size: 24px;
+  }
+
+  .deal-slider .owl-dots {
+      text-align: center;
+      margin-top: 20px;
+      bottom: 20px;
+      width: 100%;
+      height: max-content;
+  }
+  .deal-slider button.owl-dot {
+      width: 12px;
+      height: 12px;
+      background: #44444478!important;
+      margin: 0 5px;
+      border-radius: 50%!important;
+  }
+  .deal-slider button.owl-dot.active {
+      background: #ccc!important;
+      width: 40px;
+      border-radius: 10px !important;
+  }
+</style>
+<H1>Section here</H1>
+<div class="container deal-of-the_day {{ section.id }} vertical-breather">
+  <div class="row">
+    <div class="col-md-12 section__header text-container d-flex justify-content-between">
+      <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
+      {% for block in section.blocks %}
+{% if block.type == 'image-left' %}
+    image left here
+    <a href="{% if block.settings.slide_urlleft != blank %}{{block.settings.slide_urlleft}}{% else %}javascript:void(0){% endif %}" class="slide-url">
+      <div class="item">
+        <img src="{{block.settings.imageleft | img_url}}">
+      </div>
+    </a>
+{% endif %}
+{% endfor %}
+          </div>
+ <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
+   {% for block in section.blocks %}
+      {% if block.type == 'image-right' %}
+        image right here
+    <a href="{% if block.settings.slide_urlright != blank %}{{block.settings.slide_urlright}}{% else %}javascript:void(0){% endif %}" class="slide-url">
+      <div class="item">
+        <img src="{{block.settings.imageright | img_url }}">
+      </div>
+    </a>
+    {% endif %}
+{% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+    jQuery(document).ready(function() {
+      var $owl = $( '#shopify-section-{{ section.id }}.owl-carousel' );
+      $owl.on('initialized.owl.carousel', function(event){ 
+         $('.temp-slide').remove();
+      });
+      jQuery('.deal-slider.{{ section.id }}').owlCarousel({
+        loop: true,
+        responsiveClass: true,
+        autoplay:true,
+        items: 4,
+        nav: false,
+        dots: true,
+        responsive: {
+          300: {
+            items: {{section.settings.slides_no}}
+          },
+          800: {
+            items: 2
+          },
+          1000: {
+            items:{{ section.settings.deskslides_no}},
+            loop: true,
+            margin: 10
+          }
+        }
+      })
+    })
+  </script>
+
+{% schema %}
+  {
+    "name": "double Slider",
+	"max_blocks": 28,
+    "settings": [
+		{
+             "type": "text",
+             "id": "sectionHeading",
+             "label": "Section Heading"
+        },
+       {
+             "type": "text",
+             "id": "sectionpadding",
+             "label": "padding bottom",
+         "default": "0"
+        },
+         {
+             "type": "number",
+             "id": "slides_no",
+             "label": "mobile slides",
+           "default": 1
+        },
+        {
+             "type": "number",
+             "id": "deskslides_no",
+             "label": "desk slides",
+           "default": 3
+        }
+
+	],
+	"blocks": [
+	{
+			"type": "image-left",
+        	"name": "Slide-left",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "imageleft",
+                  "label": "Primary image",
+                  "info": "300px wide minimum"
+              },
+              {
+                  "type": "url",
+                  "id": "imageUrlleft",
+                  "label": "Image URL"
+              }
+			]
+		},
+{
+			"type": "image-right",
+        	"name": "Slide-right",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "imageright",
+                  "label": "Primary image",
+                  "info": "300px wide minimum"
+              },
+              {
+                  "type": "url",
+                  "id": "imageUrlright",
+                  "label": "Image URL"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "double Slider",
+        "category": "Image",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}
