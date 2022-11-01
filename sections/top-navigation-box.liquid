@@ -1,19 +1,31 @@
-<div class="top-navigation-box container cf section-id-{{ section.id }} top-collections top-2 px-lg-0 " data-section-type="custom-row">
+<div class="top-navigation-box container cf section-id-{{ section.id }} top-collections top-2 px-lg-0" data-section-type="custom-row">
   {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
     <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3">
       {%- if section.settings.title != blank -%}
         <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
       {%- endif -%}
+      {%- comment -%}{%- if section.settings.view_Url != blank -%}
+        <a class="text-red d-lg-none mr-3" href="{{ section.settings.view_Url }}"
+          ><u><b>VIEW ALL</b></u></a
+        >
+      {%- endif -%}{%- endcomment -%}
     </header>
   {%- endif -%}
   <div class="top-collections-row">
     <div class="inner-collections-row row">
       {% for block in section.blocks %}
-        <div class="single_collection_box" >
+        <div class="col-md-2 col-4" style="min-height: 10rem;">
           <a href="{{ block.settings.imageUrl }}" class="collection-block">
-            <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings. collection_Title }}">
+            <div
+              class="collection collection-{{ forloop.index }}"
+              data-item="{{ block.settings.collection_Title }}"
+            >
               <span class="collection-image">
-                <img loading="eager" src="{{ block.settings.image | img_url: '150x' }}" alt="{{ block.settings.collection_Title }}">
+                <img
+                  loading="eager"
+                  src="{{block.settings.image | img_url: '150x'}}"
+                  alt="{{ block.settings.collection_Title }}"
+                >
               </span>
             </div>
             <span class="collection-text text-center text-white">

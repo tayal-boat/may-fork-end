@@ -641,9 +641,8 @@
               {%- endfor -%}
             </form>
           {% render 'freebie-cart_gift' %} 
-  
-            {%- if section.settings.show_recommendations -%}
-              {% for item in cart.items %}
+
+             {% for item in cart.items %}
                 {% if item.product.tags contains 'gift-box' %}
                   {% assign gift-box_quantity = item.quantity | minus: cart.item_count %}
                 {% endif %}
@@ -653,6 +652,8 @@
              {% else %}
               <style>.gift-box {display: none !important}</style>
              {% endif %}  
+  
+            {%- if section.settings.show_recommendations -%}
               <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
                 {%- assign acceptable_recommendations_count = 0 -%}
   
@@ -722,14 +723,14 @@
                     </div>
                   {%- endif -%}
                 {%- else -%}
-                 <div class="mini-cart__recommendations-inner">
-                 <div class="spinner">
+              <div class="mini-cart__recommendations-inner">
+                <div class="spinner">
                   {%- render 'icon' with 'spinner', stroke_width: 3, width: 40, height: 40 -%}
-                 </div>
-                 </div>
-               {%- endif -%}
-             </cart-drawer-recommendations>
-           {%- endif -%} 
+                </div>
+              </div>
+            {%- endif -%}
+      </cart-drawer-recommendations>
+  {%- endif -%}
          
 </div>
 {% comment %}
@@ -1043,10 +1044,10 @@
   <!--       freebie-offer -->
   {% assign gift-product = collections['freebie-offer'].products[0] %}
   {% assign gift-product_variant = gift-product.variants[0].id %}
-<!--    <style>  
+   <style>  
  .line-item[data-item-id="{{ gift-product_variant }}"] ul, .line-item[data-item-id="{{ gift-product_variant }}"] span.price.price--compare.line-through, .line-item[data-item-id="{{ gift-product_variant }}"] a.line-item__remove-button.link.text--subdued.text--xxsmall {display: none;}
   #mini-cart-form  .line-item[data-item-id="{{ gift-product_variant }}"] .quantity-selector__button{pointer-events:none;cursor:no-drop;color: grey; opacity : 0.5;}  
- </style> -->
+ </style>
   <script>
   let giftId = "{{ gift-product_variant }}";
   if(document.readyState === 'loading') {console.log("loading");$(".header__icon-list").css("pointer-events", "none");}
