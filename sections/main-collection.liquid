@@ -46,10 +46,13 @@
     position: relative;
     bottom: unset;
     right: unset;
-    width: 54px!important;
+    width: 49px!important;
     }
   .item-horizontal .product-item {
       flex-direction: row;
+  }
+  .product-item__image-wrapper {
+    margin-top: 36px;
   }
   .product-horizontal {
     width: 60%;
@@ -66,7 +69,9 @@
      /*  */
      
  @media screen and (max-width:768px){ 
-
+  .product-item__image-wrapper {
+    margin-top: 16px;
+  }
   .heading.h1{font-size: 26px;}
  }
  
@@ -283,10 +288,12 @@
                     <div class="popover__content">
                       <div class="popover__choice-list">
                         {%- for sort_option in collection.sort_options -%}
-                          <label class="popover__choice-item">
-                            <input type="radio" data-bind-value="sort-by-selected-value" class="visually-hidden" {% if sort_option.value == collection_sort_by %}checked="checked"{% endif %} name="sort_by" value="{{ sort_option.value }}" title="{{ sort_option.name }}">
-                            <span class="popover__choice-label">{{ sort_option.name }}</span>
-                          </label>
+                          {% unless sort_option.value contains 'created-ascending' or sort_option.value contains 'created-descending' %}
+                           <label class="popover__choice-item">
+                             <input type="radio" data-bind-value="sort-by-selected-value" class="visually-hidden" {% if sort_option.value == collection_sort_by %}checked="checked"{% endif %} name="sort_by" value="{{ sort_option.value }}" title="{{ sort_option.name }}">
+                             <span class="popover__choice-label">{{ sort_option.name }}</span>
+                           </label>
+                          {% endunless %}
                         {%- endfor -%}
                       </div>
                     </div>
@@ -536,7 +543,7 @@
           "label": "2"
         }
       ],
-      "default": "2"
+      "default": "1"
     },
     {
       "type": "range",
@@ -544,7 +551,7 @@
       "max": 5,
       "id": "desktop_products_per_row",
       "label": "Products per row (desktop)",
-      "default": 4
+      "default": 3
     },
     {
       "type": "header",
