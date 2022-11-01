@@ -314,10 +314,28 @@
                 {%- assign gap_width = 24.0 | divided_by: section.settings.desktop_products_per_row | times: desktop_number_of_products_minus_one -%}
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
 
+                {%- assign product_rep = 1 -%}
                 {%- for product in collection.products -%}
-                {% unless product.handle == 'membership' %}
-                  {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
-                {% endunless %}
+                  {% unless product.handle == 'membership' %}
+                    {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
+                  {% endunless %}
+                  
+                  {%- if product_rep == 6 -%}
+                    {%- if collection.metafields.custom.mobile_separator_image_slider -%}
+                      {%- assign all_banners = collection.metafields.custom.mobile_separator_image_slider | split: "," -%}
+                      <div class="only-mobile collection_separator_banner">
+                        <div class="owl-carousel owl-theme collection-image-slider {{ section.id }} ">
+                          {% for single_banner in all_banners %}
+                            <div class="item">
+                              <img src="{{ single_banner }}" class="collection_single_image" />
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+
+                  {%- assign product_rep = product_rep | plus:1 -%}
                 {%- endfor -%}
               </div>
 {% if paginate.pages > 1 %}
