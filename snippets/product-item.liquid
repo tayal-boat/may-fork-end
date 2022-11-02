@@ -14,15 +14,15 @@
 
 {%- if settings.enable_flash_sale and product.tags contains 'flash-sale' -%}
   {% assign cheapest_variant_discount_price = cheapest_variant.price
-    | times: settings.flash_discount
-    | divided_by: 100
-  %}
+   | times: settings.flash_discount
+   | divided_by: 100
+   %}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price
-    | minus: cheapest_variant_discount_price
-    | divided_by: 100
-    | round
-    | times: 100
-  %}
+   | minus: cheapest_variant_discount_price
+   | divided_by: 100
+   | round
+   | times: 100
+   %}
   {% assign discount_price = product.price | times: settings.flash_discount | divided_by: 100 %}
   {% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
 {%- else -%}
@@ -30,12 +30,14 @@
   {% assign discounted_price = product.price %}
 {%- endif -%}
 
+
 <product-item
   class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}"
   {% if reveal %}
     reveal
   {% endif %}
 >
+<div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
   {%- if product.available -%}
     {%- for tag in product.tags -%}
       {%- if tag contains 'Free-' -%}
@@ -91,175 +93,85 @@
   {%- else -%}
     <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
   {%- endif -%}
-  {% comment %} {% unless product.tags contains 'Coming-Soon' %}
-    {%- if product.available == false -%}
-      <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
-    {% endif %}
-  {% endunless %}
-  {% if product.tags contains 'Coming-Soon' %}
-    <span class="label label--highlight custom-label coming-soon">COMING SOON</span>
-  {% endif %}
-  {%- if product.available == true -%}
-    {% if product.tags contains 'Free-Earphones' %}
-      <span class="label label--highlight custom-label free-label ">
-        🎁 Free Earphones
-      </span>
-    {% elsif product.tags contains 'flash-sale' and settings.enable_flash_sale %}
-      {%- if product.price < product.compare_at_price -%}
-        <span class="label label--highlight custom-label lowest-price flash">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
-</svg>
-          {{ settings.flash_products_label }}
-        </span>
-      {%- endif -%}
-    {% else %}
-      {%- for tag in product.tags -%}
-        {%- if tag contains 'Coupon-' -%}
-          <span class="label label--highlight custom-label coupon-label {{ tag | remove: 'meta-label-sold' }}">
-            ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
-          </span>
-          {%- break -%}
-
-        {% comment %} {%- elsif tag contains 'Free-' -%}
-        <span class="label label--highlight custom-label free-label {{ tag | remove: 'meta-label-sold' }}">
-          🎁 {{ tag | split: '-' | first }} {{ tag | split: '-' | last }}
-        </span>
-        {%- break -%} {% endcomment %}
-
-        {%- else -%}
-          {%- if tag contains 'meta-label-lowest-price' -%}
-            {%- if product.price < product.compare_at_price -%}
-              <span class="label label--highlight custom-label lowest-price custom-saved-price-lable">
-                You Save
-                {{
-                  product.compare_at_price
-                  | minus: product.price
-                  | times: 100.0
-                  | divided_by: product.compare_at_price
-                  | round
-                  | append: '%'
-                }}
-              </span>
-            {%- endif -%}
-          {% else %}
-            {%- if tag contains 'meta-label-' -%}
-              <span class="label label--highlight custom-label {{ tag | remove: 'meta-label-sold' }} r"
-                ><span>{{ tag | remove: 'meta-label-' }}</span></span
-              >
-            {%- endif -%}
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endif -%}
-  {%- endif -%} {% endcomment %}
   {%- comment -%}
     {%- capture product_labels -%}
+
       {%- for tag in product.tags -%}
-        {%- if tag contains '__label' -%}
-          <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
-    	  {%- elsif settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag -%}
-          {%- if settings.discount_mode == 'percentage' -%}
-            {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
-          {%- else -%}
-            {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
-          {%- endif -%}
-        <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
-        {%- endif -%}
-    	 {%- else -%}
+      {%- if tag contains '__label' -%}
+      <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
+      {%- elsif settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag -%}
+      {%- if settings.discount_mode == 'percentage' -%}
+      {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
+      {%- else -%}
+      {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
+      {%- endif -%}
+      <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
+      {%- endif -%}
+      {%- else -%}
       {%- endfor -%}
 
       {%- unless product.available -%}
-        <span class="label label--subdued">{{ 'collection.product.sold_out' | t }}</span>
+      <span class="label label--subdued">{{ 'collection.product.sold_out' | t }}</span>
       {%- endunless -%}
 
       {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
       {%- if settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank -%}
-        {%- if settings.discount_mode == 'percentage' -%}
-          {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
-        {%- else -%}
-          {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
+      {%- if settings.discount_mode == 'percentage' -%}
+      {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
+      {%- else -%}
+      {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
+      {%- endif -%}
+
+      <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
+      {%- endif -%}
+      {%- endcapture -%}
+    {%- endcomment -%}
+    <div class="product-item__image-wrapper {% if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true %}product-item__image-wrapper--multiple{% endif %}">
+      {%- if product_labels != blank and reduced_content != true -%}
+        <div class="product-item__label-list label-list">
+          {{- product_labels -}}
+        </div>
+      {%- endif -%}
+
+      <a href="{{ product.url }}" class="product-item__aspect-ratio aspect-ratio {% if settings.product_image_size != 'natural' %}aspect-ratio--{{ settings.product_image_size }}{% endif %}" style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}">
+        {% if product.variants.size > 1 %}
+          <img class="product-item__primary-image" loading="lazy" data-media-id="{{ product.featured_media.id | escape }}" sizes="{{ sizes_attribute }}" {% render 'image-attributes', image: product.selected_or_first_available_variant.image, sizes: '200,300' -%}>
+        {% else %}
+          <img class="product-item__primary-image" loading="lazy" data-media-id="{{ product.featured_media.id | escape }}" sizes="{{ sizes_attribute }}" {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
+        {% endif %}
+        {%- if settings.product_color_display == 'swatch' -%}
+          {%- assign featured_media = product.variants | map: 'featured_media' -%}
+
+          {%- for media in featured_media -%}
+            {%- unless media == product.featured_media -%}
+              <img class="product-item__primary-image" hidden data-media-id="{{ media.id | escape }}" loading="lazy" sizes="{{ sizes_attribute }}" {% render 'image-attributes', image: media, sizes: '200,300' %}>
+            {%- endunless -%}
+          {%- endfor -%}
         {%- endif -%}
 
-        <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
-      {%- endif -%}
-    {%- endcapture -%}
-  {%- endcomment -%}
-  <div class="product-item__image-wrapper {% if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true %}product-item__image-wrapper--multiple{% endif %}">
-    {%- if product_labels != blank and reduced_content != true -%}
-      <div class="product-item__label-list label-list">
-        {{- product_labels -}}
+        {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
+          {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position]
+            | plus: 1
+            -%}
+          {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position]
+            | default: product.media[next_media_pos]
+            -%}
+          <img class="product-item__secondary-image" loading="lazy" sizes="{{ sizes_attribute }}" {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
+        {%- endif -%}
+      </a>
+      {% unless template contains 'collection' %}
+        {% if product.available and product.tags contains 'flash-sale' -%}
+          {%- render 'inventory-bar' with product -%}
+        {%- endif -%}
+      {%- endunless -%}
+      {% if product.tags contains 'Super Quick Delivery' %}
+      <div class="quick-delivery-lable">
+        {% render 'icon' with 'quick-delivery' %}<span>Super Quick Delivery</span>
       </div>
-    {%- endif -%}
-
-    <a
-      href="{{ product.url }}"
-      class="product-item__aspect-ratio aspect-ratio {% if settings.product_image_size != 'natural' %}aspect-ratio--{{ settings.product_image_size }}{% endif %}"
-      style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}"
-    >
-      {% if product.variants.size > 1 %}
-        <img
-          class="product-item__primary-image"
-          loading="lazy"
-          data-media-id="{{ product.featured_media.id | escape }}"
-          sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes',
-            image: product.selected_or_first_available_variant.image,
-            sizes: '200,300,400,500,600,700,800,900,1000,1100,1200'
-          -%}
-        >
-      {% else %}
-        <img
-          class="product-item__primary-image"
-          loading="lazy"
-          data-media-id="{{ product.featured_media.id | escape }}"
-          sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes',
-            image: product.featured_image,
-            sizes: '200,300,400,500,600,700,800,900,1000,1100,1200'
-          -%}
-        >
       {% endif %}
-      {%- if settings.product_color_display == 'swatch' -%}
-        {%- assign featured_media = product.variants | map: 'featured_media' -%}
-
-        {%- for media in featured_media -%}
-          {%- unless media == product.featured_media -%}
-            <img
-              class="product-item__primary-image"
-              hidden
-              data-media-id="{{ media.id | escape }}"
-              loading="lazy"
-              sizes="{{ sizes_attribute }}"
-              {% render 'image-attributes', image: media, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' %}
-            >
-          {%- endunless -%}
-        {%- endfor -%}
-      {%- endif -%}
-
-      {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-        {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position]
-          | plus: 1
-        -%}
-        {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position]
-          | default: product.media[next_media_pos]
-        -%}
-        <img
-          class="product-item__secondary-image"
-          loading="lazy"
-          sizes="{{ sizes_attribute }}"
-          {% render 'image-attributes', image: next_media, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200' %}
-        >
-      {%- endif -%}
-    </a>
-    {% if product.tags contains 'Super Quick Delivery' %}
-    <div class="quick-delivery-lable">
-      {% render 'icon' with 'quick-delivery' %}<span>Super Quick Delivery</span>
     </div>
-    {% endif %}
   </div>
-
   <div class="product-item__info {% if show_cta %}product-item__info--with-button{% endif %} {% if reduced_font_size %}text--small{% endif %}">
     <div class="product-item-meta">
       {%- if settings.show_vendor -%}
@@ -291,6 +203,18 @@
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
+            {% if product.compare_at_price > product.price %}
+              <p class="m-0 pr-2 off">
+                {{-
+                  product.compare_at_price
+                  | minus: discounted_price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '% off'
+                -}}
+              </p>
+            {% endif %}
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
@@ -301,18 +225,7 @@
               {%- endcapture -%}
 
               {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
-                <span
-                  class="price price--highlight product-card-price-varies product-card-price"
-                  data-price="{{ cheapest_variant.price }}"
-                >
-                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
-                </span>
-
-                <span
-                  class="price price--compare line-through"
-                  data-compare-price="{{ cheapest_variant.compare_at_price }}"
-                >
+                <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
@@ -326,16 +239,27 @@
                     {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
+                <span class="price price--highlight product-card-price-varies product-card-price" data-price="{{ cheapest_variant.price }}">
+                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
+                </span>
+
+
               {%- else -%}
-                <span
-                  class="price product-card-price product-card-price-varies"
-                  data-price="{{ cheapest_variant.price }}"
-                >
+                <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                   {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
                 </span>
               {%- endif -%}
             {%- elsif product.price < product.compare_at_price -%}
+              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
               <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -346,14 +270,7 @@
                 {%- endif -%}
               </span>
 
-              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
+
             {%- elsif product.price_varies -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
@@ -422,6 +339,7 @@
               )
             </p>
           {% endif %}
+
         {% endunless %}
         
         {% if product.selected_or_first_available_variant.metafields.custom.delivery != blank %}
@@ -450,21 +368,14 @@
               {%- if product.tags contains 'Free-Earphones' -%}
                 <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
               {%- endif -%}
-              <button
-                is="loader-button"
-                type="submit"
-                class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-touch"
-              >
+              <button is="loader-button" type="submit" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-touch">
                 {%- if product.tags contains 'prebooking' -%}
                   {{- 'product.form.pre_order' | t -}}
                 {% else %}
                   {{- 'product.form.add_to_cart' | t -}}
                 {% endif %}
               </button>
-              <button
-                type="submit"
-                class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch"
-              >
+              <button type="submit" class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
                 <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
                 {%- if product.tags contains 'prebooking' -%}
                   {{- 'product.form.pre_order' | t -}}
@@ -477,65 +388,48 @@
             {%- comment -%}
               IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
             {%- endcomment -%}
+            <div class="d-flex align-items-center">
+              <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash mr-2{% endif %}">
+                <button is="toggle-button" loader aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone">
+                  {%- if product.tags contains 'prebooking' -%}
+                    {{- 'product.form.pre_order' | t -}}
+                  {% else %}
+                    {{- 'product.form.add_to_cart' | t -}}
+                  {% endif %}
+                </button>
+                <button is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="product-item__quick-buy-button hidden-no-touch hidden-phone">
+                  <span class="visually-hidden">ADD</span>
+                  {%- if product.tags contains 'prebooking' -%}
+                    {{- 'product.form.pre_order' | t -}}
+                  {% else %}
+                    {{- 'product.form.add_to_cart' | t -}}
+                  {% endif %}
+                </button>
 
-            <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
-              <button
-                is="toggle-button"
-                loader
-                aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
-                aria-expanded="false"
-                class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone"
-              >
-                {%- if product.tags contains 'prebooking' -%}
-                  {{- 'product.form.pre_order' | t -}}
-                {% else %}
-                  {{- 'product.form.add_to_cart' | t -}}
-                {% endif %}
-              </button>
-              <button
-                is="toggle-button"
-                aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
-                aria-expanded="false"
-                class="product-item__quick-buy-button hidden-no-touch hidden-phone"
-              >
-                <span class="visually-hidden">ADD</span>
-                {%- if product.tags contains 'prebooking' -%}
-                  {{- 'product.form.pre_order' | t -}}
-                {% else %}
-                  {{- 'product.form.add_to_cart' | t -}}
-                {% endif %}
-              </button>
-
-              <button
-                is="toggle-button"
-                aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
-                aria-expanded="false"
-                class="product-item__quick-buy-button hidden-tablet-and-up"
-              >
-                <span class="visually-hidden">ADD</span>
-                {%- if product.tags contains 'prebooking' -%}
-                  {{- 'product.form.pre_order' | t -}}
-                {% else %}
-                  {{- 'product.form.add_to_cart' | t -}}
-                {% endif %}
-              </button>
+                <button is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" aria-expanded="false" class="product-item__quick-buy-button hidden-tablet-and-up">
+                  <span class="visually-hidden">ADD</span>
+                  {%- if product.tags contains 'prebooking' -%}
+                    {{- 'product.form.pre_order' | t -}}
+                  {% else %}
+                    {{- 'product.form.add_to_cart' | t -}}
+                  {% endif %}
+                </button>
+              </div>
+              {% if template contains 'collection' %}
+                {% if product.available and product.tags contains 'flash-sale' -%}
+                  {%- render 'inventory-bar' with product -%}
+                {%- endif %}
+              {%- endif %}
             </div>
-
-            <quick-buy-popover
-              id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
-              href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover"
-              class="popover popover--quick-buy hidden-tablet-and-up"
-            ></quick-buy-popover>
-            <quick-buy-drawer
-              id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
-              href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer"
-              class="drawer drawer--large drawer--quick-buy hidden-phone"
-            ></quick-buy-drawer>
+            <quick-buy-popover id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover" class="popover popover--quick-buy hidden-tablet-and-up"></quick-buy-popover>
+            <quick-buy-drawer id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer" class="drawer drawer--large drawer--quick-buy hidden-phone"></quick-buy-drawer>
           {%- endif -%}
         {%- endif -%}
         {% unless product.available %}
           <div class="product-item__quick-form">
-            <a href="#" class="BIS_trigger item_BIS" data-product-data="{{ product | json | escape }}"> Notify Me </a>
+            <a href="#" class="BIS_trigger item_BIS" data-product-data="{{ product | json | escape }}">
+              Notify Me
+            </a>
           </div>
         {% endunless %}
       </div>
@@ -555,33 +449,17 @@
                   {%- assign variant_option = 'option' | append: product_option.position -%}
                   {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
 
-                  {%- capture color_name -%}{{ section.id }}-{{ block.id }}-{{ product.id }}{%- endcapture -%}
+                  {%- capture color_name -%}
+                    {{ section.id }}-{{ block.id }}-{{ product.id }}{%- endcapture -%}
 
                   {%- for value in product_option.values -%}
-                    {%- capture color_id -%}{{ color_name }}-{{ forloop.index }}{%- endcapture -%}
+                    {%- capture color_id -%}
+                      {{ color_name }}-{{ forloop.index }}{%- endcapture -%}
                     {%- assign color_value_downcase = value | downcase -%}
                     {%- assign variant_for_value = product.variants | where: variant_option, value | first -%}
 
                     <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}">
-                      <input
-                        class="color-swatch__radio visually-hidden"
-                        type="radio"
-                        name="{{ color_name }}"
-                        id="{{ color_id }}"
-                        value="{{ value | escape }}"
-                        {% if product_option.selected_value == value %}
-                          checked="checked"
-                        {% endif %}
-                        data-variant-id="{{ variant_for_value.id }}"
-                        {% if variant_for_value.featured_media %}
-                          data-variant-featured-media="{{ variant_for_value.featured_media.id }}"
-                        {% endif %}
-                      >
-                      <label
-                        class="color-swatch__item"
-                        for="{{ color_id }}"
-                        style="{% render 'color-swatch-style', color_swatch_config: color_swatch_config, value: value %}"
-                      >
+                      <input class="color-swatch__radio visually-hidden" type="radio" name="{{ color_name }}" id="{{ color_id }}" value="{{ value | escape }}" {% if product_option.selected_value == value %}checked="checked"{% endif %}data-variant-id="{{ variant_for_value.id }}" {% if variant_for_value.featured_media %}data-variant-featured-media="{{ variant_for_value.featured_media.id }}"{% endif %}><label class="color-swatch__item" for="{{ color_id }}" style="{% render 'color-swatch-style', color_swatch_config: color_swatch_config, value: value %}">
                         <span class="visually-hidden">{{ value }}</span>
                       </label>
                     </div>
@@ -595,12 +473,12 @@
       {%- endif -%}
 
       {% comment %}
-            		{%- if product.metafields.benefits.usp1 -%}
-          <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
-            <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-            <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-            <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-          </div>
+        {%- if product.metafields.benefits.usp1 -%}
+        <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
+        <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
+        <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
+        <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+        </div>
         {%- endif -%}
       {% endcomment %}
     </div>
@@ -617,52 +495,22 @@
             {%- if product.tags contains 'Free-Earphones' -%}
               <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
             {%- endif -%}
-            <button
-              type="submit"
-              {% if show_cta %}
-                is="loader-button"
-              {% endif %}
-              class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}"
-            >
+            <button type="submit" {% if show_cta %}is="loader-button"{% endif %}class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">
               Add To Cart
             </button>
           {%- endform -%}
         {%- else -%}
-          <button
-            type="button"
-            {% if show_cta %}
-              loader
-            {% endif %}
-            is="toggle-button"
-            aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
-            aria-expanded="false"
-            class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %} hidden-phone"
-          >
+          <button type="button" {% if show_cta %}loader
+            {% endif %}is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %} hidden-phone">
             Add To Cart
           </button>
-          <button
-            type="button"
-            {% if show_cta %}
-              loader
-            {% endif %}
-            is="toggle-button"
-            aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
-            aria-expanded="false"
-            class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %} hidden-tablet-and-up"
-          >
+          <button type="button" {% if show_cta %}loader
+            {% endif %}is="toggle-button" aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" aria-expanded="false" class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %} hidden-tablet-and-up">
             Add To Cart
           </button>
 
-          <quick-buy-popover
-            id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
-            href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover"
-            class="popover popover--quick-buy hidden-tablet-and-up"
-          ></quick-buy-popover>
-          <quick-buy-drawer
-            id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
-            href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer"
-            class="drawer drawer--large drawer--quick-buy hidden-phone"
-          ></quick-buy-drawer>
+          <quick-buy-popover id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover" class="popover popover--quick-buy hidden-tablet-and-up"></quick-buy-popover>
+          <quick-buy-drawer id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer" class="drawer drawer--large drawer--quick-buy hidden-phone"></quick-buy-drawer>
         {%- endif -%}
       </div>
     {%- elsif reduced_content -%}
@@ -670,10 +518,6 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-
-      {% if product.available and product.tags contains 'flash-sale' -%}
-        {%- render 'inventory-bar' with product -%}
-      {%- endif %}
 
   </div>
 </product-item>

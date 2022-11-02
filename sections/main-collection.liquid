@@ -25,9 +25,6 @@
   #shopify-section-{{ section.id }} {
     --section-products-per-row: {{ section.settings.mobile_products_per_row | times: 1 }};
   }
-  .product-list__inner .product-item-meta__title {
-    overflow: hidden;
-  }
   .jdgm-widget.jdgm-widget {
       display: block!important;    min-height: 18px;
   }
@@ -44,9 +41,41 @@
     	display: block;
       	width: 100%;
     }
+   /* collection cards */
+    div[role="progressbar"]{
+    position: relative;
+    bottom: unset;
+    right: unset;
+    width: 49px!important;
+    }
+  .item-horizontal .product-item {
+      flex-direction: row;
+  }
+  .product-item__image-wrapper {
+    margin-top: 36px;
+  }
+  .product-horizontal {
+    width: 60%;
+  }
+  .product-list__inner.item-horizontal .product-item__info{  
+      border-radius: 0;
+      margin: 0 ;
+      padding: 10px 12px 8px 16px;
+    }
+  .item-horizontal .product-item{
+    border-radius: 5px;
+    border: 1px solid #E7E7E7;
+  }
+     /*  */
+     
  @media screen and (max-width:768px){ 
-
-     .heading.h1{font-size: 26px;}
+  .product-item__image-wrapper {
+    margin-top: 16px;
+  }
+  .heading.h1{font-size: 26px;}
+  div[role="progressbar"]{
+    width: 46px!important;
+  }
  }
  
 /*  -------------------------------   */
@@ -61,6 +90,11 @@
   }
 
   {%- if section.settings.filter_position == 'drawer' -%}
+    @media screen and (min-width: 769px) {
+      #shopify-section-{{ section.id }} {
+        --section-products-per-row: {{ section.settings.desktop_products_per_row | minus:1 }};
+      }
+    }
     @media screen and (min-width: 1200px) {
       #shopify-section-{{ section.id }} {
         --section-products-per-row: {{ section.settings.desktop_products_per_row }};
@@ -236,7 +270,10 @@
                     <span class="popover__overlay"></span>
 
                     <header class="popover__header">
-                      <span class="popover__title heading h6">{{- 'collection.general.sort_by' | t -}}</span>
+                      <span class="popover__title heading h6">
+                        {%- render 'icon' with 'sort-by', inline: true -%}
+
+                        {{- 'collection.general.sort_by' | t | upcase  -}}</span>
 
                       <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
                         {%- render 'icon' with 'close' -%}
@@ -246,10 +283,12 @@
                     <div class="popover__content">
                       <div class="popover__choice-list">
                         {%- for sort_option in collection.sort_options -%}
-                          <label class="popover__choice-item">
-                            <input type="radio" data-bind-value="sort-by-selected-value" class="visually-hidden" {% if sort_option.value == collection_sort_by %}checked="checked"{% endif %} name="sort_by" value="{{ sort_option.value }}" title="{{ sort_option.name }}">
-                            <span class="popover__choice-label">{{ sort_option.name }}</span>
-                          </label>
+                          {% unless sort_option.value contains 'created-ascending' or sort_option.value contains 'created-descending' %}
+                           <label class="popover__choice-item">
+                             <input type="radio" data-bind-value="sort-by-selected-value" class="visually-hidden" {% if sort_option.value == collection_sort_by %}checked="checked"{% endif %} name="sort_by" value="{{ sort_option.value }}" title="{{ sort_option.name }}">
+                             <span class="popover__choice-label">{{ sort_option.name }}</span>
+                           </label>
+                          {% endunless %}
                         {%- endfor -%}
                       </div>
                     </div>
@@ -273,15 +312,33 @@
                 {%- assign sidebar_width = 0 -%}
               {%- endif -%}
 
-              <div class="product-list__inner {% if paginate.pages > 1 %}load-more__inner {% endif %}" id="Huratips_Loop">
+              <div class="product-list__inner item-horizontal {% if paginate.pages > 1 %}load-more__inner {% endif %}" id="Huratips_Loop">
                 {%- assign desktop_number_of_products_minus_one = section.settings.desktop_products_per_row | minus: 1 -%}
                 {%- assign gap_width = 24.0 | divided_by: section.settings.desktop_products_per_row | times: desktop_number_of_products_minus_one -%}
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
 
+                {%- assign product_rep = 1 -%}
                 {%- for product in collection.products -%}
-                {% unless product.handle == 'membership' %}
-                  {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
-                {% endunless %}
+                  {% unless product.handle == 'membership' %}
+                    {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
+                  {% endunless %}
+                  
+                  {%- if product_rep == 6 -%}
+                    {%- if collection.metafields.custom.mobile_separator_image_slider -%}
+                      {%- assign all_banners = collection.metafields.custom.mobile_separator_image_slider | split: "," -%}
+                      <div class="only-mobile collection_separator_banner">
+                        <div class="owl-carousel owl-theme collection-image-slider {{ section.id }} ">
+                          {% for single_banner in all_banners %}
+                            <div class="item">
+                              <img src="{{ single_banner }}" class="collection_single_image" />
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+
+                  {%- assign product_rep = product_rep | plus:1 -%}
                 {%- endfor -%}
               </div>
 {% if paginate.pages > 1 %}
@@ -462,7 +519,7 @@
       "type": "range",
       "id": "products_per_page",
       "label": "Products per page",
-      "min": 8,
+      "min": 9,
       "max": 50,
       "step": 1,
       "default": 24
@@ -481,7 +538,7 @@
           "label": "2"
         }
       ],
-      "default": "2"
+      "default": "1"
     },
     {
       "type": "range",
@@ -489,7 +546,7 @@
       "max": 5,
       "id": "desktop_products_per_row",
       "label": "Products per row (desktop)",
-      "default": 4
+      "default": 3
     },
     {
       "type": "header",
