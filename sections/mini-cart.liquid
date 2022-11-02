@@ -69,27 +69,28 @@
       .razorpay-checkout button > span.btn-text > span:last-child {padding-top: 3px;font-size: 15px;line-height: 10px;font-weight:700;}
       .razorpay-checkout button > span.pay-opt-icon img:first-child {margin-right: 10px;margin-left: 10px;}
 </style>
-      <script>
-        function setCookie(name,value,days) {
-        var expires = "";
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days*24*60*60*1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-        }
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0;i < ca.length;i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
-      </script>
+<script>
+  function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+</script>
   
   <cart-drawer section="{{ section.id }}" id="mini-cart" class="mini-cart drawer drawer--large">
       <span class="drawer__overlay"></span>
@@ -871,7 +872,13 @@
         }
     })
    {% endcomment %}
-  
+    $(".razorpay-checkout").click(function () {
+      let productsincart = line_item.product;
+      clevertap.event.push("razor/magic Button Clicked",{
+        "cart products": productsincart,
+        "Amount": cart_total_price
+      });
+    });
   });
   $(".razorpay-checkout").click(function () {
     let productsincart = line_item.product;
