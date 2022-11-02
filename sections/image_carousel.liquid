@@ -20,7 +20,7 @@
       </div>
   {% endif %}
   <div class="row">
-    	<a href="#0" class="slide-url temp-slide w-100 d-flex justify-content-center">
+    	{%- comment -%} <a href="#0" class="slide-url temp-slide w-100 d-flex justify-content-center">
           <div class="loading_icon">
             <img
               loading="lazy"
@@ -29,7 +29,7 @@
               style="width: 50px;"
             >
           </div>
-        </a>
+        </a> {%- endcomment -%}
     <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
       {% for block in section.blocks %}
         {% assign popup_class = "" %}
@@ -39,7 +39,7 @@
         
     <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
       <div class="item">
-        <img src="{{block.settings.image | img_url: ''}}">
+        <img loading="lazy" {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500' %}>
       </div>
     </a>
       {% endfor %}
@@ -47,8 +47,7 @@
   </div>
 </div>
 
-<script>
-    $(document).ready(function() {
+<script type="deferjs">
       var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
       $owl.on('initialized.owl.carousel', function(event){ 
          $('.temp-slide').hide();
@@ -76,7 +75,6 @@
           }
         }
       })
-    })
   </script>
 
 {% schema %}
