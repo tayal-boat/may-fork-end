@@ -61,28 +61,36 @@
         0% {-webkit-transform: rotate(0deg);transform: rotate(0deg);}
         100% {-webkit-transform: rotate(360deg);transform: rotate(360deg);}
       }
+      .razorpay-checkout {margin-bottom: 10px;}
+      .razorpay-checkout button {max-width: 100%;width: 100%;border: 1px solid transparent;display: flex;justify-content: center;align-items: center;background: white;border: 2px solid red; 	position: relative;margin: 0;border-radius: 4px;padding: 0;text-align: center;height: 50px;}
+      #razorpay-buy-now.disabled{opacity:0.5;cursor: not-allowed;}
+      .razorpay-checkout button:focus {outline: none;}
+      .razorpay-checkout button > span {display: flex;color: red;}
+      .razorpay-checkout button > span.btn-text > span:last-child {padding-top: 3px;font-size: 15px;line-height: 10px;font-weight:700;}
+      .razorpay-checkout button > span.pay-opt-icon img:first-child {margin-right: 10px;margin-left: 10px;}
 </style>
-      <script>
-        function setCookie(name,value,days) {
-        var expires = "";
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days*24*60*60*1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-        }
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0;i < ca.length;i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
-      </script>
+<script>
+  function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+</script>
   
   <cart-drawer section="{{ section.id }}" id="mini-cart" class="mini-cart drawer drawer--large">
       <span class="drawer__overlay"></span>
@@ -864,52 +872,18 @@
         }
     })
    {% endcomment %}
-  
+    $(".razorpay-checkout").click(function () {
+      let productsincart = line_item.product;
+      clevertap.event.push("razor/magic Button Clicked",{
+        "cart products": productsincart,
+        "Amount": cart_total_price
+      });
+    });
   });
   
   </script>
-            <script>
-          function handleapplyclick(){
-              applyCoupon();
-              $('#coupon-apply').before(`<div id="apply_coupon_overlay" style="display:none;">
-        <div class="apply_coupon_spinner"></div>
-          </div>`)
   
-              $("#apply_coupon_overlay").fadeIn();
-              $('#coupon-apply').hide();
-              setTimeout(function () {$('#coupon-code-text').val()==''; $("#apply_coupon_overlay").remove(); $('#coupon-apply').fadeIn(); }, 3000);
-              let couponCode = $('#coupon-code-text').val();
-              let discountAmount = $(this).closest('.coupon-text').closest('.cart-coupon').siblings('.discount-price').find('.coupon-p').text();
-              //             setTimeout(function () {if (couponCode) {
-              //                 clevertap.event.push("Discount Code Applied", {
-              //                     "Discounted Amount": discountAmount,
-              //                     "Discount Code": couponCode,
-              //                     "source": 'Cart Drawer'
-              //                 });
-              //                 console.log('Sheena' + discountAmount)
-              //             }
-              //                                     }, 5000)
-            }
-  </script>
-      <script>
-        setInterval(function(){
-          if($('#apply_coupon_overlay').css("opacity")!='1'){
-            if($('#coupon-code-text').val()=='' ) {
-              $('#coupon-apply').hide();
-            }
-  
-            else {
-              $('#coupon-apply').show()
-            }
-          }
-          else{
-            $('#coupon-apply').hide()
-          }
-        },100)
-        
-      </script>
-  
-      {% schema %}
+  {% schema %}
       {
         "name": "Cart drawer",
         "class": "shopify-section--mini-cart",
@@ -961,4 +935,4 @@
           }
         ]
       }
-      {% endschema %}
+  {% endschema %}
