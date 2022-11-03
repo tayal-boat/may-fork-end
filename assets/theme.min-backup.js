@@ -5770,6 +5770,7 @@ function collectionLoadMoreButton(){
 };
 sessionStorage.setItem('Load_More','false');
 collectionLoadMoreButton();
+Shopify.collectionFilter();
 
 
   window.customElements.define("product-facet", ProductFacet);
@@ -5793,16 +5794,21 @@ collectionLoadMoreButton();
       triggerEvent(this, "facet:criteria-changed", { url: target.href });
       setTimeout(function(){
         collectionLoadMoreButton();
+        Shopify.collectionFilter();
         },1000);
     }
     _onFilterChanged() {
       const formData = new FormData(this.querySelector("#facet-filters-form"));
       const searchParamsAsString = new URLSearchParams(formData).toString();
+      console.log(window.location.pathname);
+      console.log(searchParamsAsString);
       triggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParamsAsString}` });
       setTimeout(function(){
         collectionLoadMoreButton();
+        Shopify.collectionFilter();
       },1000);
     }
+
     _adjustDrawer(match) {
       this.classList.toggle("drawer", match.matches);
       this.classList.toggle("drawer--from-left", match.matches);
