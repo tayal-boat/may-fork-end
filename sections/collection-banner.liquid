@@ -1,18 +1,30 @@
 <style>
-  #shopify-section-{{ section.id }} .image-overlay {
-    --heading-color: {{ section.settings.image_text_color.red }}, {{ section.settings.image_text_color.green }}, {{ section.settings.image_text_color.blue }};
-    --text-color: {{ section.settings.image_text_color.red }}, {{ section.settings.image_text_color.green }}, {{ section.settings.image_text_color.blue }};
+  #shopify-section-{{ section.id }}.image-overlay {
+    --heading-color: 
+    {{ section.settings.image_text_color.red }},
+    {{ section.settings.image_text_color.green }}, {{ section.settings.image_text_color.blue }};
+    --text-color: 
+    {{ section.settings.image_text_color.red }},
+    {{ section.settings.image_text_color.green }}, {{ section.settings.image_text_color.blue }};
     --section-items-alignment: center;
-    --section-overlay-color: {{ section.settings.image_overlay_color.red }}, {{ section.settings.image_overlay_color.green }}, {{ section.settings.image_overlay_color.blue }};
+    --section-overlay-color: 
+    {{ section.settings.image_overlay_color.red }},
+    {{ section.settings.image_overlay_color.green }}, {{ section.settings.image_overlay_color.blue }};
     --section-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+  }
+
+  @media screen and (max-width: 767px) {
+    .collection-mobile-banner-section .collection-image-slider {
+      padding: 10px;
+    }
   }
 </style>
 
 <section>
   {%- comment -%}
-  ------------------------------------------------------------------------------------------
-  TOP PART (IMAGE AND BREADCRUMB)
-  ------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------
+    TOP PART (IMAGE AND BREADCRUMB)
+    ------------------------------------------------------------------------------------------
   {%- endcomment -%}
 
   {%- capture breadcrumb -%}
@@ -35,71 +47,36 @@
     </nav>
   {%- endcapture -%}
 
-  {%- if collection.metafields.banner.web_banner and section.settings.show_collection_image -%}
-  	  <div class="container">
-        <div class="page-header">
-          {{- breadcrumb -}}
-        </div>
-      </div>
- <a class="custom-collection-banner {%- if template contains 'notify-me-collection' -%}buttonbtnexplore{%- endif -%}">
-  	  <picture>
-        <source media="(min-width: 768px)" srcset="{{collection.metafields.banner.web_banner}}">
-        <source media="(max-width: 767px)" srcset="{{collection.metafields.banner.mobile_banner}}">
-        <img loading="eager" src="{{collection.metafields.banner.web_banner }}" alt="{{collection.title}}" />
-      </picture>
-            </a>     
-  
-
-    {%- comment -%}
-  	<image-with-text-overlay reveal-on-scroll parallax class="image-overlay image-overlay--{{ section.settings.section_height }}" {% if section.settings.section_height == 'auto' %}style="--image-aspect-ratio: {{ collection.image.aspect_ratio }}"{% endif %}>
-      <div class="image-overlay__image-wrapper" {% if section.settings.section_height == 'auto' %}style="padding-bottom: {{ 100.0 | divided_by: collection.image.aspect_ratio }}%"{% endif %}>
-        {%- comment -%}Performance note: this image must not be lazyloaded as it contributes to the LCP{%- endcomment -%}
-        <picture>
-          <source media="(min-width: 769px)" {% render 'image-attributes', image: collection.metafields.banner.web_banner, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
-          <source media="(max-width: 768px)" {% render 'image-attributes', image: collection.metafields.banner.mobile_banner, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
-          <img class="image-overlay__image" reveal {% render 'image-attributes', image: collection.metafields.banner.web_banner, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}>
-        </picture>
-      </div>
-      <div class="container visually-hidden">
-        <div class="image-overlay__content-wrapper">
-          {{- breadcrumb -}}
-          <div class="image-overlay__content content-box content-box--{{ section.settings.text_width }} content-box--text-center content-box--center text-container">
-            <h1 class="heading h1">
-              <split-lines reveal>{{ collection.title }}</split-lines>
-            </h1>
-            {%- if section.settings.show_collection_description and collection.description != blank -%}
-              <div class="image-overlay__text-container" reveal>
-                {{- collection.description -}}
-              </div>
-            {%- endif -%}
+  <div class="container">
+    <div class="page-header">
+      {{- breadcrumb -}}
+    </div>
+  </div>
+  {%- if collection.metafields.custom.mobile_image_slider -%}
+    {%- assign all_banners = collection.metafields.custom.mobile_image_slider | split: "," -%}
+    <div class="mobile-only pt-2">
+      <div class="owl-carousel owl-theme collection-image-slider {{ section.id }}">
+        {% for single_banner in all_banners %}
+          {% comment %}
+            <a class="custom-collection-banner {%- if template contains 'notify-me-collection' -%}buttonbtnexplore{%- endif -%}">
+          {% endcomment %}
+          <div class="item">
+            <img src="{{ single_banner }}" class="collection_single_image"/>
           </div>
-        </div>
-      </div>
-    </image-with-text-overlay>
-  {%- endcomment -%}
-  {%- else -%}
-  {%- comment -%}
-    <div class="container">
-      <div class="page-header">
-        {{- breadcrumb -}}
-
-        <div class="page-header__text-wrapper text-container">
-          <h1 class="heading h1">{{ collection.title }}</h1>  
-
-
-          {%- if section.settings.show_collection_description and collection.description != blank -%}
-            {{- collection.description -}}
-          {%- endif -%}
-        </div>
+          {% comment %}
+            </a>
+          {% endcomment %}
+        {% endfor %}
       </div>
     </div>
-  {%- endcomment -%}
   {%- endif -%}
 
+
+
   {%- comment -%}
-  ------------------------------------------------------------------------------------------
-  QUICK LINKS PART
-  ------------------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------------------
+    QUICK LINKS PART
+    ------------------------------------------------------------------------------------------
   {%- endcomment -%}
 
   {%- assign quick_links_menu = section.settings.quick_links -%}
@@ -123,116 +100,129 @@
       </div>
     </link-bar>
   {%- endif -%}
-  
-</section>
 
+</section>
+<script>
+  $(document).ready(function() {
+    $('.collection-image-slider').owlCarousel({
+      loop: false,
+      responsiveClass: true,
+      autoplay: true,
+      items: 4,
+      nav: false,
+      dots: true,
+      responsive: {
+        300: {
+          dots: false,
+          items: 1
+        },
+        800: {
+          items: 1
+        },
+        1000: {
+          dots: false,
+          items: 1,
+          loop: true,
+          margin: 10
+        }
+      }
+    })
+  });
+</script>
 {% schema %}
-{
-  "name": "Collection banner",
-  "class": "shopify-section--collection-banner",
-  "settings": [
-    {
-      "type": "paragraph",
-      "content": "To change collection descriptions or collection images, [edit your collections](/admin/collections)."
-    },
-    {
-      "type": "checkbox",
-      "id": "show_collection_image",
-      "label": "Show collection image",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_collection_description",
-      "label": "Show collection description",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "section_height",
-      "label": "Image height",
-      "options": [
-        {
-          "value": "auto",
-          "label": "Original image ratio"
-        },
-        {
-          "value": "small",
-          "label": "Small"
-        },
-        {
-          "value": "medium",
-          "label": "Medium"
-        },
-        {
-          "value": "large",
-          "label": "Large"
-        }
-      ],
-      "info": "Choose \"Original image ratio\" to not cut images. [Learn more](https://help.shopify.com/en/manual/online-store/images/theme-images#best-practices-for-slideshows-and-full-width-images)",
-      "default": "small"
-    },
-    {
-      "type": "select",
-      "id": "text_width",
-      "label": "Text width",
-      "options": [
-        {
-          "value": "small",
-          "label": "Small"
-        },
-        {
-          "value": "medium",
-          "label": "Medium"
-        },
-        {
-          "value": "large",
-          "label": "Large"
-        },
-        {
-          "value": "fill",
-          "label": "Fill screen"
-        }
-      ],
-      "default": "medium"
-    },
-    {
-      "type": "header",
-      "content": "Color",
-      "info": "Only applicable when collection image is used."
-    },
-    {
-      "type": "color",
-      "id": "image_text_color",
-      "label": "Text",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "image_overlay_color",
-      "label": "Overlay",
-      "default": "#000000"
-    },
-    {
-      "type": "range",
-      "id": "image_overlay_opacity",
-      "label": "Overlay opacity",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
-      "default": 30
-    },
-    {
-      "type": "header",
-      "content": "Navigation"
-    },
-    {
-      "type": "link_list",
-      "id": "quick_links",
-      "label": "Quick links",
-      "info": "This menu won't show dropdown items."
-    }
-  ]
-}
+  {
+    "name": "Collection banner",
+    "class": "shopify-section--collection-banner",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "To change collection descriptions or collection images, [edit your collections](/admin/collections)."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_image",
+        "label": "Show collection image",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_description",
+        "label": "Show collection description",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "section_height",
+        "label": "Image height",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Original image ratio"
+          }, {
+            "value": "small",
+            "label": "Small"
+          }, {
+            "value": "medium",
+            "label": "Medium"
+          }, {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "info": "Choose \"Original image ratio\" to not cut images. [Learn more](https://help.shopify.com/en/manual/online-store/images/theme-images#best-practices-for-slideshows-and-full-width-images)",
+        "default": "small"
+      }, {
+        "type": "select",
+        "id": "text_width",
+        "label": "Text width",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small"
+          }, {
+            "value": "medium",
+            "label": "Medium"
+          }, {
+            "value": "large",
+            "label": "Large"
+          }, {
+            "value": "fill",
+            "label": "Fill screen"
+          }
+        ],
+        "default": "medium"
+      }, {
+        "type": "header",
+        "content": "Color",
+        "info": "Only applicable when collection image is used."
+      }, {
+        "type": "color",
+        "id": "image_text_color",
+        "label": "Text",
+        "default": "#ffffff"
+      }, {
+        "type": "color",
+        "id": "image_overlay_color",
+        "label": "Overlay",
+        "default": "#000000"
+      }, {
+        "type": "range",
+        "id": "image_overlay_opacity",
+        "label": "Overlay opacity",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 30
+      }, {
+        "type": "header",
+        "content": "Navigation"
+      }, {
+        "type": "link_list",
+        "id": "quick_links",
+        "label": "Quick links",
+        "info": "This menu won't show dropdown items."
+      }
+    ]
+  }
 {% endschema %}
