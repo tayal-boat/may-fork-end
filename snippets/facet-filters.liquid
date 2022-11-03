@@ -31,7 +31,25 @@ Code that create the faceted search for the collection and search pages. It curr
   <span class="drawer__overlay"></span>
 
   <header class="drawer__header {% if filters_position == 'always_visible' %}hidden-lap-and-up{% endif %}">
-    <p class="drawer__title heading h6 text-white">{{- 'collection.general.filters' | t -}} {% if active_filters_count > 0 %}<span class="product-facet__active-count bubble-count">{{ active_filters_count }}</span>{%- endif -%}</p>
+    <div class="drawer__header_inner">
+    <p class="drawer__title heading h6 text-white">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" fill="none">
+<mask id="mask0_2623_268" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="18" height="18">
+<rect width="18" height="18" fill="url(#pattern0)"/>
+</mask>
+<g mask="url(#mask0_2623_268)">
+<rect x="-18" y="-14" width="46" height="46" fill="white"/>
+</g>
+<defs>
+<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_2623_268" transform="scale(0.00195312)"/>
+</pattern>
+<image id="image0_2623_268" width="512" height="512" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIABAMAAAAGVsnJAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAA9wAAAPcAEzbFVHAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAABtQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeBnKPQAAAAh0Uk5TADE4SXCTqOBWhzETAAABe0lEQVR42u3cMQ2AMBRF0RICrGioAkQgAAlMzMhANjMLQxMS2n+OhLu/lxIAAAAAAAAAAAAAAAAAAAAAAAAAAEBNjuDSFZwAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACtBQgB2c6CwAAAAAAAAAAAAAAAAAAAAAAAAAAzerXaiyfBBjr+crdBRBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEECAd+GHkwAAAAAAAAAAAAAAAAAAAAAAAAAAQBBdLjQ3EmAqfcc9BRBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEECAvxmOQlsCAAAAAAAAAAAAAAAAAAAAAAAAAADg4Qa3yzgMvNqcVQAAAABJRU5ErkJggg=="/>
+</defs>
+</svg>
+      {{- 'collection.general.filters' | t -}} 
+      {%- comment -%} {% if active_filters_count > 0 %}<span class="product-facet__active-count bubble-count">{{ active_filters_count }}</span>{%- endif -%} {%- endcomment -%}
+      </p>
 
     {%- if active_filters_count > 0 -%}
       {%- if request.page_type == 'collection' -%}
@@ -40,7 +58,7 @@ Code that create the faceted search for the collection and search pages. It curr
         <a class="drawer__header-action link text--subdued" data-action="clear-filters" href="{{ page_url }}?sort_by={{ sort_by }}&q={{ search.terms | escape }}&type=product&options[prefix]=last&options[unavailable_products]={{ settings.search_unavailable_products }}">{{ 'collection.general.clear_filters' | t }}</a>
       {%- endif -%}
     {%- endif -%}
-
+</div>
     <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
       {%- render 'icon' with 'close' -%}
     </button>
@@ -128,8 +146,16 @@ Code that create the faceted search for the collection and search pages. It curr
                     {%- else -%}
                       {%- for filter_value in filter.values -%}
                         <div class="checkbox-container">
+                          <div class="checkbox-lable">
+                          {% if filter_value.param_name == 'filter.v.option.color' %}
+                          <div class="checkbox-color-swatch" style="{% render 'color-swatch-style', color_swatch_config: color_swatch_config, value: filter_value.label %}"></div>
+                          {% endif %}
+                          <label for="{{ filter_value.param_name | escape }}-{{ forloop.index }}">{{ filter_value.label }}</label>
+                          </div>
+                          <div class="checkbox-input">
+                           <span>{{ filter_value.count}}</span>  
                           <input class="checkbox" type="checkbox" name="{{ filter_value.param_name }}" id="{{ filter_value.param_name | escape }}-{{ forloop.index }}" value="{{ filter_value.value | escape }}" {% if filter_value.active %}checked="checked"{% endif %} {% if filter_value.count == 0 %}disabled{% endif %}>
-                          <label for="{{ filter_value.param_name | escape }}-{{ forloop.index }}">{{ filter_value.label }} ({{ filter_value.count}})&lrm;</label>
+                          </div>
                         </div>
                       {%- endfor -%}
                     {%- endif -%}
