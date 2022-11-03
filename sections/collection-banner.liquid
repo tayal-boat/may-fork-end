@@ -6,6 +6,10 @@
     --section-overlay-color: {{ section.settings.image_overlay_color.red }}, {{ section.settings.image_overlay_color.green }}, {{ section.settings.image_overlay_color.blue }};
     --section-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
   }
+
+  @media screen and (max-width: 767px) {
+    .collection-mobile-banner-section .collection-image-slider{padding: 10px;}
+  }
 </style>
 
 <section>
@@ -35,66 +39,28 @@
     </nav>
   {%- endcapture -%}
 
-  {%- if collection.metafields.banner.web_banner and section.settings.show_collection_image -%}
   	  <div class="container">
         <div class="page-header">
           {{- breadcrumb -}}
         </div>
       </div>
- <a class="custom-collection-banner {%- if template contains 'notify-me-collection' -%}buttonbtnexplore{%- endif -%}">
-  	  <picture>
-        <source media="(min-width: 768px)" srcset="{{collection.metafields.banner.web_banner}}">
-        <source media="(max-width: 767px)" srcset="{{collection.metafields.banner.mobile_banner}}">
-        <img loading="eager" src="{{collection.metafields.banner.web_banner }}" alt="{{collection.title}}" />
-      </picture>
-            </a>     
+      {%- if collection.metafields.custom.mobile_image_slider -%}
+        {%- assign all_banners = collection.metafields.custom.mobile_image_slider | split: "," -%}
+            <div class="mobile-only pt-2">
+              <div class="owl-carousel owl-theme collection-image-slider {{ section.id }}">
+                {% for single_banner in all_banners %}
+                  {% comment %} <a class="custom-collection-banner {%- if template contains 'notify-me-collection' -%}buttonbtnexplore{%- endif -%}"> {% endcomment %}
+                    <div class="item">
+                      <img src="{{ single_banner }}" class="collection_single_image" />
+                    </div>
+                  {% comment %} </a>     {% endcomment %}
+                {% endfor %}
+              </div>
+            </div>
+     {%- endif -%} 
   
 
-    {%- comment -%}
-  	<image-with-text-overlay reveal-on-scroll parallax class="image-overlay image-overlay--{{ section.settings.section_height }}" {% if section.settings.section_height == 'auto' %}style="--image-aspect-ratio: {{ collection.image.aspect_ratio }}"{% endif %}>
-      <div class="image-overlay__image-wrapper" {% if section.settings.section_height == 'auto' %}style="padding-bottom: {{ 100.0 | divided_by: collection.image.aspect_ratio }}%"{% endif %}>
-        {%- comment -%}Performance note: this image must not be lazyloaded as it contributes to the LCP{%- endcomment -%}
-        <picture>
-          <source media="(min-width: 769px)" {% render 'image-attributes', image: collection.metafields.banner.web_banner, sizes: '400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600', height_constraint: 400, ignore_src: true %}>
-          <source media="(max-width: 768px)" {% render 'image-attributes', image: collection.metafields.banner.mobile_banner, sizes: '400,500,600,700,800,900,1000', height_constraint: 400, crop: 'center', ignore_src: true %}>
-          <img class="image-overlay__image" reveal {% render 'image-attributes', image: collection.metafields.banner.web_banner, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}>
-        </picture>
-      </div>
-      <div class="container visually-hidden">
-        <div class="image-overlay__content-wrapper">
-          {{- breadcrumb -}}
-          <div class="image-overlay__content content-box content-box--{{ section.settings.text_width }} content-box--text-center content-box--center text-container">
-            <h1 class="heading h1">
-              <split-lines reveal>{{ collection.title }}</split-lines>
-            </h1>
-            {%- if section.settings.show_collection_description and collection.description != blank -%}
-              <div class="image-overlay__text-container" reveal>
-                {{- collection.description -}}
-              </div>
-            {%- endif -%}
-          </div>
-        </div>
-      </div>
-    </image-with-text-overlay>
-  {%- endcomment -%}
-  {%- else -%}
-  {%- comment -%}
-    <div class="container">
-      <div class="page-header">
-        {{- breadcrumb -}}
 
-        <div class="page-header__text-wrapper text-container">
-          <h1 class="heading h1">{{ collection.title }}</h1>  
-
-
-          {%- if section.settings.show_collection_description and collection.description != blank -%}
-            {{- collection.description -}}
-          {%- endif -%}
-        </div>
-      </div>
-    </div>
-  {%- endcomment -%}
-  {%- endif -%}
 
   {%- comment -%}
   ------------------------------------------------------------------------------------------
@@ -125,11 +91,33 @@
   {%- endif -%}
   
 </section>
-{% comment %}
-{%- if collection.handle == 'offer-zone' -%}
-	{%- render 'collection-offers' -%}
-{%- endif -%}
-{% endcomment %}
+<script>
+  $(document).ready(function() {
+    $('.collection-image-slider').owlCarousel({
+      loop: false,
+      responsiveClass: true,
+      autoplay:true,
+      items: 4,
+      nav: false,
+      dots: true,
+      responsive: {
+        300: {
+          dots: false,
+          items: 1
+        },
+        800: {
+          items: 1
+        },
+        1000: {
+          dots: false,
+          items:1,
+          loop: true,
+          margin: 10
+        }
+      }
+    })
+  });
+</script>
 {% schema %}
 {
   "name": "Collection banner",
