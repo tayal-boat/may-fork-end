@@ -105,11 +105,15 @@
     inventory: function inventory() {
       var res = this.inventory_available;
       var flashSale = '';
+      var free = '';
       if(this.tags.includes('flash-sale')){
         flashSale = 'flash-sale';
       }
+      if(this.tags.includes('Free-Earphones')){
+      free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
+      }
       if(this.inventory_available) {
-        res = '<input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + flashSale + '" />';
+        res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
       }else{
       if(this.tags.includes('Coming-Soon')){
         res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
@@ -133,11 +137,18 @@
   rating__star rating__star--full" viewBox="0 0 14 13">  <path d="M7 0L8.6458 4.73475L13.6574 4.83688L9.66296 7.86525L11.1145 12.6631L7 9.8L2.8855 12.6631L4.33704 7.86525L0.342604 4.83688L5.3542 4.73475L7 0Z" fill="currentColor"></path> </svg>
     ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
   </div>`;  
+      }else{
+        res = `<div class="rating"><div class="rating__stars" role="img" >
+        <svg fill="none" focusable="false" width="14" height="14" class="icon icon--rating-star  
+  rating__star rating__star--full" viewBox="0 0 14 13">  <path d="M7 0L8.6458 4.73475L13.6574 4.83688L9.66296 7.86525L11.1145 12.6631L7 9.8L2.8855 12.6631L4.33704 7.86525L0.342604 4.83688L5.3542 4.73475L7 0Z" fill="currentColor"></path> </svg>
+       Be the first to review
+    </div></div>`
       }
      return res;
     },
     badge: function badge() {
       var res = '';
+      var res_class = '';
       // console.log(this);
       var tags = this.tags;
       var price_ratio = this.price_ratio;
@@ -145,23 +156,55 @@
       Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
     var discount_ratio = 1.0 - price_ratio;
     if(this.inventory_available){
-      if(tags.includes('flash-sale') && comparing){
-        res = '<img class="flash-sale-thunder" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/thunder_2_10x16.png?v=1655103798" loading="lazy" alt="thunder" /> ' + Math.floor(discount_ratio * 100) + '%';
-        res = '<div class="aa-product-badge flash-sale-badge">' + res + '</div>';
-    }else{
-      for (var i = 0; i < tags.length ; i++) {
-        if(tags[i].includes('meta-label-lowest-price') && comparing){
-            res = 'You Save: ' + Math.floor(discount_ratio * 100) + '%';
-        }
-        else if(tags[i].includes('meta-label-sold')) {
-          res = '';
-        }
-        else if(tags[i].includes('meta-label-')) {
-          res = tags[i].replace('meta-label-','').replace('-',' ');
-        }
-      }
-      res = '<div class="aa-product-badge">' + res + '</div>';
-    } 
+          for (let i = 0; i < tags.length ; i++) {
+
+            if(tags[i].includes( 'Free-' ) ){
+              res = `🎁 ${tags[i].replace('-',' ')}`;
+              res_class = 'free-label label bg-green';
+              break;
+            }
+            else if(tags[i].includes('Coupon-') ){
+              res = `₹ ${tags[i].replace('Coupon-',' ').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
+              res_class = 'coupon-label label bg-green';
+              break;
+            }
+            else if(tags[i].includes('flash-sale') && comparing){
+              res = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill flash-sale-thunder pr-1" viewBox="0 0 16 16">
+              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+            </svg> SUPER SAVER`;
+               res_class = 'flash-sale-badge';
+              break;
+            }
+            else if(tags[i].includes('meta-label-Bestseller')){
+                res = `🚀 ${tags[i].replace('meta-label-',' ')}`;
+                res_class = 'label bg-orange';        
+                break;        
+            }
+            else if(tags[i].includes('meta-label-trending')){
+              res = `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;position: unset;margin-right: 4px;" /> ${tags[i].replace('meta-label-',' ')}`;
+              res_class = 'label bg-orange';        
+              break;        
+          }
+            else if(tags[i].includes('meta-label-exclusive')) {
+                res = `💝 LIMITED EDITION`;
+                res_class = 'label bg-purple';        
+                break;    
+            }            
+            else if(tags[i].includes('meta-label-just launched')) {
+                res = `🎉 NEW LAUNCH`;
+                res_class = 'label bg-purple';        
+                break;    
+            }
+            else if(tags[i].includes('Feature|')) {
+                res = `${tags[i].replace('Feature|',' ')}`;
+                res_class = ' label bg-black';        
+                break;    
+            }
+            else if(tags[i].includes('meta-label-sold')) {
+              res = '';
+            }
+          }
+          res = `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
     }
       return res;
     },
@@ -285,7 +328,7 @@
   var i = helpersNames.length;
   var helpersArray = new Array(i);
   while (i--) helpersArray[i] = [helpersNames[i], helpers[helpersNames[i]]];
-
+  
   algolia.hoganHelpers = helpersArray.reduce(function(res, options) {
     var name = options[0];
     var helper = options[1];
@@ -301,7 +344,7 @@
         return helper.call(this, text, render);
       }.bind(this);
     };
-
     return newRes;
+
   }, {});
 })(window.algoliaShopify);
