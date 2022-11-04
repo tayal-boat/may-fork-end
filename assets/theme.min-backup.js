@@ -5677,6 +5677,8 @@
   };
   window.customElements.define("product-item", ProductItem);
 
+
+
   // js/custom-element/section/product-facet/product-facet.js
   var ProductFacet = class extends CustomHTMLElement {
     connectedCallback() {
@@ -5702,13 +5704,16 @@
           toolbarItem.classList.toggle("has-filters", activeFilterList.length > 0);
         }
         const filtersTempDiv = fakeDiv.querySelector("#facet-filters");
+        console.log(filtersTempDiv, 'filtersTempDiv');
         if (filtersTempDiv) {
           const previousScrollTop = this.querySelector("#facet-filters .drawer__content").scrollTop;
           Array.from(this.querySelectorAll("#facet-filters-form .collapsible-toggle")).forEach((filterToggle) => {
             const filtersTempDivToggle = filtersTempDiv.querySelector(`[aria-controls="${filterToggle.getAttribute("aria-controls")}"]`), isExpanded = filterToggle.getAttribute("aria-expanded") === "true";
+
             filtersTempDivToggle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
             filtersTempDivToggle.nextElementSibling.toggleAttribute("open", isExpanded);
             filtersTempDivToggle.nextElementSibling.style.overflow = isExpanded ? "visible" : "";
+            console.log(filtersTempDivToggle , 'filtersTempDivToggle');
           });
           this.querySelector("#facet-filters").innerHTML = filtersTempDiv.innerHTML;
           this.querySelector("#facet-filters .drawer__content").scrollTop = previousScrollTop;
@@ -5717,7 +5722,11 @@
         requestAnimationFrame(() => {
           scrollTo.scrollIntoView({ block: "start", behavior: "smooth" });
         });
+        
         this.hideLoadingBar();
+        setTimeout(function(){
+        Shopify.collectionFilter();
+      },1000);
       } catch (e) {
         if (e.name === "AbortError") {
           return;
@@ -5768,6 +5777,63 @@ function collectionLoadMoreButton(){
   }
   
 };
+
+Shopify.collectionFilter = function(event){
+
+      function accordion(tablinks){
+        for (i = 0; i < tablinks.length; i++) {
+          if (tablinks[i].hasAttribute("open")) {
+            tablinks[i].removeAttribute("open"); 
+            tablinks[i].previousElementSibling.setAttribute('aria-expanded','false');
+          }
+        } 
+  }
+let details = document.querySelectorAll("#facet-filters-form collapsible-content");
+let summary = $('#facet-filters-form .collapsible-toggle');
+  accordion(details);
+  summary[1].setAttribute('aria-expanded','true');
+  summary[1].nextElementSibling.setAttribute('open','true');
+    summary.click(function(){
+    accordion(details);
+    $(this).attr('aria-expanded','true');
+    $(this).siblings('collapsible-content').attr('open','true'); 
+     });
+  
+console.log('collectionFilter'); 
+  function preserveQuery() {
+    Shopify.queryParams = {};
+    if (window.location.search.length) {
+      const params = window
+        .location
+        .search
+        .substr(1)
+        .split('&');
+
+      for (let i = 0; i < params.length; i++) {
+        const keyValue = params[i].split('=');
+
+        if (keyValue.length) {
+          Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+        }
+      }
+    }
+
+  }
+  preserveQuery();
+  let sortItems = document.querySelectorAll('.price-tag-filter .tag');
+  for (let i = 0; i < sortItems.length; i++) {
+    sortItems[i].addEventListener('click', function(e) {
+      preserveQuery();
+      console.log(e.target.attributes);
+      Shopify.queryParams['filter.v.price.gte'] = e.target.attributes['data-min'].value;
+      Shopify.queryParams['filter.v.price.lte'] = e.target.attributes['data-max'].value;
+      let searchParams = new URLSearchParams(Shopify.queryParams).toString();
+console.log(searchParams);
+      triggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParams}` });
+    })
+  }
+}
+
 sessionStorage.setItem('Load_More','false');
 collectionLoadMoreButton();
 Shopify.collectionFilter();
@@ -5794,7 +5860,6 @@ Shopify.collectionFilter();
       triggerEvent(this, "facet:criteria-changed", { url: target.href });
       setTimeout(function(){
         collectionLoadMoreButton();
-        Shopify.collectionFilter();
         },1000);
     }
     _onFilterChanged() {
@@ -5805,7 +5870,6 @@ Shopify.collectionFilter();
       triggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParamsAsString}` });
       setTimeout(function(){
         collectionLoadMoreButton();
-        Shopify.collectionFilter();
       },1000);
     }
 

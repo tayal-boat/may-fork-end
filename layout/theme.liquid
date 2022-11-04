@@ -332,6 +332,7 @@
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
       {%- section 'footer' -%}
     {%- endif -%}
+    {% comment %}
 <script>
 Shopify.collectionFilter = function(event){
 console.log('collectionFilter');
@@ -352,12 +353,6 @@ let details = document.querySelectorAll("#facet-filters-form collapsible-content
 let summary = $('#facet-filters-form .collapsible-toggle');
 accordion(summary, details);
 
-function customTriggerEvent(element, name, data = {}) {
-  element.dispatchEvent(new CustomEvent(name, {
-    bubbles: true,
-    detail: data
-  }));
-}
   function preserveQuery() {
     Shopify.queryParams = {};
     if (window.location.search.length) {
@@ -388,12 +383,16 @@ function customTriggerEvent(element, name, data = {}) {
       let searchParams = new URLSearchParams(Shopify.queryParams).toString();
 
 console.log(searchParams);
-      customTriggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParams}` });
+      // customTriggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParams}` });
+      this.dispatchEvent(new CustomEvent("facet:criteria-changed", {
+      bubbles: true,
+      detail: { url: `${window.location.pathname}?${searchParams}` }
+    }));
     })
   }
 }
 </script>
-
+ {% endcomment %}
     <script src="{{ 'theme.min-backup.js' | asset_url }}" defer></script>
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
 
