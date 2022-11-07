@@ -9,7 +9,6 @@
     {%- assign active_filters_count = active_filters_count | plus: 1 -%}
   {%- endif -%}
 {%- endfor -%}
-
 <style>
 
   /*   cutomised by boat developers */
@@ -158,6 +157,7 @@
           {%- capture promotion_blocks -%}
             <div class="promotion-block-list promotion-block-list--{{ section.settings.promotion_position }}">
               {%- for block in section.blocks -%}
+               {%- if block.type == 'image' -%}
                 {%- capture block_content -%}
                   {%- if block.settings.image != blank -%}
                     <img class="promotion-block__image"
@@ -195,6 +195,7 @@
                   <div id="block-{{ section.id }}-{{ block.id }}" class="promotion-block promotion-block--{{ section.settings.promotion_height }} promotion-block--expand image-zoom" {{ block.shopify_attributes }}>
                     {{- block_content -}}
                   </div>
+                {%- endif -%}
                 {%- endif -%}
               {%- endfor -%}
             </div>
@@ -276,21 +277,24 @@
               <div class="product-list__inner {% if paginate.pages > 1 %}load-more__inner {% endif %}" id="Huratips_Loop">
                 {%- assign desktop_number_of_products_minus_one = section.settings.desktop_products_per_row | minus: 1 -%}
                 {%- assign gap_width = 24.0 | divided_by: section.settings.desktop_products_per_row | times: desktop_number_of_products_minus_one -%}
+                
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
 
                 {%- for product in collection.products -%}
                 {% unless product.handle == 'membership' %}
-                {% if forloop.index == 3 %}
+                {% if section.settings.enable_price_slab %}
+                {% if forloop.index == 3 and paginate.current_page == 1 %}
                 <div class="price-tag-filter-container">
                 <h3>Sort By Price Range</h3>
                 <div class="price-tag-filter">
-                  <div class="tag" data-min="1" data-max="500" class="price-tag-filter-item">₹ 1 - ₹500 </div>
-                  <div class="tag" data-min="501" data-max="1000" class="price-tag-filter-item">₹ 501 - ₹1000</div>
-                  <div class="tag" data-min="1001" data-max="2500" class="price-tag-filter-item">₹1001 - ₹2500</div>
-                  <div class="tag">₹2501 - ₹5000</div>
-                  <div class="tag">₹5001 - ₹1000</div>
+                  {%- for block in section.blocks -%}
+                  {%- if block.type == 'filters' -%}
+                  <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
+                  {%- endif -%}
+                  {%- endfor -%}
                 </div>
                 </div>
+                {% endif %}
                 {% endif %}
                   {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
                 {% endunless %}
@@ -341,7 +345,6 @@
 {
   "name": "Collection page",
   "class": "shopify-section--main-collection",
-  "max_blocks": 2,
   "blocks": [
     {
       "type": "image",
@@ -460,6 +463,22 @@
           "label": "Button text color",
           "default": "#1e316a"
         }
+      ]
+    },
+    {
+      "type": "filters",
+      "name": "price slab",
+      "settings": [
+    {
+      "type": "number",
+      "id": "min_price",
+      "label": "Min Price"
+    },
+    {
+      "type": "number",
+      "id": "max_price",
+      "label": "Max Price"
+    }
       ]
     }
   ],
@@ -589,6 +608,26 @@
         }
       ],
       "default": "small"
+    },
+    {
+      "type": "header",
+      "content": "Price slab Filters",
+      "info": "Enable price slab filter and set its position."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_price_slab",
+      "label": "Enable price slab filter",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "price_slab_position",
+      "label": "Price slab position",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 2
     }
   ]
 }

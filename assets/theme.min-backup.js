@@ -5724,9 +5724,7 @@
         });
         
         this.hideLoadingBar();
-        setTimeout(function(){
-        Shopify.collectionFilter();
-      },1000);
+        setTimeout(function(){Shopify.collectionFilter()},1000);
       } catch (e) {
         if (e.name === "AbortError") {
           return;
@@ -5778,9 +5776,9 @@ function collectionLoadMoreButton(){
   
 };
 
-Shopify.collectionFilter = function(event){
+Shopify.collectionFilter = function(filterLoad){
 
-      function accordion(tablinks){
+  Shopify.accordion = function(tablinks){
         for (i = 0; i < tablinks.length; i++) {
           if (tablinks[i].hasAttribute("open")) {
             tablinks[i].removeAttribute("open"); 
@@ -5790,16 +5788,13 @@ Shopify.collectionFilter = function(event){
   }
 let details = document.querySelectorAll("#facet-filters-form collapsible-content");
 let summary = $('#facet-filters-form .collapsible-toggle');
-  accordion(details);
-  summary[1].setAttribute('aria-expanded','true');
-  summary[1].nextElementSibling.setAttribute('open','true');
+
     summary.click(function(){
-    accordion(details);
+      Shopify.accordion(details);
     $(this).attr('aria-expanded','true');
     $(this).siblings('collapsible-content').attr('open','true'); 
      });
   
-console.log('collectionFilter'); 
   function preserveQuery() {
     Shopify.queryParams = {};
     if (window.location.search.length) {
@@ -5828,15 +5823,20 @@ console.log('collectionFilter');
       Shopify.queryParams['filter.v.price.gte'] = e.target.attributes['data-min'].value;
       Shopify.queryParams['filter.v.price.lte'] = e.target.attributes['data-max'].value;
       let searchParams = new URLSearchParams(Shopify.queryParams).toString();
-console.log(searchParams);
       triggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParams}` });
     })
   }
+  if(filterLoad){
+    Shopify.accordion(details);
+    summary[0].setAttribute('aria-expanded','true');
+    summary[0].nextElementSibling.setAttribute('open','true');
+   }
 }
 
 sessionStorage.setItem('Load_More','false');
 collectionLoadMoreButton();
-Shopify.collectionFilter();
+let collectionFilterLoad = true;
+Shopify.collectionFilter(collectionFilterLoad);
 
 
   window.customElements.define("product-facet", ProductFacet);
