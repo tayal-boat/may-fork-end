@@ -20,16 +20,6 @@
       </div>
   {% endif %}
   <div class="row">
-    	{%- comment -%} <a href="#0" class="slide-url temp-slide w-100 d-flex justify-content-center">
-          <div class="loading_icon">
-            <img
-              loading="lazy"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765"
-              alt="Load More"
-              style="width: 50px;"
-            >
-          </div>
-        </a> {%- endcomment -%}
     <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
       {% for block in section.blocks %}
         {% assign popup_class = "" %}
@@ -37,11 +27,11 @@
           {% assign popup_class = block.settings.popup_class %}
         {% endif %}
         
-    <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
-      <div class="item">
-        <img loading="lazy" {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500' %}>
-      </div>
-    </a>
+        <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
+          <div class="item">
+            <img loading="lazy" {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500' %}>
+          </div>
+        </a>
       {% endfor %}
     </div>
   </div>
@@ -74,21 +64,23 @@
             margin: 10
           }
         }
+        
       })
 
 // --- clevertap events --->
-var image_slides = document.querySelectorAll('.deal-slider.{{ section.id }} .slide-url');
-image_slides.forEach((slide, i) => {
-  slide.addEventListener('click', function(e) {
-      let imageurl = slide.href;
-      let imageTitle = slide.querySelector('img').alt;
-      clevertap.event.push("image_carousel clicked", {
-        "image url": imageurl,
-         "image Title": imageTitle,
-        "userSource": userSource
+    var image_slides = document.querySelectorAll('.deal-slider.{{ section.id }} .slide-url');
+    image_slides.forEach((slide, i) => {
+      slide.addEventListener('click', function(e) {
+          let imageurl = slide.href;
+          let imageTitle = slide.querySelector('img').alt;
+          clevertap.event.push("image_carousel clicked", {
+            "image url": imageurl,
+             "image Title": imageTitle,
+            "userSource": userSource
+          })
       })
-  })
-});
+    });
+
   </script>
 
 {% schema %}
