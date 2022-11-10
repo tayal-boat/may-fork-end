@@ -24,7 +24,7 @@
   <div class="shop_by_collection-row mx-lg-5 ">
       <div class="row owl-carousel owl-theme shop-by-category-slider {{ section.id }} ">
           {% for block in section.blocks %}
-              <div class="">
+
                   <a href="{{ block.settings.imageUrl }}" class="collection-block">
                       <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
                           <span class="collection-image">
@@ -35,7 +35,7 @@
                           <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
                       </span>
                   </a>
-            </div>
+
           {% endfor %}
       </div>
   </div>
@@ -49,6 +49,17 @@ $('.top-collections.top-2 .collection').each(function () {
             "Item": item
         });
     });
+});
+// --- clevertap events --->
+var category_slides = document.querySelectorAll('.shop-by-category-slider.{{ section.id }} .collection-block');
+category_slides.forEach((slide, i) => {
+  slide.addEventListener('click', function(e) {
+      let imageTitle = slide.querySelector('.collection-title').innerText;
+      clevertap.event.push("shop-bycategory clicked", {
+         "collection Title": imageTitle,
+        "userSource": userSource
+      })
+  })
 });
 </script>
 

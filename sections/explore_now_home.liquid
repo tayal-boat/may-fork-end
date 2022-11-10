@@ -22,7 +22,7 @@
                 {{- block.settings.title -}}
               {%- endif -%} 
             </div>
-            <img src="{{- block.settings.image | img_url: '' -}}">
+            <img src="{{- block.settings.image | img_url: '' -}}" alt="{{ block.settings.image.alt }}">
             <a href="{{- block.settings.image_url -}}" class="explore_now_link">{{- block.settings.label -}}</a>
         </div>
       </div>
@@ -34,8 +34,8 @@
 <!-- Shop by section ends here -->
 
 <script>
-    jQuery(document).ready(function() {
-      jQuery('.explore_now_slider').owlCarousel({
+    $(document).ready(function() {
+      $('.explore_now_slider').owlCarousel({
         loop: true,
         responsiveClass: true,
         autoplay:true,
@@ -58,7 +58,25 @@
           }
         }
       })
-    })
+    });
+
+    var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item');
+    explore_now_slider_img.forEach((slide, i) => {
+        slide.addEventListener('click', function(e) {
+          e.preventDefault();
+            let imageurl = slide.querySelector('a').href;
+            let imageTitle = slide.querySelector('img').alt;
+
+            console.log(imageurl);
+            console.log(imageTitle);
+            clevertap.event.push("Explore now clicked", {
+              "image url": imageurl,
+              "image Title": imageTitle,
+              "userSource": userSource
+            })
+        })
+      });
+
   </script>
 
 {% schema %}
