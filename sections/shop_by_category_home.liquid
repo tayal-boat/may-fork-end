@@ -1,16 +1,16 @@
 <style>
   .top-collections {
-    margin: {{ section.settings.sectiondeskmargin }};
+    margin: {{ section.settings.sectiondeskmargin | default: 0 }};
   }
   @media(max-width:768px) {
     .top-collections {
-      margin: {{ section.settings.sectionmargin }};
+      margin: {{ section.settings.sectionmargin | default: 0 }};
     }
   }
 </style>
 <div class="shop_by_category_section container cf section-id-{{ section.id }} top-collections top-2 px-lg-0" data-section-type="custom-row">
   {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
-      <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 pb-4">
+      <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 ">
           {%- if section.settings.title != blank -%}
               <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
           {%- endif -%}
@@ -24,24 +24,24 @@
   <div class="shop_by_collection-row mx-lg-5 ">
       <div class="row owl-carousel owl-theme shop-by-category-slider {{ section.id }} ">
           {% for block in section.blocks %}
-              <div class="">
+
                   <a href="{{ block.settings.imageUrl }}" class="collection-block">
                       <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
                           <span class="collection-image">
-                              <img loading="eager" src="{{block.settings.image | img_url: '150x'}}" alt="{{ block.settings.collection_Title }}">
+                              <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}">
                           </span>
                       </div>
                       <span class="collection-text text-center text-white">
                           <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
                       </span>
                   </a>
-            </div>
+
           {% endfor %}
       </div>
   </div>
 </div>
 
-<script>
+<script type="deferjs">
 $('.top-collections.top-2 .collection').each(function () {
     $(this).click(function () {
         let item = $(this).data('item');
@@ -50,10 +50,20 @@ $('.top-collections.top-2 .collection').each(function () {
         });
     });
 });
+// --- clevertap events --->
+var category_slides = document.querySelectorAll('.shop-by-category-slider.{{ section.id }} .collection-block');
+category_slides.forEach((slide, i) => {
+  slide.addEventListener('click', function(e) {
+      let imageTitle = slide.querySelector('.collection-title').innerText;
+      clevertap.event.push("shop-bycategory clicked", {
+         "collection Title": imageTitle,
+        "userSource": userSource
+      })
+  })
+});
 </script>
 
-<script>
-  $(document).ready(function() {
+<script type="deferjs">
     var $owl = $('#shopify-section-{{ section.id }}.owl-carousel');
       $owl.on('initialized.owl.carousel', function(event) {
           $('.temp-slide').remove();
@@ -96,7 +106,6 @@ $('.top-collections.top-2 .collection').each(function () {
               $(section_id + ' .owl-dots .owl-dot.active').next().click();
           }
       }
-  })
 </script>
 
 {% schema %}
