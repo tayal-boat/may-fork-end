@@ -198,18 +198,6 @@
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
-            {% if product.compare_at_price > product.price %}
-              <p class="m-0 pr-2 off">
-                {{-
-                  product.compare_at_price
-                  | minus: discounted_price
-                  | times: 100.0
-                  | divided_by: product.compare_at_price
-                  | round
-                  | append: '% off'
-                -}}
-              </p>
-            {% endif %}
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
@@ -247,14 +235,6 @@
                 </span>
               {%- endif -%}
             {%- elsif product.price < product.compare_at_price -%}
-              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
               <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -264,6 +244,25 @@
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
+                <p class="m-0 pr-2 off">
+                  {{-
+                    product.compare_at_price
+                    | minus: discounted_price
+                    | times: 100.0
+                    | divided_by: product.compare_at_price
+                    | round
+                    | append: '% off'
+                  -}}
+                </p>
+              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
+
 
 
             {%- elsif product.price_varies -%}
