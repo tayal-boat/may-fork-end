@@ -227,3 +227,197 @@ if(e.available == false){
   $('.custom-notify-btn').hide();
 }
 }
+
+// OTP Login
+
+  //Function to allow only numbers
+     function _isNumberCheck(evt) {
+      var charCode = (evt.which) ? evt.which : event.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57))
+      return false;
+      return true;
+   }
+   // Not allow 0 as first digit on input
+   $(document).on("input", "#otp-mobile-number", (e) => {
+      $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+   })
+   $(document).on("keypress", "#otp-mobile-number", (e) => {
+      return _isNumberCheck(e);
+   })
+
+   function TimerFunction(){
+    let timerOn = true;
+    $('.resend-timer').show();
+    $('.resend-text').hide();
+    $('.resend-btn').hide();
+    $('.otp-login-confirm-btn').removeAttr('style');
+    function timer(remaining) {
+      let m = Math.floor(remaining / 60);
+      let s = remaining % 60;
+
+      m = m < 10 ? '0' + m : m;
+      s = s < 10 ? '0' + s : s;
+      $('#timer').html(m + ':' + s);
+      remaining -= 1;
+
+      if(remaining >= 0 && timerOn) {
+        setTimeout(function() {
+            timer(remaining);
+        }, 1000);
+        return;
+      }
+
+      if(!timerOn) {
+        // Do validate stuff here
+        return;
+      }
+
+      // Do timeout stuff here
+      $('.resend-timer').hide();
+      $('.resend-text').show();
+      $('.resend-btn').show();
+      $('.otp-login-confirm-btn').css('background','#ED1C24');
+    }
+    timer(30);
+   }
+
+   function emailMask(email) {
+    var maskedEmail = email.replace(/([^@\.])/g, "*").split('');
+    var previous	= "";
+    for(i=0;i<maskedEmail.length;i++){
+      if (i<=1 || previous == "." || previous == "@"){
+        maskedEmail[i] = email[i];
+      }
+      previous = email[i];
+    }
+    return maskedEmail.join('');
+  }
+
+  function selectEmail(email, session_id){
+    let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/emails/select';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "session_id": session_id,
+        "email" : email
+      }),
+    };
+    $.ajax(settings).done(function (response) {
+      console.log(response);
+      if(response.code == 200 && response.message == 'login URL sent'){
+        location.href = response.URL;
+      }else if(response.code == 422 && response.message == 'validation_error'){
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }else if(response.code == 401 || response.code == 404 ){
+        $('.otp-login-error').html(response.message);
+      }
+    });
+  }
+
+function verifyotp(session_id, otp){
+  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/login/verifyotp';
+  var settings = {
+    "url": base_Url,
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "session_id": session_id,
+      "otp": otp
+    }),
+  };
+  
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    if(response.code == 200 && response.message == 'login URL sent'){
+      location.href = response.URL;
+    }else if(response.code == 422 && response.message == 'validation_error'){
+      $('.otp-login-error').html('Something went wrong please try again.');
+    }else if(response.code == 401){
+      $('.otp-login-error').html(response.message);
+    }else if(response.code == 406 && response.message == 'time exceeded 5 minutes'){
+      $('.otp-login-error').html('Otp expired.');
+    }else if(response.code == 300 && response.message == 'emailId list'){
+      console.log(response.emailList);
+      $('.otp-login-message h3').html('Please select your Primary email id');
+      $('.customer-login-section').attr('multi_email', 'true');
+      $('.otp-timer-container').hide();
+      $('.otp-login-error').html('');
+      let emailList = response.emailList;
+      let emailListHtml = '', i ;
+      let emailListContainer = document.querySelector('.email-list-container');
+      for (let i = 0; i < emailList.length; i++) {
+        console.log(emailListHtml);
+        emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
+      }
+      emailListContainer.innerHTML = emailListHtml;
+      let selectedEmail = '';
+      let emailSelector = $('.email-list-container span');
+      emailSelector[0].setAttribute('selected','true');
+      emailSelector.click(function(event){
+      console.log(event);   
+      selectedEmail = event.target.dataset.value;
+      console.log(selectedEmail);
+      for (i = 0; i < emailSelector.length; i++) {
+        if (emailSelector[i].hasAttribute("selected")) {
+          emailSelector[i].removeAttribute("selected");   
+        }
+    }
+      $(this).attr('selected','true'); 
+      });
+      $('.otp-login-submit-btn').click(function(){
+      selectEmail(selectedEmail, session_id);
+      });
+    }
+  });
+}
+
+function otpLogin(phone){
+  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/login/sendotp';
+  var settings = {
+    "url": base_Url,
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "phone": phone
+    }),
+  };
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    if(response.code == 200 && response.message == 'OTP sent'){
+    $('.customer-login-section').attr('otp_send', 'true');
+    $('.otp-login-error').html('');
+    TimerFunction();
+    $('.otp-login-confirm-btn').click(function(){
+      let session_id = response.session_id;
+      let otp = $('.mobile-otp-inout input').val();
+      verifyotp(session_id, otp);
+    })
+  }else if(response.code == 422 && response.message == 'validation_error'){
+  $('.otp-login-error').html('The phone field is required.');
+  }else if(response.code == 403 && response.message == 'Invalid phone number'){
+    $('.otp-login-error').html(response.message);
+  }
+  });
+}
+
+$('.otp-login-btn, #resend-btn').click(function(){
+  console.log('hii');
+  let phone = $('#otp-mobile-number').val();
+  console.log(phone);
+  otpLogin(phone);
+})
+
+$(document).on('click', '#resend__otp', function(){
+  TimerFunction();
+});
