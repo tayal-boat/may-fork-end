@@ -41,53 +41,44 @@
   {%- if product.available -%}
     {%- for tag in product.tags -%}
       {%- if tag contains 'Free-' -%}
-        <span class="label label--highlight custom-label free-label bg-green">
+        <span class="priority label z-10 label--highlight custom-label free-label bg-green">
           🎁 Free&nbsp; {{- tag | remove: 'Free-' -}}
         </span>
-        {%- break -%}
       {%- elsif tag contains 'Coupon-' -%}
-        <span class="label label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
+        <span class="priority label z-9 label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
           ₹ {{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
         </span>
-        {%- break -%}
       {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
-        <span class="label label--highlight custom-label lowest-price flash">
+        <span class="priority label z-8 label--highlight custom-label lowest-price flash">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
           <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
           </svg>
           {{ settings.flash_products_label }}
         </span>
-        {%- break -%}
       {%- elsif tag contains 'meta-label-Bestseller' -%}
-        <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
+        <span class="priority label z-7 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
           🚀 {{ tag | remove: 'meta-label-' }} 
         </span>
-        {%- break -%}
       {%- elsif tag contains 'meta-label-trending' -%}
-        <span class="label label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
+        <span class="priority label z-6 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
           <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> TRENDING
         </span>
-        {%- break -%}
       {%- elsif tag contains 'meta-label-exclusive' -%}
-        <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
+        <span class="priority label z-5 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
         💝 LIMITED EDITION
         </span>
-        {%- break -%}
       {%- elsif tag contains 'meta-label-just launched' -%}
-        <span class="label label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
+        <span class="priority label z-4 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
           🎉 NEW LAUNCH
         </span>
-        {%- break -%}
       {%- elsif tag contains 'Feature|' -%}
-        <span class="label label--highlight custom-label bg-black {{ tag }}">
-          {{- tag | remove: 'Feature|' -}}
+        <span class="priority label z-3 label--highlight custom-label bg-black {{ tag }}">
+          {{- tag | remove: 'Feature|'  -}}
         </span>
-        {%- break -%}
       {%- elsif tag contains 'meta-label-' -%}
-        <span class="label label--highlight custom-label bg-white {{ tag }}">
-          {{- tag | remove: 'meta-label-' -}}
+        <span class="priority label z-2 label--highlight custom-label bg-white {{ tag }}">
+          {{- tag | remove: 'meta-label-'  -}}
         </span>
-        {%- break -%}
       {%- endif -%}
     {%- endfor -%}
   {%- else -%}
@@ -254,16 +245,16 @@
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-              <p class="m-0 pr-2 off">
-                {{-
-                  product.compare_at_price
-                  | minus: discounted_price
-                  | times: 100.0
-                  | divided_by: product.compare_at_price
-                  | round
-                  | append: '% off'
-                -}}
-              </p>
+                <p class="m-0 pr-2 off">
+                  {{-
+                    product.compare_at_price
+                    | minus: discounted_price
+                    | times: 100.0
+                    | divided_by: product.compare_at_price
+                    | round
+                    | append: '% off'
+                  -}}
+                </p>
               <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
@@ -272,9 +263,6 @@
                   {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-
-
-
 
             {%- elsif product.price_varies -%}
               {%- capture price_min -%}
@@ -521,3 +509,27 @@
 
   </div>
 </product-item>
+
+<script>
+  $('.product-item').each(function() {
+    if($(this).find('.z-10').length > 0) {
+        $(this).find('.z-10').show();
+    } else if($(this).find('.z-9').length > 0) {
+        $(this).find('.z-9').show();
+    } else if($(this).find('.z-8').length > 0) {
+        $(this).find('.z-8').show();
+    } else if($(this).find('.z-7').length > 0) {
+        $(this).find('.z-7').show();
+    } else if($(this).find('.z-6').length > 0) {
+        $(this).find('.z-6').show();
+    } else if($(this).find('.z-5').length > 0) {
+        $(this).find('.z-5').show();
+    } else if($(this).find('.z-4').length > 0) {
+        $(this).find('.z-4').show();
+    } else if($(this).find('.z-3').length > 0) {
+        $(this).find('.z-3').show();
+    } else if($(this).find('.z-2').length > 0) {
+        $(this).find('.z-2').show();
+    } 
+})
+</script>
