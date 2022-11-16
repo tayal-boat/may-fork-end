@@ -411,11 +411,81 @@ function otpLogin(phone){
   });
 }
 
-$('.otp-login-btn, #resend-btn').click(function(){
+function verifySignUpOtp(session_id, otp){
+  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/signup/verifyotp';
+  var settings = {
+    "url": base_Url,
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "session_id": session_id,
+      "otp": otp
+    }),
+  };
+  
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    if(response.code == 200 && response.message == 'login URL sent'){
+      location.href = response.URL;
+    }else if(response.code == 422 && response.message == 'validation_error'){
+      $('.otp-login-error').html('Something went wrong please try again.');
+    }else if(response.code == 401){
+      $('.otp-login-error').html(response.message);
+    }
+  });
+}
+
+function otpSignUp(full_name, email, phone){
+  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/signup/sendotp';
+  var settings = {
+    "url": base_Url,
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "full_name" : full_name,
+      "email": email,
+      "phone" : phone
+    }),
+  };
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    if(response.code == 200 && response.message == 'OTP sent'){
+    $('.customer-signup-section').attr('otp_send', 'true');
+    $('.otp-login-error').html('');
+    TimerFunction();
+    $('.customer-signup-section .otp-login-confirm-btn').click(function(){
+      let session_id = response.session_id;
+      let otp = $('.mobile-otp-inout input').val();
+      verifySignUpOtp(session_id, otp);
+    })
+  }else if(response.code == 422 && response.message == 'validation_error'){
+  $('.otp-login-error').html('The phone field is required.');
+  }else if(response.code == 401 && response.customer == 'True'){
+    $('.otp-login-error').html(response.message);
+  }
+  });
+}
+
+$('.otp-login-btn, .login-resend-btn').click(function(){
   console.log('hii');
   let phone = $('#otp-mobile-number').val();
   console.log(phone);
   otpLogin(phone);
+})
+
+$('.otp-signup-btn, .signUp-resend-btn').click(function(){
+  console.log('hii');
+  let full_name = $('.otp-fullName #full_name').val();
+  let email = $('.otp-email #email').val();
+  let phone = $('#otp-mobile-number').val();
+  console.log(phone);
+  otpSignUp(full_name, email, phone);
 })
 
 $(document).on('click', '#resend__otp', function(){
@@ -429,3 +499,8 @@ $( "#otp" ).on( "input", function() {
     $('.otp-login-confirm-btn').css('background','#ED1C24');
   }
 });
+
+$('.mobile-login-edit-icon').click(function(){
+  $('.otp-login-error').html('');
+  $('.customer--section').removeAttr('otp_send');
+  });
