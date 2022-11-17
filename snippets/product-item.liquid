@@ -311,21 +311,14 @@
               </div>
             {%- endif -%}
           </div>
-          {% if product.compare_at_price > product.price %}
             <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;">
-              You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} (
-              {{-
-                product.compare_at_price
-                | minus: discounted_price
-                | times: 100.0
-                | divided_by: product.compare_at_price
-                | round
-                | append: '%'
-              -}}
-              )
+              {% assign p_price = product.price | times: 100 | divided_by: 100 %}
+              {% if p_price > 50000 %}
+                Save ₹15 more on UPI payment
+              {% else %}
+                Free Shipping available
+              {% endif %}
             </p>
-          {% endif %}
-
         {% endunless %}
         {%- if request.page_type != 'password'
           and settings.product_add_to_cart
