@@ -157,55 +157,115 @@
       var comparing =
       Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
     var discount_ratio = 1.0 - price_ratio;
+    let product_tags_priority = ['Free-', 'Coupon-', 'flash-sale', 'meta-label-Bestseller', 'meta-label-trending', 'meta-label-exclusive', 'meta-label-just launched', 'Feature|', 'meta-label-sold'];
+    product_tags_priority = product_tags_priority.reverse();
+    let flag = '';
     if(this.inventory_available){
-          for (let i = 0; i < tags.length ; i++) {
-
-            if(tags[i].includes( 'Free-' ) ){
+      for (let j = 0; j < product_tags_priority.length ; j++) {
+        flag = false;
+      for (let i = 0; i < tags.length ; i++) {
+        if(tags[i].includes( product_tags_priority[j] ) ){
+            if(product_tags_priority[j] == 'Free-'){
               res = `🎁 ${tags[i].replace('-',' ')}`;
               res_class = 'free-label label bg-green';
               break;
             }
-            else if(tags[i].includes('Coupon-') ){
+            else if(product_tags_priority[j] == 'Coupon-' ){
               res = `₹ ${tags[i].replace('Coupon-',' ').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
               res_class = 'coupon-label label bg-green';
               break;
             }
-            else if(tags[i].includes('flash-sale') && comparing){
+            else if(product_tags_priority[j] == 'flash-sale' && comparing){
               res = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill flash-sale-thunder pr-1" viewBox="0 0 16 16">
               <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
             </svg> SUPER SAVER`;
                res_class = 'flash-sale-badge';
               break;
             }
-            else if(tags[i].includes('meta-label-Bestseller')){
+            else if(product_tags_priority[j] == 'meta-label-Bestseller'){
                 res = `🚀 ${tags[i].replace('meta-label-',' ')}`;
                 res_class = 'label bg-orange';        
                 break;        
             }
-            else if(tags[i].includes('meta-label-trending')){
+            else if(product_tags_priority[j] == 'meta-label-trending'){
               res = `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;position: unset;margin-right: 4px;" /> ${tags[i].replace('meta-label-',' ')}`;
               res_class = 'label bg-orange';        
               break;        
           }
-            else if(tags[i].includes('meta-label-exclusive')) {
+            else if(product_tags_priority[j] == 'meta-label-exclusive') {
                 res = `💝 LIMITED EDITION`;
                 res_class = 'label bg-purple';        
                 break;    
             }            
-            else if(tags[i].includes('meta-label-just launched')) {
+            else if(product_tags_priority[j] == 'meta-label-just launched') {
                 res = `🎉 NEW LAUNCH`;
                 res_class = 'label bg-purple';        
                 break;    
             }
-            else if(tags[i].includes('Feature|')) {
+            else if(product_tags_priority[j] == 'Feature|') {
                 res = `${tags[i].replace('Feature|',' ')}`;
                 res_class = ' label bg-black';        
                 break;    
             }
-            else if(tags[i].includes('meta-label-sold')) {
+            else if(product_tags_priority[j] == 'meta-label-sold') {
               res = '';
             }
-          }
+          break;
+          flag = true;
+        }
+      }
+      if(flag){
+        break;  
+      }
+    }
+          // for (let i = 0; i < tags.length ; i++) {
+
+          //   if(tags[i].includes( 'Free-' ) ){
+          //     res = `🎁 ${tags[i].replace('-',' ')}`;
+          //     res_class = 'free-label label bg-green';
+          //     break;
+          //   }
+          //   else if(tags[i].includes('Coupon-') ){
+          //     res = `₹ ${tags[i].replace('Coupon-',' ').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
+          //     res_class = 'coupon-label label bg-green';
+          //     break;
+          //   }
+          //   else if(tags[i].includes('flash-sale') && comparing){
+          //     res = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill flash-sale-thunder pr-1" viewBox="0 0 16 16">
+          //     <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+          //   </svg> SUPER SAVER`;
+          //      res_class = 'flash-sale-badge';
+          //     break;
+          //   }
+          //   else if(tags[i].includes('meta-label-Bestseller')){
+          //       res = `🚀 ${tags[i].replace('meta-label-',' ')}`;
+          //       res_class = 'label bg-orange';        
+          //       break;        
+          //   }
+          //   else if(tags[i].includes('meta-label-trending')){
+          //     res = `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;position: unset;margin-right: 4px;" /> ${tags[i].replace('meta-label-',' ')}`;
+          //     res_class = 'label bg-orange';        
+          //     break;        
+          // }
+          //   else if(tags[i].includes('meta-label-exclusive')) {
+          //       res = `💝 LIMITED EDITION`;
+          //       res_class = 'label bg-purple';        
+          //       break;    
+          //   }            
+          //   else if(tags[i].includes('meta-label-just launched')) {
+          //       res = `🎉 NEW LAUNCH`;
+          //       res_class = 'label bg-purple';        
+          //       break;    
+          //   }
+          //   else if(tags[i].includes('Feature|')) {
+          //       res = `${tags[i].replace('Feature|',' ')}`;
+          //       res_class = ' label bg-black';        
+          //       break;    
+          //   }
+          //   else if(tags[i].includes('meta-label-sold')) {
+          //     res = '';
+          //   }
+          // }
           res = `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
     }
       return res;
