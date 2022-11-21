@@ -1,141 +1,226 @@
 <div class=" {% if section.settings.customTimer == blank %}timer--expired{% endif %}">
-    <div class="custom_timer">
-      {% if section.settings.starting_text != blank %}
-        <h1 class="timer__title">{{ section.settings.starting_text }}</h1>
-      {% endif %}
-  
+    <div class="text-center custom_timer">
+      {% if section.settings.customflash %}
+        <div class="flash_sale">
+          <p class="m-0 text-uppercase flash_text">
+            <span class="thunder"
+              ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"></path>
+                </svg></span
+            >&nbsp;{{ settings.flash_sale_title }}
 
-      <div class="my-4 custom_timer-display">
-        <p style="display:none;" class="endsale"> countDown ended </p>
-        <div class="custom_timer-block">
-          <span class="custom_timer-block__num_text ">Days</span>
-          <span class="custom_timer-block__num js-timer-days">00</span>
-          <!--        <span class="timer-block__unit">:</span>  -->
+          </p>
+          {% render 'flashsale-timer', title: {{section.settings.starting_text}}, end_date: section.settings.customTimer %}
         </div>
-        <div class="custom_timer-block">
-          <span class="custom_timer-block__num_text ">Hours</span>
-          <span class="custom_timer-block__num js-timer-hours">00</span>
-          <!--        <span class="timer-block__unit">:</span>  -->
+      {% else %}
+      {% if section.settings.starting_text != blank %}
+        <h1 class="pt-4 timer__title">{{ section.settings.starting_text }}</h1>
+      {% endif %}
+      <div class=" my-4 containerr">
+        <div class="container-segment">
+          <div class="segment-title">Days</div>
+          <div class="segment">
+            <div class="flip-card" data-days-tens>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+            <div class="flip-card" data-days-ones>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+          </div>
         </div>
-        <div class="custom_timer-block">
-          <span class="custom_timer-block__num_text ">Minutes</span>
-          <span class="custom_timer-block__num js-timer-minutes">00</span>
-          <!--        <span class="timer-block__unit">:</span>  -->
+        <div class="container-segment">
+          <div class="segment-title">Hours</div>
+          <div class="segment">
+            <div class="flip-card" data-hours-tens>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+            <div class="flip-card" data-hours-ones>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+          </div>
         </div>
-        <div class="custom_timer-block">
-          <span class="custom_timer-block__num_text">Seconds</span>
-          <span class="custom_timer-block__num js-timer-seconds">00</span>
-  
-          <!--        <span class="timer-block__unit">:</span>  -->
+        <div class="container-segment">
+          <div class="segment-title">Minutes</div>
+          <div class="segment">
+            <div class="flip-card" data-minutes-tens>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+            <div class="flip-card" data-minutes-ones>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="container-segment">
+          <div class="segment-title">Seconds</div>
+          <div class="segment">
+            <div class="flip-card" data-seconds-tens>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+            <div class="flip-card" data-seconds-ones>
+              <div class="top">0</div>
+              <div class="bottom">0</div>
+            </div>
+          </div>
         </div>
       </div>
-      <h5 class="pb-4 timer__addtional_text">{{ section.settings.additional_text}}</h5>
-  
-  
+      <style>
+        *, *::after, *::before {box-sizing: border-box;}
+        .flip-card {
+          position: relative;
+          display: inline-flex;
+          flex-direction: column;
+          font-weight:900;
+          font-size:2.5rem;
+          box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
+          border-radius: .1em;
+        }
+        .top, .bottom, .flip-card .top-flip, .flip-card .bottom-flip {
+          height: .75em;
+          line-height: 1;
+          padding: .25em;
+          overflow: hidden;
+        }
+        
+        .top, .flip-card .top-flip {
+          background-color: #f7f7f7;
+          border-top-right-radius: .1em;
+          border-top-left-radius: .1em;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .bottom, .flip-card .bottom-flip {
+          background-color: white;
+          display: flex;
+          align-items: flex-end;
+          border-bottom-right-radius: .1em;
+          border-bottom-left-radius: .1em;
+        }
+        
+        .flip-card .top-flip {
+          position: absolute;
+          width: 100%;
+          animation: flip-top 250ms ease-in;
+          transform-origin: bottom;
+        }
+        
+        @keyframes flip-top {
+          100% {
+            transform: rotateX(90deg);
+          }
+        }
+        
+        .flip-card .bottom-flip {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          animation: flip-bottom 250ms ease-out 250ms;
+          transform-origin: top;
+          transform: rotateX(90deg);
+        }
+        
+        @keyframes flip-bottom {
+          100% {
+            transform: rotateX(0deg);
+          }
+        }
+        
+        .containerr {
+            margin: auto;
+            width: 50%;
+            display: flex;
+            justify-content: space-around;
+            font-size: 1.5rem;
+        }
+        @media(max-width:768px){
+          .segment-title {font-size: 1rem;}
+          .containerr {width: 70%;}
+          .flip-card {font-size:1.5rem;}
+        }
+        .container-segment {
+          display: flex;
+          flex-direction: column;
+          gap: .1em;
+          align-items: center;
+        }
+        .segment-title{font-weight:900}
+        .segment {
+          display: flex;
+          gap: .1em;
+        }
+        .timer--expired {
+          display: none !important;
+        }
+      </style>
+      <script type="text/javascript">
+        const countToDate = new Date("{{- section.settings.customTimer -}}").getTime();
+        console.log(countToDate)
+        let previousTimeBetweenDates
+        setInterval(() => {
+          const currentDate = new Date().getTime()
+          const timeBetweenDates = (countToDate - currentDate)
+          flipAllCards(timeBetweenDates)
+        
+          previousTimeBetweenDates = timeBetweenDates
+        }, 250)
+        
+        function flipAllCards(time) {
+          const seconds = Math.floor((time % (1000 * 60)) / 1000);
+          const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+          const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const days = Math.floor(time / (1000 * 60 * 60 * 24));
+          console.log(days)
+        
+          flip(document.querySelector("[data-days-tens]"), Math.floor(days / 10))
+          flip(document.querySelector("[data-days-ones]"), days % 10)
+          flip(document.querySelector("[data-hours-tens]"), Math.floor(hours / 10))
+          flip(document.querySelector("[data-hours-ones]"), hours % 10)
+          flip(document.querySelector("[data-minutes-tens]"), Math.floor(minutes / 10))
+          flip(document.querySelector("[data-minutes-ones]"), minutes % 10)
+          flip(document.querySelector("[data-seconds-tens]"), Math.floor(seconds / 10))
+          flip(document.querySelector("[data-seconds-ones]"), seconds % 10)
+        }
+        
+        function flip(flipCard, newNumber) {
+          const topHalf = flipCard.querySelector(".top")
+          const startNumber = parseInt(topHalf.textContent)
+          if (newNumber === startNumber) return
+        
+          const bottomHalf = flipCard.querySelector(".bottom")
+          const topFlip = document.createElement("div")
+          topFlip.classList.add("top-flip")
+          const bottomFlip = document.createElement("div")
+          bottomFlip.classList.add("bottom-flip")
+        
+          top.textContent = startNumber
+          bottomHalf.textContent = startNumber
+          topFlip.textContent = startNumber
+          bottomFlip.textContent = newNumber
+        
+          topFlip.addEventListener("animationstart", e => {
+            topHalf.textContent = newNumber
+          })
+          topFlip.addEventListener("animationend", e => {
+            topFlip.remove()
+          })
+          bottomFlip.addEventListener("animationend", e => {
+            bottomHalf.textContent = newNumber
+            bottomFlip.remove()
+          })
+          flipCard.append(topFlip, bottomFlip)
+        }
+      </script>
+    {% endif %}
+      <h5 class="p-3 pb-5 timer__addtional_text">{{ section.settings.additional_text}}</h5>
     </div>
   </div>
-  <style>
-  
-    .custom_timer-block__num_text {
-      font-size: 1.1rem;
-      font-weight: 900;
-      border: none !important;
-      background-color: white;
-      display: flex;
-      justify-content: center;
-  
-    }
-    .custom_timer-block .custom_timer-block__num {
-      border: 1px solid black;
-      background-color: #b5b2b26e;
-      border-radius: 5px;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    .custom_timer {
-      background: white;
-      padding: 10px 0;
-      margin: 15px 0 0;
-      border-radius: 5px;
-      position: relative !important;
-      line-height: normal;
-    }
-  
-    .timer__title {
-      text-align: center;
-      margin: 0;
-    }
-    .timer__addtional_text {
-      text-align: center;
-      margin: 0;
-  
-      padding: 10px
-    }
-    .custom_timer-display {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-      -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-      justify-content: center;
-      margin-top: 5px;
-    }
-    .text_date_timer-block {
-      position: relative;
-      padding: 0 10px;
-    }
-    .custom_timer-block {
-      position: relative;
-      width: 20%;
-      padding: 0 10px;
-      font-size: 2rem;
-      line-height: 2;
-    }
-    @media(min-width:1024px){
-        .custom_timer-block {
-            width: 8%;
-            line-height: 4;
-        }
-    }
-    .text_date_timer-block:not(:last-child):after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-  
-    .custom_timer-block__num,
-    .timer-block__unit {
-      display: block;
-      text-align: center;
-    }
-    .timer--expired {
-      display: none !important;
-    }
-  </style>
-  <script type="text/javascript">
-    var second = 1000,
-      minute = second * 60,
-      hour = minute * 60,
-      _day = hour * 24;
-  
-    var countDown = new Date('{{- section.settings.customTimer -}}').getTime(),
-       x = setInterval(function() {
-        var now = new Date().getTime(),
-        distance = countDown - now;
-        if (distance > 0){
-        document.querySelector('.js-timer-days').innerText = Math.floor(distance / (_day)) ,
-        document.querySelector('.js-timer-hours').innerText = Math.floor((distance % (_day)) / (hour)),
-        document.querySelector('.js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)),
-        document.querySelector('.js-timer-seconds').innerText = Math.floor((distance % (minute)) / second);
-      }else{
-        $('.custom_timer-block').css("display" , "none");
-        $('.endsale').css("display" , "block");
-      }
-    }, second)
-  </script>
+
   
   {% schema %}
     {
@@ -146,7 +231,13 @@
           "type": "text",
           "id": "customTimer",
           "label": "End Date (Ex: Apr 30, 2022)"
-        }, {
+        },
+        {
+          "type": "checkbox",
+          "id": "customflash",
+          "label": "Enable flash than normal timer"
+        },
+         {
           "type": "text",
           "id": "starting_text",
           "label": "Heading (Ex. Starts in)"
