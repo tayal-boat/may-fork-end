@@ -11,9 +11,10 @@
 {%- endif -%}
 
 <style>
-  .image-with-text-block__content {
-    display: none;
-}   
+  .image-with-text-block__content {display: none;}   
+{% if section.settings.enable_text %}
+  #shopify-section-{{ section.id }}  .image-with-text-block__content {display:block;margin:0 auto;}
+{% endif %}
   #shopify-section-{{ section.id }} {
     {%- if section.settings.text_background == 'rgba(0,0,0,0)' -%}
       {%- assign section_block_background = settings.background -%}
@@ -101,7 +102,7 @@
       {%- capture section_content -%}
         {%- assign text_position = section.settings.text_position | split: '_' | last -%}
 
-        <div {% if section.settings.reveal_on_scroll %}reveal{% endif %} class="image-with-text-block__content content-box content-box--small content-box--text-{{ section.settings.text_alignment}} content-box--{{ text_position }} text-container">
+        <div {% if section.settings.reveal_on_scroll %}reveal{% endif %} class="image-with-text-block__content content-box--text-{{ section.settings.text_alignment}} content-box--{{ text_position }} text-container">
           {%- if section.settings.subheading != blank -%}
             <h2 class="heading heading--small">
               <split-lines {% if section.settings.reveal_on_scroll %}reveal{% endif %}>{{ section.settings.subheading | escape }}</split-lines>
@@ -116,7 +117,7 @@
 
           <div class="image-with-text-block__text-container" {% if section.settings.reveal_on_scroll %}reveal{% endif %}>
             {%- if section.settings.content != blank -%}
-              {{- section.settings.content -}}
+              {{ section.settings.content }}
             {%- endif -%}
 
             {%- if section.settings.button_text != blank -%}
@@ -168,6 +169,11 @@
       "label": "alt-text"
     },
     {
+      "type": "checkbox",
+      "id": "enable_text",
+      "label": "enable-text"
+    },
+    {
       "type": "text",
       "id": "subheading",
       "label": "Subheading",
@@ -180,7 +186,7 @@
       "default": "Image with text block"
     },
     {
-      "type": "richtext",
+      "type": "html",
       "id": "content",
       "label": "Content",
       "default": "<p>Use block text to give your customers insight into your brand. Select impactful text that relates to your brand and story.</p>"
