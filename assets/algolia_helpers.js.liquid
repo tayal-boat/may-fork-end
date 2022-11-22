@@ -10,16 +10,13 @@
   };
 
   function formattedPriceWithComparison(price, compare_at_price, price_ratio) {
-    var comparing =
-      Number(compare_at_price) && Number(compare_at_price) > Number(price);
+    var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
     var discount_ratio = 1.0 - price_ratio;
     var res = '<b>' + formatPrice(price) + '</b>';
     if (comparing) {
-      res =
-      '</span> ' + '<b>' + formatPrice(price) + '</b>' +
-        ' <span style="color:#05A143;font-size:14px;padding-left:8px;">' + Math.floor(discount_ratio * 100) + '% off </span>'
-         + ' <span class="ais-hit--price-striked">' +
-        formatPrice(compare_at_price);
+      res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>'
+    + '<b style="padding-left:8px;">' + formatPrice(price) + '</b>'
+         + ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
     }
  
     return res;
@@ -101,13 +98,15 @@
       var price = this.price;
       var price_ratio = this.price_ratio;
       var discount_ratio = 1.0 - price_ratio;
-      if (this.price > 500) {
-        res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>';
-        return res;
+      if (price >= 500 ) {
+       res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>';
       } else {
         res += ' <p class="ais-hit--price-discount">Free Shipping available</p>';
-        return res;
       }
+      // res += ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
+      //   Math.floor(discount_ratio * 100) +
+      //   '%)</p>';
+       return res;
     },
     inventory: function inventory() {
       var res = this.inventory_available;

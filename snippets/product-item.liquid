@@ -32,7 +32,7 @@
 
 
 <product-item
-  class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %}"
+  class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}"
   {% if reveal %}
     reveal
   {% endif %}
@@ -199,10 +199,6 @@
               {%- endcapture -%}
 
               {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
-                <span class="price price--highlight product-card-price-varies product-card-price" data-price="{{ cheapest_variant.price }}">
-                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
-                </span>
                 <p class="m-0 pr-2 off">
                   {{-
                     product.compare_at_price
@@ -213,6 +209,16 @@
                     | append: '% off'
                   -}}
                 </p>
+                <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+  
+                  {%- if settings.currency_code_enabled -%}
+                    {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {%- else -%}
+                    {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {%- endif -%}
+                </span>
+
                 <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -236,6 +242,16 @@
                 </span>
               {%- endif -%}
             {%- elsif product.price < product.compare_at_price -%}
+              <p class="m-0 pr-2 off">
+                {{-
+                  product.compare_at_price
+                  | minus: discounted_price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '% off'
+                -}}
+              </p>
               <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -245,16 +261,7 @@
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-                <p class="m-0 pr-2 off">
-                  {{-
-                    product.compare_at_price
-                    | minus: discounted_price
-                    | times: 100.0
-                    | divided_by: product.compare_at_price
-                    | round
-                    | append: '% off'
-                  -}}
-                </p>
+
               <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
@@ -318,14 +325,13 @@
               </div>
             {%- endif -%}
           </div>
-            <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;">
-              {% assign p_price = product.price | times: 100 | divided_by: 100 %}
-              {% if p_price > 50000 %}
-                Save ₹15 more on UPI payment
-              {% else %}
-                Free Shipping available
-              {% endif %}
-            </p>
+          <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;">
+            {% if product.price >= 50000 %}
+              Save ₹15 more on UPI payment
+            {% else %}
+              Free Shipping available
+            {% endif %}
+          </p>
         {% endunless %}
         {%- if request.page_type != 'password'
           and settings.product_add_to_cart
