@@ -72,7 +72,7 @@
 
 
   .main_banner_slider .timer {
-    background: #fff; 
+    background: transparent; 
     padding: 4px 0;
   }
 
@@ -80,26 +80,34 @@
     justify-content: center; 
   }
   
+  .main_banner_slider .timer__title{
+    font-size: 14px;
+    text-align: left;
+    padding-left: 8px;
+    color: #fff;
+  }
+
   .main_banner_slider .timer-block { 
     width: 33%;
   } 
 
   .main_banner_slider .timer-block:not(:last-child):after {
-    display: none;
+    /* display: none; */
+    color: #fff;
   }
 
   .main_banner_slider .timer-block__num{
     text-align: center; 
-    background: #000;
+    background: #ed1d23;
     color: #fff;
     padding: 4px;
     border-radius: 5px;
     text-transform: uppercase;
   }
-  .main_banner_slider .js-timer-seconds{display: none;}
+  .main_banner_slider .timer-display .timer-block:first-child{display: none;}
 
   @media screen and (max-width:767px){
-    .main_banner_slider .timer {max-width: 180px; left: 15px;}
+    .main_banner_slider .timer {max-width: 180px; left: 8px;top: 50%;}
     .main_banner_slider .timer__title{font-size: 14px;}
     .main_banner_slider .timer-display{font-size: 12px;}
     .main_banner_slider .timer-block{padding: 0 5px;}
@@ -110,7 +118,7 @@
   <script type="text/javascript"> 
     $(window).on('load', function() {
       $('.timer').fadeIn("fast");
-    })
+    });
     var banner_second = 1000, 
         banner_minute = banner_second * 60, 
         banner_hour = banner_minute * 60, 
@@ -118,12 +126,17 @@
 
     var banner_countDown = new Date('{{- banner_end_date -}}').getTime(), 
         banner_x = setInterval(function() { 
+          console.log("Timer changed")
     var banner_now = new Date().getTime(), 
-        banner_distance = banner_countDown - banner_now; 
-        document.querySelector('.banner-timer .js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + ' d', 
-        document.querySelector('.banner-timer .js-timer-hours').innerText = Math.floor((banner_distance % (banner_day)) / (banner_hour)) + ' h', 
-        document.querySelector('.banner-timer .js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + ' m', 
-        document.querySelector('.banner-timer .js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + ' s'; 
+        banner_distance = banner_countDown - banner_now;
+          
+        var days_left = Math.floor(banner_distance / (banner_day));
+        var hours_left = Math.floor((banner_distance % (banner_day)) / (banner_hour)) + days_left * 24;
+        
+        document.querySelector('.js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + ' d', 
+        document.querySelector('.js-timer-hours').innerText = hours_left + ' h', 
+        document.querySelector('.js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + ' m', 
+        document.querySelector('.js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + ' s'; 
     }, banner_second) 
  </script> 
 
