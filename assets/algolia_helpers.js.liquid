@@ -129,6 +129,15 @@
       }
       return res;
     },
+    soldImage : function inventory() {
+      var res = this.inventory_available;
+      if (res){
+        res = "aa-product-image" 
+      }else{
+        res = "aa-product-image sold-out"
+      }
+      return res;
+    },
       reviews: function reviews() {
       var res = '';
       var reviews = this.meta.reviews;
@@ -140,15 +149,29 @@
       var rating_count = reviews.rating_count;
       res = `<div class="rating"><div class="rating__stars" role="img" aria-label="${rating_value} out of 5.0 stars">
             <span style="color:#05A143;font-size:16px;">★</span>
-    ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
-  </div>`;  
+            ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
+            </div>`;  
       }else{
         res = `<div class="rating"><div class="rating__stars" role="img" >
-        <span style="color:#05A143;font-size:16px;">★</span>
-       Be the first to review
-    </div></div>`
+               <span style="color:#05A143;font-size:16px;">★</span>
+               Be the first to review
+              </div></div>`
       }
      return res;
+    },
+    imageClass: function imageClass() {
+      var tags = this.tags;
+      var res_class = ''
+      if(this.inventory_available) {
+        res_class = 'aa-product-image'
+      } else {
+        if(tags.includes( 'Coming-Soon' ) ){
+        res_class = 'aa-product-image'
+        }else{
+        res_class = 'aa-product-image sold-out'
+        }
+      }
+      return res_class;
     },
     badge: function badge() {
       var res = '';
@@ -158,9 +181,9 @@
       var price_ratio = this.price_ratio;
       var comparing =
       Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
-    var discount_ratio = 1.0 - price_ratio;
+     var discount_ratio = 1.0 - price_ratio;
+     var response = '';
     if(this.inventory_available){
-      var response = '';
           for (let i = 0; i < tags.length ; i++) {
             if(tags[i].includes( 'Free-' ) ){
               res = `🎁 ${tags[i].replace('-',' ')}`;
@@ -210,15 +233,18 @@
               response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
             }
             else if(tags[i].includes('meta-label-sold')) {
-              res = '';
-              response = "";
+              res = 'sold-out';
+              res_class = ' label bg-black';
+              response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
             }
           }
-    }
-    else {
-      var response = '';
-      response = response + `<div class="aa-product-badge q -out-click-to-notify">SOLD OUT</div>`;
-    }
+    } else {
+      if(tags.includes( 'Coming-Soon' ) ){
+      var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+      }else{
+      var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+      }
+  }
    return response;
     },
     fullHTMLTitle: function fullHTMLTitle() {

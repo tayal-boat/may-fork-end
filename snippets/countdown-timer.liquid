@@ -1,6 +1,6 @@
-{% if end_date != blank %} 
- <div class="timer"> 
-   {% if title != blank %}<h4 class="timer__title">{{ title }}</h4>{% endif %} 
+{% if banner_end_date != blank %} 
+ <div class="timer banner-timer"> 
+   {% if banner_title != blank %}<h4 class="timer__title">{{ banner_title }}</h4>{% endif %} 
    <div class="timer-display"> 
      <div class="timer-block"> 
        <span class="timer-block__num js-timer-days">00</span> 
@@ -27,7 +27,7 @@
      padding: 10px 0; 
      margin: 15px 0 0; 
      max-width: 250px;
-/*      border: 1px dashed; */
+    /* border: 1px dashed; */
      border-radius: 5px;
      line-height: normal;
      display: none;
@@ -61,8 +61,8 @@
    .timer-block:not(:last-child):after { 
        content: ':'; 
        position: absolute; 
-       right: 0; 
-       top: 0px; 
+       right: -1px;
+       top: 4px;
      } 
    .timer-block__num, 
    .timer-block__unit { 
@@ -70,26 +70,78 @@
      text-align: center; 
    } 
 
+
+  .main_banner_slider .timer {
+    background: transparent; 
+    padding: 4px 0;
+  }
+
+  .main_banner_slider .timer-display {
+    justify-content: center; 
+  }
+  
+  .main_banner_slider .timer__title{
+    font-size: 14px;
+    text-align: center;
+    padding-left: 8px;
+    color: #fff;
+  }
+
+  .main_banner_slider .timer-block { 
+    width: 30%;
+  } 
+
+  .main_banner_slider .timer-block:not(:last-child):after {
+    /* display: none; */
+    color: #fff;
+  }
+
+  .main_banner_slider .timer-block__num{
+    text-align: center; 
+    background: #f5950c;
+    color: #fff;
+    padding: 4px;
+    border-radius: 5px;
+    text-transform: uppercase;
+  }
+  .main_banner_slider .timer-display .timer-block:first-child{display: none;}
+
+  @media screen and (max-width:767px){
+    .main_banner_slider .timer {max-width: 180px; left: 8px;top: 70%;}
+    .main_banner_slider .timer__title{font-size: 14px;display: none;}
+    .main_banner_slider .timer-display{font-size: 12px;}
+    .main_banner_slider .timer-block{padding: 0 5px;}
+    .main_banner_slider .timer-block:nth-child(2) {padding-left: 0px;}
+  }
+
+  @media screen and (min-width:767px){
+    .main_banner_slider .timer {display: none !important;}
+  }
+
  </style> 
 
- <script type="text/javascript"> 
-   $(window).on('load', function() {
-   	$('.timer').fadeIn("fast");
-   })
-   var second = 1000, 
-       minute = second * 60, 
-       hour = minute * 60, 
-       _day = hour * 24; 
+  <script type="text/javascript"> 
+    $(window).on('load', function() {
+      $('.timer').fadeIn("fast");
+    });
+    var banner_second = 1000, 
+        banner_minute = banner_second * 60, 
+        banner_hour = banner_minute * 60, 
+        banner_day = banner_hour * 24; 
 
-   var countDown = new Date('{{- end_date -}}').getTime(), 
-       x = setInterval(function() { 
-   var now = new Date().getTime(), 
-       distance = countDown - now; 
-       document.querySelector('.js-timer-days').innerText = Math.floor(distance / (_day)) + ' d', 
-       document.querySelector('.js-timer-hours').innerText = Math.floor((distance % (_day)) / (hour)) + ' h', 
-       document.querySelector('.js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)) + ' m', 
-       document.querySelector('.js-timer-seconds').innerText = Math.floor((distance % (minute)) / second) + ' s'; 
-   }, second) 
+    var banner_countDown = new Date('{{- banner_end_date -}}').getTime(), 
+        banner_x = setInterval(function() { 
+    var banner_now = new Date().getTime(), 
+        banner_distance = banner_countDown - banner_now;
+          
+        var days_left = Math.floor(banner_distance / (banner_day));
+        var hours_left = Math.floor((banner_distance % (banner_day)) / (banner_hour)) + days_left * 24;
+        
+        document.querySelector('.js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + ' d', 
+        document.querySelector('.js-timer-hours').innerText = hours_left + ' h', 
+        document.querySelector('.js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + ' m', 
+        document.querySelector('.js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + ' s'; 
+    }, banner_second) 
  </script> 
 
  {% endif %} 
