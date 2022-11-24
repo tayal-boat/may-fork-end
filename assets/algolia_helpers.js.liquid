@@ -109,9 +109,11 @@
        return res;
     },
     inventory: function inventory() {
+      
       var res = this.inventory_available;
       var flashSale = '';
       var free = '';
+      let productJson = JSON.stringify(this);
       if(this.tags.includes('flash-sale')){
         flashSale = 'flash-sale';
       }
@@ -124,17 +126,15 @@
       if(this.tags.includes('Coming-Soon')){
         res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
       }else{
-      res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+      // res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+      // console.log(this);
+      res = `<div class="product-item__quick-form">
+      
+      <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","tags":[],"available":"${this.inventory_available}","variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
+      Notify Me
+      </a>
+      </div>`
       }
-      }
-      return res;
-    },
-    soldImage : function inventory() {
-      var res = this.inventory_available;
-      if (res){
-        res = "aa-product-image" 
-      }else{
-        res = "aa-product-image sold-out"
       }
       return res;
     },
@@ -149,29 +149,15 @@
       var rating_count = reviews.rating_count;
       res = `<div class="rating"><div class="rating__stars" role="img" aria-label="${rating_value} out of 5.0 stars">
             <span style="color:#05A143;font-size:16px;">★</span>
-            ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
-            </div>`;  
+    ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
+  </div>`;  
       }else{
         res = `<div class="rating"><div class="rating__stars" role="img" >
-               <span style="color:#05A143;font-size:16px;">★</span>
-               Be the first to review
-              </div></div>`
+        <span style="color:#05A143;font-size:16px;">★</span>
+       Be the first to review
+    </div></div>`
       }
      return res;
-    },
-    imageClass: function imageClass() {
-      var tags = this.tags;
-      var res_class = ''
-      if(this.inventory_available) {
-        res_class = 'aa-product-image'
-      } else {
-        if(tags.includes( 'Coming-Soon' ) ){
-        res_class = 'aa-product-image'
-        }else{
-        res_class = 'aa-product-image sold-out'
-        }
-      }
-      return res_class;
     },
     badge: function badge() {
       var res = '';
@@ -181,9 +167,9 @@
       var price_ratio = this.price_ratio;
       var comparing =
       Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
-     var discount_ratio = 1.0 - price_ratio;
-     var response = '';
+    var discount_ratio = 1.0 - price_ratio;
     if(this.inventory_available){
+      var response = '';
           for (let i = 0; i < tags.length ; i++) {
             if(tags[i].includes( 'Free-' ) ){
               res = `🎁 ${tags[i].replace('-',' ')}`;
@@ -233,18 +219,11 @@
               response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
             }
             else if(tags[i].includes('meta-label-sold')) {
-              res = 'sold-out';
-              res_class = ' label bg-black';
-              response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
+              res = '';
+              response = "";
             }
           }
-    } else {
-      if(tags.includes( 'Coming-Soon' ) ){
-      var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
-      }else{
-      var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
-      }
-  }
+    }
    return response;
     },
     fullHTMLTitle: function fullHTMLTitle() {
