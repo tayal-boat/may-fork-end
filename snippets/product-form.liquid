@@ -570,7 +570,7 @@
             {%- if product.tags contains 'flash-sale' -%}
             <input class="flash_sale_enable" type="hidden" name="properties[flash_sale]" value="true">
             {%- endif -%}
-            {%- if product.tags contains 'Free-Earphones' -%}
+            {%- if product.tags contains '{{ settings.products_offering_freebie }}' -%}
               <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
             {%- endif -%}
             <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer"{% endif %} class="product-form__payment-container" {{ block.shopify_attributes }}>
@@ -588,11 +588,13 @@
                 </button>
               {%- endif -%}
 
-               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}         
-                 <button type="button" onclick="onBuyNowClick(this)" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled  style="display:none !important;" {% endunless %}>
+               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%} 
+                {% unless product.tags contains '{{ settings.products_offering_freebie }}' %}    
+                 <button type="button" onclick="onBuyNowClick(this)" class="{% if product.tags contains '{{ settings.products_offering_freebie }}' %} free {% endif %}" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled  style="display:none !important;" {% endunless %}>
                  {{ settings.buynow-titile }}
                  <div style="display:none"><div class="cir-loader">Loading..</div></div>
                  </button>
+                {% endunless %} 
                  {% if product.metafields.custom.product_highlights %}
                    <div class="price-container product-highlight mt-3 p-3 mobile-only">
                     <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey; font-weight: 700;">Product Highlights</h6>
