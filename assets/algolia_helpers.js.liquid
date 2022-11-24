@@ -160,11 +160,16 @@
      return res;
     },
     imageClass: function imageClass() {
+      var tags = this.tags;
       var res_class = ''
       if(this.inventory_available) {
         res_class = 'aa-product-image'
       } else {
+        if(tags.includes( 'Coming-Soon' ) ){
+        res_class = 'aa-product-image'
+        }else{
         res_class = 'aa-product-image sold-out'
+        }
       }
       return res_class;
     },
@@ -234,8 +239,12 @@
             }
           }
     } else {
+      if(tags.includes( 'Coming-Soon' ) ){
+      var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+      }else{
       var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
-    }
+      }
+  }
    return response;
     },
     fullHTMLTitle: function fullHTMLTitle() {
