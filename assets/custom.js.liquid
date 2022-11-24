@@ -278,7 +278,7 @@ if(e.available == false){
       $('.resend-btn').show();
       $('.otp-login-confirm-btn').css('background','#ED1C24');
     }
-    timer(30);
+    timer(60);
    }
 
    function emailMask(email) {
@@ -294,7 +294,7 @@ if(e.available == false){
   }
 
   function selectEmail(email, session_id){
-    let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/emails/select';
+    let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
     var settings = {
       "url": base_Url,
       "method": "POST",
@@ -319,8 +319,41 @@ if(e.available == false){
     });
   }
 
-function verifyotp(session_id, otp){
-  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/login/verifyotp';
+  function otpSignUp(full_name, email, phone, session_id, url){
+    let base_Url = 'https://otp.boat-lifestyle.com/signup';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "full_name" : full_name,
+        "email": email,
+        "phone": phone,
+        "session_id": session_id,
+        "url" : url
+      }),
+    };
+    $.ajax(settings).done(function (response) {
+      console.log(response);
+      if(response.code == 200 && response.message == 'login URL sent'){
+        $('.customer-login-section.customer--section').hide();
+        $('.oto-login-success-container').show();
+        setTimeout(function(){
+          location.href = response.URL;
+        },5000)
+      }else if(response.code == 422 && response.message == 'validation_error'){
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }else if(response.code == 401){
+        $('.otp-login-error').html(response.message);
+      }
+    });
+  }
+  
+function verifyotp(session_id, otp, url){
+  let base_Url = 'https://otp.boat-lifestyle.com/login/verifyotp';
   var settings = {
     "url": base_Url,
     "method": "POST",
@@ -330,18 +363,37 @@ function verifyotp(session_id, otp){
     },
     "data": JSON.stringify({
       "session_id": session_id,
-      "otp": otp
+      "otp": otp,
+      "url": url
     }),
   };
   
   $.ajax(settings).done(function (response) {
     console.log(response);
     if(response.code == 200 && response.message == 'login URL sent'){
-      location.href = response.URL;
+      $('.customer-login-section.customer--section').hide();
+      $('.oto-login-success-container').show();
+      setTimeout(function(){
+        location.href = response.URL;
+      },5000)
+      
     }else if(response.code == 422 && response.message == 'validation_error'){
       $('.otp-login-error').html('Something went wrong please try again.');
     }else if(response.code == 401){
       $('.otp-login-error').html(response.message);
+      $('.customer-login-section').attr('new_customer', 'true');
+      $('.otp-login-message h3').html('Continue with Email');
+      $('.otp-timer-container').hide();
+      $('.otp-login-error').html('');
+      $('.otp-login-confirm-btn').click(function(){
+        let full_name = $('.otp-fullName #full_name').val();
+        let email = $('.otp-email #email').val();
+        let phone = $('#otp-mobile-number').val();
+        let session_id = response.session_id;
+        let register_url = response.URL;
+        otpSignUp(full_name, email, phone, session_id, register_url);
+      })
+      
     }else if(response.code == 406 && response.message == 'time exceeded 5 minutes'){
       $('.otp-login-error').html('Otp expired.');
     }else if(response.code == 300 && response.message == 'emailId list'){
@@ -380,7 +432,7 @@ function verifyotp(session_id, otp){
 }
 
 function otpLogin(phone){
-  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/login/sendotp';
+  let base_Url = 'https://otp.boat-lifestyle.com/login/sendotp';
   var settings = {
     "url": base_Url,
     "method": "POST",
@@ -401,72 +453,11 @@ function otpLogin(phone){
     $('.otp-login-confirm-btn').click(function(){
       let session_id = response.session_id;
       let otp = $('.mobile-otp-inout input').val();
-      verifyotp(session_id, otp);
+      verifyotp(session_id, otp, url);
     })
   }else if(response.code == 422 && response.message == 'validation_error'){
   $('.otp-login-error').html('The phone field is required.');
   }else if(response.code == 403 && response.message == 'Invalid phone number'){
-    $('.otp-login-error').html(response.message);
-  }
-  });
-}
-
-function verifySignUpOtp(session_id, otp){
-  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/signup/verifyotp';
-  var settings = {
-    "url": base_Url,
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "data": JSON.stringify({
-      "session_id": session_id,
-      "otp": otp
-    }),
-  };
-  
-  $.ajax(settings).done(function (response) {
-    console.log(response);
-    if(response.code == 200 && response.message == 'login URL sent'){
-      location.href = response.URL;
-    }else if(response.code == 422 && response.message == 'validation_error'){
-      $('.otp-login-error').html('Something went wrong please try again.');
-    }else if(response.code == 401){
-      $('.otp-login-error').html(response.message);
-    }
-  });
-}
-
-function otpSignUp(full_name, email, phone){
-  let base_Url = 'https://ab58-106-51-87-194.ngrok.io/customer/signup/sendotp';
-  var settings = {
-    "url": base_Url,
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "data": JSON.stringify({
-      "full_name" : full_name,
-      "email": email,
-      "phone" : phone
-    }),
-  };
-  $.ajax(settings).done(function (response) {
-    console.log(response);
-    if(response.code == 200 && response.message == 'OTP sent'){
-    $('.customer-signup-section').attr('otp_send', 'true');
-    $('.otp-login-error').html('');
-    TimerFunction();
-    $('.customer-signup-section .otp-login-confirm-btn').click(function(){
-      let session_id = response.session_id;
-      let otp = $('.mobile-otp-inout input').val();
-      verifySignUpOtp(session_id, otp);
-    })
-  }else if(response.code == 422 && response.message == 'validation_error'){
-  $('.otp-login-error').html('The phone field is required.');
-  }else if(response.code == 401 && response.customer == 'True'){
     $('.otp-login-error').html(response.message);
   }
   });
@@ -479,22 +470,13 @@ $('.otp-login-btn, .login-resend-btn').click(function(){
   otpLogin(phone);
 })
 
-$('.otp-signup-btn, .signUp-resend-btn').click(function(){
-  console.log('hii');
-  let full_name = $('.otp-fullName #full_name').val();
-  let email = $('.otp-email #email').val();
-  let phone = $('#otp-mobile-number').val();
-  console.log(phone);
-  otpSignUp(full_name, email, phone);
-})
-
 $(document).on('click', '#resend__otp', function(){
   TimerFunction();
 });
 
 $( "#otp" ).on( "input", function() {
   console.log( $(this).val().length);
-  if($(this).val().length > 3){
+  if($(this).val().length >5 ){
     console.log( 'hiii');
     $('.otp-login-confirm-btn').css('background','#ED1C24');
   }
@@ -503,4 +485,12 @@ $( "#otp" ).on( "input", function() {
 $('.mobile-login-edit-icon').click(function(){
   $('.otp-login-error').html('');
   $('.customer--section').removeAttr('otp_send');
+  });
+
+  let login_location = ''; 
+  document.getElementsByClassName('custom-account-icon')[0].addEventListener("click", function myFunction(event) {
+    event.preventDefault();
+      console.log('hii');
+      login_location = window.location.href;
+      sessionStorage.setItem('login_location',login_location);
   });
