@@ -3,29 +3,7 @@ This snippet structures the micro-data using JSON-LD specification. Please note 
 the schema often changes. We try to output as much info as possible, but Google may add new requirements over time,
 or change the format of some info
 {%- endcomment -%}
-{%- if template.name == 'collection' -%}
-<script type="application/ld+json">
-	{
-      "@context" : "https://schema.org",
-      "@type" : "ItemList",
-      "itemListElement": 
-      [
-        {%- for product in collection.products -%}
-			{
-              "@type":"ListItem",
-              "position": {{forloop.index}},
-              "url":"{{shop.url}}{{ product.url }}",
-              "name":"{{ product.title }}"
-            {% unless forloop.last %}
-            },
-            {% else %}
-                }
-            {%- endunless -%}
-        {%- endfor -%}
-	  ]
-	}
-</script>
-{%- endif -%}
+
 {%- if request.page_type == 'product' -%}
   {%- assign days_product_price_valid_until = 10 | times: 86400 -%}
 
@@ -217,3 +195,26 @@ or change the format of some info
   }
   </script>
 {% endif %}
+{%- if template.name == 'collection' -%}
+<script type="application/ld+json">
+	{
+      "@context" : "https://schema.org",
+      "@type" : "ItemList",
+      "itemListElement": 
+      [
+        {%- for product in collection.products -%}
+			{
+              "@type":"ListItem",
+              "position": {{forloop.index}},
+              "url":"{{shop.url}}{{ product.url }}",
+              "name":'{{ product.title }}'
+            {% unless forloop.last %}
+            },
+            {% else %}
+                }
+            {%- endunless -%}
+        {%- endfor -%}
+	  ]
+	}
+</script>
+{%- endif -%}
