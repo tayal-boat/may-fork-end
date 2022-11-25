@@ -17,11 +17,12 @@
     {% endfor %}
   <div class="carousel-inner owl-carousel main_banner_slider" id="main_banner_slider">
     {% for block in section.blocks %}
+    {% assign img_alt = block.settings.desktop_image | split: 'files/' | last | split : 'files/' | last | split: '.' | first %}
       <div class="carousel--item slide_{{forloop.index}}">
         {% if block.settings.show_timer %}
           {% render 'countdown-timer', banner_title: "Starts in", banner_end_date: block.settings.end_date %}
         {% endif %}
-        <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
+        <span class="image_alt visually-hidden">{{ img_alt }}</span>
         <a
           href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}"
           class="slide-url"
@@ -29,14 +30,15 @@
           <picture>
             <source
               media="(min-width: 769px)"
-              {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+              {% render 'image-attributes-carousel', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
             >
             <img
               class="image-overlay__image_"
-              {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
-              alt="{{block.settings.desktop_image.alt}}"
+              {% render 'image-attributes-carousel', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
+              alt=""
             >
           </picture>
+          
         </a>
       
         {%- assign video_class_name = "video_unavailable" -%}
