@@ -293,7 +293,7 @@ if(e.available == false){
     return maskedEmail.join('');
   }
 
-  function selectEmail(email, session_id){
+  function selectEmail(email, session_id, url){
     let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
     var settings = {
       "url": base_Url,
@@ -304,7 +304,8 @@ if(e.available == false){
       },
       "data": JSON.stringify({
         "session_id": session_id,
-        "email" : email
+        "email" : email,
+        "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
@@ -385,12 +386,12 @@ function verifyotp(session_id, otp, url){
       $('.otp-login-message h3').html('Continue with Email');
       $('.otp-timer-container').hide();
       $('.otp-login-error').html('');
-      $('.otp-login-confirm-btn').click(function(){
+      $('.otp-login-submit-btn').click(function(){
         let full_name = $('.otp-fullName #full_name').val();
         let email = $('.otp-email #email').val();
         let phone = $('#otp-mobile-number').val();
-        let session_id = response.session_id;
-        let register_url = response.URL;
+        let register_url = sessionStorage.getItem('login_location');
+        console.log(session_id);
         otpSignUp(full_name, email, phone, session_id, register_url);
       })
       
@@ -424,8 +425,9 @@ function verifyotp(session_id, otp, url){
     }
       $(this).attr('selected','true'); 
       });
+      let selectedEmail_url = sessionStorage.getItem('login_location');
       $('.otp-login-submit-btn').click(function(){
-      selectEmail(selectedEmail, session_id);
+      selectEmail(selectedEmail, session_id, selectedEmail_url);
       });
     }
   });
@@ -453,6 +455,7 @@ function otpLogin(phone){
     $('.otp-login-confirm-btn').click(function(){
       let session_id = response.session_id;
       let otp = $('.mobile-otp-inout input').val();
+      let url = sessionStorage.getItem('login_location');
       verifyotp(session_id, otp, url);
     })
   }else if(response.code == 422 && response.message == 'validation_error'){
