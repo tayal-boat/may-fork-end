@@ -115,7 +115,7 @@
       if(this.tags.includes('flash-sale')){
         flashSale = 'flash-sale';
       }
-      if(this.tags.includes('Free-Earphones')){
+      if(this.tags.includes('{{ settings.products_offering_freebie }}')){
       free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
       }
       if(this.inventory_available) {
@@ -173,6 +173,16 @@
       }
       return res_class;
     },
+    containerClass: function containerClass() {
+      var tags = this.tags;
+      var res_class = ''
+      if(tags.includes( 'st-hide' ) ){
+        res_class = 'aa-product hide-suggestion'
+      } else {
+        res_class = 'aa-product show-suggestion'
+      }
+      return res_class;
+    },
     badge: function badge() {
       var res = '';
       var res_class = '';
@@ -191,7 +201,7 @@
               response  = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
             }
             else if(tags[i].includes('Coupon-') ){
-              res = `₹ ${tags[i].replace('Coupon-',' ').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
+              res = `₹${tags[i].replace('Coupon-','').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
               res_class = 'coupon-label label bg-green z-9';
               response  = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
             }
