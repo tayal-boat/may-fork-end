@@ -281,6 +281,19 @@ if(e.available == false){
     timer(60);
    }
 
+   function countdown(timeleft, url){
+    var timeleft = timeleft;
+    var downloadTimer = setInterval(function(){
+      if(timeleft <= 0){
+        clearInterval(downloadTimer);
+        location.href = url;
+      } else {
+        document.getElementById("countdown").innerHTML = timeleft;
+      }
+      timeleft -= 1;
+    }, 1000);
+   }
+
    function emailMask(email) {
     var maskedEmail = email.replace(/([^@\.])/g, "*").split('');
     var previous	= "";
@@ -311,7 +324,9 @@ if(e.available == false){
     $.ajax(settings).done(function (response) {
       console.log(response);
       if(response.code == 200 && response.message == 'login URL sent'){
-        location.href = response.URL;
+        $('.customer-login-section.customer--section').hide();
+        $('.oto-login-success-container').show();
+        countdown(5, response.URL);
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401 || response.code == 404 ){
@@ -342,9 +357,7 @@ if(e.available == false){
       if(response.code == 200 && response.message == 'login URL sent'){
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
-        setTimeout(function(){
-          location.href = response.URL;
-        },5000)
+        countdown(5, response.URL);
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401){
@@ -374,9 +387,7 @@ function verifyotp(session_id, otp, url){
     if(response.code == 200 && response.message == 'login URL sent'){
       $('.customer-login-section.customer--section').hide();
       $('.oto-login-success-container').show();
-      setTimeout(function(){
-        location.href = response.URL;
-      },5000)
+      countdown(5, response.URL);
       
     }else if(response.code == 422 && response.message == 'validation_error'){
       $('.otp-login-error').html('Something went wrong please try again.');
