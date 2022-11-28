@@ -122,26 +122,24 @@
   <div class="row custom_press_items">
     <div class="press_wrapper">
       
-      <div id="London" class="tabcontent">
-        <h3>London</h3>
-        <p>London is the capital city of England.</p>
-      </div>
-      
-      <div id="Paris" class="tabcontent">
-        <h3>Paris</h3>
-        <p>Paris is the capital of France.</p> 
-      </div>
-      
-      <div id="Tokyo" class="tabcontent">
-        <h3>Tokyo</h3>
-        <p>Tokyo is the capital of Japan.</p>
-      </div>
-
+      {%- for block in section.blocks -%}
+        <div id="press_icon_{{ forloop.index }}" class="tabcontent">
+          <p>{{ block.settings.content | escape }}</p>
+        </div>
+      {% endfor %}
       
       <div class="tab">
-        <button class="tablinks" onclick="openCity(event, 'London')">London</button>
-        <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
-        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+        {%- for block in section.blocks -%}
+          <button class="tablinks" onclick="openCity(event, 'press_icon_{{ forloop.index }}' )">
+            {%- if block.settings.logo != blank -%}
+              {%- capture image_sizes -%}{{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
+              <img class="press-list__logo-image" loading="lazy" style="max-width: 160px" sizes="160px" {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+            {%- else -%}
+              <span class="heading h6">Logo {{ forloop.index }}</span>
+            {%- endif -%}
+          </button>
+        {% endfor %}
+        
       </div>
     </div>
   </div>
