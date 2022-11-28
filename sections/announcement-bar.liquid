@@ -74,7 +74,10 @@
                   <button class="link" data-action="open-content">{{ block.settings.text }}</button>
                 {%- endif -%}
               {%- else -%}
-                <p>{{ block.settings.text  }}</p>
+                <p class="{%- if section.settings.show_timer -%}m-0{%- endif -%}">{{ block.settings.text }}</p>
+                {% if section.settings.show_timer %}
+                  {% render 'countdown-timer', banner_title: section.settings.timer_title , banner_end_date: section.settings.end_date %}
+                {% endif %}
               {%- endif -%}
             </div>
             </a>
@@ -89,8 +92,6 @@
                       <span class="visually-hidden">{{ 'general.accessibility.close' | t }}</span>
                       {%- render 'icon' with 'close' -%}
                     </button>
-
-
                     {%- if block.settings.content != blank -%}
                       <div class="announcement-bar__content-text-wrapper">
                         <div class="announcement-bar__content-text text-container">
@@ -101,7 +102,6 @@
                           {%- if block.settings.content != blank -%}
                             {{- block.settings.content -}}
                           {%- endif -%}
-
 
                         </div>
                       </div>
@@ -203,9 +203,34 @@
     },
     {
       "type": "checkbox",
+      "id": "show_timer",
+      "label": "Show Timer",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "timer_title",
+      "label": "timer_title"
+    },
+    {
+      "type": "color",
+      "id": "timer_background",
+      "label": "timer_background"
+    },
+    {
+      "type": "checkbox",
+      "id": "timer_inline",
+      "label": "get_timer_inline"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "timer End Date (Ex: Apr 30, 2022)"
+    },
+    {
+      "type": "checkbox",
       "id": "autoplay",
-      "label": "Auto rotate between messages",
-      "default": true
+      "label": "Auto rotate between messages"
     },
     {
       "type": "range",
