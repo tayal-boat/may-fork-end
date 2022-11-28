@@ -52,7 +52,10 @@
           return cb(extendedHits, res);
         })
           .catch((err) => cb([], err));       
-
+          sessionStorage.setItem('preSearch', false);    
+  if (sessionStorage.getItem('preSearchInput') && sessionStorage.getItem('preSearchInput') !== '') {
+    sessionStorage.removeItem('preSearchInput');
+}
 document.querySelector("body").classList.add("noScroll"); 
 document.querySelector("store-header").classList.add("fixed_header"); 
 document.querySelector("#shopify-section-announcement-bar").classList.add("fixed_announcement"); 
@@ -244,10 +247,6 @@ sessionStorage.setItem('queryList', queryList);
        searchPopupContainer[i].removeAttribute("style");  
     }
   }
-
-  if (sessionStorage.getItem('preSearchInput') && sessionStorage.getItem('preSearchInput') !== '') {
-      sessionStorage.removeItem('preSearchInput');
-  }
   }
 
   var config = {
@@ -360,6 +359,7 @@ sessionStorage.setItem('queryList', queryList);
 
   // Event listeners
   autocompleteInstance.on('autocomplete:selected', function(obj, datum, name) {
+    event.preventDefault();
 setTimeout(function(){
 if(window.innerWidth < 1200){
 document.querySelector('.algolia-search__form_mobile input').value = sessionStorage.getItem('algoliaSearchQuery'); 
@@ -423,8 +423,8 @@ if (addToCartBtn) {
   })
 }
     }
-    switch (name) {
-      case 'products': {
+    // switch (name) {
+    //   case 'products': {
         // var addVariantId =
         //   !algolia.config.show_products && datum.objectID !== datum.id;
         // window.location.href =
@@ -434,15 +434,15 @@ if (addToCartBtn) {
         //   datum.handle +
         //   (addVariantId ? '?variant=' + datum.objectID : '');
 
-        break;
-      }
-      case 'articles':
-        window.location.href =
-          '/blogs/' + datum.blog.handle + '/' + datum.handle;
-        break;
-      default:
-        window.location.href = '/' + name + '/' + datum.handle;
-    }
+    //     break;
+    //   }
+    //   case 'articles':
+    //     window.location.href =
+    //       '/blogs/' + datum.blog.handle + '/' + datum.handle;
+    //     break;
+    //   default:
+    //     window.location.href = '/' + name + '/' + datum.handle;
+    // }
   });
  
   autocompleteInstance.on('autocomplete:redrawn', function() {
