@@ -22,16 +22,23 @@
  </div> 
 
  <style> 
-   .timer { 
-     background: rgb(205, 205, 205); 
-     padding: 10px 0; 
-     margin: 15px 0 0; 
-     max-width: 250px;
-    /* border: 1px dashed; */
-     border-radius: 5px;
-     line-height: normal;
-     display: none;
+  {{section.id}} .timer { 
+     background: {{section.settings.timer_background}}; 
    } 
+   {% if section.settings.timer_inline %}
+   {{section.id}} .timer.banner-timer {
+    padding-top: 4px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  @media(min-width:1024px){
+    {{section.id}} .timer.banner-timer {
+      padding-top: 0px; 
+      margin-left: 8px;
+    }
+  }
+{% endif %}
    .timer--expired { 
      display: none; 
    } 
@@ -51,7 +58,6 @@
      -webkit-box-pack: justify; 
      -ms-flex-pack: justify; 
      justify-content: space-between; 
-     margin-top: 5px; 
    } 
    .timer-block { 
      position: relative; 
@@ -136,10 +142,10 @@
         var days_left = Math.floor(banner_distance / (banner_day));
         var hours_left = Math.floor((banner_distance % (banner_day)) / (banner_hour)) + days_left * 24;
         
-        document.querySelector('.js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + '\n d', 
-        document.querySelector('.js-timer-hours').innerText = hours_left + '\n h', 
-        document.querySelector('.js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + '\n m', 
-        document.querySelector('.js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + '\n s'; 
+        document.querySelector('.js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + 'd', 
+        document.querySelector('.js-timer-hours').innerText = hours_left + 'h', 
+        document.querySelector('.js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + 'm', 
+        document.querySelector('.js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + 's'; 
     }, banner_second) 
  </script> 
 
