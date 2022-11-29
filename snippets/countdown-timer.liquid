@@ -22,18 +22,18 @@
  </div> 
 
  <style> 
-  .{{ section.id }} .timer { 
+  #shopify-section-{{ section.id }} .timer { 
      background: {{ time_background }}; 
    } 
   {% if time_inline %}
-   .{{ section.id }} .timer.banner-timer {
+   #shopify-section-{{ section.id }} .timer.banner-timer {
     padding-top: 4px; 
     display: flex!important;
     justify-content: center;
     align-items: center;
   }
   @media(min-width:1024px){
-    {{section.id}} .timer.banner-timer {
+    #shopify-section-{{ section.id }} .timer.banner-timer {
       padding-top: 0px; 
       margin-left: 8px;
     }
@@ -72,31 +72,31 @@
      display: block; 
      text-align: center; 
    } 
-  .{{section.id}} .timer.banner-timer{position: absolute;top: -20px;}
+  #shopify-section-{{ section.id }} .timer.banner-timer{position: absolute;left: -90vw;}
  </style> 
 
   <script type="text/javascript"> 
     $(window).on('load', function() {
-      $('.{{section.id}} .timer').fadeIn("fast");
+      $('#shopify-section-{{ section.id }} .timer').fadeIn("fast");
     });
     var banner_second = 1000, 
         banner_minute = banner_second * 60, 
         banner_hour = banner_minute * 60, 
         banner_day = banner_hour * 24; 
 
-    var banner_countDown = new Date('{{- banner_end_date -}}').getTime(), 
+    var banner_countDown{{ section.id | split: '-' | last | split: '__' | last }} = new Date('{{- banner_end_date -}}').getTime(), 
         banner_x = setInterval(function() { 
     var banner_now = new Date().getTime(), 
-        banner_distance = banner_countDown - banner_now;
+        banner_distance{{ section.id | split: '-' | last | split: '__' | last }} = banner_countDown{{ section.id | split: '-' | last | split: '__' | last }} - banner_now;
           
-        var days_left = Math.floor(banner_distance / (banner_day));
-        var hours_left = Math.floor((banner_distance % (banner_day)) / (banner_hour)) + days_left * 24;
-        if (banner_distance > 0){
-          $('.{{section.id}} .timer.banner-timer').css("position", "unset");
-          document.querySelector('.{{section.id}} .js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + 'd', 
-          document.querySelector('.{{section.id}} .js-timer-hours').innerText = hours_left + 'h', 
-          document.querySelector('.{{section.id}} .js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + 'm', 
-          document.querySelector('.{{section.id}} .js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + 's'; 
+        var days_left{{ section.id | split: '-' | last | split: '__' | last }} = Math.floor(banner_distance{{ section.id | split: '-' | last | split: '__' | last }} / (banner_day));
+        var hours_left{{ section.id | split: '-' | last | split: '__' | last }} = Math.floor((banner_distance{{ section.id | split: '-' | last | split: '__' | last }} % (banner_day)) / (banner_hour)) + days_left{{ section.id | split: '-' | last | split: '__' | last }} * 24;
+        if (banner_distance{{ section.id | split: '-' | last | split: '__' | last }} > 0){
+          $('#shopify-section-{{ section.id }} .timer.banner-timer').css("position", "unset");
+          document.querySelector('#shopify-section-{{ section.id }} .js-timer-days').innerText = Math.floor(banner_distance{{ section.id | split: '-' | last | split: '__' | last }} / (banner_day)) + 'd', 
+          document.querySelector('#shopify-section-{{ section.id }} .js-timer-hours').innerText = hours_left{{ section.id | split: '-' | last | split: '__' | last }} + 'h', 
+          document.querySelector('#shopify-section-{{ section.id }} .js-timer-minutes').innerText = Math.floor((banner_distance{{ section.id | split: '-' | last | split: '__' | last }} % (banner_hour)) / (banner_minute)) + 'm', 
+          document.querySelector('#shopify-section-{{ section.id }} .js-timer-seconds').innerText = Math.floor((banner_distance{{ section.id | split: '-' | last | split: '__' | last }} % (banner_minute)) / banner_second) + 's'; 
         }
     }, banner_second) 
  </script> 
