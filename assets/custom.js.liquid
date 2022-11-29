@@ -502,16 +502,21 @@ $('.mobile-login-edit-icon').click(function(){
   $('.otp-login-error').html('');
   $('.customer--section').removeAttr('otp_send');
   });
-  sessionStorage.setItem('login_location','https://www.boat-lifestyle.com/');
+  if(!sessionStorage.login_location && sessionStorage.login_location !== ''){
+    sessionStorage.setItem('login_location','https://www.boat-lifestyle.com/');
+  }
+  
 
   document.querySelector('.custom-account-icon').addEventListener("click", function myFunction(event) {
     event.preventDefault();
       sessionStorage.setItem('login_location',window.location.href);
   });
 
-  let mobile_account = document.querySelector('.mobile-custom-account-icon');
-  mobile_account.addEventListener("click", function myFunction(event) {
-    event.preventDefault();
-      sessionStorage.setItem('login_location',window.location.href);
-      window.location = this.firstElementChild.href;
-  });
+  let mobile_account = document.querySelectorAll('.mobile-custom-account-icon');
+  for (let i = 0; i < mobile_account.length; i++) {
+    mobile_account[i].addEventListener("click", function myFunction(event) {
+      event.preventDefault();
+        sessionStorage.setItem('login_location',window.location.href);
+        window.location = '/account';
+    });
+  }
