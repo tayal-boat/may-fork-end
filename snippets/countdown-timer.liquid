@@ -22,13 +22,13 @@
  </div> 
 
  <style> 
-  {{section.id}} .timer { 
-     background: {{section.settings.timer_background}}; 
+  .{{ section.id }} .timer { 
+     background: {{ time_background }}; 
    } 
-   {% if section.settings.timer_inline %}
-   {{section.id}} .timer.banner-timer {
+  {% if time_inline %}
+   .{{ section.id }} .timer.banner-timer {
     padding-top: 4px; 
-    display: flex;
+    display: flex!important;
     justify-content: center;
     align-items: center;
   }
@@ -37,11 +37,8 @@
       padding-top: 0px; 
       margin-left: 8px;
     }
-  }
-{% endif %}
-   .timer--expired { 
-     display: none; 
-   } 
+   }
+  {% endif %}
    .timer__title { 
      text-align: center; 
      margin: 0;
@@ -75,59 +72,12 @@
      display: block; 
      text-align: center; 
    } 
-
-
-  .main_banner_slider .timer {
-    background: transparent;
-    padding: 4px 0;
-  }
-
-  .main_banner_slider .timer-display {
-    justify-content: space-between;
-  }
-  
-  .main_banner_slider .timer__title{
-    font-size: 14px;
-    text-align: center;
-    color: #fff;
-  }
-
-  .main_banner_slider .timer-block {width: 27%;font-weight: 600;} 
-
-  .main_banner_slider .timer-block:not(:last-child):after {
-    /* display: none; */
-    color: #fff;
-    top: 10px;
-    right: -8px;
-  }
-
-  .main_banner_slider .timer-block__num{
-    text-align: center; 
-    background: #f5950c;
-    color: #fff;
-    padding: 4px;
-    border-radius: 5px;
-    text-transform: uppercase;
-  }
-  .main_banner_slider .timer-display .timer-block:first-child{display: none;}
-
-  @media screen and (max-width:767px){
-    .main_banner_slider .timer {max-width: 154px; left: 18px;top: 70%;}
-    .main_banner_slider .timer__title{font-size: 14px;display: block;text-align: left;}
-    .main_banner_slider .timer-display{font-size: 12px;}
-    .main_banner_slider .timer-block{padding: 0 5px;}
-    .main_banner_slider .timer-block:nth-child(2) {padding-left: 0px;}
-  }
-
-  @media screen and (min-width:767px){
-    .main_banner_slider .timer {display: none !important;}
-  }
-
+  .{{section.id}} .timer.banner-timer{position: absolute;top: -20px;}
  </style> 
 
   <script type="text/javascript"> 
     $(window).on('load', function() {
-      $('.timer').fadeIn("fast");
+      $('.{{section.id}} .timer').fadeIn("fast");
     });
     var banner_second = 1000, 
         banner_minute = banner_second * 60, 
@@ -141,11 +91,13 @@
           
         var days_left = Math.floor(banner_distance / (banner_day));
         var hours_left = Math.floor((banner_distance % (banner_day)) / (banner_hour)) + days_left * 24;
-        
-        document.querySelector('.js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + 'd', 
-        document.querySelector('.js-timer-hours').innerText = hours_left + 'h', 
-        document.querySelector('.js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + 'm', 
-        document.querySelector('.js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + 's'; 
+        if (banner_distance > 0){
+          $('.{{section.id}} .timer.banner-timer').css("position", "unset");
+          document.querySelector('.{{section.id}} .js-timer-days').innerText = Math.floor(banner_distance / (banner_day)) + 'd', 
+          document.querySelector('.{{section.id}} .js-timer-hours').innerText = hours_left + 'h', 
+          document.querySelector('.{{section.id}} .js-timer-minutes').innerText = Math.floor((banner_distance % (banner_hour)) / (banner_minute)) + 'm', 
+          document.querySelector('.{{section.id}} .js-timer-seconds').innerText = Math.floor((banner_distance % (banner_minute)) / banner_second) + 's'; 
+        }
     }, banner_second) 
  </script> 
 
