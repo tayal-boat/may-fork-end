@@ -680,7 +680,35 @@
         {%- endif -%}
       </cart-drawer>
   
-
+  <script>
+      function updateCheckoutBtn() {
+        {%- comment -%} if ($("input#gstbill").is(":checked")) {
+          $('.checkout-button').removeClass("d-none");
+          $('.gokwik-checkout').removeClass("d-block");
+          $('.checkout-button').addClass("d-block");
+          $('.gokwik-checkout').addClass("d-none");
+        } else {
+          $('.checkout-button').removeClass("d-block");
+          $('.gokwik-checkout').removeClass("d-none");
+          $('.checkout-button').addClass("d-none");
+          $('.gokwik-checkout').addClass("d-block");
+        } {%- endcomment -%}
+      }
+      function checkInputChange() {
+        $('body').on('change', 'input#gstbill',function () {
+          updateCheckoutBtn();
+        });
+      }
+      $(window).bind("load", function() {
+        $('input#gstbill').prop('checked', false);
+        updateCheckoutBtn();
+        checkInputChange();
+      });
+      
+      document.addEventListener('cart:updated', function(event) {
+        checkInputChange();
+      });
+  </script>
   <!--       freebie-offer -->
   {% assign gift-product = collections['freebie-offer'].products[0] %}
   {% assign gift-product_variant = gift-product.variants[0].id %}
