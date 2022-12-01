@@ -7,23 +7,21 @@
   {% endif %}
 <div id="homepage-carousel" class="container c-new">
   <!-- The slideshow -->
-{% for block in section.blocks limit: 1 %}
-  {% assign img_alt = block.settings.desktop_image | split: 'files/' | last | split : 'files/' | last | split: '.' | first %}
+{% comment %} {% for block in section.blocks limit: 1 %}
     	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide homepage-first-slide-container">
           <picture>
             <source media="(min-width: 769px)" srcset="{{block.settings.desktop_image |img_url: '1000x'}}" >
-            <img style="width: 100%;" loading="eager" fetchpriority="high" class="homepage-first-slide" src="{{block.settings.mobile_image |img_url: '360x'}}" alt="{{img_alt}}" />
+            <img style="width: 100%;" loading="eager" fetchpriority="high" class="homepage-first-slide" src="{{block.settings.mobile_image |img_url: '360x'}}" alt="{{block.settings.desktop_image.alt}}" />
           </picture>
         </a>
-    {% endfor %}
+    {% endfor %} {% endcomment %}
   <div class="carousel-inner owl-carousel main_banner_slider" id="main_banner_slider">
     {% for block in section.blocks %}
-    {% assign img_alt = block.settings.desktop_image | split: 'files/' | last | split : 'files/' | last | split: '.' | first %}
       <div class="carousel--item slide_{{forloop.index}}">
         {% if block.settings.show_timer %}
-          {% render 'countdown-timer', banner_title: block.settings.timer_title , banner_end_date: block.settings.end_date , time_background: block.settings.timer_background , time_inline: block.settings.timer_inline %}
+          {% render 'countdown-timer', banner_title: "Starts in", banner_end_date: block.settings.end_date %}
         {% endif %}
-        <span class="image_alt visually-hidden">{{ img_alt }}</span>
+        <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
         <a
           href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}"
           class="slide-url"
@@ -31,15 +29,14 @@
           <picture>
             <source
               media="(min-width: 769px)"
-              {% render 'image-attributes-carousel', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+              {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
             >
             <img
               class="image-overlay__image_"
-              {% render 'image-attributes-carousel', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
-              alt=""
+              {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
+              alt="{{block.settings.desktop_image.alt}}"
             >
           </picture>
-          
         </a>
       
         {%- assign video_class_name = "video_unavailable" -%}
@@ -265,9 +262,6 @@
 
   	$(document).ready(function(){
           var $owl = $( '.owl-carousel' );
-          $owl.on('initialized.owl.carousel', function(event){
-              $('.temp-slide').remove();
-          });
           $(".main_banner_slider").owlCarousel({
               items: 1,
               loop: true,
@@ -282,10 +276,8 @@
               pullDrag: false,
               checkVisible: false,
               responsiveClass:true,
-              autoplayHoverPause: true,
-              onInitialized: startProgressBar,
-              onTranslate: resetProgressBar,
-              onTranslated: startProgressBar
+              autoplayHoverPause: true
+              {% if section.settings.enable_progressbar %},onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar {% endif %}
           });
       });
 
@@ -431,6 +423,12 @@
       "type": "text",
       "id": "clevertap_split",
       "label": "clevertap event only for split products"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_progressbar",
+      "label": "Enable progressbar on slider",
+      "default": true
     }
   ],
   "blocks": [
@@ -461,28 +459,13 @@
         {
           "type": "checkbox",
           "id": "show_timer",
-          "label": "Show Timer",
+          "label": "Show Timer on Banner",
           "default": false
         },
         {
           "type": "text",
-          "id": "timer_title",
-          "label": "timer_title"
-        },
-        {
-          "type": "color",
-          "id": "timer_background",
-          "label": "timer_background"
-        },
-        {
-          "type": "checkbox",
-          "id": "timer_inline",
-          "label": "get_timer_inline"
-        },
-        {
-          "type": "text",
           "id": "end_date",
-          "label": "timer End Date (Ex: Apr 30, 2022)"
+          "label": "End Date (Ex: Apr 30, 2022)"
         },
         {
           "type": "checkbox",
