@@ -21,7 +21,7 @@
     {% assign img_alt = block.settings.desktop_image | split: 'files/' | last | split : 'files/' | last | split: '.' | first %}
       <div class="carousel--item slide_{{forloop.index}}">
         {% if block.settings.show_timer %}
-          {% render 'countdown-timer', banner_title: "Starts in", banner_end_date: block.settings.end_date %}
+          {% render 'countdown-timer', banner_title: block.settings.timer_title , banner_end_date: block.settings.end_date , time_background: block.settings.timer_background , time_inline: block.settings.timer_inline %}
         {% endif %}
         <span class="image_alt visually-hidden">{{ img_alt }}</span>
         <a
@@ -461,13 +461,28 @@
         {
           "type": "checkbox",
           "id": "show_timer",
-          "label": "Show Timer on Banner",
+          "label": "Show Timer",
           "default": false
         },
         {
           "type": "text",
+          "id": "timer_title",
+          "label": "timer_title"
+        },
+        {
+          "type": "color",
+          "id": "timer_background",
+          "label": "timer_background"
+        },
+        {
+          "type": "checkbox",
+          "id": "timer_inline",
+          "label": "get_timer_inline"
+        },
+        {
+          "type": "text",
           "id": "end_date",
-          "label": "End Date (Ex: Apr 30, 2022)"
+          "label": "timer End Date (Ex: Apr 30, 2022)"
         },
         {
           "type": "checkbox",
