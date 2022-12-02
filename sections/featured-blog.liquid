@@ -100,7 +100,7 @@
   </span>
 {%- endcapture %}
 
-<div class="container padded-row blog-row vertical-breather article_list-main-container-{{section.id}}" data-section-type="featured-blog">
+<div class="container padded-row blog-row vertical-breather article_list-main-container-{{section.id}}" data-section-type="featured-blog" data-ctevent-name="Homepage Blog section clicked" data-ctevent-container="article-list">
   {% unless blog.empty? %}
     <header class="section__header text-container d-flex justify-content-between mb-0">
       <h3 class="heading h2 text-white">bo<span class="text-red">A</span>t BLOGS</h3>
@@ -284,11 +284,18 @@
 {% endif %}
 
 <script type="text/javascript">
-  {%- comment -%} $(document).ready(function($) {
-    $('.article-list').on('click', function() {
-      clevertap.event.push('Homepage Blog section clicked', {userSource: userSource});
-    });
-  }); {%- endcomment -%}
+  $(document).ready(function($) {
+    $('.article-list .article').each(function() {
+      $(this).click(function() {
+        let blogTitle = $(this).find('h3').text();
+        clevertap.event.push('Homepage Blog section clicked', {
+          'blogTitle': blogTitle,
+          userSource: userSource
+          }
+        );
+      })
+    })
+  }); 
   function sectionWithoutImage(sectionClass, eventName) {
       $(sectionClass).click(function() {
       alert(sectionClass)
@@ -297,7 +304,7 @@
       })
   }
 
-  sectionWithImage('.article-list', 'Homepage Blog section clicked');
+  {%- comment -%} sectionWithoutImage('.article-list', 'Homepage Blog section clicked'); {%- endcomment -%}
 </script>
 {% comment %}
   <script type="text/javascript">
