@@ -2,7 +2,7 @@
   .deal-of-the_day.{{ section.id }}{
     padding-top: 20px; padding-bottom: {{section.settings.sectionpadding}}px;
     background: {{ section.settings.bg_color }};
-    margin:{{section.settings.sectionmargin}}px;
+    margin:{{section.settings.sectionmargin}};
   }
   @media(max-width:768px){
     .deal-of-the_day.{{ section.id }}{
@@ -11,7 +11,7 @@
   }
 </style>
 
-<div class="container deal-of-the_day section-id-{{ section.id }} ">
+<div class="container deal-of-the_day {{ section.id }} ">
   {% if section.settings.sectionHeading != blank %}
       <div class="row">
         <div class="col-md-12 section__header text-container d-flex justify-content-between">
@@ -36,58 +36,8 @@
     </div>
   </div>
 </div>
+{% render 'carousel-js' %}
 
-<script type="deferjs">
-  var $owl = $('.carousel-id.{{ section.id }}');
-  $owl.on('initialized.owl.carousel', function(event) {
-      $('.temp-slide').hide();$('.shop-heading').removeClass('d-none');
-  });
-
-    $('.carousel-id.{{ section.id }}').owlCarousel({
-        loop: {{ section.settings.loop}},
-        responsiveClass: true,
-        autoplay: {{ section.settings.autoplay}},
-        slideBy: {{ section.settings.slideBy}},
-        nav: false,
-        dots: {{ section.settings.show_dots_on_desktop }},
-        margin: {{ section.settings.margin }},
-        responsive: {
-            500: {
-                items: {{ section.settings.slides_no }},
-                dots: {{ section.settings.show_dots_on_mobile }}
-            },
-            1000: {
-               items:  {{ section.settings.deskslides_no}},
-            }
-        }
-    }).on("dragged.owl.carousel", function(event) {
-        slide_item_on_drag( '.carousel-id.{{ section.id }}', event.relatedTarget['_drag']['direction'] );
-    });
-
-    function slide_item_on_drag(section_id, drag_direction) {
-        if( drag_direction == 'right' ){
-           // $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-        }
-        else if( drag_direction == 'left' ){
-            $(section_id + ' .owl-dots .owl-dot.active').next().click();
-        }
-    }
-
-// --- clevertap events --->
-    var image_slides = document.querySelectorAll('.carousel-id.{{ section.id }} .slide-url');
-    image_slides.forEach((slide, i) => {
-      slide.addEventListener('click', function(e) {
-          let imageurl = slide.href;
-          let imageTitle = slide.querySelector('img').alt;
-          clevertap.event.push("image_carousel clicked", {
-            "image url": imageurl,
-             "image Title": imageTitle,
-            "userSource": userSource
-          })
-      })
-    });
-
-  </script>
 
 {% schema %}
   {

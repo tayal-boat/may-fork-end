@@ -1,0 +1,37 @@
+<script type="deferjs">
+
+var $owl = $('.carousel-id.{{ section.id }}');
+$owl.on('initialized.owl.carousel', function(event) {
+    $('.temp-slide').hide();$('.shop-heading').removeClass('d-none');
+});
+
+  $('.carousel-id.{{ section.id }}').owlCarousel({
+      loop: {{ section.settings.loop | default: true }},
+      responsiveClass: true,
+      autoplay: {{ section.settings.autoplay | default: true }},
+      slideBy: {{ section.settings.slideBy | default: 1 }},
+      nav: false,
+      dots: {{ section.settings.show_dots_on_desktop | default: true }},
+      margin: {{ section.settings.margin | default: 0 }},
+      responsive: {
+          300: {
+              items: {{ section.settings.slides_no | default: 1 }},
+              dots: {{ section.settings.show_dots_on_mobile | default: true }}
+          },
+          1024: {
+             items:  {{ section.settings.deskslides_no | default: 1 }},
+          }
+      }
+  }).on("dragged.owl.carousel", function(event) {
+      slide_item_on_drag( '.carousel-id.{{ section.id }}', event.relatedTarget['_drag']['direction'] );
+  });
+
+  function slide_item_on_drag(section_id, drag_direction) {
+      if( drag_direction == 'right' ){
+         $(section_id + ' .owl-dots .owl-dot.active').prev().click();
+      }
+      else if( drag_direction == 'left' ){
+          $(section_id + ' .owl-dots .owl-dot.active').next().click();
+      }
+  }
+</script>

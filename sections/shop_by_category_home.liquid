@@ -40,66 +40,8 @@
       </div>
   </div>
 </div>
+{% render 'carousel-js' %}
 
-<script type="deferjs">
-$('.top-collections.top-2 .collection').each(function () {
-    $(this).click(function () {
-        let item = $(this).data('item');
-        clevertap.event.push('Top Collections Clicked', {
-            "Item": item
-        });
-    });
-});
-// --- clevertap events --->
-var category_slides = document.querySelectorAll('.shop-by-category-slider.{{ section.id }} .collection-block');
-category_slides.forEach((slide, i) => {
-  slide.addEventListener('click', function(e) {
-      let imageTitle = slide.querySelector('.collection-title').innerText;
-      clevertap.event.push("shop-bycategory clicked", {
-         "collection Title": imageTitle,
-        "userSource": userSource
-      })
-  })
-});
-</script>
-
-<script type="deferjs">
- 
-    var $owl = $('.carousel-id.{{ section.id }}');
-    $owl.on('initialized.owl.carousel', function(event) {
-        $('.temp-slide').hide();$('.shop-heading').removeClass('d-none');
-    });
-  
-      $('.carousel-id.{{ section.id }}').owlCarousel({
-          loop: {{ section.settings.loop}},
-          responsiveClass: true,
-          autoplay: {{ section.settings.autoplay}},
-          slideBy: {{ section.settings.slideBy}},
-          nav: false,
-          dots: {{ section.settings.show_dots_on_desktop }},
-          margin: {{ section.settings.margin }},
-          responsive: {
-              500: {
-                  items: {{ section.settings.slides_no }},
-                  dots: {{ section.settings.show_dots_on_mobile }}
-              },
-              1000: {
-                 items:  {{ section.settings.deskslides_no}},
-              }
-          }
-      }).on("dragged.owl.carousel", function(event) {
-          slide_item_on_drag( '.carousel-id.{{ section.id }}', event.relatedTarget['_drag']['direction'] );
-      });
-  
-      function slide_item_on_drag(section_id, drag_direction) {
-          if( drag_direction == 'right' ){
-             // $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-          }
-          else if( drag_direction == 'left' ){
-              $(section_id + ' .owl-dots .owl-dot.active').next().click();
-          }
-      }
-</script>
 
 {% schema %}
 {
