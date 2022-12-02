@@ -11,7 +11,7 @@
   }
 </style>
 
-<div class="container deal-of-the_day {{ section.id }} ">
+<div class="container deal-of-the_day section-id-{{ section.id }} ">
   {% if section.settings.sectionHeading != blank %}
       <div class="row">
         <div class="col-md-12 section__header text-container d-flex justify-content-between">
@@ -20,7 +20,7 @@
       </div>
   {% endif %}
   <div class="row">
-    <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
+    <div class="col-md-12 owl-carousel owl-theme carousel-id {{ section.id }}">
       {% for block in section.blocks %}
         {% assign popup_class = "" %}
         {% if block.settings.popup_class != blank %}
@@ -38,37 +38,43 @@
 </div>
 
 <script type="deferjs">
-      var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
-      $owl.on('initialized.owl.carousel', function(event){ 
-         $('.temp-slide').hide();
-      });
-      $('.deal-slider.{{ section.id }}').owlCarousel({
-        loop: true,
+  var $owl = $('.carousel-id.{{ section.id }}');
+  $owl.on('initialized.owl.carousel', function(event) {
+      $('.temp-slide').hide();$('.shop-heading').removeClass('d-none');
+  });
+
+    $('.carousel-id.{{ section.id }}').owlCarousel({
+        loop: {{ section.settings.loop}},
         responsiveClass: true,
-        autoplay:true,
-        items: 4,
+        autoplay: {{ section.settings.autoplay}},
+        slideBy: {{ section.settings.slideBy}},
         nav: false,
-        dots: true,
+        dots: {{ section.settings.show_dots_on_desktop }},
+        margin: {{ section.settings.margin }},
         responsive: {
-          300: {
-            dots: {{ section.settings.show_dots_on_mobile }},
-            items: {{section.settings.slides_no}}
-          },
-          800: {
-            items: 2
-          },
-          1000: {
-            dots: {{ section.settings.show_dots_on_desktop }},
-            items:{{ section.settings.deskslides_no}},
-            loop: true,
-            margin: 10
-          }
+            500: {
+                items: {{ section.settings.slides_no }},
+                dots: {{ section.settings.show_dots_on_mobile }}
+            },
+            1000: {
+               items:  {{ section.settings.deskslides_no}},
+            }
         }
-        
-      })
+    }).on("dragged.owl.carousel", function(event) {
+        slide_item_on_drag( '.carousel-id.{{ section.id }}', event.relatedTarget['_drag']['direction'] );
+    });
+
+    function slide_item_on_drag(section_id, drag_direction) {
+        if( drag_direction == 'right' ){
+           // $(section_id + ' .owl-dots .owl-dot.active').prev().click();
+        }
+        else if( drag_direction == 'left' ){
+            $(section_id + ' .owl-dots .owl-dot.active').next().click();
+        }
+    }
 
 // --- clevertap events --->
-    var image_slides = document.querySelectorAll('.deal-slider.{{ section.id }} .slide-url');
+    var image_slides = document.querySelectorAll('.carousel-id.{{ section.id }} .slide-url');
     image_slides.forEach((slide, i) => {
       slide.addEventListener('click', function(e) {
           let imageurl = slide.href;
@@ -124,6 +130,30 @@
         },
         {
             "type": "checkbox",
+            "id": "loop",
+            "label": "infinite loop",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": "autoplay",
+            "default": true
+        },
+        {
+            "type": "number",
+            "id": "slideBy",
+            "label": "number of slides drag in one screen",
+            "default": 1
+        },
+        {
+            "type": "number",
+            "id": "margin",
+            "label": "margin",
+            "default": 0
+        },
+        {
+            "type": "checkbox",
             "id": "show_dots_on_mobile",
             "label": "Show Dots on Mobile",
             "default": true
@@ -145,7 +175,7 @@
 	"blocks": [
 		{
 			"type": "image",
-        	"name": "Slide",
+      "name": "Slide",
 			"settings" : [
 				{
                   "type": "image_picker",
