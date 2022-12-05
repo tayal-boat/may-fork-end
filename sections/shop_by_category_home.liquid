@@ -10,7 +10,7 @@
 </style>
 <div class="shop_by_category_section container cf section-id-{{ section.id }} top-collections top-2 px-lg-0" data-section-type="custom-row">
   {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
-      <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 shop-heading d-none ">
+      <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 shop-heading">
           {%- if section.settings.title != blank -%}
               <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
           {%- endif -%}
@@ -22,7 +22,7 @@
       </header>
   {%- endif -%}
   <div class="shop_by_collection-row mx-lg-5 ">
-      <div class="row owl-carousel owl-theme shop-by-category-slider {{ section.id }} ">
+      <div class="row owl-carousel owl-theme shop-by-category-slider custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
           {% for block in section.blocks %}
 
                   <a href="{{ block.settings.imageUrl }}" class="collection-block">
@@ -63,51 +63,6 @@ category_slides.forEach((slide, i) => {
 });
 </script>
 
-<script type="deferjs">
-    var $owl = $('.shop-by-category-slider');
-    $owl.on('initialized.owl.carousel', function(event) {
-        $('.shop-heading').removeClass('d-none');
-    });
-
-      $('.shop-by-category-slider.{{ section.id }}').owlCarousel({
-          loop: false,
-          responsiveClass: true,
-          autoplay: false,
-          items: 5,
-          slideBy: 3,
-          nav: false,
-          dots: true,
-          merge: true,
-          dragBeforeAnimFinish: false,
-          responsive: {
-              300: {
-                  items: {{section.settings.slides_no}},
-                  loop: false
-              },
-              800: {
-                  items: 5,
-                  loop: false,
-                  mergeFit: true
-              },
-              1000: {
-                  items: {{ section.settings.deskslides_no}},
-                  loop: false
-              }
-          }
-      }).on("dragged.owl.carousel", function(event) {
-          slide_item_on_drag( '.shop-by-category-slider.{{ section.id }}', event.relatedTarget['_drag']['direction'] );
-      });
-
-      function slide_item_on_drag(section_id, drag_direction) {
-          if( drag_direction == 'right' ){
-             // $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-          }
-          else if( drag_direction == 'left' ){
-              $(section_id + ' .owl-dots .owl-dot.active').next().click();
-          }
-      }
-</script>
-
 {% schema %}
 {
 "name": "Shop by category",
@@ -134,7 +89,37 @@ category_slides.forEach((slide, i) => {
         "id": "deskslides_no",
         "label": "desk slides",
         "default": 3
-    }
+    }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": false
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": false
+      }, {
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "margin",
+        "label": "margin",
+        "default": 0
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      }
 ],
 "blocks": [
     {
