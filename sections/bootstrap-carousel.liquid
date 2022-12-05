@@ -7,14 +7,14 @@
   {% endif %}
 <div id="homepage-carousel" class="container c-new">
   <!-- The slideshow -->
-{% for block in section.blocks limit: 1 %}
+{% comment %} {% for block in section.blocks limit: 1 %}
     	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide homepage-first-slide-container">
           <picture>
             <source media="(min-width: 769px)" srcset="{{block.settings.desktop_image |img_url: '1000x'}}" >
             <img style="width: 100%;" loading="eager" fetchpriority="high" class="homepage-first-slide" src="{{block.settings.mobile_image |img_url: '360x'}}" alt="{{block.settings.desktop_image.alt}}" />
           </picture>
         </a>
-    {% endfor %}
+    {% endfor %} {% endcomment %}
   <div class="carousel-inner owl-carousel main_banner_slider" id="main_banner_slider">
     {% for block in section.blocks %}
       <div class="carousel--item slide_{{forloop.index}}">
@@ -34,6 +34,7 @@
             <img
               class="image-overlay__image_"
               {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
+              {% if forloop.first %} loading="eager" fetchpriority="high" {% endif %}
               alt="{{block.settings.desktop_image.alt}}"
             >
           </picture>
@@ -262,9 +263,6 @@
 
   	$(document).ready(function(){
           var $owl = $( '.owl-carousel' );
-          $owl.on('initialized.owl.carousel', function(event){
-              $('.temp-slide').remove();
-          });
           $(".main_banner_slider").owlCarousel({
               items: 1,
               loop: true,
