@@ -1,15 +1,15 @@
 <style>
-  #saleModal {
+  #custom-saleModal {
     z-index: 9999;
     background: #0009;
     padding: 0 !important;
   }
-  #saleModal .modal-dialog,
-  #saleModals-1 .modal-dialog,
-  #saleModals-2 .modal-dialog {
+  #custom-saleModal .modal-dialog,
+  #custom-saleModals-1 .modal-dialog,
+  #custom-saleModals-2 .modal-dialog {
     top: 20%;
   }
-  #saleModal .close {
+  #custom-saleModal .close {
     position: absolute;
     top: 0;
     right: 0;
@@ -23,60 +23,60 @@
     text-align: center;
     font-size: 30px !important;
   }
-  #saleModal .close:focus {
+  #custom-saleModal .close:focus {
     border: 0;
     outline: none;
   }
-  input#sale_email::placeholder {
+  #custom-saleModal input#sale_email::placeholder {
     color: grey !important;
   }
-  .error-msg-sale,
-  .thankyou-msg-sale,
-  .aluser-msg-sale {
+  #custom-saleModal .error-msg-sale,
+  #custom-saleModal .thankyou-msg-sale,
+  #custom-saleModal .aluser-msg-sale {
     text-align: center;
     margin: 0;
     font-size: 12px;
     opacity: .8;
   }
-  .sale-btn:focus {
+  #custom-saleModal .sale-btn:focus {
     outline: none;
   }
-  #saleModal img {
+  #custom-saleModal img {
     display: block;
   }
-  #saleModal .modal-content {
+  #custom-saleModal .modal-content {
     border: 0;
   }
-  .modal-form {
+  #custom-saleModal .modal-form {
     background: {{ section.settings.popup_backgroung }} !important;
   }
-  #saleModal input {
+  #custom-saleModal input {
     background: transparent;
     color: #ccc;
     margin-right: 4px;
     padding: 0 12px;
     border: 0;
   }
-  #saleModal input::-webkit-input-placeholder {
+  #custom-saleModal input::-webkit-input-placeholder {
     color: #ccc;
   }
-  #saleModal .sale-btn:hover {
+  #custom-saleModal .sale-btn:hover {
     background: #EB1C24 !important;
   }
-  .modal {
+  #custom-saleModal .modal {
     transform: translateY(0%);
   }
 
   {{ section.settings.popup_id }}
   @media screen and (max-width: 600px) {
-    #saleModal .modal-dialog,
-    #saleModals-1 .modal-dialog,
-    #saleModals-2 .modal-dialog {
+    #custom-saleModal .modal-dialog,
+    #custom-saleModals-1 .modal-dialog,
+    #custom-saleModals-2 .modal-dialog {
       top: 25%;
     }
   }
 </style>
-<div id="saleModal" class="modal fade" role="dialog">
+<div id="custom-custom-saleModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body p-0">
@@ -118,12 +118,12 @@
   var camp = "{{ request.path | split: '/' | last }}"
     {% if section.settings.landing_based  %}
       if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
-        $(".custom_Popup #saleModal").modal("show");
+        $(".custom_Popup #custom-saleModal").modal("show");
         sessionStorage.setItem("popUpPoped", "poped");
       }
     {% else %}
       $("{{ section.settings.popup_id }}").click(function(e) {
-        $(".custom_Popup #saleModal").modal("show");
+        $(".custom_Popup #custom-saleModal").modal("show");
       });{% endif %}$(".custom_Popup .sale-btn").click(function() {
       var e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
@@ -137,7 +137,7 @@
           }), clevertap.event.push("Notify Me   {{ section.settings.clevertap_id }}", {
             Email: e,
             Source: camp
-          }), $(".custom_Popup #saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+          }), $(".custom_Popup #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
         : $(".custom_Popup .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
       setTimeout(function() {
         $(".custom_Popup .error-msg-sale, .custom_Popup .thankyou-msg-sale, .custom_Popup .aluser-msg-sale").remove();

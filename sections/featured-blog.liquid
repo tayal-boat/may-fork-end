@@ -122,7 +122,6 @@
       {% else %}
         {% assign aspect_ratio = false %}
       {% endif %}
-      {% capture custom_article_list %}
         <div class="article-list article-layout--columns article-layout--one-row">
           <div class="article">
             <div class="article__inner">
@@ -214,16 +213,8 @@
             </div>
           {% endfor %}
         </div>
-      {% endcapture %}
-      {% if section.settings.lazyload_section %}
-        <div class="article_list-container article_list-container-{{section.id}}">
-          <div class="loading_icon">
-            <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final_loader.gif?v=1669098911" alt="Load More" style="width: 50px;">
-          </div>
-        </div>
-      {% else %}
-        {{ custom_article_list }}
-      {% endif %}
+
+
     {% endif %}
   {% else %}
     <h2 class="hometitle h4-style align-center">{{ section.settings.title | escape }}
@@ -261,27 +252,7 @@
     </div>
   {% endunless %}
 </div>
-{% if section.settings.lazyload_section %}
-  <script>
-    window.addEventListener('load', function() {
-      sessionStorage.setItem('article_list- {{section.id}}', 'false');
-      function ScrollStart() {
-        if (sessionStorage.getItem('article_list- {{section.id}}') == 'false') {
-          document.querySelector('.article_list-container- {{section.id}}').innerHTML = `{{ custom_article_list | strip_newlines }}`;
-          sessionStorage.setItem('article_list- {{section.id}}', 'true');
-        }
-      }
-      var observer = new IntersectionObserver(function(entries) {
-        if (entries[0].isIntersecting === true) 
-          ScrollStart();
-        
-      }, {threshold: [1]});
-      if (document.querySelector('.article_list-main-container- {{section.id}}') !== null) {
-        observer.observe(document.querySelector('.article_list-main-container- {{section.id}}'));
-      }
-    });
-  </script>
-{% endif %}
+
 
 <script type="text/javascript">
   $(document).ready(function($) {
@@ -290,61 +261,12 @@
     });
   });
 </script>
-{% comment %}
-  <script type="text/javascript">
-  $(document).ready(function($) {
-  $('.article-list').slick({
-  dots: false,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 3,
-  slidesToScroll: 3,
-  autoplay: false,
-  autoplaySpeed: 2000,
-  arrows: true,
-  responsive: [
-  {
-  breakpoint: 3000,
-  settings: {
-  slidesToShow: 3,
-  slidesToScroll: 1
-  }
-  },
 
-  {
-  breakpoint: 1920,
-  settings: {
-  slidesToShow: 3,
-  slidesToScroll: 1
-  }
-  },
-  {
-  breakpoint: 767,
-  settings: {
-  arrows: false,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  centerMode: true,
-  centerPadding: '20%'
-  }
-  }]
-  });
-  $('.article-list').on('click', function(){
-  clevertap.event.push("Homepage Blog section clicked");
-  });
-  });
-  </script>{% endcomment %}
 {% schema %}
   {
     "name": "featured Blog posts",
     "class": "boat-featured-blogs container",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "lazyload_section",
-        "label": "lazyload section",
-        "default": true
-      },
       {
         "type": "blog",
         "id": "blog",
