@@ -171,7 +171,8 @@ window.addEventListener("load", function() {
           dataType: "html",
           success: function(e) {
               let t = $(e).find("#index-lazyload_sections").html();
-              $(".custom-lazyloaded-content").html(t)
+              $(".custom-lazyloaded-content").html(t);
+              Shopify.homepageLazyload();
           }
       }), sessionStorage.setItem("lazyloaded_sections", "true"))
   }
@@ -241,10 +242,11 @@ for (let i = 0; i < sliderSelector.length; i++) {
     loop: JSON.parse(sliderSelector[i].getAttribute('data-loop')),
     responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
     autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
-    items: 4,
+    items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
     nav: false,
     dots: JSON.parse(sliderSelector[i].getAttribute('data-dots')),
     margin: JSON.parse(sliderSelector[i].getAttribute('data-margin')),
+    slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
     responsive: {
         300: {
             items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_items')),
@@ -256,6 +258,66 @@ for (let i = 0; i < sliderSelector.length; i++) {
     }
   })     
 }
+
  
+Shopify.homepageLazyload = function(){
+  $('.explore_now_slider').owlCarousel({
+    loop: true,
+    responsiveClass: true,
+    autoplay:true,
+    items: 6,
+    nav: false,
+    dots: false,
+    responsive: {
+      300: {
+        items: 2.3,
+        margin: 10
+      },
+      600: {
+        items: 5.2,
+        margin: 10
+      },
+      1000: {
+        items: 6,
+        loop: true,
+        margin: 10
+      }
+    }
+  })
 
+// Explore our slide section
+var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item');
+explore_now_slider_img.forEach((slide, i) => {
+    slide.addEventListener('click', function() {
+      
+        let imageurl = slide.querySelector('a').href;
+        let imageTitle = slide.querySelector('img').alt;
 
+        console.log(imageurl);
+        console.log(imageTitle);
+        clevertap.event.push("Explore now clicked", {
+          "image url": imageurl,
+          "image Title": imageTitle,
+          "userSource": userSource
+        })
+    })
+  });
+
+// Press section
+    $('.custom_press_slider').owlCarousel({
+      loop: true,
+      responsiveClass: true,
+      autoplay: true,
+      items: 1,
+      slideBy: 1,
+      nav: false,
+      dots: true
+    });
+
+  $('.shopify-section shopify-section--press').on('click', function() {
+    clevertap.event.push("In the Press section clicked", {"userSource": userSource});
+  });
+  $("button.press-list__logo-item.tap-area").hover(function() {
+    $(this).trigger("click")
+  });
+}
