@@ -1,6 +1,6 @@
 /* See https://www.algolia.com/doc/integration/shopify/advanced-customization/customizing-instant-search/#hogan */
 
-
+ 
 
 (function(algolia) {
   'use strict';
@@ -125,7 +125,7 @@
         res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
       }else{
       res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
-      // console.log(this);
+      console.log(this);
 // Notify me popup stop appearing after adding ("title":"${this.title}") so i remove it for now.
       // res = `<div class="product-item__quick-form">
       // <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","tags":[],"available":"${this.inventory_available}",
@@ -273,7 +273,7 @@
           this._highlightResult.title.value
         );
       }
-
+ 
       if (
         !this._distinct &&
         this.variant_title &&
@@ -327,6 +327,40 @@
       } else {
         return '';
       }
+    },
+    no_result_page: function no_result_page () {
+      console.log(this);
+      let res = '';
+      let query = this.query;
+      if(query.toLowerCase() == 'christmas' ){
+        res = `<div class="algolia-no-result-container"> <h3> Merry Christmas 🎅 & <br> &#127882; Happy New year to you too.</h3> <div class="algolia-coupon-container"> <p> Here's a small gift from us to double your celebrations... </p><div class="coupon-code"> <span>USE CODE :  boAtXMAS</span></div> <p> Use above code to get <strong>5% off</strong> site-wide </p></div> </div>`;
+      }else{
+        res = `<div class="algolia-no-result-container"> <h3> Oh shoot. We've hit offshore with that search. <br> 😑 <br> Try one of this?</h3><div class="algolia-trending-list"> ${document.querySelector('.algolia-trending-list').innerHTML} </div></div>`;
+          let algolia_trending_item = "";
+          function algolia__input(algolia_no_result_input){
+            algolia_no_result_input.value = algolia_trending_item.trim();
+            algolia_no_result_input.dispatchEvent(new Event("input", {
+              bubbles: !0
+            }))
+          }
+        setTimeout(function(){
+        $(".algolia-trending-item").click(function() {
+          algolia_trending_item = $(this).children(".algolia-trending-label").text();
+          if(window.innerWidth < 1200) {
+            let algolia_no_result_input = document.querySelector(".predictive-search__input_mobile");
+            algolia__input(algolia_no_result_input);
+            }else{
+            let algolia_no_result_input = document.querySelector(".predictive-search__input_desk");
+            algolia__input(algolia_no_result_input);
+            }
+      });
+    },1000);
+      }
+      let storedQuery = sessionStorage.queryList;
+      storedQuery = storedQuery.split(',');
+      storedQuery.shift();
+      sessionStorage.setItem('queryList', storedQuery);  
+      return res;
     },
     floor: function floor(text, render) {
       return '' + Math.floor(Number(render(text)));
@@ -404,4 +438,5 @@
     return newRes;
 
   }, {});
+
 })(window.algoliaShopify);
