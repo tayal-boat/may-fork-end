@@ -7,15 +7,7 @@
   {% endif %}
 <div id="homepage-carousel" class="container c-new">
   <!-- The slideshow -->
-{% comment %} {% for block in section.blocks limit: 1 %}
-    	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide homepage-first-slide-container">
-          <picture>
-            <source media="(min-width: 769px)" srcset="{{block.settings.desktop_image |img_url: '1000x'}}" >
-            <img style="width: 100%;" loading="eager" fetchpriority="high" class="homepage-first-slide" src="{{block.settings.mobile_image |img_url: '360x'}}" alt="{{block.settings.desktop_image.alt}}" />
-          </picture>
-        </a>
-    {% endfor %} {% endcomment %}
-  <div class="carousel-inner owl-carousel main_banner_slider" id="main_banner_slider">
+  <div class="carousel-inner owl-carousel main_banner_slider custom_slider_init {{ section.id }}" id="main_banner_slider" {%- render 'carousel-js' -%}>
     {% for block in section.blocks %}
       <div class="carousel--item slide_{{forloop.index}}">
         {% if block.settings.show_timer %}
@@ -34,7 +26,6 @@
             <img
               class="image-overlay__image_"
               {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
-              {% if forloop.first %} loading="eager" fetchpriority="high" {% endif %}
               alt="{{block.settings.desktop_image.alt}}"
             >
           </picture>
@@ -261,27 +252,6 @@
     }
   }
 
-  	$(document).ready(function(){
-          var $owl = $( '.owl-carousel' );
-          $(".main_banner_slider").owlCarousel({
-              items: 1,
-              loop: true,
-              nav: true,
-              lazyLoad: true,
-              autoplay: true,
-              autoplayTimeout: 5000,
-              merge: true,
-              dots: true,
-              startPosition: 0,
-              smartSpeed:500,
-              pullDrag: false,
-              checkVisible: false,
-              responsiveClass:true,
-              autoplayHoverPause: true
-              {% if section.settings.enable_progressbar %},onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar {% endif %}
-          });
-      });
-
       function startProgressBar() {
         $(".slide-progress").css({
           width: "100%",
@@ -430,7 +400,47 @@
       "id": "enable_progressbar",
       "label": "Enable progressbar on slider",
       "default": true
-    }
+    }, {
+        "type": "number",
+        "id": "slides_no",
+        "label": "mobile slides",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "deskslides_no",
+        "label": "desk slides",
+        "default": 1
+      }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": true
+      }, {
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "margin",
+        "label": "margin",
+        "default": 0
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      }
   ],
   "blocks": [
     {
