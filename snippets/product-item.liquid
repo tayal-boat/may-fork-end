@@ -31,93 +31,57 @@
 {%- endif -%}
 
 
-<product-item
-  class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}"
-  {% if reveal %}
-    reveal
-  {% endif %}
->
-<div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
-  {%- if product.available -%}
-    {%- for tag in product.tags -%}
-      {%- if tag contains 'Free-' -%}
-        <span class="priority label z-10 label--highlight custom-label free-label bg-green">
-          🎁 Free&nbsp; {{- tag | remove: 'Free-' -}}
-        </span>
-      {%- elsif tag contains 'Coupon-' -%}
-        <span class="priority label z-9 label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
-          ₹{{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }} 
-        </span>
-      {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
-        <span class="priority label z-8 label--highlight custom-label lowest-price flash">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-          <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
-          </svg>
-          {{ settings.flash_products_label }}
-        </span>
-      {%- elsif tag contains 'meta-label-Bestseller' -%}
-        <span class="priority label z-7 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-          🚀 {{ tag | remove: 'meta-label-' }} 
-        </span>
-      {%- elsif tag contains 'meta-label-trending' -%}
-        <span class="priority label z-6 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> TRENDING
-        </span>
-      {%- elsif tag contains 'meta-label-exclusive' -%}
-        <span class="priority label z-5 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-        💝 LIMITED EDITION
-        </span>
-      {%- elsif tag contains 'meta-label-just launched' -%}
-        <span class="priority label z-4 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-          🎉 NEW LAUNCH
-        </span>
-      {%- elsif tag contains 'Feature|' -%}
-        <span class="priority label z-3 label--highlight custom-label bg-black {{ tag }}">
-          {{- tag | remove: 'Feature|'  -}}
-        </span>
-      {%- elsif tag contains 'meta-label-' -%}
-        <span class="priority label z-2 label--highlight custom-label bg-black {{ tag }}">
-          {{- tag | remove: 'meta-label-'  -}}
-        </span>
-      {%- endif -%}
-    {%- endfor -%}
-  {%- else -%}
-    <span class="label label--highlight custom-label q -out-click-to-notify"><span>SOLD OUT</span></span>
-  {%- endif -%}
-  {%- comment -%}
-    {%- capture product_labels -%}
-
+<product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}" {% if reveal %}reveal
+  {% endif %}><div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
+    {%- if product.available -%}
       {%- for tag in product.tags -%}
-      {%- if tag contains '__label' -%}
-      <span class="label label--custom{% if tag contains '__label2' %}2{% endif %}">{{ tag | split: ':' | last }}</span>
-      {%- elsif settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank and tag -%}
-      {%- if settings.discount_mode == 'percentage' -%}
-      {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
-      {%- else -%}
-      {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
-      {%- endif -%}
-      <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
-      {%- endif -%}
-      {%- else -%}
+        {%- if tag contains 'Free-' -%}
+          <span class="priority label z-10 label--highlight custom-label free-label bg-green">
+            🎁 Free&nbsp; {{- tag | remove: 'Free-' -}}
+          </span>
+        {%- elsif tag contains 'Coupon-' -%}
+          <span class="priority label z-9 label--highlight custom-label coupon-label bg-green {{ tag | remove: 'meta-label-sold' }}">
+            ₹{{ tag | remove: 'Coupon-' | split: '|' | first  }} OFF ON {{ tag | remove: 'Coupon-' | split: '|' | last  }}
+          </span>
+        {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
+          <span class="priority label z-8 label--highlight custom-label lowest-price flash">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+            </svg>
+            {{ settings.flash_products_label }}
+          </span>
+        {%- elsif tag contains 'meta-label-Bestseller' -%}
+          <span class="priority label z-7 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
+            🚀 {{ tag | remove: 'meta-label-' }}
+          </span>
+        {%- elsif tag contains 'meta-label-trending' -%}
+          <span class="priority label z-6 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;"/> TRENDING
+          </span>
+        {%- elsif tag contains 'meta-label-exclusive' -%}
+          <span class="priority label z-5 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
+            💝 LIMITED EDITION
+          </span>
+        {%- elsif tag contains 'meta-label-just launched' -%}
+          <span class="priority label z-4 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
+            🎉 NEW LAUNCH
+          </span>
+        {%- elsif tag contains 'Feature|' -%}
+          <span class="priority label z-3 label--highlight custom-label bg-black {{ tag }}">
+            {{- tag | remove: 'Feature|'  -}}
+          </span>
+        {%- elsif tag contains 'meta-label-' -%}
+          <span class="priority label z-2 label--highlight custom-label bg-black {{ tag }}">
+            {{- tag | remove: 'meta-label-'  -}}
+          </span>
+        {%- endif -%}
       {%- endfor -%}
+    {%- else -%}
+      <span class="label label--highlight custom-label q -out-click-to-notify">
+        <span>SOLD OUT</span>
+      </span>
+    {%- endif -%}
 
-      {%- unless product.available -%}
-      <span class="label label--subdued">{{ 'collection.product.sold_out' | t }}</span>
-      {%- endunless -%}
-
-      {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
-
-      {%- if settings.show_discount and product.available and product.price < product.compare_at_price and cheapest_variant.compare_at_price != blank -%}
-      {%- if settings.discount_mode == 'percentage' -%}
-      {%- assign savings = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' -%}
-      {%- else -%}
-      {%- capture savings -%}{{ product.compare_at_price | minus: product.price | money }}{%- endcapture -%}
-      {%- endif -%}
-
-      <span class="label label--highlight">you {{ 'collection.product.discount_html' | t: savings: savings }}</span>
-      {%- endif -%}
-      {%- endcapture -%}
-    {%- endcomment -%}
     <div class="product-item__image-wrapper {% if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true %}product-item__image-wrapper--multiple{% endif %}">
       {%- if product_labels != blank and reduced_content != true -%}
         <div class="product-item__label-list label-list">
@@ -211,7 +175,7 @@
                 </p>
                 <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-  
+
                   {%- if settings.currency_code_enabled -%}
                     {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
@@ -346,36 +310,36 @@
             {% endif %}
           {% endfor %}
           <div class="d-flex align-items-center">
-          {%- if available_variants == 1 -%}
-            {%- capture form_id -%}
-              product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
-            {%- endcapture -%}
-            {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
-              <input type="hidden" name="quantity" value="1">
-              <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
-              {%- if product.tags contains  settings.products_offering_freebie -%}
-                <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
-              {%- endif -%}
-              <button is="loader-button" type="submit" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-touch">
-                {%- if product.tags contains 'prebooking' -%}
-                  {{- 'product.form.pre_order' | t -}}
-                {% else %}
-                  {{- 'product.form.add_to_cart' | t -}}
-                {% endif %}
-              </button>
-              <button type="submit" class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
-                <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
-                {%- if product.tags contains 'prebooking' -%}
-                  {{- 'product.form.pre_order' | t -}}
-                {% else %}
-                  {{- 'product.form.add_to_cart' | t -}}
-                {% endif %}
-              </button>
-            {%- endform -%}
-          {%- else -%}
-            {%- comment -%}
-              IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
-            {%- endcomment -%}
+            {%- if available_variants == 1 -%}
+              {%- capture form_id -%}
+                product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
+              {%- endcapture -%}
+              {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+                {%- if product.tags contains  settings.products_offering_freebie -%}
+                  <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+                {%- endif -%}
+                <button is="loader-button" type="submit" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-touch">
+                  {%- if product.tags contains 'prebooking' -%}
+                    {{- 'product.form.pre_order' | t -}}
+                  {% else %}
+                    {{- 'product.form.add_to_cart' | t -}}
+                  {% endif %}
+                </button>
+                <button type="submit" class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
+                  <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
+                  {%- if product.tags contains 'prebooking' -%}
+                    {{- 'product.form.pre_order' | t -}}
+                  {% else %}
+                    {{- 'product.form.add_to_cart' | t -}}
+                  {% endif %}
+                </button>
+              {%- endform -%}
+            {%- else -%}
+              {%- comment -%}
+                IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
+              {%- endcomment -%}
               <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
                 <button is="toggle-button" loader aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" aria-expanded="false" class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone">
                   {%- if product.tags contains 'prebooking' -%}
@@ -402,15 +366,15 @@
                   {% endif %}
                 </button>
               </div>
-            <quick-buy-popover id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover" class="popover popover--quick-buy hidden-tablet-and-up"></quick-buy-popover>
-            <quick-buy-drawer id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer" class="drawer drawer--large drawer--quick-buy hidden-phone"></quick-buy-drawer>
-          {%- endif -%}
-          {% if template contains 'collection' %}
-            {% if product.available and product.tags contains 'flash-sale' -%}
-              {%- render 'inventory-bar' with product -%}
+              <quick-buy-popover id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-popover" class="popover popover--quick-buy hidden-tablet-and-up"></quick-buy-popover>
+              <quick-buy-drawer id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer" href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer" class="drawer drawer--large drawer--quick-buy hidden-phone"></quick-buy-drawer>
+            {%- endif -%}
+            {% if template contains 'collection' %}
+              {% if product.available and product.tags contains 'flash-sale' -%}
+                {%- render 'inventory-bar' with product -%}
+              {%- endif %}
             {%- endif %}
-          {%- endif %}
-        </div>
+          </div>
         {%- endif -%}
         {% unless product.available %}
           <div class="product-item__quick-form">
@@ -508,54 +472,3 @@
 
   </div>
 </product-item>
-
-<script>
-  $('.product-item').each(function() {
-    if($(this).find('.z-10').length > 0) {
-        $(this).find('.z-10').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-9').length > 0) {
-        $(this).find('.z-9').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-8').length > 0) {
-        $(this).find('.z-8').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-7').length > 0) {
-        $(this).find('.z-7').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-6').length > 0) {
-        $(this).find('.z-6').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-5').length > 0) {
-        $(this).find('.z-5').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-4').length > 0) {
-        $(this).find('.z-4').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-3').length > 0) {
-        $(this).find('.z-3').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } else if($(this).find('.z-2').length > 0) {
-        $(this).find('.z-2').css({
-          'display': 'flex',
-          'alignItems': 'center'
-        });
-    } 
-})
-</script>
