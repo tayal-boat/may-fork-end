@@ -1,0 +1,58 @@
+{% capture algolia_festive %}
+  [
+  {% for block in section.blocks %}
+    {
+    "search_query" : "{{ block.settings.search_query }}",
+    "coupon_code" : "{{ block.settings.coupon_code }}",
+    "coupon_value" : "{{ block.settings.coupon_value }}",
+    "message" : "{{ block.settings.message }}"
+    }
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+  ]
+{% endcapture %}
+
+<script>
+  Shopify.algolia_festive = `{{ algolia_festive }}`;
+</script>
+
+
+{% schema %}
+  {
+    "name": "algolia Codes",
+    "settings": [],
+    "blocks": [
+      {
+        "type": "algolia",
+        "name": "algolia Codes",
+        "settings": [
+          {
+            "type": "text",
+            "id": "search_query",
+            "label": "Search query"
+          }, {
+            "type": "text",
+            "id": "coupon_code",
+            "label": "Coupon code"
+          }, {
+            "type": "text",
+            "id": "coupon_value",
+            "label": "Coupon value"
+          }, {
+            "type": "richtext",
+            "id": "message",
+            "label": "Message"
+          }
+        ]
+      }
+    ],
+
+    "presets": [
+      {
+        "category": "algolia",
+        "name": "algolia Codes",
+        "settings": {}
+      }
+    ]
+  }
+{% endschema %}
