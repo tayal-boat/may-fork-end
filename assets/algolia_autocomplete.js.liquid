@@ -36,6 +36,7 @@
   return function multiQuerySource(singleIndex, params, extendHits = null) {
       return function search(query, cb) {
         sessionStorage.setItem('algoliaSearchQuery', query);
+
         if(query.length >= 3){
         const index =
           queue.push({ indexName: singleIndex.indexName, query, params }) - 1;
@@ -59,6 +60,22 @@
 document.querySelector("body").classList.add("noScroll"); 
 document.querySelector("store-header").classList.add("fixed_header"); 
 document.querySelector("#shopify-section-announcement-bar").classList.add("fixed_announcement"); 
+
+let algolia_festive_arr = Shopify.algolia_festive;
+algolia_festive_arr = JSON.parse(algolia_festive_arr);
+let festive_query_list = [];
+let custom_query = query.trim(); 
+for (let i = 0; i < algolia_festive_arr.length; i++) {
+  festive_query_list.push(algolia_festive_arr[i].search_query);
+}
+console.log(festive_query_list);
+if(!festive_query_list.includes(custom_query) ){
+  console.log('hi festive screen');
+  setTimeout(function(){
+    $('.aa-dataset-products').prepend('hiiiiiiiiiiiiiiiiiiiiiiiii');
+  },1500)
+ 
+}
 let queryList = [];
 let storedQuery = sessionStorage.queryList;
 if(sessionStorage.queryList){
@@ -69,8 +86,6 @@ queryList = storedQuery;
 queryList.push(storedQuery);
 }
 }
-
-let custom_query = query.trim(); 
 // console.log(queryList);
 if(!queryList.includes(custom_query)){
 queryList.unshift(custom_query);
