@@ -244,14 +244,7 @@ function createCleverTapEvent( event_name, event_data ){
 
 // Owl slider 
 // Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
-function slide_item_on_drag(section_id, drag_direction) {
-  if( drag_direction == 'right' ){
-     // $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-  }
-  else if( drag_direction == 'left' ){
-      $(section_id + ' .owl-dots .owl-dot.active').next().click();
-  }
-} 
+
 let section_id = '';
 let sliderSelector = document.querySelectorAll('.custom_slider_init');
 for (let i = 0; i < sliderSelector.length; i++) {
@@ -265,7 +258,7 @@ for (let i = 0; i < sliderSelector.length; i++) {
     autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
     items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
     slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
-    nav: false,
+    nav: true,
     dots: JSON.parse(sliderSelector[i].getAttribute('data-dots')),
     margin: JSON.parse(sliderSelector[i].getAttribute('data-margin')),
     responsive: {
@@ -282,18 +275,19 @@ for (let i = 0; i < sliderSelector.length; i++) {
       slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
     } 
   });  
-  function startProgressBar() {
-    $(".slide-progress").css({
-      width: "100%",
-      transition: "width 5000ms"
-    });
-  }
-
-  function resetProgressBar() {
-    $(".slide-progress").css({
-      width: 0,
-      transition: "width 0s"
-    });
+  function slide_item_on_drag(section_id, drag_direction) {
+    if( drag_direction == 'right' ){// $(section_id + ' .owl-dots .owl-dot.active').prev().click();
+    }
+    else if( drag_direction == 'left' ){$(section_id + ' .owl-dots .owl-dot.active').next().click();} } 
+  function startProgressBar() { $(".slide-progress").css({width: "100%",transition: "width 5000ms"});}
+  function resetProgressBar() {$(".slide-progress").css({width: 0,transition: "width 0s"});}
+  function openVideoPopup(url){
+    if(url != ''){
+      jQuery('.banner_video_modal .video_container iframe').attr('src', url);
+      jQuery(".banner_video_modal").modal('show');
+    }else{
+      return false;
+    }
   }
 }
 
