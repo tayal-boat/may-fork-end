@@ -33,6 +33,7 @@
         });
     }
 
+
   return function multiQuerySource(singleIndex, params, extendHits = null) {
       return function search(query, cb) {
         sessionStorage.setItem('algoliaSearchQuery', query);
@@ -49,33 +50,45 @@
           } else {
             extendedHits = res.hits
           }
-          
-          return cb(extendedHits, res);
-        })
-          .catch((err) => cb([], err));       
-          sessionStorage.setItem('preSearch', false);    
-  if (sessionStorage.getItem('preSearchInput') && sessionStorage.getItem('preSearchInput') !== '') {
-    sessionStorage.removeItem('preSearchInput');
-}
-document.querySelector("body").classList.add("noScroll"); 
-document.querySelector("store-header").classList.add("fixed_header"); 
-document.querySelector("#shopify-section-announcement-bar").classList.add("fixed_announcement"); 
-
+if(res.hits.length > 0){          
 let algolia_festive_arr = Shopify.algolia_festive;
 algolia_festive_arr = JSON.parse(algolia_festive_arr);
 let festive_query_list = [];
 let custom_query = query.trim(); 
+custom_query = custom_query.toLowerCase();
+let search_query = '';
 for (let i = 0; i < algolia_festive_arr.length; i++) {
-  festive_query_list.push(algolia_festive_arr[i].search_query);
+  search_query = algolia_festive_arr[i].search_query;
+  festive_query_list.push(search_query.toLowerCase());
 }
-console.log(festive_query_list);
-if(!festive_query_list.includes(custom_query) ){
-  console.log('hi festive screen');
+
+function copyToClipboard(element){
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+if(festive_query_list.includes(custom_query) ){
+  let res = '';
+  let search_query = '';
   setTimeout(function(){
-    $('.aa-dataset-products').prepend('hiiiiiiiiiiiiiiiiiiiiiiiii');
+    for (let i = 0; i < algolia_festive_arr.length; i++) {
+      search_query = algolia_festive_arr[i].search_query;
+    if(custom_query == search_query.toLowerCase() ){
+      res = `<div class="algolia-no-result-container algolia-no-result-festive"> <h3> ${algolia_festive_arr[i].message}</h3> <div class="algolia-coupon-container"><p> ${algolia_festive_arr[i].message2}</p> <div class="coupon-code"> <span>USE CODE : <span class="coupon_code">${algolia_festive_arr[i].coupon_code}</span> </span></div> <p> ${algolia_festive_arr[i].coupon_value}</p> </div> </div>`; 
+      setTimeout(function(){
+      let copyText = document.querySelector(".coupon_code");
+      copyToClipboard(copyText);
+      },1000);
+      break  
+    }
+  }
+    $('.aa-dataset-products').prepend(res);
   },1500)
- 
 }
+
 let queryList = [];
 let storedQuery = sessionStorage.queryList;
 if(sessionStorage.queryList){
@@ -86,15 +99,26 @@ queryList = storedQuery;
 queryList.push(storedQuery);
 }
 }
-// console.log(queryList);
 if(!queryList.includes(custom_query)){
 queryList.unshift(custom_query);
 if(queryList.length > 5){
 queryList.pop();
 }  
 }          
-
 sessionStorage.setItem('queryList', queryList);  
+}
+
+          return cb(extendedHits, res);
+        })
+          .catch((err) => cb([], err));    
+          sessionStorage.setItem('preSearch', false);    
+  if (sessionStorage.getItem('preSearchInput') && sessionStorage.getItem('preSearchInput') !== '') {
+    sessionStorage.removeItem('preSearchInput');
+}
+document.querySelector("body").classList.add("noScroll"); 
+document.querySelector("store-header").classList.add("fixed_header"); 
+document.querySelector("#shopify-section-announcement-bar").classList.add("fixed_announcement"); 
+
    };
     }
     

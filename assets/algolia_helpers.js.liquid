@@ -336,11 +336,21 @@
       let algolia_festive = Shopify.algolia_festive;
       algolia_festive = JSON.parse(algolia_festive);
       
-console.log(algolia_festive);
+    function copyToClipboard(element){
+      var $temp = $("<input>");
+      $("body").append($temp);
+      $temp.val($(element).text()).select();
+      document.execCommand("copy");
+      $temp.remove();
+    }
       for (let i = 0; i < algolia_festive.length; i++) {
         search_query = algolia_festive[i].search_query;
       if(query.toLowerCase() == search_query.toLowerCase() ){
-        res = `<div class="algolia-no-result-container"> <h3> ${algolia_festive[i].message}</h3> <div class="algolia-coupon-container"><p> ${algolia_festive[i].message2}</p> <div class="coupon-code"> <span>USE CODE : ${algolia_festive[i].coupon_code} </span></div> <p> ${algolia_festive[i].coupon_value}</p> </div> </div>`; 
+        res = `<div class="algolia-no-result-container algolia-no-result-festive"> <h3> ${algolia_festive[i].message}</h3> <div class="algolia-coupon-container"><p> ${algolia_festive[i].message2}</p> <div class="coupon-code"> <span>USE CODE : <span class="coupon_code">${algolia_festive[i].coupon_code}</span> </span></div> <p> ${algolia_festive[i].coupon_value}</p> </div> </div>`; 
+        setTimeout(function(){
+          let copyText = document.querySelector(".coupon_code");
+          copyToClipboard(copyText);
+          },1000);
         break  
       }
       else{
@@ -367,11 +377,6 @@ console.log(algolia_festive);
     break
       }
     }
-
-      let storedQuery = sessionStorage.queryList;
-      storedQuery = storedQuery.split(',');
-      storedQuery.shift();
-      sessionStorage.setItem('queryList', storedQuery);  
       return res;
     },
     floor: function floor(text, render) {
