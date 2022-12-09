@@ -328,6 +328,7 @@ if(e.available == false){
       if(response.code == 200 && response.message == 'login URL sent'){
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
+        localStorage.setItem('login_tocken', response.Token);
         countdown(5, response.URL);
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
@@ -359,6 +360,7 @@ if(e.available == false){
       if(response.code == 200 && response.message == 'login URL sent'){
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
+        localStorage.setItem('login_tocken', response.Token);
         countdown(5, response.URL);
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
@@ -389,6 +391,7 @@ function verifyotp(session_id, otp, url){
     if(response.code == 200 && response.message == 'login URL sent'){
       $('.customer-login-section.customer--section').hide();
       $('.oto-login-success-container').show();
+      localStorage.setItem('login_tocken', response.Token);
       countdown(5, response.URL);
       
     }else if(response.code == 422 && response.message == 'validation_error'){
@@ -521,32 +524,55 @@ $('.mobile-login-edit-icon').click(function(){
     });
   }
 
+{% unless customer %}
+  if(localStorage.getItem('login_tocken') && localStorage.getItem('login_tocken') !== ''){
+    var settings = {
+      "url": "https://otp.boat-lifestyle.com/loginstatus",
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "Token": localStorage.getItem('login_tocken'),
+        "url": location.href
+      }),
+    };
+    
+    $.ajax(settings).done(function (response) {
+      console.log(response);
+      {% unless customer %}
+      location.href = response.URL;
+      {% endunless %}
+    });
+  }
+  {% endunless %}
 
-  // if ('OTPCredential' in window) {
-  //   window.addEventListener('DOMContentLoaded', (e) => {
+  if ('OTPCredential' in window) {
+    window.addEventListener('DOMContentLoaded', (e) => {
       
-  //     const input = document.querySelector('input[autocomplete="one-time-code"]');
-  //     if (!input) return;
-  //     const ac = new AbortController();
-  //     const form = input.closest('form');
-  //     if (form) {
-  //       form.addEventListener('submit', (e) => {
-  //         ac.abort();
-  //       });
-  //     }
-  //     alert('Hii 1 otp');
-  //     navigator.credentials.get({
-  //       otp: { transport:['sms'] },
-  //       signal: ac.signal
-  //     }).then((otp) => {
-  //       alert('otp');
-  //       alert(otp);
-  //       input.value = otp.code;
+      const input = document.querySelector('input[autocomplete="one-time-code"]');
+      if (!input) return;
+      const ac = new AbortController();
+      const form = input.closest('form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          ac.abort();
+        });
+      }
+      // alert('Hii 1 otp');
+      navigator.credentials.get({
+        otp: { transport:['sms'] },
+        signal: ac.signal
+      }).then((otp) => {
+        alert('otp');
+        alert(otp);
+        input.value = otp.code;
         
-  //       // if (form) form.submit();
-  //     }).catch((err) => {
-  //       console.error(err);
-  //     });
-  //   });
-  // }
+        // if (form) form.submit();
+      }).catch((err) => {
+        console.error(err);
+      });
+    });
+  }
   
