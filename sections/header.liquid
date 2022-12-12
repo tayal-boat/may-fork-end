@@ -739,7 +739,7 @@
 {%- endcomment -%}
 
 <script>
-  $('.announce .announcement-bar__message p').each(function (ind, el) {
+  /* $('.announce .announcement-bar__message p').each(function (ind, el) {
     $(el).on('click', function (e) {
       var announcementText = $(this).text();
       clevertap.event.push('Announcement bar clicked', {
@@ -747,7 +747,7 @@
         userSource: userSource,
       });
     });
-  });
+  }); */
 
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
@@ -791,11 +791,23 @@
     }
   </script>
 {%- endif -%}
+{% capture search_placeholders %}
+{{ section.settings.search_placeholders | json }}
+{% endcapture %}
+<script>
+  Shopify.search_placeholders = `{{ search_placeholders }}`;
+</script>
 {% schema %}
 {
   "name": "Header",
   "class": "shopify-section--header",
   "settings": [
+    {
+        "type": "text",
+        "id": "search_placeholders",
+        "label": "Search Placeholders (Earphones, Smartwatches, Neckbands, Speakers)",
+        "default": "Earphones, Smartwatches, Neckbands, Speakers"
+    },
     {
       "type": "checkbox",
       "id": "enable_sticky_header",
