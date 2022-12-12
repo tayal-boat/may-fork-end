@@ -77,7 +77,7 @@ if(festive_query_list.includes(custom_query) ){
     for (let i = 0; i < algolia_festive_arr.length; i++) {
       search_query = algolia_festive_arr[i].search_query;
     if(custom_query == search_query.toLowerCase() ){
-      res = `<div class="algolia-no-result-container algolia-no-result-festive"> <h3> ${algolia_festive_arr[i].message}</h3> <div class="algolia-coupon-container"><p> ${algolia_festive_arr[i].message2}</p> <div class="coupon-code"> <span>USE CODE : <span class="coupon_code">${algolia_festive_arr[i].coupon_code}</span> </span> </div> <p> ${algolia_festive_arr[i].coupon_value}</p> </div> </div>`; 
+      res = `<div class="algolia-no-result-container algolia-no-result-festive"> <h3> ${algolia_festive_arr[i].message}</h3> <div class="algolia-coupon-container"><p> ${algolia_festive_arr[i].message2}</p> <div class="coupon-code"> <span class="coupon_code_wrapper">USE CODE : <span class="coupon_code">${algolia_festive_arr[i].coupon_code}</span> </span> </div> <p> ${algolia_festive_arr[i].coupon_value}</p> </div> </div>`; 
       setTimeout(function(){
       let copyText = document.querySelector(".coupon_code");
       copyToClipboard(copyText);
@@ -87,6 +87,29 @@ if(festive_query_list.includes(custom_query) ){
   }
     $('.aa-dataset-products').prepend(res);
   },1500)
+
+  
+  /* Code for copying coupon code */
+
+  $('.algolia-autocomplete').on('click', '.algolia-no-result-festive .coupon-code .coupon_code_wrapper', function(){
+
+    const current_date = new Date();
+    let coupon_code = $('.algolia-autocomplete .coupon_code').html();
+
+    // Removing cookie value if alreadt exists
+
+    current_date.setTime(current_date.getTime());
+    const current_time = current_date.toUTCString();
+    document.cookie = "discount_code='';expires="+current_time;
+    
+    // Seeting cookie for 24 hrs
+    let next_day = current_date.setTime(current_date.getTime() + (1*24*60*60*1000) );
+    document.cookie = "discount_code="+coupon_code+";expires="+next_day;
+
+    $('<p class="dis_code_copy_msg">Discount will be applied on checkout.</p>').insertBefore('.coupon-code')
+
+  });
+  
 }
 
 let queryList = [];
