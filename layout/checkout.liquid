@@ -594,6 +594,15 @@
       .gift-box-notifier {
         margin-top: 5px;
       }
+
+
+      /* CSS for separate coupon code field */
+      /* .order-summary__section--discount .edit_checkout .fieldset .field:last-child{display:flex;}
+      .order-summary__section--discount .edit_checkout .fieldset .field:last-child .commander-wrapper{width: inherit;}
+      .order-summary__section--discount .edit_checkout .fieldset .field:last-child .commander-wrapper input{border: 1px transparent solid;border-radius: 5px;display: block !important;box-sizing: border-box;width: 100%;padding: 0.9285714286em 0.7857142857em;word-break: normal;line-height: inherit;background: #fff;border-color: #d5d5d5;color: #333;}
+      .order-summary__section--discount .edit_checkout .fieldset .field:last-child button{cursor: pointer;display: inline-block !important;background-color: #ea2127;background-clip: border-box;box-sizing: border-box;border: 1px transparent solid;border-radius: 5px;color: white;font-weight: 500;padding: 1.4em 1.7em;text-align: center;position: relative;width: auto;margin-left: 0.8571428571em;white-space: nowrap;padding-top: 0;padding-bottom: 0;}
+      */
+
     </style>
     <!-- Single Checkout Page Styling Engs -->
   </head>
@@ -1271,6 +1280,15 @@
         color: red;
         font-weight: 500;
       }
+
+      /* Couponcode styling */
+      .couponcode-heading{font-size: 18px;font-weight: 600;}
+      .couponcode_container, .gift_card_container{display: block !important;position: relative;padding: 15px 0 10px 0;}
+      .couponcode_container input, .gift_card_container input{border: 1px transparent solid;background-clip: padding-box;border-radius: 5px;display: block;box-sizing: border-box;width: 100%;padding: 0.9285714286em 0.7857142857em;word-break: normal;line-height: inherit;background-color: white;color: #333333;border-color: #d9d9d9;}
+      .couponcode-button, .gift_card-button{position: absolute;right: 0;color: #f44336;padding: 10px;font-weight: 600;bottom: 0.7rem;top: 15px;font-size: 16px;list-style: none;display: flex;align-items: center;justify-content: center;}
+      .gift_card_label{border-top: 1px solid rgba(175,175,175,0.34);padding: 10px 0; display:flex; align-items:center;}
+
+
     </style>
     <!-- Single Checkout Page Styling-2 Begins -->
 
@@ -1371,7 +1389,34 @@
           $('[data-address-fields]').append(
             '<input class="gstin_number" id="GSTIN_yes" type="hidden" name="checkout[attributes][CustomerGSTIN]" value="">'
           );
-          $('[data-order-summary-section="payment-lines"]').prepend(`<div class="gstin_main_container">
+          $('[data-order-summary-section="payment-lines"]').prepend(`
+            
+            <div class="gift_card_main_container">
+              <label class="gift_card_label">
+                <input style="-webkit-appearance:checkbox;" type="checkbox" id="gift-card-redemption_cb">
+                <p style="font-size:18px;font-weight:600;padding-left: 10px;">Redeem Gift card?</p>
+              </label>
+              <div class="gift_card_container">
+                <input class="gift_card_input" type="text" placeholder="Gift Card" name="gift_card" value="">
+                <details>
+                  <summary class="gift_card-button">Apply</summary>
+                </details>
+              </div>
+              <p class="gift_card_error"></p>
+            </div>
+            
+            <div class="couponcode_main_container">
+              <h2 class="couponcode-heading">Apply coupon code</h2>
+              <div class="couponcode_container">
+                <input class="couponcode_input" type="text" placeholder="Coupon code" name="couponcode" value="">
+                <details>
+                  <summary class="couponcode-button">Apply</summary>
+                </details>
+              </div>
+              <p class="couponcode_error"></p>
+            </div>
+
+            <div class="gstin_main_container">
           <h2 class="gst-heading">Your GST Information</h2>
           <div class="gstin_container">
             <input class="gstin_input" type="text" placeholder="GSTIN" name="GSTIN" value="">
