@@ -57,10 +57,20 @@ let festive_query_list = [];
 let custom_query = query.trim(); 
 custom_query = custom_query.toLowerCase();
 let search_query = '';
+
 for (let i = 0; i < algolia_festive_arr.length; i++) {
   search_query = algolia_festive_arr[i].search_query;
-  festive_query_list.push(search_query.toLowerCase());
+  search_query = search_query.toLowerCase();
+  search_query = search_query.split(',');
+  if( Array.isArray(search_query)){
+    festive_query_list = festive_query_list.concat(search_query);
+  }else{
+    festive_query_list.push(search_query);
+  }
 }
+ festive_query_list = festive_query_list.map(element => {
+  return element.trim();
+});
 
 function copyToClipboard(element){
   var $temp = $("<input>");
@@ -70,22 +80,28 @@ function copyToClipboard(element){
   $temp.remove();
 }
 
-if(festive_query_list.includes(custom_query) ){
-  let res = '';
-  let search_query = '';
   setTimeout(function(){
-    for (let i = 0; i < algolia_festive_arr.length; i++) {
-      search_query = algolia_festive_arr[i].search_query;
-    if(custom_query == search_query.toLowerCase() ){
+  for (let i = 0; i < algolia_festive_arr.length; i++) {
+    search_query = algolia_festive_arr[i].search_query;
+    search_query = search_query.toLowerCase();
+  search_query = search_query.split(',');
+  search_query = search_query.map(element => {
+    return element.trim();
+  });
+
+  if(search_query.includes(custom_query)){
       res = `<div class="algolia-no-result-container algolia-no-result-festive"> <h3> ${algolia_festive_arr[i].message}</h3> <div class="algolia-coupon-container"><p> ${algolia_festive_arr[i].message2}</p> <div class="coupon-code"> <span class="coupon_code_wrapper">USE CODE : <span class="coupon_code">${algolia_festive_arr[i].coupon_code}</span> </span> </div> <p> ${algolia_festive_arr[i].coupon_value}</p> </div> </div>`; 
       setTimeout(function(){
       let copyText = document.querySelector(".coupon_code");
       copyToClipboard(copyText);
       },1000);
-      break  
-    }
+    break  
   }
-    $('.aa-dataset-products').prepend(res);
+}
+if(document.querySelectorAll('.algolia-no-result-festive').length > 0){
+  $('.algolia-no-result-festive').remove();
+}
+  $('.aa-dataset-products').prepend(res);
   },500)
 
   /* Code for copying coupon code */
@@ -127,7 +143,7 @@ queryList.pop();
 }  
 }          
 sessionStorage.setItem('queryList', queryList);  
-}
+// }
 
           return cb(extendedHits, res);
         })
