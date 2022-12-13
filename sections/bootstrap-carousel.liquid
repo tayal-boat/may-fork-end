@@ -7,15 +7,7 @@
   {% endif %}
 <div id="homepage-carousel" class="container c-new">
   <!-- The slideshow -->
-{% for block in section.blocks limit: 1 %}
-    	<a href="{{block.settings.slide_url}}" class="slide-url temp-slide homepage-first-slide-container">
-          <picture>
-            <source media="(min-width: 769px)" srcset="{{block.settings.desktop_image |img_url: '1000x'}}" >
-            <img style="width: 100%;" loading="eager" fetchpriority="high" class="homepage-first-slide" src="{{block.settings.mobile_image |img_url: '360x'}}" alt="{{block.settings.desktop_image.alt}}" />
-          </picture>
-        </a>
-    {% endfor %}
-  <div class="carousel-inner owl-carousel main_banner_slider" id="main_banner_slider">
+  <div class="carousel-inner owl-carousel main_banner_slider custom_slider_init {{ section.id }}" id="main_banner_slider" {%- render 'carousel-js' -%}>
     {% for block in section.blocks %}
       <div class="carousel--item slide_{{forloop.index}}">
         {% if block.settings.show_timer %}
@@ -243,72 +235,6 @@
 </div>
 
 <script type="deferjs">
-  jQuery(document).ready(function(){
-    /* const modalTimeout = setTimeout(showGformModal, 2000);
-    function showGformModal() {
-      jQuery('.custom_gform_modal').modal('show');
-      clearTimeout(modalTimeout);
-    } */
-  });
-
-  function openVideoPopup(url){
-    if(url != ''){
-      jQuery('.banner_video_modal .video_container iframe').attr('src', url);
-      jQuery(".banner_video_modal").modal('show');
-    }else{
-      return false;
-    }
-  }
-
-  	$(document).ready(function(){
-          var $owl = $( '.owl-carousel' );
-          $owl.on('initialized.owl.carousel', function(event){
-              $('.temp-slide').remove();
-          });
-          $(".main_banner_slider").owlCarousel({
-              items: 1,
-              loop: true,
-              nav: true,
-              lazyLoad: true,
-              autoplay: true,
-              autoplayTimeout: 5000,
-              merge: true,
-              dots: true,
-              startPosition: 0,
-              smartSpeed:500,
-              pullDrag: false,
-              checkVisible: false,
-              responsiveClass:true,
-              autoplayHoverPause: true
-              {% if section.settings.enable_progressbar %},onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar {% endif %}
-          });
-      });
-
-      function startProgressBar() {
-        $(".slide-progress").css({
-          width: "100%",
-          transition: "width 5000ms"
-        });
-      }
-
-      function resetProgressBar() {
-        $(".slide-progress").css({
-          width: 0,
-          transition: "width 0s"
-        });
-      }
-    const slides = document.querySelectorAll('.carousel-inner .carousel--item');
-    slides.forEach((slide, i) => {
-      slide.addEventListener('click', function() {
-          let imageTitle = slide.querySelector('.image_alt').innerText;
-          let slideNum = `${i+1}`
-          clevertap.event.push("Homepage Banner clicked", {
-            "Banner Number": 'Banner ' + slideNum,
-             "Banner Title": imageTitle,
-            "userSource": userSource
-          })
-      })
-    });
     {% if section.settings.show_popup %}
       var slide_num = '{{ section.settings.banner_number}}';
       $(`.slide_${slide_num} a`).click(function(e){
@@ -428,11 +354,56 @@
       "label": "clevertap event only for split products"
     },
     {
+      "type": "text",
+      "id": "autoplay_timeout",
+      "label": "autoplay_timeout in 5000 = 5sec"
+    },
+    {
       "type": "checkbox",
       "id": "enable_progressbar",
       "label": "Enable progressbar on slider",
       "default": true
-    }
+    }, {
+        "type": "number",
+        "id": "slides_no",
+        "label": "mobile slides",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "deskslides_no",
+        "label": "desk slides",
+        "default": 1
+      }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": true
+      }, {
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "margin",
+        "label": "margin",
+        "default": 0
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      }
   ],
   "blocks": [
     {
