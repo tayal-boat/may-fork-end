@@ -408,3 +408,207 @@ function labelsPriority() {
 window.addEventListener('load', labelsPriority)
 $("button.press-list__logo-item.tap-area").hover(function() {$(this).trigger("click")});
 
+// Creating cleverTap push event
+function createCleverTapEvent( event_name, event_data ){
+  if( event_name != '' && event_data != '' ){
+    clevertap.event.push( event_name, event_data );
+    console.log(clevertap.getCleverTapID());
+  }
+}
+
+// Creating cleverTap login event
+function createCleverTapLoginEvent( event_name, event_data ){
+  if( event_name != '' && event_data != '' ){
+    clevertap.onUserLogin.push( event_name, event_data );
+  }
+}
+
+// Strip HTML tags from string
+function stripHtml(html){
+   var tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent || tmp.innerText || "";
+}
+
+/* clevertap code for login customer starts here */
+
+$("#customer_login").submit(function(){
+  var event = 'Login';
+  var userEmail = document.getElementById("customer[email]").value;
+  var event_info = { "Email": userEmail };
+  var event_login = "Site";
+
+  createCleverTapEvent( event, event_info );
+  createCleverTapLoginEvent(event_login, event_info);
+});
+
+/* clevertap code for login customer ends here */
+
+/* Clevertap code for announcement bar starts here */
+
+$('.announce .announcement-bar__message p').each(function (ind, el) {
+  $(el).on('click', function (e) {
+    var announcementText = $(this).text();
+    
+    var event = 'Announcement bar clicked';
+    var event_info = { "Message": announcementText, "userSource": userSource };
+
+    createCleverTapEvent( event, event_info );
+  });
+});
+
+/* Clevertap code for announcement bar ends here */
+
+
+/* Clevertap code for Bootstrap carousel homepage starts here */
+
+const slides = document.querySelectorAll('.carousel-inner .carousel--item');
+slides.forEach((slide, i) => {
+  slide.addEventListener('click', function() {
+      let imageTitle = slide.querySelector('.image_alt').innerText;
+      let slideNum = `${i+1}`
+      
+      var event = 'Homepage Banner clicked';
+      var event_info = { "Banner Number": "Banner " + slideNum, "Banner Title": imageTitle, "userSource": userSource };
+
+      createCleverTapEvent( event, event_info );
+  })
+});
+
+/* Clevertap code for Bootstrap carousel homepage ends here */
+
+/* Clevertap Code for "shop by category and top collections on colletion page" starts here  */
+
+$('.top-collections.top-2 .collection-block').each(function () {
+  $(this).click(function () {
+    var item = $(this).find('.collection').attr('data-item');
+
+    var event = "Top Collections Clicked";
+
+    var event_info = { "Item": stripHtml(item), "userSource": userSource };
+
+    createCleverTapEvent( event, event_info );
+  });
+});
+
+/* var category_slides = document.querySelectorAll('.shop-by-category-slider .collection-block');
+category_slides.forEach((slide, i) => {
+  slide.addEventListener('click', function(e) {
+      
+      var event = 'shop-bycategory clicked';
+      var imageTitle = slide.querySelector('.collection-title').innerText;
+      var event_info = { 'collection Title': imageTitle, "userSource": userSource };
+
+      createCleverTapEvent( event, event_info );
+  })
+}); */
+
+/* Clevertap Code for "shop by category and top collections on colletion page" ends here  */
+
+/* clevertap code for "image_carousel.liquid" section starts here */
+
+  var image_slides = document.querySelectorAll('.deal-slider .slide-url');
+  image_slides.forEach((slide, i) => {
+    slide.addEventListener('click', function(e) {
+      var imageurl = slide.href;
+      var imageTitle = slide.querySelector('img').alt;
+      var event = "image_carousel clicked";
+      var event_info = { "image url": imageurl, "image Title": imageTitle, "userSource": userSource };
+      createCleverTapEvent( event, event_info );
+    })
+  });
+
+/* clevertap code for "image_carousel.liquid" section ends here */
+
+/* clevertap code for Explore now section on homepage starts here */
+
+  var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item .explore_now_btn_link');
+  explore_now_slider_img.forEach((explore_now_slide, i) => {
+    explore_now_slide.addEventListener('click', function(e) {
+      var imageurl = explore_now_slide.href;
+      var imageTitle = explore_now_slide.querySelector('img').alt;
+      var event = "Explore now clicked";
+      var event_info = { "image url": imageurl, "image Title": imageTitle, "userSource": userSource };
+      createCleverTapEvent( event, event_info );
+    })
+  });
+
+/* clevertap code for Explore now section on homepage ends here */
+
+/* Clevertap code starts for homepage-collection-banner.liquid */
+
+  let collection_slides = document.querySelectorAll('.collection-banners .carousel-inner .carousel-item');
+  collection_slides.forEach((slide, i) => {
+    slide.addEventListener('click', function() {
+      const slideNum = `${i+1}`;
+      let imageTitle = slide.querySelector('.collection-banners .image_alt').innerText;
+      
+      var event = "Deals Banner clicked";
+      var event_info = { "Banner Number": 'Banner ' + slideNum, "Banner Title": imageTitle, "userSource": userSource };
+      createCleverTapEvent( event, event_info );
+    })
+  });
+
+/* Clevertap code ends for homepage-collection-banner.liquid */
+
+/* clevertap code for Featuerd blogs on homepage starts here */
+
+$('.article-list').on('click', function() {
+    var event = "Homepage Blog section clicked";
+    var event_info = { "userSource": userSource };
+    createCleverTapEvent( event, event_info );
+});
+
+/* clevertap code for Featuerd blogs on homepage ends here */
+
+/* clevertap code for Press on homepage starts here */
+
+  $('.shopify-section shopify-section--press').on('click', function() {
+    var event = "In the Press section clicked";
+    var event_info = { "userSource": userSource };
+    createCleverTapEvent( event, event_info );
+  });
+
+/* clevertap code for Press on homepage ends here */
+
+/* clevertap code for login customer starts here */
+
+$("#customer_login").submit(function(){
+  var event = 'Login';
+  var userEmail = document.getElementById("customer[email]").value;
+  var event_info = { "Email": userEmail };
+  var event_login = "Site";
+
+  createCleverTapEvent( event, event_info );
+  createCleverTapLoginEvent(event_login, event_info);
+});
+
+/* clevertap code for login customer ends here */
+
+/* clevertap code for customer registeration starts here */
+
+$("#register-customer").submit(function(){
+  var firstName = document.getElementById("customer[first_name]").value;
+  var lastName = document.getElementById("customer[last_name]").value;
+  var userEmail = document.getElementById("customer[email]").value;
+  var event_login = "Site";
+  var event = 'Sign Up';
+  var event_info = { "Email": userEmail, "First Name": firstName, "Last Name": lastName };
+
+  createCleverTapLoginEvent(event_login, event_info);
+  createCleverTapEvent( event, event_info );
+});
+
+/* clevertap code for customer registeration ends here */
+
+/* clevertap code for clicking razor pay starts here */
+$(".razorpay-checkout").click(function () {
+  var mini_Cart_data = document.querySelector("#mini-cart-form");
+  var productsincart = mini_Cart_data.dataset.cart_items;
+  var event = 'razor/magic Button Clicked';
+  var event_info = { "cart products": productsincart, "Amount": cart_total_price };
+
+  createCleverTapEvent( event, event_info );
+});
+
+/* clevertap code for clicking razor pay ends here */
