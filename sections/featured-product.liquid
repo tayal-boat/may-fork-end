@@ -81,7 +81,14 @@
     --background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
     --secondary-background: {{ section_secondary_background.red }}, {{ section_secondary_background.green }}, {{ section_secondary_background.blue }};
   }
-  
+  .product--featured{position:relative}
+  .product--featured .color-swatch-list {position: absolute;top: 50%;transform: translateY(-50%);right:0}
+  .product--featured .product-form__option-info,.product--featured .product__media-nav{display:none}
+  .product--featured #gokwik-buy-now{text-align:center;letter-spacing:1px;}
+  .product--featured .product__media-image-wrapper{background:white}
+  .product--featured .product__info{text-align: center;background: beige;margin-left: -20px;margin-right: -20px;padding: 2rem;margin-top: -2rem;border-radius: 1rem;}
+  .product--featured .price-list{display: flex;flex-wrap: wrap;align-items: center;justify-content: space-around;}
+  .product--featured .current-price,.product--featured .usual-price{display: flex;flex-direction: column;font-size: 20px;padding: 10px;border: 1px solid #ccc;border-radius: 1rem;flex: 1;margin: 0 10px}
 </style>
 
 <section class="section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -102,7 +109,7 @@
       <div class="product product--featured product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
         {%- if product != blank -%}
           {%- render 'product-media', product: product -%}
-          {%- render 'product-info', product: product, featured: true, update_url: false -%}
+          {%- render 'product-info-featured-homepage', product: product, featured: true, update_url: false -%}
         {%- else -%}
           {%- comment -%}
           ----------------------------------------------------------------------------------------------------------------
@@ -268,7 +275,35 @@
     </div>
   </div>
 </section>
+<script>
+    const variantQtys = []
+    {% for variant in product.variants %}
+    variantQtys.push({{ variant.inventory_quantity }})
+    {% endfor %}
+    const totaltInventory = variantQtys.reduce((total, qty) => {
+        return total + qty
+    }, 0)
+    const unitsLeft = document.querySelector('.p-units');
+    unitsLeft.innerHTML = totaltInventory
 
+    const newPriceHtml = `<div class="price-list custom-product-price">
+                <div class="usual-price">
+                    <span>Usually at</span>
+                    <span>₹{{ product.price | divided_by: 100}}</span>
+                </div>
+                <div class="current-price">
+                    <span>Now at</span>
+                    <span>₹{{ product.price | divided_by: 100}}</span>
+                </div>
+            </div>`
+    const priceContainer = document.querySelector('.new-price-container')
+    priceContainer.innerHTML = newPriceHtml
+    Shopify.variantChange = function(e){
+        alert()
+        priceContainer.innerHTML = ''
+        priceContainer.innerHTML = newPriceHtml
+    }
+</script>
 {% schema %}
 {
   "name": "Featured product",
