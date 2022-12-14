@@ -607,7 +607,7 @@
     <!-- Single Checkout Page Styling Engs -->
   </head>
 
-  <body>
+  <body class="checkout_body">
     <!-- Google Tag Manager (noscript) -->
     <noscript
       ><iframe
@@ -1282,11 +1282,14 @@
       }
 
       /* Couponcode styling */
+      .order-summary__section form.edit_checkout .fieldset .field:first-child{display: none;}
       .couponcode-heading{font-size: 18px;font-weight: 600;}
       .couponcode_container, .gift_card_container{display: block;position: relative;padding: 15px 0 10px 0;}
       .couponcode_container input, .gift_card_container input{border: 1px transparent solid;background-clip: padding-box;border-radius: 5px;display: block;box-sizing: border-box;width: 100%;padding: 0.9285714286em 0.7857142857em;word-break: normal;line-height: inherit;background-color: white;color: #333333;border-color: #d9d9d9;}
       .couponcode-button, .gift_card-button{position: absolute;right: 0;color: #f44336;padding: 10px;font-weight: 600;bottom: 0.7rem;top: 15px;font-size: 16px;list-style: none;display: flex;align-items: center;justify-content: center;}
       .gift_card_label{border-top: 1px solid rgba(175,175,175,0.34);padding: 10px 0; display:flex; align-items:center;}
+      .gift_card_main_container{border-bottom: 1px solid rgba(175,175,175,0.34);padding-bottom: 15px;}
+      .couponcode_main_container{padding: 14px 0px;border-bottom: 1px solid rgba(175,175,175,0.34);}
 
 
     </style>
@@ -2690,15 +2693,18 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       }, 3000);
 
       /* Code for auto festive coupon code */
+      apply_discount_code();
 
-      let check_festive_code = getCookie("discount_code");
+      function apply_discount_code(){
+        let check_festive_code = getCookie("discount_code");
 
-      if( check_festive_code != ""){
-        $(".order-summary__sections label").click();
-        $("#checkout_reduction_code").val(check_festive_code);
-        $("#checkout_submit").removeClass('btn--disabled');
-        $("#checkout_submit").removeAttr('disabled');
-        $("#checkout_submit").click();
+        if( check_festive_code != ""){
+          $(".order-summary__sections label").click();
+          $("#checkout_reduction_code").val(check_festive_code);
+          $("#checkout_submit").removeClass('btn--disabled');
+          $("#checkout_submit").removeAttr('disabled');
+          $("#checkout_submit").click();
+        }
       }
 
       function getCookie(cname) {
@@ -2719,8 +2725,17 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
 
       /* script for coupon code customization */
       
-      $('.gift_card_label').on('click', '#gift-card-redemption_cb', function(){
-        $('.gift_card_container').css('display', 'block !important');
+      $('body.checkout_body').on('change', '.gift_card_label #gift-card-redemption_cb', function() {
+        $('.gift_card_container').toggle();
+      });
+      
+      $('body.checkout_body').on('click', '.couponcode_main_container .couponcode-button', function(){
+        var couponcode_input = $('.couponcode_input').val();
+        if(couponcode_input != ""){
+          
+        }else{
+          $('.couponcode_input_err').html('');
+        }
       });
 
 
