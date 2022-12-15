@@ -1,5 +1,15 @@
 {%- capture product_form_id -%}product-form-{{ section.id }}-{{ product.id }}{%- endcapture -%}
 
+{% assign pod_units = 0 %}
+{% for variant in product.variants %}
+  {% if variant.metafields.custom.pod_units %}
+    {% capture variant_pod_units %}
+      {{ variant.metafields.custom.pod_units }}
+    {% endcapture %}
+    {% assign pod_units = pod_units | plus: variant_pod_units %}
+  {% endif %}
+{% endfor %}
+
 <div class="product__info pl-lg-5">
   <!-- PRODUCT META -->
   <product-meta
@@ -19,14 +29,16 @@
         {%- endif -%}
       </h2>
     {%- endif -%}
+
+
     {% unless featured %}
       <p class="units_text text-uppercase">only
-        <span class="p-units">{{ product.selected_or_first_available_variant.metafields.custom.pod_units }}</span>
+        <span class="p-units">{{ pod_units }}</span>
         units left</p>
       <h1 class="product-meta__title heading h3">{{ product.title | split: '|' | first }}</h1>
     {% else %}
       <p class="units_text text-uppercase">only
-        <span class="p-units">{{ product.selected_or_first_available_variant.metafields.custom.pod_units }}</span>
+        <span class="p-units">{{ pod_units }}</span>
         units left</p>
       <h2 class="product-meta__title heading h3 test">
         <a href="{{ product.url }}">{{ product.title | split: '|' | first | split: 'boAt' | last }}</a>
