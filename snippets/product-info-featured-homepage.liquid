@@ -2,7 +2,11 @@
 
 <div class="product__info pl-lg-5">
   <!-- PRODUCT META -->
-  <product-meta form-id="{{ product_form_id }}" price-class="price--large" class="product-meta" data-product-price-list>
+  <product-meta
+    form-id="{{ product_form_id }}"
+    price-class="price--large"
+    class="product-meta"
+    data-product-price-list>
     {%- if section.settings.show_vendor -%}
       <h2 class="product-meta__vendor heading heading--small">
         {%- assign vendor_handle = product.vendor | handle -%}
@@ -15,60 +19,37 @@
         {%- endif -%}
       </h2>
     {%- endif -%}
-    {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
-   <div class="d-flex">
-	<div class="flash_sale">
-       <p class="m-0 text-uppercase flash_text"><span class="thunder"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
-</svg></span>&nbsp;{{settings.flash_sale_title}}</p>
-        {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
-    </div>
-        {% if product.available %}{%- render 'inventory-bar' with product -%}{% endif %}
-    </div>
-
-    {%- endif -%}
     {% unless featured %}
-      <p class="units_text text-uppercase">only <span class="p-units"></span> units left</p>
+      <p class="units_text text-uppercase">only
+        <span class="p-units">{{ product.selected_or_first_available_variant.metafields.custom.pod_units }}</span>
+        units left</p>
       <h1 class="product-meta__title heading h3">{{ product.title | split: '|' | first }}</h1>
     {% else %}
-      <p class="units_text text-uppercase">only <span class="p-units"></span> units left</p>
+      <p class="units_text text-uppercase">only
+        <span class="p-units">{{ product.selected_or_first_available_variant.metafields.custom.pod_units }}</span>
+        units left</p>
       <h2 class="product-meta__title heading h3 test">
-        <a href="{{ product.url }}">{{ product.title | split: '|' | first }}</a>
+        <a href="{{ product.url }}">{{ product.title | split: '|' | first | split: 'boAt' | last }}</a>
       </h2>
     {% endunless %}
-	{%- if section.settings.show_product_rating or section.settings.show_sku -%}
-      <div class="product-meta__reference">
-        {%- if section.settings.show_product_rating -%}
-        {%- comment -%}
-          <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-reviews-pocket" is="review-link" data-smooth-scroll class="product-meta__reviews-badge hidden-lap-and-up">{%- render 'product-rating', product: product -%}</a>
-          <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-tabs" is="review-link" data-smooth-scroll class="product-meta__reviews-badge hidden-pocket">{%- render 'product-rating', product: product -%}</a>
-        {%- endcomment -%}
-        {% comment %}Start automatically added Judge.me widget {% endcomment %}
-          {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
-        {% comment %}End automatically added Judge.me widget{% endcomment %}
-        {%- endif -%}
-        {%- if section.settings.show_sku -%}
-          <span class="product-meta__sku text--subdued text--xxsmall" {% if product.selected_or_first_available_variant.sku == blank %}style="display: none"{% endif %} data-product-sku-container>
-            {{- 'product.general.sku' | t }}
-            <span class="product-meta__sku-number" data-product-sku-number>{{ product.selected_or_first_available_variant.sku }}</span>
-          </span>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-    {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
+    <a class="product-item-meta__reviews-badge text--small" href="{{ product.url }}">
+      {%- render 'product-rating', product: product -%}
+    </a>
+    {%- if product.available -%}
+      {% render 'product-offers' %}{%- endif -%}
     {% if product.tags contains "Coming-Soon" %}
- 		<div style="background: #000;color: #fff;display: inline-block;padding: 5px 10px;border-radius: 5px;font-size: 16px;font-weight: bold;margin: 10px 0 20px;border:2px solid #fff;">COMING SOON</div>
+      <div style="background: #000;color: #fff;display: inline-block;padding: 5px 10px;border-radius: 5px;font-size: 16px;font-weight: bold;margin: 10px 0 20px;border:2px solid #fff;">COMING SOON</div>
     {% endif %}
     {%- if section.settings.show_timer_on_all -%}
-    	{% render 'countdown-timer', title: {{section.settings.timer_text}}, end_date: section.settings.end_date %}
+      {% render 'countdown-timer', title: {{section.settings.timer_text}}, end_date: section.settings.end_date %}
     {%- endif -%}
     {%- if section.settings.show_timer_on_selected -%}
       {%- if product.tags contains 'timer' -%}
-      	{% render 'countdown-timer', title: {{section.settings.timer_text}}, end_date: section.settings.end_date %}
+        {% render 'countdown-timer', title: {{section.settings.timer_text}}, end_date: section.settings.end_date %}
       {%- endif -%}
     {%- endif -%}
     {%- if product.metafields.timer.end_date != blank -%}
-      	{% render 'countdown-timer', title: {{product.metafields.timer.timer_text}}, end_date: product.metafields.timer.end_date %}
+      {% render 'countdown-timer', title: {{product.metafields.timer.timer_text}}, end_date: product.metafields.timer.end_date %}
     {%- endif -%}
     {%- if section.settings.show_taxes_included -%}
       {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
@@ -88,12 +69,15 @@
       {%- assign product_installment_form_id = 'product-installment-form-' | append: section.id | append: '-' | append: product.id -%}
 
       {%- form 'product', product, id: product_installment_form_id -%}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input
+          type="hidden"
+          name="id"
+          value="{{ product.selected_or_first_available_variant.id }}">
         {{- form | payment_terms -}}
       {%- endform -%}
     </product-payment-terms>
 
-    
+
   </product-meta>
 
   {%- render 'product-form-featured-homepage', product: product, update_url: update_url -%}
@@ -110,7 +94,13 @@
           {%- assign pinterest_description = product.description | strip_html | truncatewords: 15 | url_param_escape -%}
           {%- assign pinterest_image = product.featured_image | img_url: '800x' | prepend: 'https:' -%}
 
-          <button is="share-toggle-button" share-url="{{ share_url | escape }}" share-title="{{ product.title | escape }}" class="product-meta__share-label link hidden-tablet-and-up" aria-controls="mobile-share-buttons-{{ section.id }}" aria-expanded="false">{{ 'product.general.share' | t }}</button>
+          <button
+            is="share-toggle-button"
+            share-url="{{ share_url | escape }}"
+            share-title="{{ product.title | escape }}"
+            class="product-meta__share-label link hidden-tablet-and-up"
+            aria-controls="mobile-share-buttons-{{ section.id }}"
+            aria-expanded="false">{{ 'product.general.share' | t }}</button>
           <div class="product-meta__share-label hidden-phone">{{ 'product.general.share' | t }}</div>
 
           <popover-content id="mobile-share-buttons-{{ section.id }}" class="popover hidden-tablet-and-up">
@@ -119,44 +109,84 @@
             <header class="popover__header">
               <span class="popover__title heading h6">{{- 'article.general.share' | t -}}</span>
 
-              <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+              <button
+                type="button"
+                class="popover__close-button tap-area tap-area--large"
+                data-action="close"
+                title="{{ 'general.accessibility.close' | t | escape }}">
                 {%- render 'icon' with 'close' -%}
               </button>
             </header>
 
             <div class="mobile-share-buttons">
-              <a class="mobile-share-buttons__item mobile-share-buttons__item--facebook" href="https://www.facebook.com/sharer.php?u={{ share_url }}" target="_blank" rel="noopener" aria-label="{{ 'general.social.facebook_share' | t }}">
+              <a
+                class="mobile-share-buttons__item mobile-share-buttons__item--facebook"
+                href="https://www.facebook.com/sharer.php?u={{ share_url }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="{{ 'general.social.facebook_share' | t }}">
                 {%- render 'icon' with 'facebook-share-mobile' -%} Facebook
               </a>
 
-              <a class="mobile-share-buttons__item mobile-share-buttons__item--pinterest" href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if pinterest_image != blank %}&media={{ pinterest_image }}{% endif %}&description={{ pinterest_description }}" target="_blank" rel="noopener" aria-label="{{ 'general.social.pinterest_pin' | t }}">
+              <a
+                class="mobile-share-buttons__item mobile-share-buttons__item--pinterest"
+                href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if pinterest_image != blank %}&media={{ pinterest_image }}{% endif %}&description={{ pinterest_description }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="{{ 'general.social.pinterest_pin' | t }}">
                 {%- render 'icon' with 'pinterest-share-mobile' -%} Pinterest
               </a>
 
-              <a class="mobile-share-buttons__item mobile-share-buttons__item--twitter" href="https://twitter.com/share?{% if twitter_text != blank %}text={{twitter_text}}&{% endif %}url={{ share_url }}" target="_blank" rel="noopener" aria-label="{{ 'general.social.twitter_tweet' | t }}">
+              <a
+                class="mobile-share-buttons__item mobile-share-buttons__item--twitter"
+                href="https://twitter.com/share?{% if twitter_text != blank %}text={{twitter_text}}&{% endif %}url={{ share_url }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="{{ 'general.social.twitter_tweet' | t }}">
                 {%- render 'icon' with 'twitter-share-mobile' -%} Twitter
               </a>
 
-              <a class="mobile-share-buttons__item mobile-share-buttons__item--mail" href="mailto:?&subject={{ article.title | escape }}&body={{ share_url }}" aria-label="{{ 'general.social.email_share' | t }}">
+              <a
+                class="mobile-share-buttons__item mobile-share-buttons__item--mail"
+                href="mailto:?&subject={{ article.title | escape }}&body={{ share_url }}"
+                aria-label="{{ 'general.social.email_share' | t }}">
                 {%- render 'icon' with 'email-share-mobile' -%} {{ 'general.social.email_label' | t }}
               </a>
             </div>
           </popover-content>
 
           <div class="product-meta__share-button-list hidden-phone">
-            <a class="product-meta__share-button-item product-meta__share-button-item--facebook link tap-area" href="https://www.facebook.com/sharer.php?u={{ share_url }}" target="_blank" rel="noopener" aria-label="{{ 'general.social.facebook_share' | t }}">
+            <a
+              class="product-meta__share-button-item product-meta__share-button-item--facebook link tap-area"
+              href="https://www.facebook.com/sharer.php?u={{ share_url }}"
+              target="_blank"
+              rel="noopener"
+              aria-label="{{ 'general.social.facebook_share' | t }}">
               {%- render 'icon' with 'facebook', width: 8, height: 14 -%}
             </a>
 
-            <a class="product-meta__share-button-item product-meta__share-button-item--pinterest link tap-area" href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if pinterest_image != blank %}&media={{ pinterest_image }}{% endif %}&description={{ pinterest_description }}" target="_blank" rel="noopener" aria-label="{{ 'general.social.pinterest_pin' | t }}">
+            <a
+              class="product-meta__share-button-item product-meta__share-button-item--pinterest link tap-area"
+              href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if pinterest_image != blank %}&media={{ pinterest_image }}{% endif %}&description={{ pinterest_description }}"
+              target="_blank"
+              rel="noopener"
+              aria-label="{{ 'general.social.pinterest_pin' | t }}">
               {%- render 'icon' with 'pinterest', width: 10, height: 14 -%}
             </a>
 
-            <a class="product-meta__share-button-item product-meta__share-button-item--twitter link tap-area" href="https://twitter.com/share?{% if twitter_text != blank %}text={{ twitter_text }}&{% endif %}url={{ share_url }}" target="_blank" rel="noopener" aria-label="{{ 'general.social.twitter_tweet' | t }}">
+            <a
+              class="product-meta__share-button-item product-meta__share-button-item--twitter link tap-area"
+              href="https://twitter.com/share?{% if twitter_text != blank %}text={{ twitter_text }}&{% endif %}url={{ share_url }}"
+              target="_blank"
+              rel="noopener"
+              aria-label="{{ 'general.social.twitter_tweet' | t }}">
               {%- render 'icon' with 'twitter', width: 17, height: 14 -%}
             </a>
 
-            <a class="product-meta__share-button-item product-meta__share-button-item--mail link tap-area" href="mailto:?&subject={{ product.title | escape }}&body={{ share_url }}" aria-label="{{ 'general.social.email_share' | t }}">
+            <a
+              class="product-meta__share-button-item product-meta__share-button-item--mail link tap-area"
+              href="mailto:?&subject={{ product.title | escape }}&body={{ share_url }}"
+              aria-label="{{ 'general.social.email_share' | t }}">
               {%- render 'icon' with 'share', width: 13, height: 13 -%}
             </a>
           </div>
@@ -164,8 +194,16 @@
       {%- endif -%}
 
       {%- if help_page != blank -%}
-        <button is="toggle-button" class="product-meta__help link text--subdued hidden-tablet-and-up" aria-controls="product-{{ section.id }}-help-popover" aria-expanded="false">{{ 'product.general.need_help' | t }}</button>
-        <button is="toggle-button" class="product-meta__help link text--subdued hidden-phone" aria-controls="product-{{ section.id }}-help-drawer" aria-expanded="false">{{ 'product.general.need_help' | t }}</button>
+        <button
+          is="toggle-button"
+          class="product-meta__help link text--subdued hidden-tablet-and-up"
+          aria-controls="product-{{ section.id }}-help-popover"
+          aria-expanded="false">{{ 'product.general.need_help' | t }}</button>
+        <button
+          is="toggle-button"
+          class="product-meta__help link text--subdued hidden-phone"
+          aria-controls="product-{{ section.id }}-help-drawer"
+          aria-expanded="false">{{ 'product.general.need_help' | t }}</button>
       {%- endif -%}
     </div>
   {%- endif -%}
@@ -178,7 +216,11 @@
       <header class="drawer__header">
         <p class="drawer__title heading h6">{{ help_page.title }}</p>
 
-        <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+        <button
+          type="button"
+          class="drawer__close-button tap-area"
+          data-action="close"
+          title="{{ 'general.accessibility.close' | t | escape }}">
           {%- render 'icon' with 'close' -%}
         </button>
       </header>
@@ -191,13 +233,20 @@
     </drawer-content>
 
     {%- comment -%}Popover for mobile{%- endcomment -%}
-    <popover-content hidden id="product-{{ section.id }}-help-popover" class="popover hidden-lap-and-up">
+    <popover-content
+      hidden
+      id="product-{{ section.id }}-help-popover"
+      class="popover hidden-lap-and-up">
       <span class="popover__overlay"></span>
 
       <header class="popover__header">
         <p class="popover__title heading h6">{{ help_page.title }}</p>
 
-        <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+        <button
+          type="button"
+          class="popover__close-button tap-area tap-area--large"
+          data-action="close"
+          title="{{ 'general.accessibility.close' | t | escape }}">
           {%- render 'icon' with 'close' -%}
         </button>
       </header>
