@@ -1292,6 +1292,7 @@
       .checkout_submit_btn{cursor: pointer;}
       .gift_card_main_container{border-bottom: 1px solid rgba(175,175,175,0.34);padding-bottom: 15px;}
       .couponcode_main_container{padding: 14px 0px;border-bottom: 1px solid rgba(175,175,175,0.34);}
+      p.code_err_msg{padding: 0px;color: #f00;font-size: 14px;}
 
 
     </style>
@@ -2733,33 +2734,40 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       
       $('body.checkout_body').on('click', '.couponcode_main_container .couponcode-button', function(){
         $('.checkout_box_container').attr('data-active', 'false');
-        $(this).parents('.couponcode_main_container').find('.couponcode_container').attr('data-active', true)
+        $(this).parents('.couponcode_main_container').find('.couponcode_container').attr('data-active', true);
+        /* $(this).parents('.couponcode_main_container').find('input').attr('disabled', 'disabled');
+        $(this).parents('.couponcode_main_container').find('.checkout_submit_btn').css('color', '#db1717'); */
         apply_custom_code('.couponcode_input');
       });
 
       $('body.checkout_body').on('click', '.gift_card_main_container .gift_card-button', function(){
         $('.checkout_box_container').attr('data-active', 'false');
         $(this).parent('.gift_card_main_container').find('.checkout_box_container').attr('data-active', true);
+        /* $(this).parents('.gift_card_main_container').find('input').attr('disabled', 'disabled');
+        $(this).parents('.gift_card_main_container').find('.checkout_submit_btn').css('color', '#db1717'); */
         apply_custom_code('.gift_card_input');
       });
 
       function apply_custom_code(section_class){
+        sessionStorage.removeItem("checkout_error_msg");
         var section_class_item = $(section_class).val();
         if(section_class_item != ""){
           $("#checkout_reduction_code").val(section_class_item);
           $("#checkout_submit").removeClass('btn--disabled');
           $("#checkout_submit").removeAttr('disabled');
+          
+          var myInterval = setInterval(function(){ 
+            if( $('#error-for-reduction_code' ).text() != ''){
+              var error_msg = $('#error-for-reduction_code' ).text();
+              sessionStorage.setItem("checkout_error_msg", error_msg);
+              $('.checkout_box_container[data-active="true"]').prepend('<p class="code_err_msg">'+ sessionStorage.getItem("checkout_error_msg") +'</p>');
+              clearInterval(myInterval);
+            }
+          }, 1000);
           $("#checkout_submit").click();
-          $(this).parent().find('.checkout_box_container').attr('data-active', 'true');
-
-          setInterval(messageHandling, 1000);
         }else{
-          /* $('.couponcode_input_err').html(''); */
+          
         }
-      }
-      
-      function messageHandling(){
-        
       }
 
     </script>
