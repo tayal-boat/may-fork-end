@@ -169,17 +169,9 @@
               {%- capture flickity_config -%}
                 {
                 "adaptiveHeight": true,
-                                                                                                                                                                                                                                                                                                                                                                                                                                "dragThreshold": 10,
-                                                                                                                                                                                                                                                                                                                                                                                                                                "fade":
                 {% if section.settings.transition_effect == 'fade' %}true{% else %}false{% endif %},
                 "draggable": ">1",
-                                                                                                                                                                                                                                                                                                                                                                                                                                "contain": true,
-                                                                                                                                                                                                                                                                                                                                                                                                                                "percentPosition": false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                "pageDots": false,
-                                                                                                                                                                                                                                                                                                                                                                                                                                "prevNextButtons": false
-                                                                                                                                                                                                                                                                                                                                                                                                                              }
               {%- endcapture -%}
-
               <flickity-carousel
                 flickity-config="{{ flickity_config | escape }}"
                 id="product-{{ section.id }}-placeholder-media-list"
@@ -395,11 +387,13 @@
 <script>
   console.log({{variantQtys}});
   sessionStorage.setItem('variantQtys', {{variantQtys | json}});
-  const podUnits = [];
-  {% for variant in product.variants %}
-    podUnits.push({{ variant.metafields.custom.pod_units }});
-  {% endfor %}
-  console.log(podUnits);
+  const podUnits = [];{% for variant in product.variants %}podUnits.push({{ variant.metafields.custom.pod_units }});{% endfor %}console.log(podUnits);
+  const swatchItems = document.querySelectorAll('.color-swatch');
+  swatchItems.forEach((item, i) => {
+    item.dataset.podUnits = podUnits[i] || 0
+    if (item.dataset.podUnits < 1 || item.dataset.podUnits == undefined || item.dataset.podUnits == null) 
+      item.classList.add('hide-swatch')
+  })
 </script>
 {% schema %}
   {
