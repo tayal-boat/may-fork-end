@@ -77,9 +77,15 @@
         {%- endif -%}
       {%- endfor -%}
     {%- else -%}
+     {% if product.tags contains 'Coming-soon' %}
+      <span class="label label--highlight custom-label q -out-click-to-notify">
+        <span>Coming-soon</span>
+      </span>
+     {% else %}  
       <span class="label label--highlight custom-label q -out-click-to-notify">
         <span>SOLD OUT</span>
       </span>
+     {%- endif -%}
     {%- endif -%}
 
     <div class="product-item__image-wrapper {% if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true %}product-item__image-wrapper--multiple{% endif %}">
@@ -291,7 +297,8 @@
           </div>
           <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;">
             {% if product.price >= 50000 %}
-              Save ₹15 more on UPI payment
+              {% comment %} Save ₹15 more on UPI payment{% endcomment %}
+              Free Shipping available
             {% else %}
               Free Shipping available
             {% endif %}
