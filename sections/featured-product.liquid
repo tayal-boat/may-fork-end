@@ -377,7 +377,7 @@
   {% capture variantQtys %}
     {
     {% for variant in product.variants %}
-      "{{ variant.id }}":[{"pod_units":"{{ variant.metafields.custom.pod_units | strip_newlines }}","pod_revertprice":"{{ variant.metafields.custom.pod_revertprice | strip_newlines }}"}]
+      "{{ variant.id }}":[{"pod_units":"{{ variant.metafields.custom.pod_units | strip }}","pod_revertprice":"{{ variant.metafields.custom.pod_revertprice | strip_newlines }}"}]
       {% unless forloop.last %}
         ,
       {% endunless %}
@@ -387,6 +387,7 @@
 
   <script>
     sessionStorage.setItem('variantQtys', {{variantQtys | json}});
+    console.log({{variantQtys}});
   </script>
 {% endif %}
 {% schema %}
