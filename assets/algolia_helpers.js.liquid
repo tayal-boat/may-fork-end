@@ -380,6 +380,25 @@
         break  
       }
     }
+
+    let queryList = [];
+    let storedQuery = sessionStorage.queryList;
+    if(sessionStorage.queryList){
+    storedQuery = storedQuery.split(',');
+    if( Array.isArray(storedQuery)){
+    queryList = storedQuery;
+    }else{
+    queryList.push(storedQuery);
+    }
+    }
+    if(!queryList.includes(custom_query)){
+    queryList.unshift(custom_query);
+    if(queryList.length > 5){
+    queryList.pop();
+    }  
+    }          
+    sessionStorage.setItem('queryList', queryList);  
+
   }
       else{
         res = `<div class="algolia-no-result-container"> <h3 class="pb-0 mb-0"> ${JSON.parse(Shopify.algolia_no_result)} </h3><div class="algolia-trending-list"> ${document.querySelector('.algolia-trending-list').innerHTML} </div></div>`;
