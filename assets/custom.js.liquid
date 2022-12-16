@@ -288,6 +288,7 @@ if(e.available == false){
     var downloadTimer = setInterval(function(){
       if(timeleft <= 0){
         clearInterval(downloadTimer);
+        sessionStorage.setItem('login','false');
         location.href = url;
       } else {
         document.getElementById("countdown").innerHTML = timeleft;
@@ -525,8 +526,9 @@ $('.mobile-login-edit-icon').click(function(){
   }
 
 if(Shopify.customer == 'false'){
-  sessionStorage.setItem('login','true');
-  if(localStorage.getItem('login_tocken') && localStorage.getItem('login_tocken') !== '' && sessionStorage.getItem('login') == 'true'){
+  if(localStorage.getItem('login_tocken') && localStorage.getItem('login_tocken') !== ''){
+    sessionStorage.setItem('login','true');
+    if(sessionStorage.getItem('login') == 'true'){
     var settings = {
       "url": "https://otp.boat-lifestyle.com/loginstatus",
       "method": "POST",
@@ -542,12 +544,15 @@ if(Shopify.customer == 'false'){
     
     $.ajax(settings).done(function (response) {
       console.log(response);
-      if(sessionStorage.getItem('login') == 'true'){
-        sessionStorage.setItem('login','false');
+      sessionStorage.setItem('login','false');
+      if(sessionStorage.getItem('login') == 'false'){
         localStorage.setItem('login_tocken', response.Token);
+        setTimeout(function(){
         window.location = response.URL;
+        },500);
       }
     });
+  }
   }
 }else{
   sessionStorage.setItem('login','false'); 
