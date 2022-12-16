@@ -49,7 +49,51 @@
       also lazyloads non-essential libraries (such as PhotoSwipe or Flickity) and
       only loads them on demand.
     {%- endcomment -%}
+{% comment %} Persistant login start {% endcomment %}
+{%- if customer -%}
+<script>
+  sessionStorage.setItem('login','false'); 
+    
+  $('.logout').click(function(){
+  sessionStorage.removeItem('login');
+  localStorage.removeItem('login_tocken');
+});
+</script>
+{%- else -%}
+<script>
 
+if(localStorage.getItem('login_tocken') && localStorage.getItem('login_tocken') !== ''){
+  sessionStorage.setItem('login','true');
+  if(sessionStorage.getItem('login') == 'true'){
+  var settings = {
+    "url": "https://otp.boat-lifestyle.com/loginstatus",
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "Token": localStorage.getItem('login_tocken'),
+      "url": location.href
+    }),
+  };
+  
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    sessionStorage.setItem('login','false');
+    setTimeout(function(){
+    if(sessionStorage.getItem('login') == 'false'){
+      localStorage.setItem('login_tocken', response.Token);
+      window.location = response.URL;
+    }
+  },500);
+  });
+}
+}
+
+</script>
+{%- endif -%}
+{% comment %} Persistant login end {% endcomment %}
     {%- if request.page_type == 'product' -%}
       {%- assign selected_media = product.selected_or_first_available_variant.image
         | default: product.selected_or_first_available_variant.image
@@ -117,6 +161,8 @@
         j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
         f.parentNode.insertBefore(j, f);
       })(window, document, "script", "dataLayer", "GTM-BZTQ6ZT");
+
+    Shopify.customer = {% if customer %} 'true' {% else %}'false'{% endif %};
     </script>
     <!-- Google Tag Manager Ends -->
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 -->
