@@ -1,3 +1,48 @@
+{%- if customer -%}
+<script>
+  sessionStorage.setItem('login','false'); 
+    
+  $('.logout').click(function(){
+  sessionStorage.removeItem('login');
+  localStorage.removeItem('login_tocken');
+});
+</script>
+{%- else -%}
+<script>
+
+if(localStorage.getItem('login_tocken') && localStorage.getItem('login_tocken') !== ''){
+  sessionStorage.setItem('login','true');
+  if(sessionStorage.getItem('login') == 'true'){
+  var settings = {
+    "url": "https://otp.boat-lifestyle.com/loginstatus",
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "Token": localStorage.getItem('login_tocken'),
+      "url": location.href
+    }),
+  };
+  
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    sessionStorage.setItem('login','false');
+    setTimeout(function(){
+    if(sessionStorage.getItem('login') == 'false'){
+      localStorage.setItem('login_tocken', response.Token);
+      window.location = response.URL;
+    }
+  },500);
+  });
+}
+}
+
+</script>
+{%- endif -%}
+
+
 <!-- Algolia head -->
 {% for tag in customer.tags %}
   {% if tag == 'gst_added' %}
@@ -138,3 +183,5 @@ $('.algolia-header-search-input').css('pointer-events', 'all');
   }
 </style>
 <!-- /Algolia head -->
+
+
