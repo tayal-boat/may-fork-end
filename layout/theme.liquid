@@ -49,7 +49,21 @@
       also lazyloads non-essential libraries (such as PhotoSwipe or Flickity) and
       only loads them on demand.
     {%- endcomment -%}
+    {%- comment -%}
+      Few prefech to increase performance on commonly
+      used third-parties
+    {%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    {%- unless settings.heading_font.system? and settings.text_font.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {% endunless %}
+    <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
     {%- if request.page_type == 'product' -%}
       {%- assign selected_media = product.selected_or_first_available_variant.image
         | default: product.selected_or_first_available_variant.image
@@ -301,9 +315,9 @@
       {%- if template == 'index' -%}
         <div class="custom-lazyloaded-content">
           <div class="loading_icon">
-            <img
+            <img loading="lazy"
               class="lazyload"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final_loader.gif?v=1669098911"
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader-christmas.gif?v=1671020421"
               alt="Load More"
               style="width: 50px;"
             >
@@ -311,7 +325,7 @@
         </div>
       {% endif %}
     </div>
-
+{%- section 'algolia-festive-code' -%}
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
       {%- section 'footer' -%}
     {%- endif -%}
@@ -330,9 +344,7 @@
     {% if template contains 'product' %}
       {% render 'judgeme_core' %}
     {% endif %}
-    {% unless template contains 'product' or template contains 'customers' %}
-      {%- render 'bottom-navbar-mobile' -%}
-    {% endunless %}
+    
     <!-- Magic Checkout Code Starts -->
     {%- comment -%} {% render 'magicCheckoutSnippet' %} {%- endcomment -%}
     <!-- Magic Checkout Code Ends -->
