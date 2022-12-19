@@ -163,7 +163,6 @@ $(document).on("click", ".custom-search-cta", function(e) {
       }
   })
 });
-
 window.addEventListener("load", function() {
   function e() {
       "false" == sessionStorage.getItem("lazyloaded_sections") && ($.ajax({
@@ -172,18 +171,15 @@ window.addEventListener("load", function() {
           dataType: "html",
           success: function(e) {
               let t = $(e).find("#index-lazyload_sections").html();
-              $(".custom-lazyloaded-content").html(t);
-              Shopify.homepageLazyload();
+              $(".custom-lazyloaded-content").html(t)
           }
       }), sessionStorage.setItem("lazyloaded_sections", "true"))
   }
   sessionStorage.setItem("lazyloaded_sections", "false"), document.addEventListener("touchmove", e, !0), document.addEventListener("scroll", e, !0)
 });
-
 function isIOSMobile() {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent)
 };
-
 if (!isIOSMobile()) {
   let i = Notification.permission;
 
@@ -201,14 +197,14 @@ if (!isIOSMobile()) {
   }
 
   function t() {
-    Notification.requestPermission(function(i) {
-      "granted" === i && (clevertap.profile.push({
-        Site: {
-          "Web Push": !0,
-          "MSG-push": !0
-        }
-      }), e(), console.log("granted"))
-    })
+      Notification.requestPermission(function(i) {
+          "granted" === i && (clevertap.profile.push({
+              Site: {
+                  "Web Push": !0,
+                  "MSG-push": !0
+              }
+          }), e(), console.log("granted"))
+      })
   }
   "granted" === i ? e() : t()
 };
@@ -216,434 +212,344 @@ if (!isIOSMobile()) {
 var actualDimension = $(window).width() + $(window).height();
 $(window).resize(function(){
   if($(window).width() + $(window).height() < actualDimension) {
-    $('.fixed_nav.fixed_nav_mobile').css('position','relative')
-  } else {
-    $('.fixed_nav.fixed_nav_mobile').removeAttr('style')
-  }
+  $('.fixed_nav.fixed_nav_mobile').css('position','relative')
+} else {
+  $('.fixed_nav.fixed_nav_mobile').removeAttr('style')
+}
 });
 
 
 Shopify.variantChange = function(e){
-  if(e.available == false){
-    $('.custom-notify-btn').attr('data-variant-id', e.id);
-    $('.custom-notify-btn').show();
-    $('.product__info button#AddToCart.button--ternary').css('display','none')
-  }else{
-    $('.custom-notify-btn').hide();
-    $('.product__info button#AddToCart.button--primary').css('display','block')
-  }
+if(e.available == false){
+  $('.custom-notify-btn').attr('data-variant-id', e.id);
+  $('.custom-notify-btn').show();
+  $('.product__info button#AddToCart.button--ternary').css('display','none')
+}else{
+  $('.custom-notify-btn').hide();
+  $('.product__info button#AddToCart.button--primary').css('display','block')           
+}
 }
 
+// OTP Login
 
-// Creating cleverTap push event
-function createCleverTapEvent( event_name, event_data ){
-  if( event_name != '' && event_data != '' ){
-    clevertap.event.push( event_name, event_data );
-  }
-}
-
-// Owl slider 
-// Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
-
-let section_id = '';
-let sliderSelector = document.querySelectorAll('.custom_slider_init');
-for (let i = 0; i < sliderSelector.length; i++) {
-  section_id = sliderSelector[i].getAttribute('data-sliderId');
-  let slider_section_id = '.custom_slider_init.' + section_id;
-  // console.log(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')));
-  // console.log('.custom_slider_init.' + section_id);`
-  $(slider_section_id).owlCarousel({
-    loop: JSON.parse(sliderSelector[i].getAttribute('data-loop')),
-    responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
-    autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
-    autoplayTimeout: JSON.parse(sliderSelector[i].getAttribute('data-autoplay-timeout')),
-    items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
-    slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
-    nav: true,
-    dots: JSON.parse(sliderSelector[i].getAttribute('data-dots')),
-    margin: JSON.parse(sliderSelector[i].getAttribute('data-margin')),
-    responsive: {
-        300: {
-            items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_items')),
-            dots: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_dots'))
-        },
-        1024: {
-           items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_mid_items')),
-        }
-    },onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar
-  }).on("dragged.owl.carousel", function(event) {
-    if(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')) > 1){
-      slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
-    } 
-  });  
-  function slide_item_on_drag(section_id, drag_direction) {
-    if( drag_direction == 'right' ){// $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-    }
-    else if( drag_direction == 'left' ){$(section_id + ' .owl-dots .owl-dot.active').next().click();} } 
-  function startProgressBar() { $(".slide-progress").css({width: "100%",transition: "width 5000ms"});}
-  function resetProgressBar() {$(".slide-progress").css({width: 0,transition: "width 0s"});}
-  function openVideoPopup(url){
-    if(url != ''){
-      jQuery('.banner_video_modal .video_container iframe').attr('src', url);
-      jQuery(".banner_video_modal").modal('show');
-    }else{
+  //Function to allow only numbers
+     function _isNumberCheck(evt) {
+      var charCode = (evt.which) ? evt.which : event.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57))
       return false;
-    }
-  }
-}
+      return true;
+   }
+   // Not allow 0 as first digit on input
+   $(document).on("input", "#otp-mobile-number", (e) => {
+      $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+   })
+   $(document).on("keypress", "#otp-mobile-number", (e) => {
+      return _isNumberCheck(e);
+   })
 
- 
-Shopify.homepageLazyload = function(){
-  $('.explore_now_slider').owlCarousel({
-    loop: true,
-    responsiveClass: true,
-    autoplay:true,
-    items: 6,
-    nav: false,
-    dots: false,
-    responsive: {
-      300: {
-        items: 2.3,
-        margin: 10
-      },
-      600: {
-        items: 5.2,
-        margin: 10
-      },
-      1000: {
-        items: 6,
-        loop: true,
-        margin: 10
+   function TimerFunction(){
+    let timerOn = true;
+    $('.resend-timer').show();
+    $('.resend-text').hide();
+    $('.resend-btn').hide();
+    $('.otp-login-confirm-btn').removeAttr('style');
+    function timer(remaining) {
+      let m = Math.floor(remaining / 60);
+      let s = remaining % 60;
+
+      m = m < 10 ? '0' + m : m;
+      s = s < 10 ? '0' + s : s;
+      $('#timer').html(m + ':' + s);
+      remaining -= 1;
+
+      if(remaining >= 0 && timerOn) {
+        setTimeout(function() {
+            timer(remaining);
+        }, 1000);
+        return;
       }
+
+      if(!timerOn) {
+        // Do validate stuff here
+        return;
+      }
+
+      // Do timeout stuff here
+      $('.resend-timer').hide();
+      $('.resend-text').show();
+      $('.resend-btn').show();
+      $('.otp-login-confirm-btn').css('background','#ED1C24');
     }
-  })
+    timer(60);
+   }
 
-// Explore our slide section
-var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item');
-explore_now_slider_img.forEach((slide, i) => {
-    slide.addEventListener('click', function() {
-      
-        let imageurl = slide.querySelector('a').href;
-        let imageTitle = slide.querySelector('img').alt;
+   function countdown(timeleft, url){
+    var timeleft = timeleft;
+    var downloadTimer = setInterval(function(){
+      if(timeleft <= 0){
+        clearInterval(downloadTimer);
+        sessionStorage.setItem('login','false');
+        location.href = url;
+      } else {
+        document.getElementById("countdown").innerHTML = timeleft;
+      }
+      timeleft -= 1;
+    }, 1000);
+   }
 
-        // console.log(imageurl);
-        // console.log(imageTitle);
-        clevertap.event.push("Explore now clicked", {
-          "image url": imageurl,
-          "image Title": imageTitle,
-          "userSource": userSource
-        })
-    })
-  });
+   function emailMask(email) {
+    var maskedEmail = email.replace(/([^@\.])/g, "*").split('');
+    var previous	= "";
+    for(i=0;i<maskedEmail.length;i++){
+      if (i<=1 || previous == "." || previous == "@"){
+        maskedEmail[i] = email[i];
+      }
+      previous = email[i];
+    }
+    return maskedEmail.join('');
+  }
 
-// Press section
-    $('.custom_press_slider').owlCarousel({
-      loop: true,
-      responsiveClass: true,
-      autoplay: true,
-      items: 1,
-      slideBy: 1,
-      nav: false,
-      dots: true
+  function selectEmail(email, session_id, url){
+    let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "session_id": session_id,
+        "email" : email,
+        "url": url
+      }),
+    };
+    $.ajax(settings).done(function (response) {
+      // console.log(response);
+      if(response.code == 200 && response.message == 'login URL sent'){
+        $('.customer-login-section.customer--section').hide();
+        $('.oto-login-success-container').show();
+        localStorage.setItem('login_tocken', response.Token);
+        countdown(5, response.URL);
+      }else if(response.code == 422 && response.message == 'validation_error'){
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }else if(response.code == 401 || response.code == 404 ){
+        $('.otp-login-error').html(response.message);
+      }
     });
-
-  $('.shopify-section shopify-section--press').on('click', function() {
-    clevertap.event.push("In the Press section clicked", {"userSource": userSource});
-  });
-  $("button.press-list__logo-item.tap-area").hover(function() {
-    $(this).trigger("click")
-  });
-  labelsPriority()
-}
-
-function labelsPriority() {
-  $('.product-item').each(function() {
-      if($(this).find('.z-10').length > 0) {
-          $(this).find('.z-10').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-9').length > 0) {
-          $(this).find('.z-9').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-8').length > 0) {
-          $(this).find('.z-8').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-7').length > 0) {
-          $(this).find('.z-7').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-6').length > 0) {
-          $(this).find('.z-6').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-5').length > 0) {
-          $(this).find('.z-5').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-4').length > 0) {
-          $(this).find('.z-4').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-3').length > 0) {
-          $(this).find('.z-3').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-2').length > 0) {
-          $(this).find('.z-2').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } 
-  })
-}
-
-window.addEventListener('load', labelsPriority)
-
-// Creating cleverTap push event
-function createCleverTapEvent( event_name, event_data ){
-  if( event_name != '' && event_data != '' ){
-    clevertap.event.push( event_name, event_data );
-    console.log(clevertap.getCleverTapID());
   }
-}
 
-// Creating cleverTap login event
-function createCleverTapLoginEvent( event_name, event_data ){
-  if( event_name != '' && event_data != '' ){
-    clevertap.onUserLogin.push( event_name, event_data );
+  function otpSignUp(full_name, email, phone, session_id, url){
+    let base_Url = 'https://otp.boat-lifestyle.com/signup';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "full_name" : full_name,
+        "email": email,
+        "phone": phone,
+        "session_id": session_id,
+        "url" : url
+      }),
+    };
+    $.ajax(settings).done(function (response) {
+      // console.log(response);
+      if(response.code == 200 && response.message == 'login URL sent'){
+        $('.customer-login-section.customer--section').hide();
+        $('.oto-login-success-container').show();
+        localStorage.setItem('login_tocken', response.Token);
+        countdown(5, response.URL);
+      }else if(response.code == 422 && response.message == 'validation_error'){
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }else if(response.code == 401){
+        $('.otp-login-error').html(response.message);
+      }
+    });
   }
-}
-
-// Creating cleverTap footer backtop top
-$('#btn-back-to-top').click(function () {
-  $(window).scrollTop(0);
-  clevertap.event.push('Back to Top clicked');
-});
-document.getElementById('link_btn_1').click();
-function openLink(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName('footer__item');
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = 'none';
-  }
-  tablinks = document.getElementsByClassName('footer__item-title');
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(' active', '');
-  }
-  document.getElementById(tabName).style.display = 'block';
-  evt.currentTarget.className += ' active';
-}
-
-// Creating cleverTap footer-newsletter
-{%- if customer -%}
-var myEmail = '{{customer.email}}'
-$("#subscriber-email").val(myEmail);
-{% endif %}
-var localValuePop = localStorage.getItem('MyPopup');
-if(!localValuePop) {
- setTimeout(function(){
- $(".pop-overlay, .boathead-pop").fadeIn();
-}, 15000);
-}
-$("#subscribe_pop").on("click",function(){var e=document.getElementById("pop_email").value;""!==e&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)?localStorage.getItem("userEmailId")===e?$(".aluser-msg").show():(localStorage.setItem("userEmailId",e),localStorage.setItem("MyPopup","popOnce"),clevertap.onUserLogin.push({Site:{Email:e,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:e,Source:"Popup"}),$(".thankyou-msg-pop").show(),setTimeout(function(){$(".pop-overlay, .boathead-pop").fadeOut()},5e3)):$(".error-msg-pop").show(),setTimeout(function(){$(".error-msg-pop").fadeOut()},5e3)}),$(".pop-overlay, .close-pop").click(function(){localStorage.setItem("MyPopup","popOnce"),$(".pop-overlay, .boathead-pop").fadeOut()}),$("#subscribe-btn").on("click",function(e){$('#subscribe-btn').attr('disabled', 'disabled');var o=document.getElementById("subscriber-email").value;""!==o&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(o)?localStorage.getItem("userEmailId")===o?$(".input-block").append('<p class="aluser-msg text-white">You are already subscribed!</p>').show():(localStorage.setItem("userEmailId",o),clevertap.onUserLogin.push({Site:{Email:o,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:o,Source:"Footer"}),$(".input-block").append('<p class="thankyou-msg text-white">Thank You for subscribing. Please check your inbox!</p>').show(),$("#subscriber-email").val("")):$(".input-block").append('<p class="error-msg text-white">Please enter a valid email Id!</p>').show(),setTimeout(function(){$(".thankyou-msg, .error-msg, .aluser-msg").remove();$('#subscribe-btn').removeAttr('disabled');},5e3)}),$(".download-box a").click(function(){clevertap.event.push("Download App Clicked")});
-
-
-// Strip HTML tags from string
-function stripHtml(html){
-   var tmp = document.createElement("DIV");
-   tmp.innerHTML = html;
-   return tmp.textContent || tmp.innerText || "";
-}
-
-/* clevertap code for login customer starts here */
-
-$("#customer_login").submit(function(){
-  var event = 'Login';
-  var userEmail = document.getElementById("customer[email]").value;
-  var event_info = { "Email": userEmail };
-  var event_login = "Site";
-
-  createCleverTapEvent( event, event_info );
-  createCleverTapLoginEvent(event_login, event_info);
-});
-
-/* clevertap code for login customer ends here */
-
-/* Clevertap code for announcement bar starts here */
-
-$('.announce .announcement-bar__message p').each(function (ind, el) {
-  $(el).on('click', function (e) {
-    var announcementText = $(this).text();
-    
-    var event = 'Announcement bar clicked';
-    var event_info = { "Message": announcementText, "userSource": userSource };
-
-    createCleverTapEvent( event, event_info );
-  });
-});
-
-/* Clevertap code for announcement bar ends here */
-
-
-/* Clevertap code for Bootstrap carousel homepage starts here */
-
-const slides = document.querySelectorAll('.carousel-inner .carousel--item');
-slides.forEach((slide, i) => {
-  slide.addEventListener('click', function() {
-      let imageTitle = slide.querySelector('.image_alt').innerText;
-      let slideNum = `${i+1}`
+  
+function verifyotp(session_id, otp, url){
+  let base_Url = 'https://otp.boat-lifestyle.com/login/verifyotp';
+  var settings = {
+    "url": base_Url,
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "session_id": session_id,
+      "otp": otp,
+      "url": url
+    }),
+  };
+  
+  $.ajax(settings).done(function (response) {
+    // console.log(response);
+    if(response.code == 200 && response.message == 'login URL sent'){
+      $('.customer-login-section.customer--section').hide();
+      $('.oto-login-success-container').show();
+      localStorage.setItem('login_tocken', response.Token);
+      countdown(5, response.URL);
       
-      var event = 'Homepage Banner clicked';
-      var event_info = { "Banner Number": "Banner " + slideNum, "Banner Title": imageTitle, "userSource": userSource };
-
-      createCleverTapEvent( event, event_info );
-  })
-});
-
-/* Clevertap code for Bootstrap carousel homepage ends here */
-
-/* Clevertap Code for "shop by category and top collections on colletion page" starts here  */
-
-$('.top-collections.top-2 .collection-block').each(function () {
-  $(this).click(function () {
-    var item = $(this).find('.collection').attr('data-item');
-
-    var event = "Top Collections Clicked";
-
-    var event_info = { "Item": stripHtml(item), "userSource": userSource };
-
-    createCleverTapEvent( event, event_info );
-  });
-});
-
-/* var category_slides = document.querySelectorAll('.shop-by-category-slider .collection-block');
-category_slides.forEach((slide, i) => {
-  slide.addEventListener('click', function(e) {
+    }else if(response.code == 422 && response.message == 'validation_error'){
+      $('.otp-login-error').html('Something went wrong please try again.');
+    }else if(response.code == 401 && response.message == 'Incorrect Otp'){
+      $('.otp-login-error').html(response.message);
+    }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
+      $('.otp-login-error').html(response.message);
+      $('.customer-login-section').attr('new_customer', 'true');
+      $('.otp-login-message h3').html('Continue with Email');
+      $('.otp-timer-container').hide();
+      $('.otp-login-error').html('');
+      $('.otp-login-submit-btn').click(function(){
+        let full_name = $('.otp-fullName #full_name').val();
+        let email = $('.otp-email #email').val();
+        let phone = $('#otp-mobile-number').val();
+        let register_url = sessionStorage.getItem('login_location');
+        otpSignUp(full_name, email, phone, session_id, register_url);
+      })
       
-      var event = 'shop-bycategory clicked';
-      var imageTitle = slide.querySelector('.collection-title').innerText;
-      var event_info = { 'collection Title': imageTitle, "userSource": userSource };
+    }else if(response.code == 406 && response.message == 'time exceeded 5 minutes'){
+      $('.otp-login-error').html('Otp expired.');
+    }else if(response.code == 300 && response.message == 'emailId list'){
+      $('.otp-login-message h3').html('Please select your Primary email id');
+      $('.customer-login-section').attr('multi_email', 'true');
+      $('.otp-timer-container').hide();
+      $('.otp-login-error').html('');
+      let emailList = response.emailList;
+      let emailListHtml = '', i ;
+      let emailListContainer = document.querySelector('.email-list-container');
+      for (let i = 0; i < emailList.length; i++) {
+        emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
+      }
+      emailListContainer.innerHTML = emailListHtml;
+      let selectedEmail = '';
+      let emailSelector = $('.email-list-container span');
+      emailSelector[0].setAttribute('selected','true');
+      emailSelector.click(function(event){
+      selectedEmail = event.target.dataset.value;
+      for (i = 0; i < emailSelector.length; i++) {
+        if (emailSelector[i].hasAttribute("selected")) {
+          emailSelector[i].removeAttribute("selected");   
+        }
+    }
+      $(this).attr('selected','true'); 
+      });
+      let selectedEmail_url = sessionStorage.getItem('login_location');
+      $('.otp-login-submit-btn').click(function(){
+      selectEmail(selectedEmail, session_id, selectedEmail_url);
+      });
+    }else{
+      $('.otp-login-error').html('Something went wrong please try again.');
+    }
+  });
+}
 
-      createCleverTapEvent( event, event_info );
-  })
-}); */
-
-/* Clevertap Code for "shop by category and top collections on colletion page" ends here  */
-
-/* clevertap code for "image_carousel.liquid" section starts here */
-
-  var image_slides = document.querySelectorAll('.deal-slider .slide-url');
-  image_slides.forEach((slide, i) => {
-    slide.addEventListener('click', function(e) {
-      var imageurl = slide.href;
-      var imageTitle = slide.querySelector('img').alt;
-      var event = "image_carousel clicked";
-      var event_info = { "image url": imageurl, "image Title": imageTitle, "userSource": userSource };
-      createCleverTapEvent( event, event_info );
+function otpLogin(phone){
+  let base_Url = 'https://otp.boat-lifestyle.com/login/sendotp';
+  var settings = {
+    "url": base_Url,
+    "method": "POST",
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": JSON.stringify({
+      "phone": phone
+    }),
+  };
+  $.ajax(settings).done(function (response) {
+    // console.log(response);
+    if(response.code == 200 && response.message == 'OTP sent'){
+    $('.customer-login-section').attr('otp_send', 'true');
+    $('.otp-login-error').html('');
+    TimerFunction();
+    $('.otp-login-confirm-btn').click(function(){
+      let session_id = response.session_id;
+      let otp = $('.mobile-otp-inout input').val();
+      let url = sessionStorage.getItem('login_location');
+      verifyotp(session_id, otp, url);
     })
+  }else if(response.code == 422 && response.message == 'validation_error'){
+  $('.otp-login-error').html('The phone field is required.');
+  }else if(response.code == 403 && response.message == 'Invalid phone number'){
+    $('.otp-login-error').html(response.message);
+  }
+  });
+}
+
+$('.otp-login-btn, .login-resend-btn').click(function(){
+  let phone = $('#otp-mobile-number').val();
+  otpLogin(phone);
+})
+
+$(document).on('click', '#resend__otp', function(){
+  TimerFunction();
+});
+
+$( "#otp" ).on( "input", function() {
+  if($(this).val().length >5 ){
+    $('.otp-login-confirm-btn').css('background','#ED1C24');
+  }
+});
+
+$('.mobile-login-edit-icon').click(function(){
+  $('.otp-login-error').html('');
+  $('.customer--section').removeAttr('otp_send');
+  });
+  if(!sessionStorage.login_location && sessionStorage.login_location !== ''){
+    sessionStorage.setItem('login_location','https://www.boat-lifestyle.com/');
+  }
+  
+
+  document.querySelector('.custom-account-icon').addEventListener("click", function myFunction(event) {
+    event.preventDefault();
+      sessionStorage.setItem('login_location',window.location.href);
   });
 
-/* clevertap code for "image_carousel.liquid" section ends here */
+  let mobile_account = document.querySelectorAll('.mobile-custom-account-icon');
+  for (let i = 0; i < mobile_account.length; i++) {
+    mobile_account[i].addEventListener("click", function myFunction(event) {
+      event.preventDefault();
+        sessionStorage.setItem('login_location',window.location.href);
+        window.location = '/account';
+    });
+  }
 
-/* clevertap code for Explore now section on homepage starts here */
 
-  var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item .explore_now_btn_link');
-  explore_now_slider_img.forEach((explore_now_slide, i) => {
-    explore_now_slide.addEventListener('click', function(e) {
-      var imageurl = explore_now_slide.href;
-      var imageTitle = explore_now_slide.querySelector('img').alt;
-      var event = "Explore now clicked";
-      var event_info = { "image url": imageurl, "image Title": imageTitle, "userSource": userSource };
-      createCleverTapEvent( event, event_info );
-    })
-  });
-
-/* clevertap code for Explore now section on homepage ends here */
-
-/* Clevertap code starts for homepage-collection-banner.liquid */
-
-  let collection_slides = document.querySelectorAll('.collection-banners .carousel-inner .carousel-item');
-  collection_slides.forEach((slide, i) => {
-    slide.addEventListener('click', function() {
-      const slideNum = `${i+1}`;
-      let imageTitle = slide.querySelector('.collection-banners .image_alt').innerText;
+// if( window.location = '/account/logout'){
+//   localStorage.removeItem('login_tocken');
+//   sessionStorage.removeItem('login')
+// }
+  if ('OTPCredential' in window) {
+    window.addEventListener('DOMContentLoaded', (e) => {
       
-      var event = "Deals Banner clicked";
-      var event_info = { "Banner Number": 'Banner ' + slideNum, "Banner Title": imageTitle, "userSource": userSource };
-      createCleverTapEvent( event, event_info );
-    })
-  });
-
-/* Clevertap code ends for homepage-collection-banner.liquid */
-
-/* clevertap code for Featuerd blogs on homepage starts here */
-
-$('.article-list').on('click', function() {
-    var event = "Homepage Blog section clicked";
-    var event_info = { "userSource": userSource };
-    createCleverTapEvent( event, event_info );
-});
-
-/* clevertap code for Featuerd blogs on homepage ends here */
-
-/* clevertap code for Press on homepage starts here */
-
-  $('.shopify-section shopify-section--press').on('click', function() {
-    var event = "In the Press section clicked";
-    var event_info = { "userSource": userSource };
-    createCleverTapEvent( event, event_info );
-  });
-
-/* clevertap code for Press on homepage ends here */
-
-/* clevertap code for login customer starts here */
-
-$("#customer_login").submit(function(){
-  var event = 'Login';
-  var userEmail = document.getElementById("customer[email]").value;
-  var event_info = { "Email": userEmail };
-  var event_login = "Site";
-
-  createCleverTapEvent( event, event_info );
-  createCleverTapLoginEvent(event_login, event_info);
-});
-
-/* clevertap code for login customer ends here */
-
-/* clevertap code for customer registeration starts here */
-
-$("#register-customer").submit(function(){
-  var firstName = document.getElementById("customer[first_name]").value;
-  var lastName = document.getElementById("customer[last_name]").value;
-  var userEmail = document.getElementById("customer[email]").value;
-  var event_login = "Site";
-  var event = 'Sign Up';
-  var event_info = { "Email": userEmail, "First Name": firstName, "Last Name": lastName };
-
-  createCleverTapLoginEvent(event_login, event_info);
-  createCleverTapEvent( event, event_info );
-});
-
-/* clevertap code for customer registeration ends here */
-
-/* clevertap code for clicking razor pay starts here */
-$(".razorpay-checkout").click(function () {
-  var mini_Cart_data = document.querySelector("#mini-cart-form");
-  var productsincart = mini_Cart_data.dataset.cart_items;
-  var event = 'razor/magic Button Clicked';
-  var event_info = { "cart products": productsincart, "Amount": cart_total_price };
-
-  createCleverTapEvent( event, event_info );
-});
-
-/* clevertap code for clicking razor pay ends here */
+      const input = document.querySelector('input[autocomplete="one-time-code"]');
+      if (!input) return;
+      const ac = new AbortController();
+      const form = input.closest('form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          ac.abort();
+        });
+      }
+      // alert('Hii 1 otp');
+      navigator.credentials.get({
+        otp: { transport:['sms'] },
+        signal: ac.signal
+      }).then((otp) => {
+        alert('otp');
+        alert(otp);
+        input.value = otp.code;
+        
+        // if (form) form.submit();
+      }).catch((err) => {
+        console.error(err);
+      });
+    });
+  }
+  

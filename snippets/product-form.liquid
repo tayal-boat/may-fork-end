@@ -237,7 +237,19 @@
           </div>
         {%- endif -%}
       </div>
+	{% comment %}
+      <div class="product-meta__label-list label-list" data-product-label-list>
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          {%- if settings.discount_mode == 'percentage' -%}
+            {%- assign savings = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100.0 | divided_by: product.selected_or_first_available_variant.compare_at_price | round | append: '%' -%}
+          {%- else -%}
+            {%- capture savings -%}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money }}{%- endcapture -%}
+          {%- endif -%}
 
+          <span class="label label--highlight">{{ 'collection.product.discount_html' | t: savings: savings }}</span>
+        {%- endif -%}
+      </div>
+	{% endcomment %}
         {% if product.compare_at_price > discounted_price %}     
         <p class="custom-saved-price" style="margin: 0.25rem 0 0;font-weight: 600;font-size: 14px;letter-spacing: -0.045em;color: #00C68C;"> You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} ({{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
          {% endif %}
@@ -317,7 +329,19 @@
           </div>
         {%- endif -%}
       </div>
+{% comment %}
+      <div class="product-meta__label-list label-list" data-product-label-list>
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          {%- if settings.discount_mode == 'percentage' -%}
+            {%- assign savings = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100.0 | divided_by: product.selected_or_first_available_variant.compare_at_price | round | append: '%' -%}
+          {%- else -%}
+            {%- capture savings -%}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money }}{%- endcapture -%}
+          {%- endif -%}
 
+          <span class="label label--highlight">{{ 'collection.product.discount_html' | t: savings: savings }}</span>
+        {%- endif -%}
+      </div>
+{% endcomment %}
 
 
         <div class="d-flex  mt-2 align-items-baseline justify-content-between">
@@ -565,7 +589,7 @@
               {%- endif -%}
 
                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%} 
-                {% unless product.tags contains settings.products_offering_freebie or product.tags contains 'prebooking' %} 
+                {% unless product.tags contains settings.products_offering_freebie %} 
                  <button type="button" onclick="onBuyNowClick(this)" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled  style="display:none !important;" {% endunless %}>
                  {{ settings.buynow-titile }}
                  <div style="display:none"><div class="cir-loader">Loading..</div></div>

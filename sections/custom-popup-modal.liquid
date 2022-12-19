@@ -1,16 +1,15 @@
 <style>
-  #custom-saleModal {
+  #saleModal {
     z-index: 9999;
     background: #0009;
     padding: 0 !important;
-    transform: translateY(0%);
   }
-  #custom-saleModal .modal-dialog,
-  #custom-saleModals-1 .modal-dialog,
-  #custom-saleModals-2 .modal-dialog {
+  #saleModal .modal-dialog,
+  #saleModals-1 .modal-dialog,
+  #saleModals-2 .modal-dialog {
     top: 20%;
   }
-  #custom-saleModal .close {
+  #saleModal .close {
     position: absolute;
     top: 0;
     right: 0;
@@ -24,57 +23,60 @@
     text-align: center;
     font-size: 30px !important;
   }
-  #custom-saleModal .close:focus {
+  #saleModal .close:focus {
     border: 0;
     outline: none;
   }
-  #custom-saleModal input#sale_email::placeholder {
+  input#sale_email::placeholder {
     color: grey !important;
   }
-  #custom-saleModal .error-msg-sale,
-  #custom-saleModal .thankyou-msg-sale,
-  #custom-saleModal .aluser-msg-sale {
+  .error-msg-sale,
+  .thankyou-msg-sale,
+  .aluser-msg-sale {
     text-align: center;
     margin: 0;
     font-size: 12px;
     opacity: .8;
   }
-  #custom-saleModal .sale-btn:focus {
+  .sale-btn:focus {
     outline: none;
   }
-  #custom-saleModal img {
+  #saleModal img {
     display: block;
   }
-  #custom-saleModal .modal-content {
+  #saleModal .modal-content {
     border: 0;
   }
-  #custom-saleModal .modal-form {
+  .modal-form {
     background: {{ section.settings.popup_backgroung }} !important;
   }
-  #custom-saleModal input {
+  #saleModal input {
     background: transparent;
     color: #ccc;
     margin-right: 4px;
     padding: 0 12px;
     border: 0;
   }
-  #custom-saleModal input::-webkit-input-placeholder {
+  #saleModal input::-webkit-input-placeholder {
     color: #ccc;
   }
-  #custom-saleModal .sale-btn:hover {
+  #saleModal .sale-btn:hover {
     background: #EB1C24 !important;
+  }
+  .modal {
+    transform: translateY(0%);
   }
 
   {{ section.settings.popup_id }}
   @media screen and (max-width: 600px) {
-    #custom-saleModal .modal-dialog,
-    #custom-saleModals-1 .modal-dialog,
-    #custom-saleModals-2 .modal-dialog {
+    #saleModal .modal-dialog,
+    #saleModals-1 .modal-dialog,
+    #saleModals-2 .modal-dialog {
       top: 25%;
     }
   }
 </style>
-<div id="custom-saleModal" class="modal fade" role="dialog">
+<div id="saleModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body p-0">
@@ -114,14 +116,14 @@
 <script>
   $(document).ready(function() {
   var camp = "{{ request.path | split: '/' | last }}"
-    {% if section.settings.landing_based %}
+    {% if section.settings.landing_based  %}
       if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
-        $(".custom_Popup #custom-saleModal").modal("show");
+        $(".custom_Popup #saleModal").modal("show");
         sessionStorage.setItem("popUpPoped", "poped");
       }
     {% else %}
       $("{{ section.settings.popup_id }}").click(function(e) {
-        $(".custom_Popup #custom-saleModal").modal("show");
+        $(".custom_Popup #saleModal").modal("show");
       });{% endif %}$(".custom_Popup .sale-btn").click(function() {
       var e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
@@ -135,7 +137,7 @@
           }), clevertap.event.push("Notify Me   {{ section.settings.clevertap_id }}", {
             Email: e,
             Source: camp
-          }), $(".custom_Popup #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+          }), $(".custom_Popup #saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
         : $(".custom_Popup .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
       setTimeout(function() {
         $(".custom_Popup .error-msg-sale, .custom_Popup .thankyou-msg-sale, .custom_Popup .aluser-msg-sale").remove();
@@ -171,7 +173,7 @@
         "type": "color",
         "id": "popup_backgroung",
         "label": "Popup Background",
-        "default": "#fff"
+        "default": "#000000"
       }, {
         "type": "html",
         "id": "popup_text",
