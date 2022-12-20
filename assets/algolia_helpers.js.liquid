@@ -456,4 +456,33 @@
 
   }, {});
 
+
+  /* Code for copying coupon code */
+
+  $('.algolia-autocomplete').on('click', '.algolia-no-result-festive .coupon-code .coupon_code_wrapper', function(){
+
+    const current_date = new Date();
+    let coupon_code = $('.algolia-autocomplete .coupon_code').html();
+
+    // Removing cookie value if alreadt exists
+
+    current_date.setTime(current_date.getTime());
+    const current_time = current_date.toUTCString();
+    document.cookie = "discount_code='';expires="+current_time;
+    
+    // Seeting cookie for 24 hrs
+    let next_day = current_date.setTime(current_date.getTime() + (1*24*60*60*1000) );
+    document.cookie = "discount_code="+coupon_code+";expires="+next_day;
+    $('.dis_code_copy_msg').remove();
+
+    let copyText = document.querySelector(".coupon_code");
+    copyToClipboard(copyText);
+
+    $('<p class="dis_code_copy_msg">Copied! Discount will be applied on checkout.</p>').insertAfter('.algolia-coupon-container > :last-child')
+   setTimeout(function(){
+      $(".dis_code_copy_msg").css("display" , "none")
+    }, 2000);
+  });
+
+
 })(window.algoliaShopify);

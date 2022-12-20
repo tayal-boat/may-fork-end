@@ -257,6 +257,8 @@ for (let i = 0; i < sliderSelector.length; i++) {
     responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
     autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
     autoplayTimeout: JSON.parse(sliderSelector[i].getAttribute('data-autoplay-timeout')),
+    autoplayHoverPause:true,
+    stopOnHover: true,
     items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
     slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
     nav: true,
@@ -272,6 +274,8 @@ for (let i = 0; i < sliderSelector.length; i++) {
         }
     },onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar
   }).on("dragged.owl.carousel", function(event) {
+    $(slider_section_id).trigger('stop.owl.autoplay');
+    $(slider_section_id).trigger('play.owl.autoplay');
     if(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')) > 1){
       slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
     } 
@@ -353,6 +357,7 @@ explore_now_slider_img.forEach((slide, i) => {
   $("button.press-list__logo-item.tap-area").hover(function() {
     $(this).trigger("click")
   });
+  labelsPriority()
 }
 
 function labelsPriority() {
@@ -405,6 +410,8 @@ function labelsPriority() {
       } 
   })
 }
+window.addEventListener('load', labelsPriority)
+
 window.addEventListener('load', labelsPriority)
 
 // Creating cleverTap push event
