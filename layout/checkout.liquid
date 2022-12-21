@@ -1282,7 +1282,10 @@
       }
 
       /* Couponcode styling */
-      .order-summary__section form.edit_checkout .fieldset .field:first-child{display: none;}
+      {% comment %} .order-summary__section form.edit_checkout .fieldset .field:first-child{display: none;} {% endcomment %}
+      .order-summary__section.order-summary__section--discount {
+        display: block !important;
+    } 
       .gifting-sec1 ~ label {display: none !important;}
       .couponcode-heading{font-size: 18px;font-weight: 600;}
       .couponcode_container, .gift_card_container{display: block;position: relative;padding: 15px 0 10px 0;}
@@ -2289,7 +2292,158 @@
     </script>
     <!-- Single Checkout Page Script Begins -->
     <!-- FarziPromotions Begins -->
-    <script src="https://boatfc-media.farziengineer.co/pincode/checkout1.js"></script>
+    {% comment %} <script src="https://boatfc-media.farziengineer.co/pincode/checkout1.js"></script> {% endcomment %}
+
+    <script>
+      $(document).on(`page:load page:change`, function () {
+        $(".order-summary__section--discount .fieldset").append(`<div class="field">
+    <div class="commander-wrapper">
+        <input placeholder="Discount Code" class="commander-input" data-discount-field="true" autocomplete="off" aria-required="true" size="30" type="text" name="checkout[reduction_code]">
+        </div>
+        <button name="button" type="submit" class="commander-btn" aria-busy="false">
+            <span class="btn__content visually-hidden-on-mobile" aria-hidden="true">
+                Apply
+            </span>
+            <span class="visually-hidden">
+                Apply Discount Code
+            </span>
+            <svg class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" aria-hidden="true" focusable="false"> <use xlink:href="#arrow"></use> </svg>
+            <svg class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" aria-hidden="true" focusable="false"> <use xlink:href="#spinner-button"></use> </svg>
+    </button>      </div>
+    </div>`);
+        $(".commander-input")[0].style.display = "none";
+        $(".commander-btn")[0].style.display = "none";
+        var token = "";
+        $.get("/cart.js").then((response) => {
+            token = $.parseJSON(response).token;
+        });
+        $(".order-summary__section--discount .field__input-btn").on("click touchstart", function (event) {
+            event.preventDefault();
+            var applied_code = $("#checkout_reduction_code")[0].value;
+            console.log("hii 1");
+            setTimeout(function () {
+                if ($("#error-for-reduction_code").length == 0) {
+                    console.log("hii 2");
+                    sessionStorage.setItem("discount_code", applied_code);
+                    sessionStorage.setItem("coupon-remove", false);
+                    sessionStorage.setItem("coupon-code", applied_code);
+                }
+            }, 5000);
+            var basecode = $("#checkout_reduction_code")[0].value;
+            $.ajax({ type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" }, data: `{"code":"${basecode}", "cartId":"${token}"}` })
+                .then((response) => {
+                    if (response == "true" || response == "True") {
+                        console.log("response 1");
+                        console.log(response);
+                        sessionStorage.setItem('discount_res', response);
+                        $(".commander-input")[0].value = basecode;
+                        $(".commander-btn").click();
+                        setTimeout(function () {
+                            var couponlog_postrequest = { url: "https://boat-api.farziengineer.co/couponlog", method: "POST", timeout: 0, headers: { "Content-Type": "application/json" } };
+                            var v = setInterval(function () {
+                                if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+                                    couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".edit_checkout .fieldset:last p").text() });
+                                    $.ajax(couponlog_postrequest).done(function (response) {});
+                                    clearInterval(v);
+                                } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+                                    couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text() });
+                                    $.ajax(couponlog_postrequest).done(function (response) {});
+                                    clearInterval(v);
+                                } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+                                    couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text() });
+                                    $.ajax(couponlog_postrequest).done(function (response) {});
+                                    clearInterval(v);
+                                }
+                            }, 1000);
+                        }, 3000);
+                    }
+                })
+                .fail((err) => {
+                  console.log('error 1');
+                  console.log(err);
+                  sessionStorage.setItem('discount_res', err.responseText);
+                    $(".commander-input")[0].value = basecode;
+                    $(".commander-btn").click();
+                    setTimeout(function () {
+                        var couponlog_postrequest = { url: "https://boat-api.farziengineer.co/couponlog", method: "POST", timeout: 0, headers: { "Content-Type": "application/json" } };
+                        var v = setInterval(function () {
+                            if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+                                couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".edit_checkout .fieldset:last p").text() });
+                                $.ajax(couponlog_postrequest).done(function (response) {});
+                                clearInterval(v);
+                            } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+                                couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text() });
+                                $.ajax(couponlog_postrequest).done(function (response) {});
+                                clearInterval(v);
+                            } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+                                couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text() });
+                                $.ajax(couponlog_postrequest).done(function (response) {});
+                                clearInterval(v);
+                            }
+                        }, 1000);
+                    }, 3000);
+                });
+        });
+        $(".edit_checkout .field__input-btn.btn")
+            .eq(0)
+            .on("click touchstart", function (event) {
+                event.preventDefault();
+                var basecode = $("#checkout_reduction_code_mobile")[0].value;
+                $.ajax({ type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" }, data: `{"code":"${basecode}", "cartId":"${token}"}` })
+                    .then((response) => {
+                        if (response == "true" || response == "True") {
+                          console.log("response 2");
+                          console.log(response);
+                            $(".commander-input")[0].value = basecode;
+                            $(".commander-btn").click();
+                            setTimeout(function () {
+                                var couponlog_postrequest = { url: "https://boat-api.farziengineer.co/couponlog", method: "POST", timeout: 0, headers: { "Content-Type": "application/json" } };
+                                var v = setInterval(function () {
+                                    if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+                                        couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".edit_checkout .fieldset:last p").text() });
+                                        $.ajax(couponlog_postrequest).done(function (response) {});
+                                        clearInterval(v);
+                                    } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+                                        couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text() });
+                                        $.ajax(couponlog_postrequest).done(function (response) {});
+                                        clearInterval(v);
+                                    } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+                                        couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text() });
+                                        $.ajax(couponlog_postrequest).done(function (response) {});
+                                        clearInterval(v);
+                                    }
+                                }, 1000);
+                            }, 3000);
+                        }
+                    })
+                    .fail((err) => {
+                      console.log('error 2');
+                      console.log(err);
+                        $(".commander-input")[0].value = basecode;
+                        $(".commander-btn").click();
+                        setTimeout(function () {
+                            var couponlog_postrequest = { url: "https://boat-api.farziengineer.co/couponlog", method: "POST", timeout: 0, headers: { "Content-Type": "application/json" } };
+                            var v = setInterval(function () {
+                                if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+                                    couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".edit_checkout .fieldset:last p").text() });
+                                    $.ajax(couponlog_postrequest).done(function (response) {});
+                                    clearInterval(v);
+                                } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+                                    couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text() });
+                                    $.ajax(couponlog_postrequest).done(function (response) {});
+                                    clearInterval(v);
+                                } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+                                    couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text() });
+                                    $.ajax(couponlog_postrequest).done(function (response) {});
+                                    clearInterval(v);
+                                }
+                            }, 1000);
+                        }, 3000);
+                    });
+            });
+    });
+    
+    </script>
     <!-- FarziPromotions Ends -->
     <script type="text/javascript">
       createEditableSelect(document.forms[0].country);
@@ -2735,12 +2889,16 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       $('body.checkout_body').on('click', '.couponcode_main_container .couponcode-button', function(){
         $('.checkout_box_container').attr('data-active', 'false');
         $(this).parents('.couponcode_main_container').find('.couponcode_container').attr('data-active', true);
-        /* $(this).parents('.couponcode_main_container').find('input').attr('disabled', 'disabled');
-        $(this).parents('.couponcode_main_container').find('.checkout_submit_btn').css('color', '#db1717'); */
-        apply_custom_code('.couponcode_input');
+        var discountCode = $('.couponcode_input').val();
+        console.log(discountCode);
+      $('[name="checkout[reduction_code]"]').val(discountCode);
+      $('[name="checkout[reduction_code]"]').closest('form').submit();
+      setTimeout(function(){
+      $('.couponcode_main_container').append('<div class="tags-list">'+ $('.tags-list').html() + '</div>');
+      },1000);
       });
 
-      $('body.checkout_body').on('click', '.gift_card_main_container .gift_card-button', function(){
+      {% comment %} $('body.checkout_body').on('click', '.gift_card_main_container .gift_card-button', function(){
         $('.checkout_box_container').attr('data-active', 'false');
         $(this).parent('.gift_card_main_container').find('.checkout_box_container').attr('data-active', true);
         /* $(this).parents('.gift_card_main_container').find('input').attr('disabled', 'disabled');
@@ -2748,28 +2906,37 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
         apply_custom_code('.gift_card_input');
       });
 
+     
+
       function apply_custom_code(section_class){
+
         sessionStorage.removeItem("checkout_error_msg");
         var section_class_item = $(section_class).val();
         if(section_class_item != ""){
           $("#checkout_reduction_code").val(section_class_item);
           $("#checkout_submit").removeClass('btn--disabled');
           $("#checkout_submit").removeAttr('disabled');
-          
-          var myInterval = setInterval(function(){ 
-            if( $('#error-for-reduction_code' ).text() != ''){
-              var error_msg = $('#error-for-reduction_code' ).text();
-              sessionStorage.setItem("checkout_error_msg", error_msg);
-              $('.checkout_box_container[data-active="true"]').prepend('<p class="code_err_msg">'+ sessionStorage.getItem("checkout_error_msg") +'</p>');
-              clearInterval(myInterval);
-            }
-          }, 1000);
+
           $("#checkout_submit").click();
+          setTimeout(function(){
+              var error_msg = $('#error-for-reduction_code' ).text();
+              console.log(error_msg);
+              sessionStorage.setItem("checkout_error_msg", error_msg);             
+                $('.checkout_box_container[data-active="true"]').prepend('<p class="code_err_msg">'+ sessionStorage.getItem("checkout_error_msg") +'</p>');              
+           },5000)
+
         }else{
           
         }
       }
+ {% endcomment %}
 
+ setTimeout(function(){     
+  if( $('.tags-list').length > 0){
+    $('.couponcode_main_container').append('<div class="tags-list">'+ $('.tags-list').html() + '</div>');
+  }
+  },1000);
+  
     </script>
   </body>
 </html>
