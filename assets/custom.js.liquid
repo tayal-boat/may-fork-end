@@ -224,6 +224,7 @@ $(window).resize(function(){
 
 let unitsLeft = '';
 let usual_price = '';
+
 Shopify.variantChange = function(e){
   if(e.available == false){
     $('.custom-notify-btn').attr('data-variant-id', e.id);
@@ -233,23 +234,28 @@ Shopify.variantChange = function(e){
     $('.custom-notify-btn').hide();
     $('.product__info button#AddToCart.button--primary').css('display','block')
   }
- document.querySelector('.custom-product-of-the-day-price .current_price').innerHTML = '₹'+ e.price / 100;
+  let custom_price = e.price / 100;
+        custom_price = custom_price - 1000;
+ document.querySelector('.custom-product-of-the-day-price .current_price').innerHTML = '₹'+ custom_price;
  let variantQtys = sessionStorage.getItem('variantQtys');
- variantQtys = JSON.parse(variantQtys);
- console.log(variantQtys);
- unitsLeft = document.querySelector('.p-units');
+//  variantQtys = JSON.parse(variantQtys);
+//  console.log(variantQtys);
+//  unitsLeft = document.querySelector('.p-units');
  usual_price = document.querySelector('.usual_price');
-   for (var key in variantQtys) {
-    if (variantQtys.hasOwnProperty(e.id)) {
-      let pod_units = variantQtys[e.id];
-      // if(unitsLeft){
-      //  unitsLeft.innerHTML = pod_units[0]['pod_units'];
-      // }
       if(usual_price){
-        usual_price.innerHTML = '₹'+ pod_units[0]['pod_revertprice'];
+        usual_price.innerHTML = '₹'+ e.price / 100;
       }
-     }
-   }
+  //  for (var key in variantQtys) {
+  //   if (variantQtys.hasOwnProperty(e.id)) {
+  //     let pod_units = variantQtys[e.id];
+  //     // if(unitsLeft){
+  //     //  unitsLeft.innerHTML = pod_units[0]['pod_units'];
+  //     // }
+  //     if(usual_price){
+  //       usual_price.innerHTML = '₹'+ pod_units[0]['pod_revertprice'];
+  //     }
+  //    }
+  //  }
 }
 
 

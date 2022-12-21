@@ -377,7 +377,7 @@
   {% capture variantQtys %}
     {
     {% for variant in product.variants %}
-      "{{ variant.id }}":[{"pod_units":"{{ variant.metafields.custom.pod_units | strip }}","pod_revertprice":"{{ variant.metafields.custom.pod_revertprice | strip_newlines }}"}]
+      "{{ variant.id }}":[{"pod_units":"{{ variant.metafields.custom.pod_units.value | strip }}","pod_revertprice":"{{ variant.metafields.custom.pod_revertprice | strip_newlines }}"}]
       {% unless forloop.last %}
         ,
       {% endunless %}
@@ -388,6 +388,7 @@
   <script>
     sessionStorage.setItem('variantQtys', {{variantQtys | json}});
     console.log({{variantQtys}});
+    console.log({{ product.metafields.custom.pod_units }});
   </script>
 {% endif %}
 {% schema %}
@@ -684,6 +685,10 @@
         "default": "Featured product"
       },
       {
+        "type": "number",
+        "id": "pod_units",
+        "label": "Pod units"
+      }, {
         "type": "checkbox",
         "id": "show_vendor",
         "label": "Show vendor",
