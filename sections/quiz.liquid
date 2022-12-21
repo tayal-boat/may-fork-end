@@ -11,7 +11,7 @@
     justify-content: space-around;
     margin: 10px auto;
     padding: 5px;
-    width: 90vw;
+    width: 90vw;    flex-wrap: wrap;
 }
 .option:hover{
 	background-color: lightskyblue;
@@ -19,7 +19,12 @@
 
 .previous, .next{	padding: 5px;}
 .previous, .next{color: white;background-color: #BF3325;}
-
+button.option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;width:50%;
+}
+@media(min-width:1024px){ button.option {width:25%;}}
         </style>
 
     {% comment %} <div id="custom-saleModal" class="modal fade" role="dialog">
@@ -53,47 +58,82 @@
 </div> {% endcomment %}
 <script>
 // Questions will be asked
-const Questions = [
+const Questions = [ 
     {
     id: 0,
-    q: "What is capital of India?",
-    a: [{ text: "gandhinagar", isCorrect: false },
-        { text: "Surat", isCorrect: false },
-        { text: "Delhi", isCorrect: false },
-        { text: "mumbai", isCorrect: false }
+    q: {{- section.settings.quiz_text | split: '1:' | first -}},
+    a: [
+        { text: `
+        {{- section.settings.quiz_text | split: '2:' | first | split: '1:' | last -}}
+        `},
+        { text: `
+        {{- section.settings.quiz_text | split: '3:' | first | split: '2:' | last -}}
+        ` },
+        { text: `
+        {{- section.settings.quiz_text | split: '4:' | first | split: '3:' | last -}}
+        ` },
+        { text: `
+        {{- section.settings.quiz_text | split: '4:' | last -}}
+        ` }
     ]
     },
 
     {
     id: 1,
-    q: "What is the capital of Thailand?",
-    a: [{ text: "Lampang", isCorrect: "a" },
-        { text: "phuket", isCorrect: "b" },
-        { text: "Ayutthaya", isCorrect: "c" },
-        { text: "Bangkok", isCorrect: "d" }
+    q: {{- section.settings.quiz_text1 | split: '1:' | first -}},
+    a: [
+        { text: `
+        {{- section.settings.quiz_text1 | split: '2:' | first | split: '1:' | last -}},
+        `, isCorrect: "a"},
+        { text: `
+        {{- section.settings.quiz_text1 | split: '3:' | first | split: '2:' | last -}}
+        `,  isCorrect: "b" },
+        { text: `
+        {{- section.settings.quiz_text1 | split: '4:' | first | split: '3:' | last -}}
+        `,  isCorrect: "c" },
+        { text: `
+        {{- section.settings.quiz_text1 | split: '4:' | last -}}
+        `,  isCorrect: "d" }
     ]
     },
 
     {
     id: 2,
-    q: "What is the capital of Gujarat",
-    a: [{ text: "surat", isCorrect: false },
-        { text: "vadodara", isCorrect: false },
-        { text: "gandhinagar", isCorrect: false },
-        { text: "rajkot", isCorrect: false }
+    q: {{- section.settings.quiz_text2 | split: '1:' | first -}},
+    a: [
+        { text: `
+        {{- section.settings.quiz_text2 | split: '2:' | first | split: '1:' | last -}}
+        `},
+        { text: `
+        {{- section.settings.quiz_text2 | split: '3:' | first | split: '2:' | last -}}
+        ` },
+        { text: `
+        {{- section.settings.quiz_text2 | split: '4:' | first | split: '3:' | last -}}
+        ` },
+        { text: `
+        {{- section.settings.quiz_text2 | split: '4:' | last -}}
+        ` }
     ]
     },
 
     {
     id: 3,
-    q: "What is the capital of maharastra",
-    a: [{ text: "pune", isCorrect: "e" },
-        { text: "nasik", isCorrect: "f" },
-        { text: "shridi", isCorrect: "g" },
-        { text: "goa", isCorrect: "h" }
+    q: {{- section.settings.quiz_text3 | split: '1:' | first -}},
+    a: [
+        { text: `
+        {{- section.settings.quiz_text3 | split: '2:' | first | split: '1:' | last -}}
+        `, isCorrect: "a"},
+        { text: `
+        {{- section.settings.quiz_text3 | split: '3:' | first | split: '2:' | last -}}
+        `, isCorrect: "b"},
+        { text: `
+        {{- section.settings.quiz_text3 | split: '4:' | first | split: '3:' | last -}}
+        `, isCorrect: "c"},
+        { text: `
+        {{- section.settings.quiz_text3 | split: '4:' | last -}}
+        `, isCorrect: "d"},
     ]
     }
-
 ]
 
 // Set start
@@ -122,10 +162,10 @@ const op4 = document.getElementById('op4');
 
 
 // Providing option text
-op1.innerText = Questions[id].a[0].text;
-op2.innerText = Questions[id].a[1].text;
-op3.innerText = Questions[id].a[2].text;
-op4.innerText = Questions[id].a[3].text;
+op1.innerHTML = Questions[id].a[0].text;
+op2.innerHTML = Questions[id].a[1].text;
+op3.innerHTML = Questions[id].a[2].text;
+op4.innerHTML = Questions[id].a[3].text;
 
 
 // Providing the true or false value to the options
@@ -175,7 +215,7 @@ for (let i = 0; i < next.length; i++) {
         if (id == 3){
          redirect = `${redirect}${value}`;
          console.log(redirect)
-
+if (redirect == aa){}
         }
         if (id < 3) {
             id+=1;
@@ -220,13 +260,23 @@ if( id == 0 ) {previous.classList.add("d-none")}
       }, 
        {
         "type": "html",
-        "id": "popup_text",
-        "label": "popup text"
-      }, 
+        "id": "quiz_text",
+        "label": "quiz options1"
+      },
       {
-        "type": "text",
-        "id": "clevertap_id",
-        "label": "clever tap event"
+        "type": "html",
+        "id": "quiz_text1",
+        "label": "quiz options2"
+      },
+      {
+        "type": "html",
+        "id": "quiz_text2",
+        "label": "quiz options3"
+      },
+      {
+        "type": "html",
+        "id": "quiz_text3",
+        "label": "quiz options4"
       }
     ],
     "presets": [
