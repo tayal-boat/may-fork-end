@@ -49,6 +49,7 @@ button.option {
 		</div>
 		<div class="navigation">
             <button class="previous d-none">previous</button>
+            <button class="submit d-none">submit</button>
 		</div>
 	</div>
     {% comment %} </div>
@@ -203,19 +204,26 @@ if (start) {
 iterate("0");
 }
 
+// submit button and method
+const submit = document.getElementsByClassName('submit')[0];
+
+
 // Next button and method
 let next = document.querySelectorAll('.option-container .option');
 let id = 0;
-var redirect;
+var redirect, redirect2, final, redirect_url;
 for (let i = 0; i < next.length; i++) {
     let self = next[i];
     self.addEventListener("click", () => {
         let value = self.value;
         if (id == 1){redirect = value}
+        if (id == 2){document.querySelector('#op4').style.display = "none";}
         if (id == 3){
-         redirect = `${redirect}${value}`;
-         console.log(redirect)
-if (redirect == aa){}
+         redirect2 = value;
+         final = `${redirect}${redirect2}`;
+         console.log(final)
+         submit.classList.remove("d-none");
+         document.querySelector('.option-container').style.pointerEvents = "none";
         }
         if (id < 3) {
             id+=1;
@@ -229,12 +237,26 @@ if (redirect == aa){}
 // previous button and method
 const previous = document.getElementsByClassName('previous')[0];
 previous.addEventListener("click", () => {
-if (id > 0) {
-    id--;
-    iterate(id);
-    console.log(id);
+  if (id > 0) {
+      id--;
+      iterate(id);
+      console.log(id);
+      document.querySelector('.option-container').style.pointerEvents = "auto";
+  }
+  if( id == 0 ) {previous.classList.add("d-none")}
+  if (id == 2){document.querySelector('#op4').style.display = "block";}
+})
+
+switch(final){
+case aa :
+redirect_url = "https://www.boat-lifestyle.com/";
+break;
+
 }
-if( id == 0 ) {previous.classList.add("d-none")}
+
+submit.addEventListener("click", () => {
+  console.log(redirect_url);
+//  document.location.href= redirect_url;
 })
 
 </script>
