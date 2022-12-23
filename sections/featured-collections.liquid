@@ -107,8 +107,6 @@
         --section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }};
       }
     }
-
-
     @media screen and (min-width: 1200px) {
       #shopify-section-{{ section.id }} {
         --section-products-per-row: {{ section.settings.products_per_row }};
@@ -116,6 +114,20 @@
       }
         .product-item-meta__color-count {margin-bottom: 5px;}
     }
+
+{% if section.settings.header_ui %}
+ #shopify-section-{{ section.id }} .tabs-nav__item-list {justify-content: center;}
+ #shopify-section-{{ section.id }} .tabs-nav--center .tabs-nav__scroller-inner {margin-left: auto;}
+ #shopify-section-{{ section.id }} p.view-all {display: none;}
+ #shopify-section-{{ section.id }} h3.heading {font-weight: 500;padding: 0 20px 20px;}
+@media(max-width: 768px){
+  #shopify-section-{{ section.id }} .tabs-nav__item-list {flex-wrap: wrap;justify-content: center!important;width: 88vw;gap: 20px;}
+  #shopify-section-{{ section.id }}  header.section__header {padding: 5vw 0;background: #e3e3e3;border-radius: 8px;}
+  #shopify-section-{{ section.id }}  button.tabs-nav__item.heading.heading--small {border: 1px solid;padding: 2px 20px;}
+  #shopify-section-{{ section.id }} button.tabs-nav__item.heading.heading--small {margin-right: 0;}
+}
+{% endif %}
+    
 </style>
 
 <section class="section section--flush">
@@ -339,6 +351,12 @@
       "id": "padding_desktop",
       "label": "margin-desktop",
       "default": "input"
+    },
+    {
+      "type": "checkbox",
+      "id": "header_ui",
+      "label": "festive header_ui",
+      "default": false
     },
     {
       "type": "url",
