@@ -345,11 +345,13 @@
 
     <!-- google dynamic remarketing tag for theme.liquid -->
     {%- render 'google-adwords-remarketing' -%}
-
-    {% if template contains 'product' %}
-      {% render 'judgeme_core' %}
-    {% endif %}
     
+    {% if template contains 'product' %}
+      {%- render 'judgeme_core' -%}
+    {% endif %}
+    {% unless template contains 'product' or template contains 'customers' %}
+      {%- render 'bottom-navbar-mobile' -%}
+    {% endunless %}
     <!-- Magic Checkout Code Starts -->
     {%- comment -%} {% render 'magicCheckoutSnippet' %} {%- endcomment -%}
     <!-- Magic Checkout Code Ends -->
@@ -381,5 +383,6 @@
     
     {%- render 'auto_atoc_items' -%}
 
+    {% include 'snowflakes' %}
   </body>
 </html>
