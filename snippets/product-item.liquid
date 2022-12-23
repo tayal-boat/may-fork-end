@@ -12,18 +12,15 @@
 
 {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
-{%- if settings.enable_flash_sale and product.tags contains 'flash-sale' -%}
-  {% assign cheapest_variant_discount_price = cheapest_variant.price
-   | times: settings.flash_discount
-   | divided_by: 100
-   %}
+{%- if settings.enable_fixed_discount and product.tags contains settings.tag_selector -%}
+  {% assign cheapest_variant_discount_price = settings.fixed_discount | times: 100 %}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price
    | minus: cheapest_variant_discount_price
    | divided_by: 100
    | round
    | times: 100
    %}
-  {% assign discount_price = product.price | times: settings.flash_discount | divided_by: 100 %}
+  {% assign discount_price = settings.fixed_discount | times: 100 %}
   {% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
 {%- else -%}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price %}
@@ -158,7 +155,7 @@
       {%- endif -%}
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
-          <div class="price-list price-list--centered{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
+          <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
