@@ -49,20 +49,31 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div class="modal-body-content">
           <div class="panel">
-            <div class="question-container" id="question">Question goes here.</div>
-            <div class="option-container">
-              <button class="option" onclick="" id="op1">option1</button>
+          {% for block in section.blocks %}
+            {% assign id =  forloop.index %}
+          <div class="screen{{ id }} {% if id != 1 %}d-none{% endif %}" >
+              <div class="question-container" id="question">{{ block.settings.quiz_text }}</div>
+              <div class="option-container">
+                <button class="option" {% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option1 | split: ',' | first }}{% else %}a{% endif %}" {% endif %} id="op1">{{- block.settings.quiz_option1 | split: ',' | last -}}</button>
 
-              <button class="option" id="op2">option2</button>
+                <button class="option" {% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option2 | split: ',' | first }}{% else %}b{% endif %}" {% endif %} id="op2">{{- block.settings.quiz_option2 | split: ',' | last -}}</button>
 
-              <button class="option" id="op3">option3</button>
+                <button class="option" {% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option3 | split: ',' | first }}{% else %}c{% endif %}" {% endif %} id="op3">{{- block.settings.quiz_option3 | split: ',' | last -}}</button>
 
-              <button class="option" id="op4">option4</button>
+                <button class="option" {% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option4 | split: ',' | first }}{% else %}d{% endif %}" {% endif %} id="op4">{{- block.settings.quiz_option4 | split: ',' | last -}}</button>
+              </div>
+              <div class="navigation pt-3 pl-4 ">
+                 <button class="previous {% if id == 1 %}d-none{% endif %}" style="background: #b102027d;color:white;">< Previous Question</button>
+                {% if id == 4 %}
+                 <button class="submit d-none text-center">Submit</button>
+                {% endif %}
+              </div>
             </div>
-            <div class="navigation pt-3 pl-4 ">
-              <button class="previous d-none" style="background: #b102027d;color:white;">< Previous Question</button>
-              <button class="submit d-none text-center">Submit</button>
-            </div>
+          {% endfor %}   
           </div>
         </div>
       </div>
@@ -70,13 +81,13 @@
   </div>
 </div>
 <script>
+  // for quiz to popup
   $(document).ready(function() {
     let camp = "{{ request.path | split: '/' | last }}";
       {% if section.settings.landing_based %}
-        if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
+        if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("quizpopUp") === null) {
           $(".Popup_quiz #custom-saleModal").modal("show");
-          console.log("opend");
-           {% comment %} sessionStorage.setItem("popUpPoped", "poped"); {% endcomment %}
+           {% comment %} sessionStorage.setItem("quizpopUp", "poped"); {% endcomment %}
         }
       {% else %}
         $("{{ section.settings.popup_id }}").click(function(e) {
@@ -84,188 +95,91 @@
         });
       {% endif %}
   });
-  // Questions will be asked
-const Questions = [
-    {
-      id: 0,
-      q: {{ section.settings.quiz_text | split: '1:' | first }},
-      a: [
-            {
-              text: `{{- section.settings.quiz_text | split: '2:' | first | split: '1:' | last -}}`
-            }, 
-            {
-              text: `{{- section.settings.quiz_text | split: '3:' | first | split: '2:' | last -}}`
-            }, 
-            {
-              text: `{{- section.settings.quiz_text | split: '4:' | first | split: '3:' | last -}}`
-            },
-            {
-              text: `{{- section.settings.quiz_text | split: '4:' | last -}}`
-            }
-         ]
-    },
-    {
-      id: 1,
-      q: {{ section.settings.quiz_text1 | split: '1:' | first }},
-      a: [
-            {
-              text: `{{- section.settings.quiz_text1 | split: '2:' | first | split: '1:' | last -}}`,
-              isCorrect: "a"
-            }, 
-            {
-              text: `{{- section.settings.quiz_text1 | split: '3:' | first | split: '2:' | last -}}`,
-              isCorrect: "b"
-            }, 
-            {
-              text: `{{- section.settings.quiz_text1 | split: '4:' | first | split: '3:' | last -}}`,
-              isCorrect: "c"
-            },
-            {
-              text: `{{- section.settings.quiz_text1 | split: '4:' | last -}}`,
-              isCorrect: "d"
-            }
-        ]
-    },
-    {
-      id: 2,
-      q: {{ section.settings.quiz_text2 | split: '1:' | first }},
-      a: [
-            {
-              text: `{{- section.settings.quiz_text2 | split: '2:' | first | split: '1:' | last -}}`
-            }, 
-            {
-              text: `{{- section.settings.quiz_text2 | split: '3:' | first | split: '2:' | last -}}`
-            }, 
-            {
-              text: `{{- section.settings.quiz_text2 | split: '4:' | first | split: '3:' | last -}}`
-            },
-            {
-              text: `{{- section.settings.quiz_text2 | split: '4:' | last -}}`
-            }
-        ]
-    },
-    {
-      id: 1,
-      q: {{ section.settings.quiz_text3 | split: '1:' | first }},
-      a: [
-            {
-              text: `{{- section.settings.quiz_text3 | split: '2:' | first | split: '1:' | last -}}`,
-              isCorrect: "a"
-            }, 
-            {
-              text: `{{- section.settings.quiz_text3 | split: '3:' | first | split: '2:' | last -}}`,
-              isCorrect: "b"
-            }, 
-            {
-              text: `{{- section.settings.quiz_text3 | split: '4:' | first | split: '3:' | last -}}`,
-              isCorrect: "c"
-            },
-            {
-              text: `{{- section.settings.quiz_text3 | split: '4:' | last -}}`,
-              isCorrect: "d"
-            }
-        ]
-    },
-  ]
 
-  // Set start
-  let start = true;
+ 
+  let next = document.querySelectorAll('.option-container');
+  let previous = document.querySelectorAll('.previous');
+  // Next button and method
+  let redirect,redirect2;
+  let final = '';
+  for (let i = 0; i < next.length; i++) {
+    let self = next[i].querySelectorAll('.option')
+    for (let j = 0; j < self.length; j++) {
+      let selft = self[j];
+      selft.addEventListener("click", () => {
+        // for screen change 
+        if (i < 3) {
+         console.log(i); 
+         document.querySelector(`.screen${i+1}`).classList.add("d-none");
+         document.querySelector(`.screen${i+2}`).classList.remove("d-none");  
+        }
+        // sceens for taking decision
+        let value = selft.value;
+        if (i == 1) {redirect = value; console.log(redirect); }
+        if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`;
+          {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
+          console.log(final);  
+          submit.classList.remove("d-none");document.querySelector('.option-container').style.pointerEvents = "none";
+        }
+     })
+    }
 
-  // Iterate
-  function iterate(id) {
-
-
-    // Getting the question
-    const question = document.getElementById("question");
-
-
-    // Setting the question text
-    question.innerText = Questions[id].q;
-
-    // Getting the options
-    const op1 = document.getElementById('op1');
-    const op2 = document.getElementById('op2');
-    const op3 = document.getElementById('op3');
-    const op4 = document.getElementById('op4');
-
-
-    // Providing option text
-    op1.innerHTML = Questions[id].a[0].text;
-    op2.innerHTML = Questions[id].a[1].text;
-    op3.innerHTML = Questions[id].a[2].text;
-    op4.innerHTML = Questions[id].a[3].text;
-
-
-    // Providing the true or false value to the options
-    op1.value = Questions[id].a[0].isCorrect;
-    op2.value = Questions[id].a[1].isCorrect;
-    op3.value = Questions[id].a[2].isCorrect;
-    op4.value = Questions[id].a[3].isCorrect;
-
-    let selected = "";
-
-    // Show selection for op1
-    op1.addEventListener("click", () => { selected = op1.value; })
-
-    // Show selection for op2
-    op2.addEventListener("click", () => { selected = op2.value; })
-
-    // Show selection for op3
-    op3.addEventListener("click", () => { selected = op3.value; })
-
-    // Show selection for op4
-    op4.addEventListener("click", () => { selected = op4.value; })
-
+    // previous button and method
+    let prev = previous[i];
+    prev.addEventListener("click", () => {
+      if (i > 0) {
+        document.querySelector(`.screen${i+1}`).classList.add("d-none");
+        document.querySelector(`.screen${i}`).classList.remove("d-none");
+        document.querySelector('.option-container').style.pointerEvents = "auto";
+      }
+      if (i == 2)submit.classList.add("d-none");
+    })
 
   }
-
-  if (start) { iterate("0") }
 
   // submit button and method
   const submit = document.getElementsByClassName('submit')[0];
-
-  // Next button and method
-  let next = document.querySelectorAll('.option-container .option');
-  let id = 0;
-  let redirect,redirect2,final;
-  let redirect_url = '';
-  for (let i = 0; i < next.length; i++) {
-    let self = next[i];
-    self.addEventListener("click", () => {
-      let value = self.value;
-      if (id == 1) {redirect = value}
-      if (id == 2) {document.querySelector('#op4').style.display = "none";}
-      if (id == 3) {redirect2 = value; final = `${redirect}${redirect2}`;
-        console.log(final) 
-        switch (final) { 
-          {{- section.settings.quiz_url -}} 
-          }
-        submit.classList.remove("d-none");document.querySelector('.option-container').style.pointerEvents = "none";
-      }
-      if (id < 3) {id += 1;console.log(id);iterate(id);}
-      if (id > 0) {previous.classList.remove("d-none")}
-   })
-  }
-
-  // previous button and method
-  const previous = document.getElementsByClassName('previous')[0];
-   previous.addEventListener("click", () => {
-     if (id > 0) { id--; iterate(id);
-      console.log(id);
-      document.querySelector('.option-container').style.pointerEvents = "auto";
-     }
-     if (id == 0) { previous.classList.add("d-none") }
-     if (id == 2) {document.querySelector('#op4').style.display = "block"; submit.classList.add("d-none"); }
-   })
-
-  // submit button and method
-  submit.addEventListener("click", () => { console.log(redirect_url); document.location.href = redirect_url; })
+  submit.addEventListener("click", () => { document.location.href = final; })
 
 </script>
 {% schema %}
 {
   "name": "section Popup quiz",
   "class": "Popup_quiz",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "html",
+      "name": "quiz screen",
+      "settings": [
+          {
+            "type": "html",
+            "id": "quiz_text",
+            "label": "quiz question"
+          },
+          {
+            "type": "html",
+            "id": "quiz_option1",
+            "label": "quiz options1"
+          },
+          {
+            "type": "html",
+            "id": "quiz_option2",
+            "label": "quiz options2"
+          },
+          {
+            "type": "html",
+            "id": "quiz_option3",
+            "label": "quiz options3"
+          },
+          {
+            "type": "html",
+            "id": "quiz_option4",
+            "label": "quiz options4"
+          }
+      ]
+    }
+  ],
   "settings": [
     {
       "type": "checkbox",
@@ -283,24 +197,9 @@ const Questions = [
       "label": "Popup background"
     },
     {
-      "type": "html",
-      "id": "quiz_text",
-      "label": "quiz options1"
-    },
-    {
-      "type": "html",
-      "id": "quiz_text1",
-      "label": "quiz options2"
-    },
-    {
-      "type": "html",
-      "id": "quiz_text2",
-      "label": "quiz options3"
-    },
-    {
-      "type": "html",
-      "id": "quiz_text3",
-      "label": "quiz options4"
+      "type": "checkbox",
+      "id": "enable_comma",
+      "label": "add comma seprated url in option htmls or"
     },
     {
       "type": "html",
@@ -310,7 +209,13 @@ const Questions = [
   ],
   "presets": [
     {
-      "name": "section Popup quiz"
+      "name": "section Popup quiz",
+      "blocks": [
+        {
+          "type": "html"
+        }
+      ],
+      "settings": {}
     }
   ]
 }
