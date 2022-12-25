@@ -103,7 +103,7 @@
   let redirect,redirect2;
   let final = '';
   for (let i = 0; i < next.length; i++) {
-    let self = next[i].querySelectorAll('.option')
+    let self = next[i].querySelectorAll('.option');
     for (let j = 0; j < self.length; j++) {
       let selft = self[j];
       selft.addEventListener("click", () => {
@@ -119,7 +119,8 @@
         if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`;
           {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
           console.log(final);  
-          submit.classList.remove("d-none");document.querySelector('.option-container').style.pointerEvents = "none";
+          submit.classList.remove("d-none");
+          self.forEach(element => {element.style.pointerEvents = "none"; });
         }
      })
     }
@@ -130,7 +131,7 @@
       if (i > 0) {
         document.querySelector(`.screen${i+1}`).classList.add("d-none");
         document.querySelector(`.screen${i}`).classList.remove("d-none");
-        document.querySelector('.option-container').style.pointerEvents = "auto";
+        self.forEach(element => {element.style.pointerEvents = "auto"; });
       }
       if (i == 2)submit.classList.add("d-none");
     })
