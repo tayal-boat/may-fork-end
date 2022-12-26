@@ -55,16 +55,16 @@
               <div class="question-container" id="question">{{ block.settings.quiz_text }}</div>
               <div class="option-container">
                 <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option1 | split: ',' | first }}{% else %}a{% endif %}" {% endif %} id="op1">{{- block.settings.quiz_option1 | split: ',' | last -}}</button>
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option1_url }}{% else %}a{% endif %}" {% endif %} id="op1">{{- block.settings.quiz_option1 -}}</button>
 
                 <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option2 | split: ',' | first }}{% else %}b{% endif %}" {% endif %} id="op2">{{- block.settings.quiz_option2 | split: ',' | last -}}</button>
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option2_url }}{% else %}b{% endif %}" {% endif %} id="op2">{{- block.settings.quiz_option2 -}}</button>
 
                 <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option3 | split: ',' | first }}{% else %}c{% endif %}" {% endif %} id="op3">{{- block.settings.quiz_option3 | split: ',' | last -}}</button>
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option3_url }}{% else %}c{% endif %}" {% endif %} id="op3">{{- block.settings.quiz_option3 -}}</button>
 
                 <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_comma %}{{ block.settings.quiz_option4 | split: ',' | first }}{% else %}d{% endif %}" {% endif %} id="op4">{{- block.settings.quiz_option4 | split: ',' | last -}}</button>
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option4_url }}{% else %}d{% endif %}" {% endif %} id="op4">{{- block.settings.quiz_option4 -}}</button>
               </div>
               <div class="navigation pt-3 pl-4 ">
                  <button class="previous {% if id == 1 %}d-none{% endif %}" style="background: #b102027d;color:white;">< Previous Question</button>
@@ -120,7 +120,7 @@
           {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
           console.log(final);  
           submit.classList.remove("d-none");
-          self.forEach(element => {element.style.pointerEvents = "none"; });
+         // self.forEach(element => {element.style.pointerEvents = "none"; });
         }
      })
     }
@@ -131,7 +131,7 @@
       if (i > 0) {
         document.querySelector(`.screen${i+1}`).classList.add("d-none");
         document.querySelector(`.screen${i}`).classList.remove("d-none");
-        self.forEach(element => {element.style.pointerEvents = "auto"; });
+       // self.forEach(element => {element.style.pointerEvents = "auto"; });
       }
       if (i == 2)submit.classList.add("d-none");
     })
@@ -159,9 +159,19 @@
             "label": "quiz question"
           },
           {
+            "type": "text",
+            "id": "quiz_option1_url",
+            "label": "quiz options1 url"
+          },
+          {
             "type": "html",
             "id": "quiz_option1",
             "label": "quiz options1"
+          },
+          {
+            "type": "text",
+            "id": "quiz_option2_url",
+            "label": "quiz options2 url"
           },
           {
             "type": "html",
@@ -169,9 +179,19 @@
             "label": "quiz options2"
           },
           {
+            "type": "text",
+            "id": "quiz_option3_url",
+            "label": "quiz options3 url"
+          },
+          {
             "type": "html",
             "id": "quiz_option3",
             "label": "quiz options3"
+          },
+          {
+            "type": "text",
+            "id": "quiz_option4_url",
+            "label": "quiz options4 url"
           },
           {
             "type": "html",
@@ -199,13 +219,13 @@
     },
     {
       "type": "checkbox",
-      "id": "enable_comma",
-      "label": "add comma seprated url in option htmls or"
+      "id": "enable_logic",
+      "label": "logic based url redirection with sort + filter"
     },
     {
       "type": "html",
       "id": "quiz_url",
-      "label": "quiz urls"
+      "label": "quiz urls brute force"
     }
   ],
   "presets": [
