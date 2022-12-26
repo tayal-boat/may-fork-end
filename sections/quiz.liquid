@@ -16,14 +16,13 @@
   #custom-saleModal .modal-dialog,#custom-saleModals-1 .modal-dialog,#custom-saleModals-2 .modal-dialog{top:5%}
   }
   .modal-body.p-0{background: url({{ section.settings.popup_image | img_url: 'master' }});background-size: cover;
-  background-position: center;min-height: 70vh;}
+  background-position: center;}
 
   .panel{padding: 6vh 0;}
   .panel h6 {color: white;font-weight: 600;     text-align: center;   margin-top: 8px;}
-   div#question::before { content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
-   position: absolute;top: -22px;left: -22px;}
+   div#question::before {content: "✨";position: absolute;display: flex;}
     .question-container{margin:10px auto;padding:12px 0;width:80%;background-color:#fff;text-align:center;border-radius: 8px;
-    border: 1px solid;position:relative;}
+    border: 1px solid;}
     .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
     .option:hover{background-color:#fa879b9e;}
     .previous, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
@@ -71,7 +70,7 @@
 </div>
 <script>
   $(document).ready(function() {
-    let camp = "{{ request.path | split: '/' | last }}";
+    var camp = "{{ request.path | split: '/' | last }}"
       {% if section.settings.landing_based %}
         if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
           $(".Popup_quiz #custom-saleModal").modal("show");
@@ -85,136 +84,249 @@
       {% endif %}
   });
   // Questions will be asked
-const Questions = [
-  {% for block in section.blocks %}
+  const Questions = [
     {
-      id: {{ forloop.index | minus: 1 }},
-      q: `{{ block.settings.quiz_text }}`,
-      a: [
-            {
-              text: `{{- block.settings.quiz_option1 -}}`,
-              isCorrect: "a"
-            }, 
-            {
-              text: `{{- block.settings.quiz_option2 -}}`,
-              isCorrect: "b"
-            }, 
-            {
-              text: `{{- block.settings.quiz_option3 -}}`,
-              isCorrect: "c"
-            },
-            {
-              text: `{{- block.settings.quiz_option4 -}}`,
-              isCorrect: "d"
-            }
-         ]
-    },
-  {% endfor %}    
+      id: 0,
+      q: {{ section.settings.quiz_text | split: '1:' | first }},
+  a: [
+    {
+      text: `
+        {{- section.settings.quiz_text | split: '2:' | first | split: '1:' | last -}}
+        `
+    }, {
+      text: `
+        {{- section.settings.quiz_text | split: '3:' | first | split: '2:' | last -}}
+        `
+    }, {
+      text: `
+        {{- section.settings.quiz_text | split: '4:' | first | split: '3:' | last -}}
+        `
+    }, {
+      text: `
+        {{- section.settings.quiz_text | split: '4:' | last -}}
+        `
+    }
+  ]
+    }, {
+    id: 1,
+      q: {{- section.settings.quiz_text1 | split: '1:' | first -}},
+    a: [
+      {
+        text: `
+        {{- section.settings.quiz_text1 | split: '2:' | first | split: '1:' | last -}},
+        `,
+        isCorrect: "a"
+      }, {
+        text: `
+        {{- section.settings.quiz_text1 | split: '3:' | first | split: '2:' | last -}}
+        `,
+        isCorrect: "b"
+      }, {
+        text: `
+        {{- section.settings.quiz_text1 | split: '4:' | first | split: '3:' | last -}}
+        `,
+        isCorrect: "c"
+      }, {
+        text: `
+        {{- section.settings.quiz_text1 | split: '4:' | last -}}
+        `,
+        isCorrect: "d"
+      }
+    ]
+  }, {
+    id: 2,
+      q: {{- section.settings.quiz_text2 | split: '1:' | first -}},
+    a: [
+      {
+        text: `
+        {{- section.settings.quiz_text2 | split: '2:' | first | split: '1:' | last -}}
+        `
+      }, {
+        text: `
+        {{- section.settings.quiz_text2 | split: '3:' | first | split: '2:' | last -}}
+        `
+      }, {
+        text: `
+        {{- section.settings.quiz_text2 | split: '4:' | first | split: '3:' | last -}}
+        `
+      }, {
+        text: `
+        {{- section.settings.quiz_text2 | split: '4:' | last -}}
+        `
+      }
+    ]
+  }, {
+    id: 3,
+      q: {{- section.settings.quiz_text3 | split: '1:' | first -}},
+    a: [
+      {
+        text: `
+        {{- section.settings.quiz_text3 | split: '2:' | first | split: '1:' | last -}}
+        `,
+        isCorrect: "a"
+      }, {
+        text: `
+        {{- section.settings.quiz_text3 | split: '3:' | first | split: '2:' | last -}}
+        `,
+        isCorrect: "b"
+      }, {
+        text: `
+        {{- section.settings.quiz_text3 | split: '4:' | first | split: '3:' | last -}}
+        `,
+        isCorrect: "c"
+      }, {
+        text: `
+        {{- section.settings.quiz_text3 | split: '4:' | last -}}
+        `,
+        isCorrect: "d"
+      }
+    ]
+  }
   ]
 
   // Set start
-  let start = true;
+  var start = true;
 
   // Iterate
   function iterate(id) {
 
+
+    // Getting the result display section
+    var result = document.getElementsByClassName("result");
+
+    // result[0].innerText = "";
+
     // Getting the question
     const question = document.getElementById("question");
+
 
     // Setting the question text
     question.innerText = Questions[id].q;
 
-    let selected = "";
+    // Getting the options
+    const op1 = document.getElementById('op1');
+    const op2 = document.getElementById('op2');
+    const op3 = document.getElementById('op3');
+    const op4 = document.getElementById('op4');
 
-    for (let i = 0; i < 4; i++) {
-      let op = document.getElementById(`op${i+1}`);
-      op.innerHTML = Questions[id].a[i].text;
-      op.value = Questions[id].a[i].isCorrect;
-      op.addEventListener("click", () => { selected = op.value; });
-    }
+
+    // Providing option text
+    op1.innerHTML = Questions[id].a[0].text;
+    op2.innerHTML = Questions[id].a[1].text;
+    op3.innerHTML = Questions[id].a[2].text;
+    op4.innerHTML = Questions[id].a[3].text;
+
+
+    // Providing the true or false value to the options
+    op1.value = Questions[id].a[0].isCorrect;
+    op2.value = Questions[id].a[1].isCorrect;
+    op3.value = Questions[id].a[2].isCorrect;
+    op4.value = Questions[id].a[3].isCorrect;
+
+    var selected = "";
+
+    // Show selection for op1
+    op1
+      .addEventListener("click", () => {
+        selected = op1.value;
+      })
+
+    // Show selection for op2
+    op2
+      .addEventListener("click", () => {
+        selected = op2.value;
+      })
+
+    // Show selection for op3
+    op3
+      .addEventListener("click", () => {
+        selected = op3.value;
+      })
+
+    // Show selection for op4
+    op4
+      .addEventListener("click", () => {
+        selected = op4.value;
+      })
+
 
   }
 
-  if (start) { iterate("0") }
+  if (start) {
+    iterate("0");
+  }
+
+  // submit button and method
+  const submit = document.getElementsByClassName('submit')[0];
 
 
   // Next button and method
   let next = document.querySelectorAll('.option-container .option');
   let id = 0;
-  let redirect,redirect2;
-  let final = '';
+  var redirect,
+    redirect2,
+    final;
+  var redirect_url = '';
   for (let i = 0; i < next.length; i++) {
     let self = next[i];
     self.addEventListener("click", () => {
       let value = self.value;
-      if (id == 1) {redirect = value}
-      if (id == 2) {document.querySelector('#op4').style.display = "none";}
-      if (id == 3) {redirect2 = value; final = `${redirect}${redirect2}`;
-        console.log(final);
-        switch (final) { {{- section.settings.quiz_url -}} }
-        console.log(final);
-        submit.classList.remove("d-none"); // document.querySelector('.option-container').style.pointerEvents = "none";
+      if (id == 1) {
+        redirect = value
       }
-      if (id < 3) {id += 1;console.log(id);iterate(id);}
-      if (id > 0) {previous.classList.remove("d-none")}
-   })
-  }
+      if (id == 2) {
+        document.querySelector('#op4').style.display = "none";
+      }
+      if (id == 3) {
+        redirect2 = value;
+        final = `${redirect}${redirect2}`;
+        console.log(final)
+        switch (final) {
+            {{- section.settings.quiz_url -}}
+      }
+      submit.classList.remove("d-none");
+      document.querySelector('.option-container').style.pointerEvents = "none";
+    }
+    if (id < 3) {
+      id += 1;
+      console.log(id);
+      iterate(id);
+    }
+    if (id > 0) {
+      previous.classList.remove("d-none")
+    }
+  })
+}
 
   // previous button and method
   const previous = document.getElementsByClassName('previous')[0];
-   previous.addEventListener("click", () => {
-     if (id > 0) { id--; iterate(id);
+  previous.addEventListener("click", () => {
+    if (id > 0) {
+      id--;
+      iterate(id);
       console.log(id);
-     // document.querySelector('.option-container').style.pointerEvents = "auto";
-     }
-     if (id == 0) { previous.classList.add("d-none") }
-     if (id == 2) {document.querySelector('#op4').style.display = "block"; submit.classList.add("d-none"); }
-   })
+      document.querySelector('.option-container').style.pointerEvents = "auto";
+    }
+    if (id == 0) {
+      previous.classList.add("d-none")
+    }
+    if (id == 2) {
+      document.querySelector('#op4').style.display = "block";
+      submit.classList.add("d-none");
+    }
+  })
 
 
-  // submit button and method
-    const submit = document.getElementsByClassName('submit')[0];
-    submit.addEventListener("click", () => { console.log(final); document.location.href = final; })
+  submit.addEventListener("click", () => {
+    console.log(redirect_url);
+    document.location.href = redirect_url;
+  })
 
 </script>
 {% schema %}
 {
   "name": "section Popup quiz",
   "class": "Popup_quiz",
-  "max_blocks": 4,
-  "blocks": [
-    {
-      "type": "html",
-      "name": "quiz screen",
-      "settings": [
-          {
-            "type": "html",
-            "id": "quiz_text",
-            "label": "quiz question"
-          },
-          {
-            "type": "html",
-            "id": "quiz_option1",
-            "label": "quiz options1"
-          },
-          {
-            "type": "html",
-            "id": "quiz_option2",
-            "label": "quiz options2"
-          },
-          {
-            "type": "html",
-            "id": "quiz_option3",
-            "label": "quiz options3"
-          },
-          {
-            "type": "html",
-            "id": "quiz_option4",
-            "label": "quiz options4"
-          }
-      ]
-    }
-  ],
   "settings": [
     {
       "type": "checkbox",
@@ -233,19 +345,33 @@ const Questions = [
     },
     {
       "type": "html",
+      "id": "quiz_text",
+      "label": "quiz options1"
+    },
+    {
+      "type": "html",
+      "id": "quiz_text1",
+      "label": "quiz options2"
+    },
+    {
+      "type": "html",
+      "id": "quiz_text2",
+      "label": "quiz options3"
+    },
+    {
+      "type": "html",
+      "id": "quiz_text3",
+      "label": "quiz options4"
+    },
+    {
+      "type": "html",
       "id": "quiz_url",
       "label": "quiz urls"
     }
   ],
   "presets": [
     {
-      "name": "section Popup quiz",
-      "blocks": [
-        {
-          "type": "html"
-        }
-      ],
-      "settings": {}
+      "name": "section Popup quiz"
     }
   ]
 }
