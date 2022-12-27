@@ -275,7 +275,10 @@
                   {% endif %}
                   <div class="current-price">
                     <span>Now at</span>
-                    <span class="current_price">₹{{ product.price | divided_by: 100 | minus: settings.fixed_discount }}</span>
+                    {% capture fixed_discount %}
+                      {% render 'fixed-discount-by-tag', product: product %}
+                    {% endcapture %}
+                    <span class="current_price">{{ fixed_discount | prepend: '₹' }}</span>
                   </div>
                 </div>
               </div>
