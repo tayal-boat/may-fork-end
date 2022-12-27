@@ -48,11 +48,9 @@
       <div class="modal-body p-0">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div class="modal-body-content">
-        
           <div class="panel">
           {% for block in section.blocks %}
             {% assign id =  forloop.index %}
-            {%- capture modal_content_inner -%}
           <div class="screen{{ id }} {% if id != 1 %}d-none{% endif %}" >
               <div class="question-container" id="question">{{ block.settings.quiz_text }}</div>
               <div class="option-container">
@@ -75,10 +73,8 @@
                 {% endif %}
               </div>
             </div>
-          {%- endcapture -%}
           {% endfor %}   
           </div>
-         
         </div>
       </div>
     </div>
@@ -86,19 +82,19 @@
 </div>
 <script>
   // for quiz to popup
+  $(document).ready(function() {
     let camp = "{{ request.path | split: '/' | last }}";
       {% if section.settings.landing_based %}
         if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("quizpopUp") === null) {
-           $('#custom-saleModal .modal-body-content .panel').append(`{{ modal_content_inner }}`)
           $(".Popup_quiz #custom-saleModal").modal("show");
            {% comment %} sessionStorage.setItem("quizpopUp", "poped"); {% endcomment %}
         }
       {% else %}
         $("{{ section.settings.popup_id }}").click(function(e) {
-          $('#custom-saleModal .modal-body-content .panel').append(`{{ modal_content_inner }}`)
           $(".Popup_quiz #custom-saleModal").modal("show");
         });
       {% endif %}
+  });
 
  
   let next = document.querySelectorAll('.option-container');
@@ -144,11 +140,7 @@
 
   // submit button and method
   const submit = document.getElementsByClassName('submit')[0];
-  document.addEventListener("click", (e) => { 
-    if(e.target.matches('submit')) {
-      document.location.href = final;
-    }
-  })
+  submit.addEventListener("click", () => { document.location.href = final; })
 
 </script>
 {% schema %}
