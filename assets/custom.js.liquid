@@ -275,22 +275,17 @@ for (let i = 0; i < sliderSelector.length; i++) {
     },onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar
   }).on("dragged.owl.carousel", function(event) {
     $(slider_section_id).trigger('stop.owl.autoplay');
-    resetProgressBar(); 
     $(slider_section_id).trigger('play.owl.autoplay');
-    startProgressBar(); 
     if(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')) > 1){
       slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
     } 
   });  
   function slide_item_on_drag(section_id, drag_direction) {
     if( drag_direction == 'right' ){// $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-          resetProgressBar();     startProgressBar(); 
     }
-    else if( drag_direction == 'left' ){$(section_id + ' .owl-dots .owl-dot.active').next().click();}
-              resetProgressBar();     startProgressBar(); 
-    } 
+    else if( drag_direction == 'left' ){$(section_id + ' .owl-dots .owl-dot.active').next().click();} } 
   function startProgressBar() { $(".slide-progress").css({width: "100%",transition: "width 5000ms"});}
-  function resetProgressBar() {$(".slide-progress").css({width: "0%",transition: "width 0s"});}
+  function resetProgressBar() {$(".slide-progress").css({width: 0,transition: "width 0s"});}
   function openVideoPopup(url){
     if(url != ''){
       jQuery('.banner_video_modal .video_container iframe').attr('src', url);
