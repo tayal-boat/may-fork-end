@@ -25,7 +25,7 @@
     .question-container{margin:10px auto;padding:12px 0;width:80%;background-color:#fff;text-align:center;border-radius: 8px;
     border: 1px solid;position:relative;}
     .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
-    .option:hover{background-color:#fa879b9e;}
+    .option:hover{background-color:#fa879b9e!important;}
     .previous, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
     button.option{display:flex;flex-direction:column;align-items:center;width: 40%;margin-bottom: 12px;}
     @media(min-width:1024px) {
@@ -49,45 +49,34 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div class="modal-body-content">
           <div class="panel">
-          {% for block in section.blocks %}
-            {% assign id =  forloop.index %}
-          <div class="screen{{ id }} {% if id != 1 %}d-none{% endif %}" >
-              <div class="question-container" id="question">{{ block.settings.quiz_text }}</div>
-              <div class="option-container">
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option1_url }}{% else %}a{% endif %}" {% endif %} id="op1">{{- block.settings.quiz_option1 -}}</button>
+            <div class="question-container" id="question"><p>Question goes here.</p></div>
+            <div class="option-container">
+              <button class="option" onclick="" id="op1">option1</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option2_url }}{% else %}b{% endif %}" {% endif %} id="op2">{{- block.settings.quiz_option2 -}}</button>
+              <button class="option" id="op2">option2</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option3_url }}{% else %}c{% endif %}" {% endif %} id="op3">{{- block.settings.quiz_option3 -}}</button>
+              <button class="option" id="op3">option3</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option4_url }}{% else %}d{% endif %}" {% endif %} id="op4">{{- block.settings.quiz_option4 -}}</button>
-              </div>
-              <div class="navigation pt-3 pl-4 ">
-                 <button class="previous {% if id == 1 %}d-none{% endif %}" style="background: #b102027d;color:white;">< Previous Question</button>
-                {% if id == 4 %}
-                 <button class="submit d-none text-center">Submit</button>
-                {% endif %}
-              </div>
+              <button class="option" id="op4">option4</button>
             </div>
-          {% endfor %}   
+            <div class="navigation pt-3 pl-4 ">
+              <button class="previous d-none" style="background: #b102027d;color:white;">< Previous Question</button>
+              <button class="submit d-none text-center">Submit</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<script>
-  // for quiz to popup
+<script async>
   $(document).ready(function() {
     let camp = "{{ request.path | split: '/' | last }}";
       {% if section.settings.landing_based %}
-        if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("quizpopUp") === null) {
+        if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
           $(".Popup_quiz #custom-saleModal").modal("show");
-           {% comment %} sessionStorage.setItem("quizpopUp", "poped"); {% endcomment %}
+          console.log("opend");
+           {% comment %} sessionStorage.setItem("popUpPoped", "poped"); {% endcomment %}
         }
       {% else %}
         $("{{ section.settings.popup_id }}").click(function(e) {
@@ -95,11 +84,63 @@
         });
       {% endif %}
   });
+  // Questions will be asked
+const Questions = [
+  {% for block in section.blocks %}
+    {
+      id: {{ forloop.index | minus: 1 }},
+      q: `{{ block.settings.quiz_text }}`,
+      a: [
+            {
+              text: `{{- block.settings.quiz_option1 -}}`,
+              isCorrect: "a"
+            }, 
+            {
+              text: `{{- block.settings.quiz_option2 -}}`,
+              isCorrect: "b"
+            }, 
+            {
+              text: `{{- block.settings.quiz_option3 -}}`,
+              isCorrect: "c"
+            },
+            {
+              text: `{{- block.settings.quiz_option4 -}}`,
+              isCorrect: "d"
+            }
+         ]
+    },
+  {% endfor %}    
+  ]
 
- 
-  let next = document.querySelectorAll('.option-container');
-  let previous = document.querySelectorAll('.previous');
+  // Set start
+  let start = true;
+
+  // Iterate
+  function iterate(id) {
+
+    // Getting the question
+    const question = document.querySelector("#question p");
+
+    // Setting the question text
+    question.innerHtml = Questions[id].q;
+
+    let selected = "";
+
+    for (let i = 0; i < 4; i++) {
+      let op = document.getElementById(`op${i+1}`);
+      op.innerHTML = Questions[id].a[i].text;
+      op.value = Questions[id].a[i].isCorrect;
+      op.addEventListener("click", () => { selected = op.value; });
+    }
+
+  }
+
+  if (start) { iterate("0") }
+
+
   // Next button and method
+  let next = document.querySelectorAll('.option-container .option');
+  let id = 0;
   let redirect,redirect2;
   let final = '';
   for (let i = 0; i < next.length; i++) {
@@ -135,12 +176,25 @@
       }
       if (i == 2){submit.classList.add("d-none");}
     })
-
   }
 
+  // previous button and method
+  const previous = document.getElementsByClassName('previous')[0];
+   previous.addEventListener("click", () => {
+     if (id > 0) { id--; iterate(id);
+      console.log(id);
+      document.querySelector('.option-container').style.pointerEvents = "auto";
+     }
+     if (id == 0) { previous.classList.add("d-none") }
+     if (id == 2) {document.querySelector('#op4').style.display = "block"; submit.classList.add("d-none"); 
+     next.forEach(element => { element.style.backgroundColor = "transparent";});
+                  }
+   })
+
+
   // submit button and method
-  const submit = document.getElementsByClassName('submit')[0];
-  submit.addEventListener("click", () => { document.location.href = final; })
+    const submit = document.getElementsByClassName('submit')[0];
+    submit.addEventListener("click", () => { console.log(final); document.location.href = final; })
 
 </script>
 {% schema %}
@@ -150,7 +204,7 @@
   "max_blocks": 4,
   "blocks": [
     {
-      "type": "html",
+      "type": "text",
       "name": "quiz screen",
       "settings": [
           {
@@ -159,19 +213,9 @@
             "label": "quiz question"
           },
           {
-            "type": "text",
-            "id": "quiz_option1_url",
-            "label": "quiz options1 url"
-          },
-          {
             "type": "html",
             "id": "quiz_option1",
             "label": "quiz options1"
-          },
-          {
-            "type": "text",
-            "id": "quiz_option2_url",
-            "label": "quiz options2 url"
           },
           {
             "type": "html",
@@ -179,19 +223,9 @@
             "label": "quiz options2"
           },
           {
-            "type": "text",
-            "id": "quiz_option3_url",
-            "label": "quiz options3 url"
-          },
-          {
             "type": "html",
             "id": "quiz_option3",
             "label": "quiz options3"
-          },
-          {
-            "type": "text",
-            "id": "quiz_option4_url",
-            "label": "quiz options4 url"
           },
           {
             "type": "html",
@@ -218,14 +252,9 @@
       "label": "Popup background"
     },
     {
-      "type": "checkbox",
-      "id": "enable_logic",
-      "label": "logic based url redirection with sort + filter"
-    },
-    {
       "type": "html",
       "id": "quiz_url",
-      "label": "quiz urls brute force"
+      "label": "quiz urls"
     }
   ],
   "presets": [
@@ -233,7 +262,7 @@
       "name": "section Popup quiz",
       "blocks": [
         {
-          "type": "html"
+          "type": "text"
         }
       ],
       "settings": {}
