@@ -273,13 +273,15 @@
                       <span class="usual_price">₹{{ product.price | divided_by: 100 }}</span>
                     </div>
                   {% endif %}
-                  <div class="current-price">
-                    <span>Now at</span>
-                    {% capture fixed_discount %}
-                      {% render 'fixed-discount-by-tag', product: product %}
-                    {% endcapture %}
-                    <span class="current_price">{{ fixed_discount | prepend: '₹' }}</span>
-                  </div>
+                  {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %}
+                    <div class="current-price">
+                      <span>Now at</span>
+                      {% capture fixed_discount %}
+                        {% render 'fixed-discount-by-tag', product: product %}
+                      {% endcapture %}
+                      <span class="current_price">{{ fixed_discount | prepend: '₹' }}</span>
+                    </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -300,7 +302,7 @@
               </style>
               <div class="price-container product-highlight my-3 p-3 only-desktop">
                 <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        font-weight: 700;">Product Highlights</h6>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            font-weight: 700;">Product Highlights</h6>
                 {{ product.metafields.custom.product_highlights }}
               </div>
             {% endif %}
