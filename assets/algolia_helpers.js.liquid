@@ -10,12 +10,6 @@
     var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
     var discount_ratio = 1.0 - price_ratio;
 
-    // if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
-    // console.log('hii');
-    // console.log(price);
-    // console.log(compare_at_price);
-    // }
-
     var res = '<b>' + formatPrice(price) + '</b>';
     if (comparing) {
       res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>' +
@@ -79,9 +73,10 @@
         price_ratio = this.price_ratio;
         var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
         var discount_ratio = 1.0 - price_ratio;
-
+        
         if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
-          price = price - Shopify.fixed_discount; 
+          let discount = price - Shopify.fixed_discount(this.tags);
+          price = price - discount; 
           discount_ratio = (compare_at_price - price) / compare_at_price;
       }
 

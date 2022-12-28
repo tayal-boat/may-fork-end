@@ -5310,16 +5310,16 @@
         productPrices.innerHTML = "";
         if (variant["compare_at_price"] > variant["price"]) {
           let Price = variant["price"];
-          let savePrice = DisCalculation(Price , productPrices);
+          let savePrice = Shopify.DisCalculation(Price , productPrices);
           productPrices.innerHTML += `<span class="price price--highlight ${this.priceClass}"><span class="visually-hidden">${window.themeVariables.strings.productSalePrice}</span>${Shopify.formatMoney(savePrice, currencyFormat)}</span>`;
           productPrices.innerHTML += `<span class="price price--compare line-through"><span class="visually-hidden">${window.themeVariables.strings.productRegularPrice}</span>${Shopify.formatMoney(variant["compare_at_price"], currencyFormat)}</span>`;
         } else {
           let Price = variant["price"];
-          let savePrice = DisCalculation(Price , productPrices);
+          let savePrice = Shopify.DisCalculation(Price , productPrices);
           productPrices.innerHTML += `<span class="price ${this.priceClass}"><span class="visually-hidden">${window.themeVariables.strings.productSalePrice}</span>${Shopify.formatMoney(savePrice, currencyFormat)}</span>`;
         }
         if (variant["unit_price_measurement"]) {
-          DisCalculation(variant["unit_price_measurement"] , productPrices);
+          Shopify.DisCalculation(variant["unit_price_measurement"] , productPrices);
           let referenceValue = "";
           if (variant["unit_price_measurement"]["reference_value"] !== 1) {
             referenceValue = `<span class="unit-price-measurement__reference-value">${variant["unit_price_measurement"]["reference_value"]}</span>`;
@@ -5448,11 +5448,10 @@
   };
   window.customElements.define("store-pickup", StorePickup);
 
-  const DisCalculation = (savePrice , selector) => {
+  Shopify.DisCalculation = function(savePrice , selector, varient) {
     let selectedVarient = document.querySelector('.quick_product-price');
     if(Shopify.enable_flash_sale && selector.className.includes("custom-product_flash-sale")){
-    let savePriceDis = savePrice / 100 * Shopify.flash_discount;
-     savePrice = savePrice - savePriceDis;
+     savePrice = Shopify.fixed_discount(varient.tags);
     }
     else if(Shopify.enable_namagoo && selector.className.includes("custom-product_namogoo")){
     if(localStorage.getItem('Namogoo')) {  
