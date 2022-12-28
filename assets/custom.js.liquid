@@ -257,6 +257,8 @@ for (let i = 0; i < sliderSelector.length; i++) {
     responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
     autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
     autoplayTimeout: JSON.parse(sliderSelector[i].getAttribute('data-autoplay-timeout')),
+    autoplayHoverPause:true,
+    stopOnHover: true,
     items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
     slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
     nav: true,
@@ -272,6 +274,8 @@ for (let i = 0; i < sliderSelector.length; i++) {
         }
     },onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar
   }).on("dragged.owl.carousel", function(event) {
+    $(slider_section_id).trigger('stop.owl.autoplay');
+    $(slider_section_id).trigger('play.owl.autoplay');
     if(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')) > 1){
       slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
     } 
@@ -406,6 +410,7 @@ function labelsPriority() {
       } 
   })
 }
+window.addEventListener('load', labelsPriority)
 
 window.addEventListener('load', labelsPriority)
 
@@ -423,40 +428,6 @@ function createCleverTapLoginEvent( event_name, event_data ){
     clevertap.onUserLogin.push( event_name, event_data );
   }
 }
-
-// Creating cleverTap footer backtop top
-$('#btn-back-to-top').click(function () {
-  $(window).scrollTop(0);
-  clevertap.event.push('Back to Top clicked');
-});
-document.getElementById('link_btn_1').click();
-function openLink(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName('footer__item');
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = 'none';
-  }
-  tablinks = document.getElementsByClassName('footer__item-title');
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(' active', '');
-  }
-  document.getElementById(tabName).style.display = 'block';
-  evt.currentTarget.className += ' active';
-}
-
-// Creating cleverTap footer-newsletter
-{%- if customer -%}
-var myEmail = '{{customer.email}}'
-$("#subscriber-email").val(myEmail);
-{% endif %}
-var localValuePop = localStorage.getItem('MyPopup');
-if(!localValuePop) {
- setTimeout(function(){
- $(".pop-overlay, .boathead-pop").fadeIn();
-}, 15000);
-}
-$("#subscribe_pop").on("click",function(){var e=document.getElementById("pop_email").value;""!==e&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)?localStorage.getItem("userEmailId")===e?$(".aluser-msg").show():(localStorage.setItem("userEmailId",e),localStorage.setItem("MyPopup","popOnce"),clevertap.onUserLogin.push({Site:{Email:e,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:e,Source:"Popup"}),$(".thankyou-msg-pop").show(),setTimeout(function(){$(".pop-overlay, .boathead-pop").fadeOut()},5e3)):$(".error-msg-pop").show(),setTimeout(function(){$(".error-msg-pop").fadeOut()},5e3)}),$(".pop-overlay, .close-pop").click(function(){localStorage.setItem("MyPopup","popOnce"),$(".pop-overlay, .boathead-pop").fadeOut()}),$("#subscribe-btn").on("click",function(e){$('#subscribe-btn').attr('disabled', 'disabled');var o=document.getElementById("subscriber-email").value;""!==o&&/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(o)?localStorage.getItem("userEmailId")===o?$(".input-block").append('<p class="aluser-msg text-white">You are already subscribed!</p>').show():(localStorage.setItem("userEmailId",o),clevertap.onUserLogin.push({Site:{Email:o,"MSG-email":!0}}),clevertap.event.push("Newsletter Subscribed",{Email:o,Source:"Footer"}),$(".input-block").append('<p class="thankyou-msg text-white">Thank You for subscribing. Please check your inbox!</p>').show(),$("#subscriber-email").val("")):$(".input-block").append('<p class="error-msg text-white">Please enter a valid email Id!</p>').show(),setTimeout(function(){$(".thankyou-msg, .error-msg, .aluser-msg").remove();$('#subscribe-btn').removeAttr('disabled');},5e3)}),$(".download-box a").click(function(){clevertap.event.push("Download App Clicked")});
-
 
 // Strip HTML tags from string
 function stripHtml(html){
