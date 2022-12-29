@@ -2740,8 +2740,11 @@ if($('.couponcode_input').val().length < 1 ){
 
     $(discountButton).on('click', function(e){
       e.preventDefault();
+      $('#checkout_reduction_code').css('color', 'transparent');
+      setTimeout(function(){
       var discountCode = $('.couponcode_input').val();
       $('[name="checkout[reduction_code]"]').val(discountCode);
+      
       var self = $(this);    
       var closestForm = discountForm;
       var submitUrl = discountForm.attr('action');
@@ -2753,6 +2756,7 @@ if($('.couponcode_input').val().length < 1 ){
         data: closestForm.serialize(),
         success: function(response) {
           self.removeClass("btn--loading");
+          $('#checkout_reduction_code').removeAttr('style');
           var result = $(response).find("#error-for-reduction_code");
           if((result.length) > 0) {
             var invalidPromo = result.html();
@@ -2760,10 +2764,13 @@ if($('.couponcode_input').val().length < 1 ){
             $('#checkout_reduction_code').val('');
           }
           else {
+            $('#checkout_reduction_code').val('');
             location.reload();
           }
         }
+       
       })
+      },500)
     });
   
 
