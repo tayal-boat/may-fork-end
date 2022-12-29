@@ -1185,7 +1185,7 @@
         font-size: 12px;
         color: #868686;
       }
-      .gst-heading {
+      .gst-heading, .couponcode-heading {
         font-size: 18px;
         font-weight: 600;
       }
@@ -1274,6 +1274,10 @@
         color: red;
         font-weight: 500;
       }
+      .couponcode_container.checkout_box_container {
+    display: flex;
+    padding: 15px 0 10px 0;
+}
     </style>
     <!-- Single Checkout Page Styling-2 Begins -->
 
@@ -1378,8 +1382,14 @@
           <div class="couponcode_main_container">
             <h2 class="couponcode-heading">Apply coupon code</h2>
             <div class="couponcode_container checkout_box_container" data-active="false">
-              <input class="couponcode_input" type="text" placeholder="Coupon code" name="couponcode" value="">
-                <span class="couponcode-button checkout_submit_btn">Apply</span>
+              <input class="couponcode_input field__input" type="text" placeholder="Coupon code" name="couponcode" value="">
+                <button class="couponcode-button checkout_submit_btn field__input-btn btn btn--disabled" disabled="disabled">
+                  <span class="btn__content visually-hidden-on-mobile" aria-hidden="true">
+                Apply
+              </span>
+                  <svg class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" aria-hidden="true" focusable="false"> <use xlink:href="#arrow"></use> </svg>
+                  <svg class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" aria-hidden="true" focusable="false"> <use xlink:href="#spinner-button"></use> </svg>
+                  </button>
             </div>
             <span class='invalid-promo' style='color:#ff0000;'></span>
           </div>
@@ -1443,9 +1453,8 @@
                     gstin: gstInput,
                   },
                   success: function (data) {
-                    console.log(data, 'data');
+
                     if (data.message == 'The provided GST number is valid and here are the details') {
-                      console.log('GST no valid');
                       sessionStorage.setItem('gstin', gstInput);
                       let res = data.response;
                       let address = res.pradr.addr;
@@ -1465,7 +1474,7 @@
                       sessionStorage.setItem('gst_billing_state', `${address.stcd}`);
                       sessionStorage.setItem('gst_billing_pincode', `${address.pncd}`);
                     } else if (data.message == 'The provided GST number is invalid') {
-                      console.log('GST no Invalid');
+
                       $('.gst_error').html(data.message);
                     }
                   },
@@ -2695,61 +2704,6 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
         $('.gift_card_container').toggle();
       });
       
-      {% comment %} $('body.checkout_body').on('click', '.couponcode_main_container .couponcode-button', function(){
-        $('.checkout_box_container').attr('data-active', 'false');
-        $(this).parents('.couponcode_main_container').find('.couponcode_container').attr('data-active', true);
-        var discountCode = $('.couponcode_input').val();
-        console.log(discountCode);
-      $('[name="checkout[reduction_code]"]').val(discountCode);
-      $('[name="checkout[reduction_code]"]').closest('form').submit();
-      setTimeout(function(){
-        $('.couponcode_error').html($('#error-for-reduction_code').html());
-        if($('.tags-list')){
-      $('.couponcode_main_container').append('<div class="tags-list">'+ $('.tags-list').html() + '</div>');
-      }
-       
-      },1000);
-      }); {% endcomment %}
-
-      {% comment %} $('body.checkout_body').on('click', '.gift_card_main_container .gift_card-button', function(){
-        $('.checkout_box_container').attr('data-active', 'false');
-        $(this).parent('.gift_card_main_container').find('.checkout_box_container').attr('data-active', true);
-        /* $(this).parents('.gift_card_main_container').find('input').attr('disabled', 'disabled');
-        $(this).parents('.gift_card_main_container').find('.checkout_submit_btn').css('color', '#db1717'); */
-        apply_custom_code('.gift_card_input');
-      });
-
-     
-
-      function apply_custom_code(section_class){
-
-        sessionStorage.removeItem("checkout_error_msg");
-        var section_class_item = $(section_class).val();
-        if(section_class_item != ""){
-          $("#checkout_reduction_code").val(section_class_item);
-          $("#checkout_submit").removeClass('btn--disabled');
-          $("#checkout_submit").removeAttr('disabled');
-
-          $("#checkout_submit").click();
-          setTimeout(function(){
-              var error_msg = $('#error-for-reduction_code' ).text();
-              console.log(error_msg);
-              sessionStorage.setItem("checkout_error_msg", error_msg);             
-                $('.checkout_box_container[data-active="true"]').prepend('<p class="code_err_msg">'+ sessionStorage.getItem("checkout_error_msg") +'</p>');              
-           },5000)
-
-        }else{
-          
-        }
-      }
- {% endcomment %}
-
- {% comment %} setTimeout(function(){     
-  if( $('.tags-list').length > 0){
-    $('.couponcode_main_container').append('<div class="tags-list">'+ $('.tags-list').html() + '</div>');
-  }
-  },1000);
-   {% endcomment %}
     </script>
 
 
@@ -2761,7 +2715,15 @@ if($('.order-summary__section--discount .tags-list').length > 0){
 }else{
   $('.couponcode_main_container .tags-list').remove();
 }
-   
+
+$('.couponcode_input').on('input', function(){
+  $(this).siblings('.couponcode-button').removeAttr('disabled');
+$(this).siblings('.couponcode-button').removeClass('btn--disabled'); 
+if($('.couponcode_input').val().length < 1 ){
+  $(this).siblings('.couponcode-button').attr('disabled','true');
+  $(this).siblings('.couponcode-button').addClass('btn--disabled'); 
+}
+});
     
     var discountButton = $('.couponcode_main_container .couponcode-button');
     var discountForm = $('[name="checkout[reduction_code]"]').closest('form');
@@ -2784,32 +2746,26 @@ if($('.order-summary__section--discount .tags-list').length > 0){
           var result = $(response).find("#error-for-reduction_code");
           if((result.length) > 0) {
             var invalidPromo = result.html();
-            console.log(invalidPromo);
             $('.invalid-promo').html(invalidPromo);
+            $('#checkout_reduction_code').val('');
           }
           else {
             location.reload();
-            {% comment %} $('.sidebar__content').append($(response).find('#partial-icon-symbols').prop("outerHTML"));
-            $('.invalid-promo').html('');
-            $('.couponcode_main_container').append('<div class="tags-list">'+ $(response).find('.tags-list').html() + '</div>');
-            $('.order-summary__section--product-list').html($(response).find('.order-summary__section--product-list').html());
-            $('.order-summary__section.order-summary__section--discount').html($(response).find('.order-summary__section.order-summary__section--discount').html());
-            $('.total-line-table').html($(response).find('.total-line-table').html()); {% endcomment %}
-
           }
         }
       })
     });
-    });
+  
 
 
-    var discountInput = $('input[name="checkout[reduction_code]"]'); 
+    var discountInput = $('.couponcode_input'); 
     discountInput.on('click', function(e) {
       e.preventDefault();
-
-      var self = $(this);
-      self.closest('form').find('.invalid-promo').html('');
+      $(this).closest('.couponcode_main_container').find('.invalid-promo').html('');
+      $(this).val('');
     }) 
+
+    });  
 
 let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container .tags-list .tag__wrapper .tag__button');
     let tag_list = document.querySelectorAll('.order-summary__section--discount .tags-list .tag__wrapper .tag__button');
@@ -2820,7 +2776,8 @@ let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container 
             formTag.click();
           })
          } 
-        
+         
+
     </script>
 
 
