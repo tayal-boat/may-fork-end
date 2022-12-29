@@ -1278,6 +1278,7 @@
     display: flex;
     padding: 15px 0 10px 0;
 }
+
     </style>
     <!-- Single Checkout Page Styling-2 Begins -->
 
@@ -1379,20 +1380,6 @@
             '<input class="gstin_number" id="GSTIN_yes" type="hidden" name="checkout[attributes][CustomerGSTIN]" value="">'
           );
           $('[data-order-summary-section="payment-lines"]').prepend(`
-          <div class="couponcode_main_container">
-            <h2 class="couponcode-heading">Apply coupon code</h2>
-            <div class="couponcode_container checkout_box_container" data-active="false">
-              <input class="couponcode_input field__input" type="text" placeholder="Coupon code" name="couponcode" value="">
-                <button class="couponcode-button checkout_submit_btn field__input-btn btn btn--disabled" disabled="disabled">
-                  <span class="btn__content visually-hidden-on-mobile" aria-hidden="true">
-                Apply
-              </span>
-                  <svg class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" aria-hidden="true" focusable="false"> <use xlink:href="#arrow"></use> </svg>
-                  <svg class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" aria-hidden="true" focusable="false"> <use xlink:href="#spinner-button"></use> </svg>
-                  </button>
-            </div>
-            <span class='invalid-promo' style='color:#ff0000;'></span>
-          </div>
 
           <div class="gstin_main_container">
           <h2 class="gst-heading">Your GST Information</h2>
@@ -2541,6 +2528,8 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       }
       if (sessionStorage.getItem('checked') == 'true') {
         $('#gift-card-redemption')[0].click();
+        $('.order-summary__section.order-summary__section--discount').show();
+        $('.order-summary__section.order-summary__section--discount')[0].style.borderTop = 'none';
       }
     </script>
     <script>
@@ -2710,8 +2699,28 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
 
     <script type="text/javascript" author="Marmeto">
     $(document).on(`page:load page:change`, function () {
+
+    $('[data-order-summary-section="payment-lines"]').prepend(`
+    <div class="couponcode_main_container">
+      <h2 class="couponcode-heading">Apply coupon code</h2>
+      <div class="couponcode_container checkout_box_container" data-active="false">
+        <input class="couponcode_input field__input" type="text" placeholder="Coupon code" name="couponcode" value="">
+          <button class="couponcode-button checkout_submit_btn field__input-btn btn btn--disabled" disabled="disabled">
+            <span class="btn__content visually-hidden-on-mobile" aria-hidden="true">
+          Apply
+        </span>
+            <svg class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" aria-hidden="true" focusable="false"> <use xlink:href="#arrow"></use> </svg>
+            <svg class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" aria-hidden="true" focusable="false"> <use xlink:href="#spinner-button"></use> </svg>
+            </button>
+      </div>
+      <span class='invalid-promo' style='color:#ff0000;'></span>
+    </div>
+    `);
+
 if($('.order-summary__section--discount .tags-list').length > 0){
   $('.couponcode_main_container').append('<div class="tags-list">'+ $('.order-summary__section--discount .tags-list').html() + '</div>');
+  $('#checkout_reduction_code').removeAttr('disabled');
+  $('.invalid-promo').html($(".notice__text").html());
 }else{
   $('.couponcode_main_container .tags-list').remove();
 }
@@ -2727,6 +2736,7 @@ if($('.couponcode_input').val().length < 1 ){
     
     var discountButton = $('.couponcode_main_container .couponcode-button');
     var discountForm = $('[name="checkout[reduction_code]"]').closest('form');
+
 
     $(discountButton).on('click', function(e){
       e.preventDefault();
@@ -2767,7 +2777,7 @@ if($('.couponcode_input').val().length < 1 ){
 
     });  
 
-let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container .tags-list .tag__wrapper .tag__button');
+ let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container .tags-list .tag__wrapper .tag__button');
     let tag_list = document.querySelectorAll('.order-summary__section--discount .tags-list .tag__wrapper .tag__button');
         for (let i = 0; i < couponcode_tag_list.length; i++) {
           couponcode_tag_list[i].addEventListener('click', function(e){
@@ -2777,7 +2787,23 @@ let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container 
           })
          } 
          
-
+         {% comment %} $('.couponcode_main_container .tags-list .tag__wrapper .tag__button').on('click', function(e) {
+          e.preventDefault();    
+          var formTag = $(this).closest('form');
+          var tagUrl = $(formTag).attr("action");
+    
+          $('[data-reduction-form] button[type="submit"]').addClass("btn--loading");
+          $.ajax({
+            url: tagUrl,
+            type: 'post',
+            data: formTag.serialize(),
+            success: function(response) {
+              console.log('response');
+              console.log(response);
+            }
+          })
+        }); {% endcomment %}
+        
     </script>
 
 
