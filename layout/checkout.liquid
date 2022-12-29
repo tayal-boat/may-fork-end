@@ -594,23 +594,14 @@
       .gift-box-notifier {
         margin-top: 5px;
       }
-
       .couponcode_main_container .tags-list {
-    float: unset !important;
-}
-
-      /* CSS for separate coupon code field */
-      /* .order-summary__section--discount .edit_checkout .fieldset .field:last-child{display:flex;}
-      .order-summary__section--discount .edit_checkout .fieldset .field:last-child .commander-wrapper{width: inherit;}
-      .order-summary__section--discount .edit_checkout .fieldset .field:last-child .commander-wrapper input{border: 1px transparent solid;border-radius: 5px;display: block !important;box-sizing: border-box;width: 100%;padding: 0.9285714286em 0.7857142857em;word-break: normal;line-height: inherit;background: #fff;border-color: #d5d5d5;color: #333;}
-      .order-summary__section--discount .edit_checkout .fieldset .field:last-child button{cursor: pointer;display: inline-block !important;background-color: #ea2127;background-clip: border-box;box-sizing: border-box;border: 1px transparent solid;border-radius: 5px;color: white;font-weight: 500;padding: 1.4em 1.7em;text-align: center;position: relative;width: auto;margin-left: 0.8571428571em;white-space: nowrap;padding-top: 0;padding-bottom: 0;}
-      */
-
+        float: unset !important;
+    }
     </style>
     <!-- Single Checkout Page Styling Engs -->
   </head>
 
-  <body class="checkout_body">
+  <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript
       ><iframe
@@ -1283,24 +1274,6 @@
         color: red;
         font-weight: 500;
       }
-
-      /* Couponcode styling */
-      {% comment %} .order-summary__section form.edit_checkout .fieldset .field:first-child{display: none;} {% endcomment %}
-      .order-summary__section.order-summary__section--discount {
-        display: block !important;
-    } 
-      .gifting-sec1 ~ label {display: none !important;}
-      .couponcode-heading{font-size: 18px;font-weight: 600;}
-      .couponcode_container, .gift_card_container{display: block;position: relative;padding: 15px 0 10px 0;}
-      .couponcode_container input, .gift_card_container input{border: 1px transparent solid;background-clip: padding-box;border-radius: 5px;display: block;box-sizing: border-box;width: 100%;padding: 0.9285714286em 0.7857142857em;word-break: normal;line-height: inherit;background-color: white;color: #333333;border-color: #d9d9d9;}
-      .couponcode-button, .gift_card-button{position: absolute;right: 0;color: #f44336;padding: 10px;font-weight: 600;bottom: 0.7rem;top: 15px;font-size: 16px;list-style: none;display: flex;align-items: center;justify-content: center;}
-      .gift_card_label{display:flex; align-items:center;}
-      .checkout_submit_btn{cursor: pointer;}
-      .gift_card_main_container{border-bottom: 1px solid rgba(175,175,175,0.34);padding-bottom: 15px;}
-      .couponcode_main_container{padding: 14px 0px;border-bottom: 1px solid rgba(175,175,175,0.34);}
-      p.code_err_msg{padding: 0px;color: #f00;font-size: 14px;}
-
-
     </style>
     <!-- Single Checkout Page Styling-2 Begins -->
 
@@ -1402,31 +1375,16 @@
             '<input class="gstin_number" id="GSTIN_yes" type="hidden" name="checkout[attributes][CustomerGSTIN]" value="">'
           );
           $('[data-order-summary-section="payment-lines"]').prepend(`
-            
-            <div class="gift_card_main_container">
-              <label class="gift_card_label">
-                <input style="-webkit-appearance:checkbox;" type="checkbox" id="gift-card-redemption_cb">
-                <p style="font-size:18px;font-weight:600;padding-left: 10px;">Redeem Gift card?</p>
-              </label>
-              <div class="gift_card_container checkout_box_container" style="display: none;"  data-active="false">
-                <input class="gift_card_input" type="text" placeholder="Gift Card" name="gift_card" value="">
-                <details>
-                  <summary class="gift_card-button checkout_submit_btn">Apply</summary>
-                </details>
-              </div>
-              <p class="gift_card_error"></p>
+          <div class="couponcode_main_container">
+            <h2 class="couponcode-heading">Apply coupon code</h2>
+            <div class="couponcode_container checkout_box_container" data-active="false">
+              <input class="couponcode_input" type="text" placeholder="Coupon code" name="couponcode" value="">
+                <span class="couponcode-button checkout_submit_btn">Apply</span>
             </div>
-            
-            <div class="couponcode_main_container">
-              <h2 class="couponcode-heading">Apply coupon code</h2>
-              <div class="couponcode_container checkout_box_container" data-active="false">
-                <input class="couponcode_input" type="text" placeholder="Coupon code" name="couponcode" value="">
-                  <span class="couponcode-button checkout_submit_btn">Apply</span>
-              </div>
-              <span class='invalid-promo' style='color:#ff0000;'></span>
-            </div>
+            <span class='invalid-promo' style='color:#ff0000;'></span>
+          </div>
 
-            <div class="gstin_main_container">
+          <div class="gstin_main_container">
           <h2 class="gst-heading">Your GST Information</h2>
           <div class="gstin_container">
             <input class="gstin_input" type="text" placeholder="GSTIN" name="GSTIN" value="">
@@ -2704,14 +2662,14 @@ font-weight: 500;">Gifting | Step 3: Fancy a Message Card?</h1><div class="gift-
       apply_discount_code();
 
       function apply_discount_code(){
-        let check_festive_code = getCookie("discount_code");
+      let check_festive_code = getCookie("discount_code");
 
-        if( check_festive_code != ""){
-          $(".order-summary__sections label").click();
-          $("#checkout_reduction_code").val(check_festive_code);
-          $("#checkout_submit").removeClass('btn--disabled');
-          $("#checkout_submit").removeAttr('disabled');
-          $("#checkout_submit").click();
+      if( check_festive_code != ""){
+        $(".order-summary__sections label").click();
+        $("#checkout_reduction_code").val(check_festive_code);
+        $("#checkout_submit").removeClass('btn--disabled');
+        $("#checkout_submit").removeAttr('disabled');
+        $("#checkout_submit").click();
         }
       }
 
@@ -2863,7 +2821,7 @@ let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container 
           })
          } 
         
-</script>
+    </script>
 
 
   </body>

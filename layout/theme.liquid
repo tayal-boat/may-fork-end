@@ -117,8 +117,9 @@
     {% endcase %}
     <!-- content for header -->
     
-    {% # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer %}
-     {{ 'starter.js' | asset_url | script_tag }}
+    {% comment %} # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer {% endcomment %}
+     {% comment %} {{ 'starter.js' | asset_url | script_tag }} {% endcomment %}
+     {%- render 'starter-js' -%}
         <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -223,6 +224,7 @@
     {% render 'clevertap' %}
   </head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
+    <!-- @prettify-ignore -->
     {%- assign feature_classes = '' -%}
     {%- if settings.show_image_zoom -%}
       {% assign feature_classes = feature_classes | append: ' features--image-zoom' %}
@@ -340,11 +342,13 @@
 
     <!-- google dynamic remarketing tag for theme.liquid -->
     {%- render 'google-adwords-remarketing' -%}
-
-    {% if template contains 'product' %}
-      {% render 'judgeme_core' %}
-    {% endif %}
     
+    {% if template contains 'product' %}
+      {%- render 'judgeme_core' -%}
+    {% endif %}
+    {% unless template contains 'product' or template contains 'customers' %}
+      {%- render 'bottom-navbar-mobile' -%}
+    {% endunless %}
     <!-- Magic Checkout Code Starts -->
     {%- comment -%} {% render 'magicCheckoutSnippet' %} {%- endcomment -%}
     <!-- Magic Checkout Code Ends -->
@@ -376,5 +380,6 @@
     
     {%- render 'auto_atoc_items' -%}
 
+    {% include 'snowflakes' %}
   </body>
 </html>
