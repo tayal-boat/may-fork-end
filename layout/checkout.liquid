@@ -594,9 +594,6 @@
         .gift-box-notifier {
           margin-top: 5px;
         }
-        .couponcode_main_container .tags-list {
-          float: unset !important;
-      }
       </style>
       <!-- Single Checkout Page Styling Engs -->
     </head>
@@ -718,7 +715,6 @@
                       $(this).attr('data-option-name', $(this).text());
                   });
                     $('#checkout_shipping_address_phone').attr('maxlength', "11");
-                    $('.order-summary-toggle--show').trigger('click');
                     const URL = window.location.href;
                     if (!URL.includes('step=shipping_method')) {
                         $('.order-summary-toggle').trigger('click');
@@ -1186,7 +1182,7 @@
           font-size: 12px;
           color: #868686;
         }
-        .gst-heading, .couponcode-heading {
+        .gst-heading {
           font-size: 18px;
           font-weight: 600;
         }
@@ -1275,12 +1271,6 @@
           color: red;
           font-weight: 500;
         }
-        .couponcode_container.checkout_box_container {
-      display: flex;
-      padding: 15px 0 10px 0;
-  }
-        .couponcode_main_container{margin-bottom:1rem;}
-  
       </style>
       <!-- Single Checkout Page Styling-2 Begins -->
   
@@ -1381,14 +1371,12 @@
             $('[data-address-fields]').append(
               '<input class="gstin_number" id="GSTIN_yes" type="hidden" name="checkout[attributes][CustomerGSTIN]" value="">'
             );
-            $('[data-order-summary-section="payment-lines"]').prepend(`
-  
-            <div class="gstin_main_container">
+            $('[data-order-summary-section="payment-lines"]').prepend(`<div class="gstin_main_container">
             <h2 class="gst-heading">Your GST Information</h2>
             <div class="gstin_container">
               <input class="gstin_input" type="text" placeholder="GSTIN" name="GSTIN" value="">
             <details>
-            <summary class="gst-button checkout_submit_btn" gstAdded="false">Validate</summary>
+            <summary class="gst-button" gstAdded="false">Validate</summary>
             <div class="gst-popup-container">
               <header>
               <h2>Your GST Details</h2>
@@ -1442,8 +1430,9 @@
                       gstin: gstInput,
                     },
                     success: function (data) {
-  
+                      console.log(data, 'data');
                       if (data.message == 'The provided GST number is valid and here are the details') {
+                        console.log('GST no valid');
                         sessionStorage.setItem('gstin', gstInput);
                         let res = data.response;
                         let address = res.pradr.addr;
@@ -1463,7 +1452,7 @@
                         sessionStorage.setItem('gst_billing_state', `${address.stcd}`);
                         sessionStorage.setItem('gst_billing_pincode', `${address.pncd}`);
                       } else if (data.message == 'The provided GST number is invalid') {
-  
+                        console.log('GST no Invalid');
                         $('.gst_error').html(data.message);
                       }
                     },
@@ -2082,7 +2071,7 @@
               'font-weight': 'bold',
             });
             $('.section.section--reductions').hide();
-            // $('.section.section--payment-method')[0].scrollIntoView();
+            $('.section.section--payment-method')[0].scrollIntoView();
   
             //     setTimeout(function () {
             //                 if ($('#checkout_billing_address_zip').val()) {
@@ -2250,7 +2239,6 @@
       <!-- Single Checkout Page Script Begins -->
       <!-- FarziPromotions Begins -->
       <script src="https://boatfc-media.farziengineer.co/pincode/checkout1.js"></script>
-  
       <!-- FarziPromotions Ends -->
       <script type="text/javascript">
         createEditableSelect(document.forms[0].country);
@@ -2498,7 +2486,7 @@
         } else {
           console.log('not opened in plobal mobile app');
           $('.order-summary__section--discount').hide();
-          $('#checkout_reduction_code').attr('placeholder', 'Gift Card');
+          $('#checkout_reduction_code').attr('placeholder', 'Gift Card or Coupon Code');
           $('.tag__button').on('click', function (event) {
             var codeapplied = $(event.target).parents('.tag__button').siblings('span.tag__text')[0].innerText;
             if (!codeapplied.includes('•')) {
@@ -2514,7 +2502,7 @@
             .before(`<label style="    border-top: 1px solid rgba(175,175,175,0.34);
       padding: 10px 0; display:flex; align-items:center;">
   <input style="-webkit-appearance:checkbox;"type="checkbox" id="gift-card-redemption">
-      <p style="font-size:18px;font-weight:600;padding-left: 10px;">Redeem Gift card?</p>
+      <p style="font-size:18px;font-weight:600;padding-left: 10px;padding-right: 10px;">Redeem Gift card or apply Coupon code?</p>
     </label>`);
           $('#gift-card-redemption').on('change', function () {
             var checked_val = $('#gift-card-redemption')[0].checked;
@@ -2530,12 +2518,12 @@
         }
         if (sessionStorage.getItem('checked') == 'true') {
           $('#gift-card-redemption')[0].click();
-          $('.order-summary__section.order-summary__section--discount').show();
-          $('.order-summary__section.order-summary__section--discount')[0].style.borderTop = 'none';
         }
       </script>
       <script>
         $(document).ready(function () {
+          $('#gift-card-redemption')[0].click();
+          
           $('[data-address-field="zip"]').insertBefore($('[data-address-field="city"]'));
         });
         $('#checkout_shipping_address_zip').keyup(function () {
@@ -2659,9 +2647,7 @@
         }, 3000);
   
         /* Code for auto festive coupon code */
-        apply_discount_code();
   
-        function apply_discount_code(){
         let check_festive_code = getCookie("discount_code");
   
         if( check_festive_code != ""){
@@ -2670,7 +2656,6 @@
           $("#checkout_submit").removeClass('btn--disabled');
           $("#checkout_submit").removeAttr('disabled');
           $("#checkout_submit").click();
-          }
         }
   
         function getCookie(cname) {
@@ -2688,118 +2673,7 @@
           return "";
         }
   
-        /* script for coupon code customization */
-        $('body.checkout_body').on('change', '.gift_card_label #gift-card-redemption_cb', function() {
-          $('.gift_card_container').toggle();
-        });
       </script>
-      <script type="text/javascript" author="Marmeto">
-        $(document).on(`page:load page:change`, function () {
-        $('[data-order-summary-section="payment-lines"]').prepend(`
-        <div class="couponcode_main_container">
-          <h2 class="couponcode-heading">Apply coupon code</h2>
-          <div class="couponcode_container checkout_box_container" data-active="false">
-            <input class="couponcode_input field__input" type="text" placeholder="Coupon code" name="couponcode" value="">
-              <button class="couponcode-button checkout_submit_btn field__input-btn btn btn--disabled" disabled="disabled">
-                <span class="btn__content visually-hidden-on-mobile" aria-hidden="true">
-              Apply
-            </span>
-                <svg class="icon-svg icon-svg--size-16 btn__icon shown-on-mobile" aria-hidden="true" focusable="false"> <use xlink:href="#arrow"></use> </svg>
-                <svg class="icon-svg icon-svg--size-18 btn__spinner icon-svg--spinner-button" aria-hidden="true" focusable="false"> <use xlink:href="#spinner-button"></use> </svg>
-                </button>
-          </div>
-          <span class='invalid-promo' style='color:#ff0000;'></span>
-        </div>
-        `);
-    if($('.order-summary__section--discount .tags-list').length > 0){
-      $('.couponcode_main_container').append('<div class="tags-list">'+ $('.order-summary__section--discount .tags-list').html() + '</div>');
-      $('#checkout_reduction_code').removeAttr('disabled');
-      $('.invalid-promo').html($(".notice__text").html());
-    }else{
-      $('.couponcode_main_container .tags-list').remove();
-    }
-    $('.couponcode_input').on('input', function(){
-      $(this).siblings('.couponcode-button').removeAttr('disabled');
-    $(this).siblings('.couponcode-button').removeClass('btn--disabled'); 
-    if($('.couponcode_input').val().length < 1 ){
-      $(this).siblings('.couponcode-button').attr('disabled','true');
-      $(this).siblings('.couponcode-button').addClass('btn--disabled'); 
-    }
-    });
-        
-        var discountButton = $('.couponcode_main_container .couponcode-button');
-        var discountForm = $('[name="checkout[reduction_code]"]').closest('form');
-        $(discountButton).on('click', function(e){
-          e.preventDefault();
-          $('#checkout_reduction_code').css('color', 'transparent');
-          setTimeout(function(){
-          var discountCode = $('.couponcode_input').val();
-          $('[name="checkout[reduction_code]"]').val(discountCode);
-          
-          var self = $(this);    
-          var closestForm = discountForm;
-          var submitUrl = discountForm.attr('action');
-          self.addClass("btn--loading");
-          $.ajax({
-            url: submitUrl,
-            type: 'post',
-            data: closestForm.serialize(),
-            success: function(response) {
-              self.removeClass("btn--loading");
-              $('#checkout_reduction_code').removeAttr('style');
-              var result = $(response).find("#error-for-reduction_code");
-              if((result.length) > 0) {
-                var invalidPromo = result.html();
-                $('.invalid-promo').html(invalidPromo);
-                $('#checkout_reduction_code').val('');
-              }
-              else {
-                $('#checkout_reduction_code').val('');
-                location.reload();
-              }
-            }
-           
-          })
-          },500)
-        });
-      
-        var discountInput = $('.couponcode_input'); 
-        discountInput.on('click', function(e) {
-          e.preventDefault();
-          $(this).closest('.couponcode_main_container').find('.invalid-promo').html('');
-          $(this).val('');
-        }) 
-        });  
-     let couponcode_tag_list = document.querySelectorAll('.couponcode_main_container .tags-list .tag__wrapper .tag__button');
-        let tag_list = document.querySelectorAll('.order-summary__section--discount .tags-list .tag__wrapper .tag__button');
-            for (let i = 0; i < couponcode_tag_list.length; i++) {
-              couponcode_tag_list[i].addEventListener('click', function(e){
-                e.preventDefault();
-                var formTag = tag_list[i].closest('form');
-                formTag.click();
-              })
-             } 
-             
-             {% comment %} $('.couponcode_main_container .tags-list .tag__wrapper .tag__button').on('click', function(e) {
-              e.preventDefault();    
-              var formTag = $(this).closest('form');
-              var tagUrl = $(formTag).attr("action");
-        
-              $('[data-reduction-form] button[type="submit"]').addClass("btn--loading");
-              $.ajax({
-                url: tagUrl,
-                type: 'post',
-                data: formTag.serialize(),
-                success: function(response) {
-                  console.log('response');
-                  console.log(response);
-                }
-              })
-            }); {% endcomment %}
-            
-        </script>
-  
-  
     </body>
   </html>
   
