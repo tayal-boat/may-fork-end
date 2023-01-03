@@ -26,7 +26,7 @@
     border: 1px solid;position:relative;}
     .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
     .option:hover{background-color:#fa879b9e;}
-    .previous, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
+    .previous, .next, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
     button.option{display:flex;flex-direction:column;align-items:center;width: 40%;margin-bottom: 12px;}
     @media(min-width:1024px) {
     button.option{width:16%}
@@ -54,21 +54,25 @@
               <div class="screen{{ id }} {% if id != 1 %}d-none{% endif %}" >
               <div class="question-container" id="question">{{ block.settings.quiz_text }}</div>
               <div class="option-container">
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option1_url }}{% else %}a{% endif %}" {% endif %} id="op1">{{- block.settings.quiz_option1 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option1_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option1_url }}{% else %}a{% endif %}" {% endif %} {% endif %} id="op1">{{- block.settings.quiz_option1 -}}</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option2_url }}{% else %}b{% endif %}" {% endif %} id="op2">{{- block.settings.quiz_option2 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option2_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option2_url }}{% else %}b{% endif %}" {% endif %} {% endif %} id="op2">{{- block.settings.quiz_option2 -}}</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option3_url }}{% else %}c{% endif %}" {% endif %} id="op3">{{- block.settings.quiz_option3 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option3_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option3_url }}{% else %}c{% endif %}" {% endif %} {% endif %} id="op3">{{- block.settings.quiz_option3 -}}</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option4_url }}{% else %}d{% endif %}" {% endif %} id="op4">{{- block.settings.quiz_option4 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option4_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option4_url }}{% else %}d{% endif %}" {% endif %} {% endif %} id="op4">{{- block.settings.quiz_option4 -}}</button>
               </div>
               <div class="navigation pt-3 pl-4 ">
+              {% if section.settings.enable_question_ans %}
+                <button class="next d-none" style=""> Next ></button>
+              {% else %}
                  <button class="previous {% if id == 1 %}d-none{% endif %}" style="background: #b102027d;color:white;">< Previous Question</button>
-                {% if id == 4 %}
+              {% endif %} 
+                 {% if id == 4 %}
                  <button class="submit d-none text-center">Submit</button>
                 {% endif %}
               </div>
@@ -102,11 +106,30 @@
   // Next button and method
   let redirect,redirect2;
   let final = '';
+  let answers = [];
   for (let i = 0; i < next.length; i++) {
     let self = next[i].querySelectorAll('.option');
     for (let j = 0; j < self.length; j++) {
       let selft = self[j];
       selft.addEventListener("click", () => {
+        let value = selft.value;
+        {% if section.settings.enable_question_ans %}
+        document.querySelector(`.screen${i+1} .next`).classList.remove("d-none");
+        self.forEach(element => {element.style.pointerEvents = "none"; });
+        document.querySelector(`.screen${i+1} .next`).addEventListener("click", () => {
+          if (i < 3) {
+          document.querySelector(`.screen${i+1}`).classList.add("d-none");
+          document.querySelector(`.screen${i+2}`).classList.remove("d-none"); 
+          self.forEach(element => {element.style.pointerEvents = "auto"; });
+          answers.push(value);console.log(answers);
+          }else{
+            document.querySelector(`.screen${i} .next`).classList.add("d-none");
+            submit.classList.remove("d-none");
+            self.forEach(element => {element.style.pointerEvents = "auto"; });
+            answers.push(value);console.log(answers);
+          }
+        });
+        {% else %}
         // for screen change 
         if (i < 3) {
          console.log(i); 
@@ -114,17 +137,17 @@
          document.querySelector(`.screen${i+2}`).classList.remove("d-none");  
         }
         // sceens for taking decision
-        let value = selft.value;
-        if (i == 1) {redirect = value; console.log(redirect); }
-        if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`; selft.style.backgroundColor = "#fa879b9e";
-          {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
-          console.log(final);  
-          submit.classList.remove("d-none");
-          self.forEach(element => {element.style.pointerEvents = "none"; });
-        }
+          if (i == 1) {redirect = value; console.log(redirect); }
+          if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`; selft.style.backgroundColor = "#fa879b9e";
+            {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
+            console.log(final);  
+            submit.classList.remove("d-none");
+            self.forEach(element => {element.style.pointerEvents = "none"; });
+          }
+        {% endif %}
      })
     }
-
+    {% unless section.settings.enable_question_ans %}
     // previous button and method
     let prev = previous[i];
     prev.addEventListener("click", () => {
@@ -135,7 +158,7 @@
       }
       if (i == 2){submit.classList.add("d-none");}
     })
-
+    {% endunless %}
   }
 
   // submit button and method
@@ -216,6 +239,11 @@
       "type": "image_picker",
       "id": "popup_image",
       "label": "Popup background"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_question_ans",
+      "label": "for question + answers types else collection redirect type"
     },
     {
       "type": "checkbox",
