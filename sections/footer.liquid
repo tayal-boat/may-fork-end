@@ -22,7 +22,7 @@
   .mobile_footer_item_title{display: none;}
   .footer__item-list {gap: 3vw;}
   p.desktop_menu_link.footer__item-title.heading.heading--small, footer .signup-form .input-block #subscriber-email{color: #000;}
-  button#btn-back-to-top {display: none;border-radius: 0!important;BACKGROUND: rgb(255 255 255 / 90%);position: fixed;color:white;background-color:black;padding-inline:6px;{% if template contains 'product' and product.available %}bottom: 18%;{% else %}bottom: 9%;{% endif %}box-shadow: 0 0 0px 1px #909090;width: 40Px;right: 0.1%;JUSTIFY-CONTENT: CENTER;Z-INDEX: 999;}
+  button#btn-back-to-top {display: none;font-weight: 400!important;border-radius: 0!important;position: fixed;color:white;background-color:black;{% if template contains 'product' and product.available %}bottom: 18%;{% else %}bottom: 9%;{% endif %}box-shadow: 0 0 0px 1px #909090;right: 0.1%;align-items: center;z-index:9;}
   .social-media__item--facebook:before {background: #4267B2; }
   .social-media__item--twitter:before{background: #1DA1F2; }
   .social-media__item--instagram:before{background: #E95950; }
@@ -58,7 +58,7 @@
     footer .footer__item--links .footer__item-content{ display: block;}
     footer .footer__item-list .footer__item-content{ padding: 0px 10px;}
     footer .footer__item--links {border-bottom: 0;}
-    footer ul.linklist.list--unstyled li{width: 50%;float: left;padding: 10px 0px 5px;}
+    footer ul.linklist.list--unstyled li{width: 50%;float: left;padding: 10px 0px 5px;text-align: center;}
     footer ul.linklist.list--unstyled li a{/*color: #A8A8A8;*/font-weight: 600;}
     footer .footer__aside .social--media{width: 100%;border-top: 1px solid rgba(105, 105, 105, 0.3);margin-top: 22px;}
     .footer .container {padding: 0;}
@@ -70,7 +70,7 @@
     .download-box a {margin: 0px 5px;width: auto;}
     .download-box a img {width: 100%;}
     footer .footer__aside .footer__copyright {padding-bottom: 36px;margin-top: 32px;}
-    button#btn-back-to-top {bottom: 24%;}
+    button#btn-back-to-top {bottom: 84%;left: 32%;right: unset;border-radius: 24px!important;padding-right: 20px;}
     br.only_mobile{display: block;}
   }
 
@@ -105,16 +105,11 @@
 
 {% unless template contains 'search' %}
 <button type="button" class="btn btn-floating btn-lg" id="btn-back-to-top">
-<!--     <img
-    STYLE="MAX-WIDTH: 24PX;"
-    loading="lazy"
-    alt="arrow"
-    src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/icon_1_1552cc8a-4e88-47c1-8f91-ca80b13c407d.png?v=1654687884"
-    class=""
-  > -->
-  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16" color:"white">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16" color:"white">
 <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
 </svg>
+  
+  <span class="mobile-only" style="padding-left:4px">Back to top</span>
 </button>
 {% endunless %}
 
@@ -534,12 +529,17 @@
   </div>
 {% endcomment %}
 <script>
-$(window).scroll(function(e){
-  if(this.oldScroll > this.scrollY)?$("#btn-back-to-top").css("display","flex"):$("#btn-back-to-top").css("display","none")
+  $(window).scroll(function(e){
+  if (this.scrollY >= 1000){
+  (this.oldScroll > this.scrollY)?$("#btn-back-to-top").css({"display":"flex", "z-index":"999"}):$("#btn-back-to-top").css("display","none")
+  }else{
+    $("#btn-back-to-top").css("display","none");
+  }
   this.oldScroll = this.scrollY;
   })
 $('#btn-back-to-top').click(function () {
   $(window).scrollTop(0);
+  $('.aa-dataset-products container.aa-right-column').scrollTop(0)
   clevertap.event.push('Back to Top clicked');
 });
 </script>
