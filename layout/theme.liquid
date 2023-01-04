@@ -100,32 +100,41 @@
         {{-
           h_content
           | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
-          | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com' 
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com'
         -}}
       {% when 'product' %}
         {{-
           h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com' 
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
         -}}
       {% when 'article', 'collection', 'blog' %}
         {{-
           h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com' 
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
         -}}
       {% else %}
         {{- content_for_header -}}
     {% endcase %}
     <!-- content for header -->
     
-    {% comment %} # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer {% endcomment %}
-     {% comment %} {{ 'starter.js' | asset_url | script_tag }} {% endcomment %}
-     {%- render 'starter-js' -%}
+    {% # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer %}
+     {{ 'starter.js' | asset_url | script_tag }}
+     <script>
+      Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
+      Shopify.tag_selector = {{ settings.tag_selector | json }};
+      Shopify.fixed_discount = function(tag){
+        let tagArr = tag;
+        console.log(tagArr, 'tagArr');
+        let pod_price = 0;
+        for (let i = 0; i < tagArr.length; i++) {
+          if(tagArr[i].includes('PoD Price|')){
+            pod_price = tagArr[i].split('|').slice(1);
+            pod_price = parseInt(pod_price);
+           }
+        }
+        return pod_price;
+      }
+     </script>
         <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -214,7 +223,6 @@
 
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
 
-    {% render 'starter-css' %}
     <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
     {%- if template == 'index' -%}
       <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
@@ -223,7 +231,6 @@
 
     {% if template contains 'product' %}
       {% render 'product-css' %}
-      {% render 'aos-css' %}
       {%- render 'product-js' -%}
     {% elsif template contains 'page' %}
       <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
@@ -232,7 +239,6 @@
     {% render 'clevertap' %}
   </head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
-    <!-- @prettify-ignore -->
     {%- assign feature_classes = '' -%}
     {%- if settings.show_image_zoom -%}
       {% assign feature_classes = feature_classes | append: ' features--image-zoom' %}
@@ -327,7 +333,7 @@
           <div class="loading_icon">
             <img loading="lazy"
               class="lazyload"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader-christmas.gif?v=1671020421"
               alt="Load More"
               style="width: 50px;"
             >
@@ -387,5 +393,7 @@
 
     
     {%- render 'auto_atoc_items' -%}
+
+    {% include 'snowflakes' %}
   </body>
 </html>

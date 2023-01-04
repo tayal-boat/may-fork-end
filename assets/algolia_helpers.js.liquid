@@ -9,6 +9,7 @@
   function formattedPriceWithComparison(price, compare_at_price, price_ratio) {
     var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
     var discount_ratio = 1.0 - price_ratio;
+
     var res = '<b>' + formatPrice(price) + '</b>';
     if (comparing) {
       res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>' +
@@ -66,12 +67,28 @@
         if (min !== max) {
           return '<b>' + formatPrice(min) + ' - ' + formatPrice(max) + '</b>';
         }
+      }else{
+        var price = this.price,
+        compare_at_price = this.compare_at_price,
+        price_ratio = this.price_ratio;
+        var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
+        var discount_ratio = 1.0 - price_ratio;
+        
+        if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
+          let discount = price - Shopify.fixed_discount(this.tags);
+          price = price - discount; 
+          discount_ratio = (compare_at_price - price) / compare_at_price;
       }
-      return formattedPriceWithComparison(
-        this.price,
-        this.compare_at_price,
-        this.price_ratio
-      );
+
+        var res = '<b>' + formatPrice(price) + '</b>';
+        if (comparing) {
+          res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>'
+        + '<b style="padding-left:8px;">' + formatPrice(price) + '</b>'
+            + ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
+        }
+    
+        return res;
+      }
     },
     instantsearchLink: function instantsearchLink() {
       var addVariantId = !this._distinct && this.objectID !== this.id;
@@ -256,10 +273,7 @@
       } else {
         if (tags.includes('Coming-Soon')) {
           var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
-        } else if (tags.includes('Restocking-Soon')){
-          var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
-        }
-         else {
+        } else {
           var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
         }
       }
