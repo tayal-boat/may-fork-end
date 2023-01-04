@@ -57,17 +57,18 @@
   $(document).ready(function() {
   let camp = "{{ request.path | split: '/' | last }}"
     {% if section.settings.landing_based  %}
-      if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
-        $(".custom_Popup #custom-saleModal").modal("show");
-        sessionStorage.setItem("popUpPoped", "poped");
+      if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("{{ section.id }}popUpPoped") === null) {
+        $("#shopify-section-{{ section.id }} #custom-saleModal").modal("show");
+        sessionStorage.setItem("{{ section.id }}popUpPoped", "poped");
       }
     {% else %}
-      $("{{ section.settings.popup_id }}").click(function(e) {
-        $(".custom_Popup #custom-saleModal").modal("show");
+      $("{{ section.settings.popup_id }}").click(function() {
+        console.log("clicked");
+        $("#shopify-section-{{ section.id }} #custom-saleModal").modal("show");
       });
     {% endif %}
 
-      $(".custom_Popup .sale-btn").click(function() {
+      $("#shopify-section-{{ section.id }} .sale-btn").click(function() {
       let e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
         ? localStorage.getItem("userEmailIdSale  {{ section.settings.clevertap_id }}") === e
@@ -80,10 +81,10 @@
           }), clevertap.event.push("Notify Me   {{ section.settings.clevertap_id }}", {
             Email: e,
             Source: camp
-          }), $(".custom_Popup #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
-        : $(".custom_Popup .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          }), $("#shopify-section-{{ section.id }} #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+        : $("#shopify-section-{{ section.id }} .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
       setTimeout(function() {
-        $(".custom_Popup .error-msg-sale, .custom_Popup .thankyou-msg-sale, .custom_Popup .aluser-msg-sale").remove();
+        $("#shopify-section-{{ section.id }} .error-msg-sale, #shopify-section-{{ section.id }} .thankyou-msg-sale, #shopify-section-{{ section.id }} .aluser-msg-sale").remove();
       }, 5e3);
     });
   });
