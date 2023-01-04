@@ -15,31 +15,46 @@
   @media screen and (max-width: 600px) {
   #custom-saleModal .modal-dialog,#custom-saleModals-1 .modal-dialog,#custom-saleModals-2 .modal-dialog{top:5%}
   }
-  .modal-body.p-0{background: url({{ section.settings.popup_image | img_url: 'master' }});background-size: cover;
-   min-height: 70vh;}
 
+
+  .modal-body.p-0{background: url({{ section.settings.popup_image | img_url: 'master' }});background-size: cover;min-height: 70vh;}
   .panel{padding: 6vh 0;}
-  .panel h6 {color: white;font-weight: 600;     text-align: center;   margin-top: 8px;}
+  .panel h6 {color: white;font-weight: 600; text-align: center;margin-top: 8px;}
    div#question::before { content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
    position: absolute;top: -22px;left: -22px;}
-    .question-container{margin:10px auto;padding:12px 0;width:80%;background-color:#fff;text-align:center;border-radius: 8px;
-    border: 1px solid;position:relative;}
-    .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
-    .option:hover{background-color:#fa879b9e;}
-    .previous, .next, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
-    button.option{display:flex;flex-direction:column;align-items:center;width: 40%;margin-bottom: 12px;}
-    @media(min-width:1024px) {
-    button.option{width:16%}
-    .question-container {width: 40%;}
-    .modal-body.p-0 {background-position: unset;background-size: unset;}
+  .question-container{margin:10px auto;padding:12px 0;width:80%;background-color:#fff;text-align:center;border-radius: 8px;
+  border: 1px solid;position:relative;}
+  .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
+  .option:hover{background-color:#fa879b9e;}
+  .previous, .next, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
+  button.option{display:flex;flex-direction:column;align-items:center;width: 40%;margin-bottom: 12px;}
+  @media(min-width:1024px) {
+  button.option{width:16%}
+  .question-container {width: 40%;}
+  .modal-body.p-0 {background-position: unset;background-size: unset;}
+  }
+  @media (min-width: 576px){
+    .modal-dialog {
+      max-width: 1200px;
+      margin: 1.75rem auto;
     }
+  }
     
-    @media (min-width: 576px){
-      .modal-dialog {
-       max-width: 1200px;
-       margin: 1.75rem auto;
-      }
-    }
+ {% if section.settings.enable_question_ans %}
+  .question-container {margin: 16% auto;background-color: transparent;border: 2px solid yellow;color: white;padding: 1rem;border-radius: 4px;position: unset;}
+  div#question::before{display:none;}
+  .option-container {display: block;}
+  .modal-body.p-0 {background-size: contain;min-height: unset;}
+  button.option { align-items: flex-start; width: 100%; padding: 5px 10px; margin-bottom: 16px; background: white; border-radius: 24px!important;}
+  .previous, .next, .submit { background-color: #000; color: white; border-radius: 0px!important;border: 0;}
+  .navigation.pt-3.pl-4 {position: absolute;right: 8%;bottom: 2%;}
+  .option:hover {background-color: #ffcf00;}
+  @media (min-width: 576px){
+  .modal-dialog {max-width: 600px;}
+  .option-container{width:60%}
+  .question-container {width: 80%;margin: 8% auto 4%;}
+  }
+ {% endif %} 
 </style>
 
 <div id="custom-saleModal" class="modal fade" role="dialog">
@@ -113,20 +128,21 @@
       let selft = self[j];
       selft.addEventListener("click", () => {
         let value = selft.value;
+        answers.push(value);console.log(answers);
         {% if section.settings.enable_question_ans %}
+        if (i < 3) {
         document.querySelector(`.screen${i+1} .next`).classList.remove("d-none");
+        }else{submit.classList.remove("d-none");}
+        selft.style.backgroundColor = "#ffcf00";
         self.forEach(element => {element.style.pointerEvents = "none"; });
         document.querySelector(`.screen${i+1} .next`).addEventListener("click", () => {
           if (i < 3) {
           document.querySelector(`.screen${i+1}`).classList.add("d-none");
           document.querySelector(`.screen${i+2}`).classList.remove("d-none"); 
           self.forEach(element => {element.style.pointerEvents = "auto"; });
-          answers.push(value);console.log(answers);
           }else{
             document.querySelector(`.screen${i} .next`).classList.add("d-none");
-            submit.classList.remove("d-none");
             self.forEach(element => {element.style.pointerEvents = "auto"; });
-            answers.push(value);console.log(answers);
           }
         });
         {% else %}
@@ -163,8 +179,29 @@
 
   // submit button and method
   const submit = document.getElementsByClassName('submit')[0];
+  {% if section.settings.enable_question_ans %}
+  submit.addEventListener("click", () => { 
+    let corans = answers.filter(word => word.includes('true')).length;
+    if (answers.includes('true')){
+      console.log("right") ;
+      document.querySelector(`.screen4`).innerHTML = `<div class="question-container" id="question"><p>Wohoo! You got ${corans} answer(s) right.
+          Here’s your exclusive coupon code: <b>BOATXAMAN</b></p>
+          <a href="/collections/daily-deals"><button is="toggle-button"  aria-expanded="false" class="text-white bg-danger mt-3 px-3 product-item__quick-buy-button" >
+            Shop Now
+         </button></a> </div>`
+        
+      }else{
+        console.log("wrong");
+        document.querySelector(`.screen4`).innerHTML = `<div class="question-container" id="question"><p>Oops! All your answer(s) were wong.
+        Here’s your consolation coupon code: <b>SHARKAMAN</b></p>
+        <a href="/collections/daily-deals"><button is="toggle-button"  aria-expanded="false" class="text-white bg-danger mt-3 px-3 product-item__quick-buy-button" >
+          Shop Now
+          </button></a> </div>`
+      }
+      })
+  {% else %}
   submit.addEventListener("click", () => { document.location.href = final; })
-
+  {% endif %}
 </script>
 {% schema %}
 {
