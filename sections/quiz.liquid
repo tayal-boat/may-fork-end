@@ -140,6 +140,27 @@
 
   // submit button and method
   const submit = document.getElementsByClassName('submit')[0];
+  {% if section.settings.enable_question_ans %}
+  submit.addEventListener("click", () => { 
+    let corans = answers.filter(word => word.includes('true')).length;
+    if (answers.includes('true')){
+      console.log("right") ;
+      document.querySelector(`.screen4`).innerHTML = `<div class="question-container" id="question"><p>Wohoo! You got ${corans} answer(s) right.
+          Here’s your exclusive coupon code: <b>BOATXAMAN</b></p>
+          <a href="/collections/daily-deals"><button is="toggle-button"  aria-expanded="false" class="text-white bg-danger mt-3 px-3 product-item__quick-buy-button" >
+            Shop Now
+         </button></a> </div>`
+        
+      }else{
+        console.log("wrong");
+        document.querySelector(`.screen4`).innerHTML = `<div class="question-container" id="question"><p>Oops! All your answer(s) were wrong.
+        Here’s your consolation coupon code: <b>SHARKAMAN</b></p>
+        <a href="/collections/daily-deals"><button is="toggle-button"  aria-expanded="false" class="text-white bg-danger mt-3 px-3 product-item__quick-buy-button" >
+          Shop Now
+          </button></a> </div>`
+      }
+      })
+  {% else %}
   submit.addEventListener("click", () => { document.location.href = final; })
 
 </script>
