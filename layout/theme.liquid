@@ -123,9 +123,25 @@
     {% endcase %}
     <!-- content for header -->
     
-    {% comment %} # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer {% endcomment %}
-     {% comment %} {{ 'starter.js' | asset_url | script_tag }} {% endcomment %}
-     {%- render 'starter-js' -%}
+     {% render 'starter-js' %}
+
+     
+     <script>
+      Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
+      Shopify.tag_selector = {{ settings.tag_selector | json }};
+      Shopify.fixed_discount = function(tag){
+        let tagArr = tag;
+        console.log(tagArr, 'tagArr');
+        let pod_price = 0;
+        for (let i = 0; i < tagArr.length; i++) {
+          if(tagArr[i].includes('PoD Price|')){
+            pod_price = tagArr[i].split('|').slice(1);
+            pod_price = parseInt(pod_price);
+           }
+        }
+        return pod_price;
+      }
+     </script>
         <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
