@@ -337,11 +337,13 @@
  -%}
           {% assign available_variants = 0 %}
           {% for variant in product.variants %}
+
             {% if variant.available %}
               {% assign available_variants = available_variants | plus: 1 %}
             {% endif %}
           {% endfor %}
           <div class="d-flex align-items-center">
+
             {%- if available_variants == 1 -%}
               {%- capture form_id -%}
                 product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
@@ -362,6 +364,13 @@
                     name="properties[Free]"
                     value="true">
                 {%- endif -%}
+                {%- if product.tags contains settings.tag_selector -%}
+                  <input
+                    class="flash_sale_enable"
+                    type="hidden"
+                    name="properties[{{ settings.tag_selector }}]"
+                    value="{{ product.selected_or_first_available_variant.metafields.custom.pod_deal_applicability.value }}">
+                {% endif %}
                 <button
                   is="loader-button"
                   type="submit"
@@ -370,6 +379,7 @@
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
                     {{- 'product.form.add_to_cart' | t -}}
+
                   {% endif %}
                 </button>
                 <button type="submit" class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
