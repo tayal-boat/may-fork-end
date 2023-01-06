@@ -239,9 +239,8 @@ Shopify.variantChange = function(e){
 }
  let variantQtys = sessionStorage.getItem('variantQtys');
  variantQtys = JSON.parse(variantQtys);
- console.log(variantQtys);
  unitsLeft = document.querySelector('.p-units');
- usual_price = document.querySelector('.usual_price');
+//  usual_price = document.querySelector('.usual_price');
       if(usual_price){
         usual_price.innerHTML = '₹'+ e.price / 100;
       }
@@ -628,3 +627,69 @@ $(".razorpay-checkout").click(function () {
 });
 
 /* clevertap code for clicking razor pay ends here */
+
+$(document).on("click", ".custom-offer-add-to-cart", function(e) {
+  e.preventDefault();
+  let offerForm = $(this).parents("form")[0];
+  let offerId = offerForm.querySelector('[name="id"]').value;
+  let offerVariantData = sessionStorage.getItem('variantQtys');
+  let OfferProperty= [];
+  let varient_pod_units = [];
+  offerVariantData = JSON.parse(offerVariantData);
+    for (var key in offerVariantData) {
+     if (offerVariantData.hasOwnProperty(offerId)) {
+      let OfferPropertyArr = offerVariantData[offerId];
+       OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+       varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+       break;
+      }
+    }
+    OfferProperty = OfferProperty[0];
+    if($(this).hasClass( "algolia_pod_offer" )){
+      $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: {
+            'quantity': 1,
+            'id': offerId,
+            'properties': {
+              '_POD': OfferProperty
+            }
+          },
+        success: function(e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                bubbles: !0
+            }));
+            setTimeout(function() {
+              $(".header__cart-count").html($("#mini-cart input.cart--count").val())
+          }, 1500)
+            console.log('hiii');
+            document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex')
+        }
+    })
+    }else{
+      $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: {
+            'quantity': 1,
+            'id': offerId,
+            'properties': {
+              '_POD': OfferProperty
+            }
+          },
+        success: function(e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                bubbles: !0
+            }));
+            setTimeout(function() {
+              $(".header__cart-count").html($("#mini-cart input.cart--count").val())
+          }, 1500)
+        }
+    })
+    }
+});
