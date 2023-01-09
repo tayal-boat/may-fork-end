@@ -44,7 +44,12 @@
   {%- endfor -%}
 </style>
 
-<section>
+<section class="{% if section.settings.hide_on_mobile %} only-desktop {% endif %} {% if section.settings.hide_on_desktop %} mobile-only {% endif %} {% if section.settings.additional_class_name %} {{ section.settings.additional_class_name }} {% endif %}">
+  {% if section.settings.shop_the_look_heading %}
+    <div class="shop_the_section_heading">
+      <h2>{{ section.settings.shop_the_look_heading }}</h2>
+    </div>
+{% endif %}
   <shop-the-look {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="shop-the-look">
     <div class="shop-the-look__item-list">
       {%- for block in section.blocks -%}
@@ -465,11 +470,33 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_desktop",
+      "label": "Hide on desktop",
+      "default": false
+    },
+    {
       "type": "text",
       "id": "label",
       "label": "Navigation label",
       "default": "Shop the looks",
       "info": "Shown when multiple looks are featured."
+    },
+    {
+      "type": "text",
+      "id": "additional_class_name",
+      "label": "Addition class name"
+    },
+    {
+      "type": "text",
+      "id": "shop_the_look_heading",
+      "label": "Shop the look heading"
     }
   ],
   "presets": [
