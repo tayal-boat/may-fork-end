@@ -298,38 +298,28 @@ for (let i = 0; i < sliderSelector.length; i++) {
         1024: {
            items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_mid_items')),
         }
-    },onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar
+    }
   }).on("dragged.owl.carousel", function(event) {
     $(slider_section_id).trigger('stop.owl.autoplay');
     $(slider_section_id).trigger('play.owl.autoplay');
     if(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')) > 1){
       slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
     } 
-  });  
+  }).on('changed.owl.carousel', function(event) {
+    navigationFill();
+});  
   function slide_item_on_drag(section_id, drag_direction) {
     if( drag_direction == 'right' ){// $(section_id + ' .owl-dots .owl-dot.active').prev().click();
     }
     else if( drag_direction == 'left' ){$(section_id + ' .owl-dots .owl-dot.active').next().click();} } 
-  function startProgressBar() { 
+  function navigationFill() {  
 
-    var pr = $(".owl-theme .owl-dots .owl-dot span");
-   $(pr).css({ width: "0%" });
+        var pr = $(".owl-theme .owl-dots .owl-dot span");
+        $(pr).css({ width: "0%" });
 
-   var progressbar = $(".owl-theme .owl-dots .owl-dot.active span");
-   $(progressbar).animate({ width: "100%" }, 5000);
-
-    //$(".slide-progress").css({width: "100%",transition: "width 5000ms"});
-  }
-  function resetProgressBar() {
-
-    var pr = $(".owl-theme .owl-dots .owl-dot span");
-   $(pr).css({ width: "0%" });
-
-   var progressbar = $(".owl-theme .owl-dots .owl-dot.active span");
-   $(progressbar).animate({ width: "100%" }, 5000);
-    
-    //$(".slide-progress").css({width: 0,transition: "width 0s"});
-  }
+        var progressbar = $(".owl-theme .owl-dots .owl-dot.active span");
+        $(progressbar).animate({ width: "100%" }, 5000);
+    }
   function openVideoPopup(url){
     if(url != ''){
       jQuery('.banner_video_modal .video_container iframe').attr('src', url);
