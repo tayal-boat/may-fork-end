@@ -128,17 +128,20 @@
                   </div>
 
                   {%- when 'color' -%}
-                  <div class="color-swatch-list surabhi">
+                  <div class="color-swatch-list">
                     {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
                     {%- assign option_position0 = option.position | minus: 1 -%}
-                    {%- for value in option.values limit: 4 -%}
+                    {% assign counter = 0 %}
+                    {%- for value in option.values -%}
                       {%- assign color_value_downcase = value | downcase -%}
                       {% for variant in product.variants %}
-                        {% capture variant_pod_units %}
-                          {{ variant.metafields.custom.pod_units }}
-                        {% endcapture %}
+                        {% assign variant_pod_units = variant.metafields.custom.pod_variant_unit.value | plus: 0  %}
                         {%- if variant.options[option_position0] == value -%}
-                          {% if variant_pod_units != '0' or variant_pod_units != blank %}
+                          {% if variant.metafields.custom.pod_deal_applicability == true and variant_pod_units > 0 %}
+                          {% assign counter = counter | plus: 1 %}
+                          {% if counter > 4 %}
+                          {% break %}
+                        {% endif %}
                             <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}">
                               <input
                                 class="color-swatch__radio visually-hidden"
@@ -156,6 +159,7 @@
                                 <span class="visually-hidden">{{ value }}</span>
                               </label>
                             </div>
+
                           {% endif %}
                         {%- endif -%}
                       {% endfor %}
@@ -267,17 +271,17 @@
               aria-live="polite">
               <div class="my-2 new-price-container">
                 <div class="price-list featured_product_price custom-product-of-the-day-price">
-                    <div class="usual-price">
-                      <span>Usually at</span><br>
-                      <span class="usual_price">₹ {{ product.price | divided_by: 100 }}</span>
-                    </div>
+                  <div class="usual-price">
+                    <span>Usually at</span><br>
+                    <span class="usual_price">₹ {{ product.price | divided_by: 100 }}</span>
+                  </div>
                   {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %}
                     <div class="current-price">
                       <span>Now at</span>
                       {% capture fixed_discount %}
                         {% render 'fixed-discount-by-tag', product: product %}
                       {% endcapture %}
-                      <span class="current_price">{{ fixed_discount | prepend: '₹' }}</span>
+                      <span class="current_price" data-pod="{{ fixed_discount | strip }}">{{ fixed_discount | prepend: '₹' }}</span>
                     </div>
                   {% endif %}
                 </div>
@@ -300,7 +304,7 @@
               </style>
               <div class="price-container product-highlight my-3 p-3 only-desktop">
                 <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            font-weight: 700;">Product Highlights</h6>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            font-weight: 700;">Product Highlights</h6>
                 {{ product.metafields.custom.product_highlights }}
               </div>
             {% endif %}
