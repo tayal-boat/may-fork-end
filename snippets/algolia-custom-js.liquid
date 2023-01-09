@@ -152,8 +152,8 @@
     $(".search-popup-container").css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"}),
     $(".search-clear-icon").css("display", "flex"),
     setTimeout(function() {
-      $(".fixed_nav").css({display: "block", "z-index": "999"}),
-      $(".algolia-autocomplete .aa-dataset-products").show()
+      $(".algolia-autocomplete .aa-dataset-products").show(),
+      $(".fixed_nav").css({display: "block", "z-index": "999"});
     }, 1e3),
     setTimeout(function() {
       let e = "";
@@ -167,6 +167,7 @@
   }),
   $(".search-clear-icon").click(function() {
     $(".fixed_nav").removeAttr("style");
+    
     let e = this.offsetParent;
     var t = $(this).closest(".algolia-header-custom-search").find(".search-popup-container");
     $(this).removeAttr("style"),
@@ -178,6 +179,7 @@
       $("body").removeClass("noScroll"),
       t.removeAttr("style"),
       $(".algolia-autocomplete .aa-dataset-products").hide()
+      $('.algolia-header-custom-search.hidden-desk').addClass('d-none')
     }, 100)
   }),
   $(document).click(function(e) {
@@ -281,4 +283,12 @@
       element: ".predictive-search__input_desk"
     }).init()
   });
+  $('.search-icon').click(function(){
+    {% comment %} alert() {% endcomment %}
+    $('.algolia-header-custom-search.hidden-desk').removeClass('d-none').css('display', 'block');
+    setTimeout(() => {
+      $(".search-popup-container").css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"})
+      
+    }, 100)
+  })
 </script>
