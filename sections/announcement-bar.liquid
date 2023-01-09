@@ -38,7 +38,7 @@
 </style>
 
 {%- if section.blocks.size > 0 -%}
-  <section>
+  <section id="shopify-section-{{ section.id }}">
     <announcement-bar {% if section.blocks.size > 1 and section.settings.autoplay %}auto-play cycle-speed="{{ section.settings.cycle_speed | escape }}"{% endif %} class="announcement-bar {% if section.blocks.size > 1 %}announcement-bar--multiple{% endif %}">
       {%- if section.blocks.size > 1 -%}
         <button data-action="prev" class="tap-area tap-area--large">
@@ -74,7 +74,10 @@
                   <button class="link" data-action="open-content">{{ block.settings.text }}</button>
                 {%- endif -%}
               {%- else -%}
-                <p>{{ block.settings.text  }}</p>
+                <p class="{%- if section.settings.show_timer -%}m-0{%- endif -%}">{{ block.settings.text }}</p>
+                {% if section.settings.show_timer %}
+                  {% render 'countdown-timer', banner_title: section.settings.timer_title , banner_end_date: section.settings.end_date , time_background: section.settings.timer_background , time_inline: section.settings.timer_inline %}
+                {% endif %}
               {%- endif -%}
             </div>
             </a>
@@ -89,8 +92,6 @@
                       <span class="visually-hidden">{{ 'general.accessibility.close' | t }}</span>
                       {%- render 'icon' with 'close' -%}
                     </button>
-
-
                     {%- if block.settings.content != blank -%}
                       <div class="announcement-bar__content-text-wrapper">
                         <div class="announcement-bar__content-text text-container">
@@ -101,7 +102,6 @@
                           {%- if block.settings.content != blank -%}
                             {{- block.settings.content -}}
                           {%- endif -%}
-
 
                         </div>
                       </div>
@@ -125,8 +125,7 @@
   </section>
 
  {% comment %} 
-<script>
-
+  <script>
     document.documentElement.style.setProperty('--announcement-bar-height', document.getElementById('shopify-section-{{ section.id }}').clientHeight + 'px');
   </script>
  {% endcomment %}
@@ -203,9 +202,34 @@
     },
     {
       "type": "checkbox",
+      "id": "show_timer",
+      "label": "Show Timer",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "timer_title",
+      "label": "timer_title"
+    },
+    {
+      "type": "color",
+      "id": "timer_background",
+      "label": "timer_background"
+    },
+    {
+      "type": "checkbox",
+      "id": "timer_inline",
+      "label": "get_timer_inline"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "timer End Date (Ex: Apr 30, 2022)"
+    },
+    {
+      "type": "checkbox",
       "id": "autoplay",
-      "label": "Auto rotate between messages",
-      "default": true
+      "label": "Auto rotate between messages"
     },
     {
       "type": "range",

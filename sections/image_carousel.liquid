@@ -1,132 +1,166 @@
 <style>
   .deal-of-the_day.{{ section.id }}{
-    padding-top: 20px; padding-bottom: {{section.settings.sectionpadding}}px;
+    padding-top: 20px;
+    padding-bottom: {{ section.settings.sectionpadding}}px;
+    background: {{ section.settings.bg_color }};
+    margin: {{ section.settings.sectionmargin }};
   }
-  @media(max-width:768px){
+  @media(max-width:768px) {
     .deal-of-the_day.{{ section.id }}{
-    padding-right: {{section.settings.sectionpaddingright}}px;
-    }}
+      padding-right: {{ section.settings.sectionpaddingright }}px;
+    }
+  }
 </style>
 
 <div class="container deal-of-the_day {{ section.id }} ">
-  <div class="row">
-    <div class="col-md-12 section__header text-container d-flex justify-content-between">
-      <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+  {% if section.settings.sectionHeading != blank %}
+    <div class="row">
+      <div class="col-md-12 section__header text-container d-flex justify-content-between">
+        <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+      </div>
     </div>
-  </div>
+  {% endif %}
   <div class="row">
-    	<a href="#0" class="slide-url temp-slide w-100 d-flex justify-content-center">
-          <div class="loading_icon">
-            <img
-              loading="lazy"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/preloader_50x.gif?v=1649585765"
-              alt="Load More"
-              style="width: 50px;"
+    <div class="col-md-12 owl-carousel owl-theme deal-slider custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
+      {% for block in section.blocks %}
+        {% assign popup_class = "" %}
+        {% if block.settings.popup_class != blank %}
+          {% assign popup_class = block.settings.popup_class %}
+        {% endif %}
+   {% if block.settings.desktop_image != blank %} 
+     {% assign desk_img =  block.settings.desktop_image %}
+   {% else %}
+     {% assign desk_img = block.settings.image %}
+   {% endif %}
+        <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
+          <div class="item">
+          <picture>
+            <source
+              media="(min-width: 769px)"
+              {% render 'image-attributes', image: desk_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
             >
+            <img
+              class="image-overlay__image_"
+              {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600' %}
+              alt="{{block.settings.image.alt}}" loading="lazy"
+            >
+          </picture>
           </div>
         </a>
-    <div class="col-md-12 owl-carousel owl-theme deal-slider {{ section.id }}">
-      {% for block in section.blocks %}
-    <a href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}" class="slide-url">
-      <div class="item">
-        <img src="{{block.settings.image | img_url: ''}}">
-      </div>
-    </a>
       {% endfor %}
     </div>
   </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-      var $owl = $( '#shopify-section-{{ section.id }} .owl-carousel' );
-      $owl.on('initialized.owl.carousel', function(event){ 
-         $('.temp-slide').hide();
-      });
-      $('.deal-slider.{{ section.id }}').owlCarousel({
-        loop: true,
-        responsiveClass: true,
-        autoplay:true,
-        items: 4,
-        nav: false,
-        dots: true,
-        responsive: {
-          300: {
-            items: {{section.settings.slides_no}}
-          },
-          800: {
-            items: 2
-          },
-          1000: {
-            items:{{ section.settings.deskslides_no}},
-            loop: true,
-            margin: 10
-          }
-        }
-      })
-    })
-  </script>
+
 
 {% schema %}
   {
     "name": "Image Slider",
-	"max_blocks": 28,
+    "max_blocks": 28,
     "settings": [
-		{
-             "type": "text",
-             "id": "sectionHeading",
-             "label": "Section Heading"
-        },
-       {
-             "type": "text",
-             "id": "sectionpadding",
-             "label": "padding bottom",
-             "default": "0"
-        },
-        {
-             "type": "text",
-             "id": "sectionpaddingright",
-             "label": "mob-padding right"
-        },
-         {
-             "type": "number",
-             "id": "slides_no",
-             "label": "mobile slides",
-           "default": 1
-        },
-        {
-             "type": "number",
-             "id": "deskslides_no",
-             "label": "desk slides",
-           "default": 3
-        }
+      {
+        "type": "text",
+        "id": "sectionHeading",
+        "label": "Section Heading"
+      },
+      {
+        "type": "text",
+        "id": "sectionmargin",
+        "label": "sectionmargin",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "sectionpadding",
+        "label": "padding bottom",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "sectionpaddingright",
+        "label": "mob-padding right"
+      }, {
+        "type": "number",
+        "id": "slides_no",
+        "label": "mobile slides",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "deskslides_no",
+        "label": "desk slides",
+        "default": 3
+      }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": true
+      }, {
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "margin",
+        "label": "margin",
+        "default": 0
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      }, {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background color",
+        "default": "#FFFFFF"
+      }
 
-	],
-	"blocks": [
-		{
-			"type": "image",
-        	"name": "Slide",
-			"settings" : [
-				{
-                  "type": "image_picker",
-                  "id": "image",
-                  "label": "Primary image",
-                  "info": "300px wide minimum"
-              },
-              {
-                  "type": "url",
-                  "id": "imageUrl",
-                  "label": "Image URL"
-              }
-			]
-		}
-	],
-	"presets": [
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Slide",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Primary image",
+            "info": "300px wide minimum"
+          }, 
+          {
+            "type": "image_picker",
+            "id": "desktop_image",
+            "label": "desk image"
+          }, 
+          {
+            "type": "url",
+            "id": "imageUrl",
+            "label": "Image URL"
+          }, {
+            "type": "text",
+            "id": "popup_class",
+            "label": "Add class name to trigger popup"
+          }
+        ]
+      }
+    ],
+    "presets": [
       {
         "name": "Image Slider",
         "category": "Image",
-        "settings": {
-        },
+        "settings": {},
         "blocks": [
           {
             "type": "image"

@@ -173,10 +173,12 @@
     {%- if template.suffix != 'quick-buy-popover'  -%}
     {% unless product.tags contains 'NO-PRICE' %}
       <div class="product-meta__price-list-container custom-product-price-mobile" role="region" aria-live="polite">
-        <div class="d-flex mb-2 align-items-end justify-content-between">
+        <div class="d-flex my-2 align-items-end justify-content-between">
       <div class="price-list custom-product-price" data-product-price-list>
         {%- if product.tags contains 'flash-sale' -%}
-        	<span class="flash-icon"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group-2.png?v=1655107410" alt="thunder" /></span>&nbsp;
+        	<span class="flash-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#facf19" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+  <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+</svg></span>&nbsp;
         {%- endif -%}
                
         
@@ -235,19 +237,7 @@
           </div>
         {%- endif -%}
       </div>
-	{% comment %}
-      <div class="product-meta__label-list label-list" data-product-label-list>
-        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
-          {%- if settings.discount_mode == 'percentage' -%}
-            {%- assign savings = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100.0 | divided_by: product.selected_or_first_available_variant.compare_at_price | round | append: '%' -%}
-          {%- else -%}
-            {%- capture savings -%}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money }}{%- endcapture -%}
-          {%- endif -%}
 
-          <span class="label label--highlight">{{ 'collection.product.discount_html' | t: savings: savings }}</span>
-        {%- endif -%}
-      </div>
-	{% endcomment %}
         {% if product.compare_at_price > discounted_price %}     
         <p class="custom-saved-price" style="margin: 0.25rem 0 0;font-weight: 600;font-size: 14px;letter-spacing: -0.045em;color: #00C68C;"> You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} ({{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
          {% endif %}
@@ -261,9 +251,9 @@
     {% endif %}
       {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
       <div class="seo-new pr-lg-1" style="overflow-y: auto;">
-        <div class="price-container mt-lg-4 mb-2 d-none">
+        {%- comment -%} <div class="price-container mt-lg-4 mb-2 d-none">
             {% render 'product-payment-partner' %}
-        </div>
+        </div> {%- endcomment -%}
 {% if product.metafields.custom.product_highlights %}
  <style>@media (min-width: 991px) {.seo-new {height: 16rem;}}</style>  
    <div class="price-container product-highlight my-3 p-3 only-desktop">
@@ -327,19 +317,7 @@
           </div>
         {%- endif -%}
       </div>
-{% comment %}
-      <div class="product-meta__label-list label-list" data-product-label-list>
-        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
-          {%- if settings.discount_mode == 'percentage' -%}
-            {%- assign savings = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | times: 100.0 | divided_by: product.selected_or_first_available_variant.compare_at_price | round | append: '%' -%}
-          {%- else -%}
-            {%- capture savings -%}{{ product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price | money }}{%- endcapture -%}
-          {%- endif -%}
 
-          <span class="label label--highlight">{{ 'collection.product.discount_html' | t: savings: savings }}</span>
-        {%- endif -%}
-      </div>
-{% endcomment %}
 
 
         <div class="d-flex  mt-2 align-items-baseline justify-content-between">
@@ -568,50 +546,48 @@
             {%- if product.tags contains 'flash-sale' -%}
             <input class="flash_sale_enable" type="hidden" name="properties[flash_sale]" value="true">
             {%- endif -%}
+            {%- if product.tags contains settings.products_offering_freebie -%}
+              <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+            {%- endif -%}
             <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer"{% endif %} class="product-form__payment-container" {{ block.shopify_attributes }}>
-         {%- if product.tags contains 'prebooking' -%}  
-              <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %} >
+             {%- if product.tags contains 'prebooking' -%}  
+                <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %} >
                       {{- 'product.form.pre_order' | t -}}
                 </button>
-          {% else %}
-              <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              {% else %}
+                <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %} disabled{% endunless %}>
                   {%- if product.selected_or_first_available_variant.available -%}
                       {{- 'product.form.add_to_cart' | t -}}
                         {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
-         
+              {%- endif -%}
 
-               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}         
-                <button type="button" onclick="onBuyNowClick(this, '#{{ product_form_id }}')" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%} 
+                {% unless product.tags contains settings.products_offering_freebie %} 
+                 <button type="button" onclick="onBuyNowClick(this)" class="" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled  style="display:none !important;" {% endunless %}>
                  {{ settings.buynow-titile }}
                  <div style="display:none"><div class="cir-loader">Loading..</div></div>
                  </button>
-  {% if product.metafields.custom.product_highlights %}
-   <div class="price-container product-highlight mt-3 p-3 mobile-only">
-      <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;
-       font-weight: 700;">Product Highlights</h6>
-       {{product.metafields.custom.product_highlights}}
-   </div>
-        {%- endif -%}
+                {% endunless %} 
+                 {% if product.metafields.custom.product_highlights %}
+                   <div class="price-container product-highlight mt-3 p-3 mobile-only">
+                    <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey; font-weight: 700;">Product Highlights</h6>
+                    {{product.metafields.custom.product_highlights}}
+                   </div>
+                  {%- endif -%}
+                  <button id="BIS_trigger" type="button" class="custom-notify-btn" data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
+                    Notify me
+                  </button>
                {%- endif -%}
-		 {%- endif -%}
- 
-       {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
-          {%- comment -%}           {{ form | payment_button }}       	{%- endcomment -%}   
-                
-                  {%- unless product.selected_or_first_available_variant.available -%}
-                    <style>
-                      #shopify-section-{{ section.id }} .shopify-payment-button {
-                        display: none;
-                      }
-                    </style>
-                  {%- endunless -%}
-                {%- endif -%}
-              </product-payment-container>
-            {%- endform -%}
-        
+
+              {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
+                  {%- comment -%}           {{ form | payment_button }}       	{%- endcomment -%}   
+              {%- endif -%}
+
+            </product-payment-container>
+          {%- endform -%}
         {%- endif -%}
 </div>
         {%- if template.suffix != 'quick-buy-popover' -%}
