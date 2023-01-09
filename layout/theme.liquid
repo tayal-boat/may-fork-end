@@ -123,9 +123,25 @@
     {% endcase %}
     <!-- content for header -->
     
-    {% comment %} # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer {% endcomment %}
-     {% comment %} {{ 'starter.js' | asset_url | script_tag }} {% endcomment %}
-     {%- render 'starter-js' -%}
+     {% render 'starter-js' %}
+
+     
+     <script>
+      Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
+      Shopify.tag_selector = {{ settings.tag_selector | json }};
+      Shopify.fixed_discount = function(tag){
+        let tagArr = tag;
+        console.log(tagArr, 'tagArr');
+        let pod_price = 0;
+        for (let i = 0; i < tagArr.length; i++) {
+          if(tagArr[i].includes('PoD Price|')){
+            pod_price = tagArr[i].split('|').slice(1);
+            pod_price = parseInt(pod_price);
+           }
+        }
+        return pod_price;
+      }
+     </script>
         <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -230,7 +246,7 @@
     {% endif %}
     {% render 'gokwik' %}
     {% render 'clevertap' %}
-  </head>
+  <img alt="icon" width="1400" height="1400" style="pointer-events: none; position: absolute; top: 0; left: 0; width: 99vw; height: 99vh; max-width: 99vw; max-height: 99vh;"  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSI5OTk5OXB4IiBoZWlnaHQ9Ijk5OTk5cHgiIHZpZXdCb3g9IjAgMCA5OTk5OSA5OTk5OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIGZpbGwtb3BhY2l0eT0iMCI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9Ijk5OTk5IiBoZWlnaHQ9Ijk5OTk5Ij48L3JlY3Q+IDwvZz4gPC9zdmc+"></head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
     <!-- @prettify-ignore -->
     {%- assign feature_classes = '' -%}
@@ -379,15 +395,14 @@
         @media screen and (max-width: 767px) {
           #main, .footer {
          background: url({{ settings.home_bg_image }}) !important;
-    background-repeat: repeat-y;
-    background-size: contain !important;
+         background-repeat: repeat-y;
+         background-size: contain !important;
         }
       </style>
     {% endif %}
 
     
     {%- render 'auto_atoc_items' -%}
-
-    {% include 'snowflakes' %}
-  </body>
+  {{ '//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23' | script_tag }}
+</body>
 </html>
