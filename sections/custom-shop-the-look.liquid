@@ -42,15 +42,17 @@
       {%- endif -%}
     {%- endfor -%}
   {%- endfor -%}
-  .custom-shop-the-look .shop-the-look__item-list{display: flex;flex-direction: row;overflow-y: auto;}
-  .custom-shop-the-look .shop-the-look__item-list .shop-the-look__item{min-width:300px;margin: 0 10px;}
-  .custom-shop-the-look .shop-the-look__nav{display:none;}
-  @media screen and (min-width:767px){
-    .custom-shop-the-look{display:none;}
-  }
+  
 </style>
 
-<section>
+<section class="{% if section.settings.hide_on_mobile %} only-desktop {% endif %} {% if section.settings.hide_on_desktop %} mobile-only {% endif %} {% if section.settings.additional_class_name %} {{ section.settings.additional_class_name }} {% endif %}">
+
+  {% if section.settings.shop_the_look_heading %}
+    <div class="shop_the_section_heading">
+      <h2>{{ section.settings.shop_the_look_heading }}</h2>
+    </div>
+  {% endif %}
+
   <shop-the-look {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="shop-the-look">
     <div class="shop-the-look__item-list">
       {%- for block in section.blocks -%}
@@ -229,6 +231,21 @@
               {%- endif -%}
             </div>
           {%- endfor -%}
+
+          <div class="shop_the_sark_addition_info">
+            {% assign product_item = block.settings.product_1 %}
+            {% assign product_item_var = block.settings.product_1.variants[0].id %}
+            <div class="row_1">{{ product_item.title | split: "|" | first | remove: "boAt" }}</div>
+            <div class="row_2">
+              <span class="product_price">{{ product_item.price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' }}</span>
+              {%- form 'product', product_item, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="id" value="{{ product_item_var }}">
+                <button class="product-item__quick-buy-button hidden-tablet-and-up shop_the_sark_btn">ADD</button>
+              {%- endform -%}
+            </div>
+          </div>
+
         </shop-the-look-item>
       {%- endfor -%}
     </div>
@@ -471,11 +488,33 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_desktop",
+      "label": "Hide on desktop",
+      "default": false
+    },
+    {
       "type": "text",
       "id": "label",
       "label": "Navigation label",
       "default": "Shop the looks",
       "info": "Shown when multiple looks are featured."
+    },
+    {
+      "type": "text",
+      "id": "additional_class_name",
+      "label": "Addition class name"
+    },
+    {
+      "type": "text",
+      "id": "shop_the_look_heading",
+      "label": "Shop the look heading"
     }
   ],
   "presets": [
