@@ -135,13 +135,13 @@
                     {%- for value in option.values -%}
                       {%- assign color_value_downcase = value | downcase -%}
                       {% for variant in product.variants %}
-                        {% assign variant_pod_units = variant.metafields.custom.pod_variant_unit.value | plus: 0  %}
+                        {% assign variant_pod_units = variant.metafields.custom.pod_variant_unit.value | plus: 0 %}
                         {%- if variant.options[option_position0] == value -%}
-                          {% if variant.metafields.custom.pod_deal_applicability == true and variant_pod_units > 0 %}
-                          {% assign counter = counter | plus: 1 %}
-                          {% if counter > 4 %}
-                          {% break %}
-                        {% endif %}
+                          {% if variant.metafields.custom.pod_deal_applicability == true and variant_pod_units > 0 and variant.inventory_quantity > 0 %}
+                            {% assign counter = counter | plus: 1 %}
+                            {% if counter > 4 %}
+                              {% break %}
+                            {% endif %}
                             <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}">
                               <input
                                 class="color-swatch__radio visually-hidden"
@@ -304,7 +304,7 @@
               </style>
               <div class="price-container product-highlight my-3 p-3 only-desktop">
                 <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            font-weight: 700;">Product Highlights</h6>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                font-weight: 700;">Product Highlights</h6>
                 {{ product.metafields.custom.product_highlights }}
               </div>
             {% endif %}
