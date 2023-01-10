@@ -1,15 +1,5 @@
 {%- capture product_form_id -%}product-form-{{ section.id }}-{{ product.id }}{%- endcapture -%}
 
-{% assign pod_units = 0 %}
-{% for variant in product.variants %}
-  {% if variant.metafields.custom.pod_units %}
-    {% capture variant_pod_units %}
-      {{ variant.metafields.custom.pod_units }}
-    {% endcapture %}
-    {% assign pod_units = pod_units | plus: variant_pod_units %}
-  {% endif %}
-{% endfor %}
-
 <div class="product__info pl-lg-5">
   <!-- PRODUCT META -->
   <product-meta
@@ -263,6 +253,14 @@
         </button>
       </header>
 
+      <div class="popover__content">
+        <div class="rte">
+          {{- help_page.content -}}
+        </div>
+      </div>
+    </popover-content>
+  {%- endif -%}
+</div>
       <div class="popover__content">
         <div class="rte">
           {{- help_page.content -}}
