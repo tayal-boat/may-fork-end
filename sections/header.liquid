@@ -225,9 +225,19 @@
               </video>
             {%- elsif section.settings.gif_logo != blank -%}
                 <span class="visually-hidden">{{ shop.name }}</span>
-                <img class="header__logo-image gif_logo" loading="lazy" width="{{ section.settings.logo.width }}"
+                <img class="header__logo-image gif_logo {% if section.settings.gif_logo_time != 0 %}timeout{% endif %}" loading="lazy" width="{{ section.settings.logo.width }}"
                 height="{{ section.settings.logo.height }}" src="{{ section.settings.gif_logo | img_url: '160x40' }}"
                 alt="{{ section.settings.logo.alt | escape }}" >
+                {%- if section.settings.gif_logo_time != 0 -%}
+                  <img
+                  class="header__logo-image timein d-none"
+                  loading="lazy"
+                  width="{{ section.settings.logo.width }}"
+                  height="{{ section.settings.logo.height }}"
+                  src="{{ section.settings.logo | img_url: logo_size }}"
+                  alt="{{ section.settings.logo.alt | escape }}"
+                  >
+                {%- endif -%}  
             {%- elsif section.settings.logo != blank -%}
               
               <span class="visually-hidden">{{ shop.name }}</span>
@@ -675,16 +685,12 @@
 {%- endcomment -%}
 
 <script>
-  /* $('.announce .announcement-bar__message p').each(function (ind, el) {
-    $(el).on('click', function (e) {
-      var announcementText = $(this).text();
-      clevertap.event.push('Announcement bar clicked', {
-        Message: announcementText,
-        userSource: userSource,
-      });
-    });
-  }); */
-
+{%- if section.settings.gif_logo_time != 0 -%}
+  let logo_timer = {{ section.settings.gif_logo_time | times: 1000 }};
+     setTimeout(function(){ 
+       document.querySelector('.gif_logo.timeout').classList.add("d-none");document.querySelector('.header__logo-image.timein').classList.remove("d-none");
+     }, logo_timer);
+{%- endif -%}
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
       headerHeight = headerElement.clientHeight,
@@ -770,6 +776,15 @@
       "type": "image_picker",
       "id": "gif_logo",
       "label": "GIF Logo"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "id": "gif_logo_time",
+      "label": "time in which gif logo will be replaced with actual logo",
+      "default": 0
     },
     {
       "type": "range",
