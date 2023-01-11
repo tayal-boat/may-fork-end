@@ -768,7 +768,14 @@ $(".razorpay-checkout").click(function () {
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401){
-        $('.otp-login-error').html(response.message);
+        $('.otp-login-error').html('Customer already exist with this email ID and with ' + response.message + ' phone number login with this number.');
+        let login_btn = $('.otp-login-submit-btn');
+        login_btn.html('Back to Login');
+        login_btn.attr('return_to_login', true);
+        $('.otp-login-submit-btn[return_to_login]').click(function(e){
+          e.preventDefault();
+          location.reload();
+        })
       }
     });
   }
@@ -928,6 +935,12 @@ if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !
   verifyotp(session_id, otp, url);
 }
 })
+$('.mobile-otp-inout').click(function(){
+  if($('.otp-login-error').html() !== ''){
+    $('.otp-login-error').html('');
+    $(this).children('input').val('');
+  }
+});
 
 // if( window.location = '/account/logout'){
 //   localStorage.removeItem('boatHead_input');
