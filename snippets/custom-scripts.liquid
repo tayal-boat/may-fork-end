@@ -1,3 +1,46 @@
+{%- if customer -%}
+  <script>
+    sessionStorage.setItem('login', 'false');
+
+    $('.logout').click(function() {
+      sessionStorage.removeItem('login');
+      localStorage.removeItem('boatHead_input');
+    });
+  </script>
+{%- else -%}
+  <script>
+
+    if (localStorage.getItem('boatHead_input') && localStorage.getItem('boatHead_input') !== '' && localStorage.getItem('boatHead_input') !== 'undefined') {
+      sessionStorage.setItem('login', 'true');
+      if (sessionStorage.getItem('login') == 'true') {
+        var settings = {
+          "url": "https://otp.boat-lifestyle.com/loginstatus",
+          "method": "POST",
+          "timeout": 0,
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": JSON.stringify(
+            {"Token": localStorage.getItem('boatHead_input'), "url": location.href}
+          )
+        };
+
+        $.ajax(settings).done(function(response) {
+          console.log(response);
+          sessionStorage.setItem('login', 'false');
+          setTimeout(function() {
+            if (sessionStorage.getItem('login') == 'false') {
+              localStorage.setItem('boatHead_input', response.Token);
+              window.location = response.URL;
+            }
+          }, 500);
+        });
+      }
+    }
+  </script>
+{%- endif -%}
+
+
 <!-- Algolia head -->
 {% for tag in customer.tags %}
   {% if tag == 'gst_added' %}
@@ -11,23 +54,23 @@
 <script type="deferjs">
   var _rmData = _rmData || [];
   _rmData.push(['setStoreKey', 'Rm193om6']);{% if customer %}_rmData.push(['setCustomer', {{ customer.email | json }}]);{% endif %}(function(d, t) {
-    var g = d.createElement(t),
-      s = d.getElementsByTagName(t)[0];
-    g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
-    s.parentNode.insertBefore(g, s);
-  }(document, 'script'));{% if customer.metafields.custom.gst_address %}Shopify.gst_added = {% if gst_added %}
+  var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
+      s.parentNode.insertBefore(g, s);
+    }(document, 'script'));{% if customer.metafields.custom.gst_address %}Shopify.gst_added =
+    {% if gst_added %}
       {{ gst_added }}
     {% else %}
       false
     {% endif %};
     let address = {{ customer.metafields.custom.gst_address }};
-
     sessionStorage.setItem('gstin', address.gst);
-    sessionStorage.setItem('gst_billing_name', address.name);
-    sessionStorage.setItem('gst_billing_address', address.address1);
-    sessionStorage.setItem('gst_billing_city', address.city);
-    sessionStorage.setItem('gst_billing_state', address.state);
-    sessionStorage.setItem('gst_billing_pincode', address.pincode);{% endif %}console.log('hii lazy script');
+        sessionStorage.setItem('gst_billing_name', address.name);
+        sessionStorage.setItem('gst_billing_address', address.address1);
+        sessionStorage.setItem('gst_billing_city', address.city);
+        sessionStorage.setItem('gst_billing_state', address.state);
+        sessionStorage.setItem('gst_billing_pincode', address.pincode);{% endif %}console.log('hii lazy script');
 
 </script>
 
@@ -42,8 +85,8 @@
 
 
 <script>
-  
-$('.algolia-header-search-input').css('pointer-events', 'all');
+
+  $('.algolia-header-search-input').css('pointer-events', 'all');
   Defer.all('script[type="lazyScript"]', 0, true);
   Defer.all('script[type="lazyScript2"]', 500, true);
 </script>
