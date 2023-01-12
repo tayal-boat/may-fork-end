@@ -564,7 +564,7 @@
                   {%- render 'icon' with 'header-tote-bag' -%}
               {%- endcase -%}
 
-              <cart-count class="header__cart-count header__cart-count--floating bubble-count">
+              <cart-count class="header__cart-count header__cart-count--floating bubble-count d-none">
                 {{- cart.item_count -}}
               </cart-count>
             </a>
@@ -609,7 +609,7 @@
                 data-no-instant
               >
                 {%- render 'icon' with 'header-tote-bag' -%}
-                <cart-count class="header__cart-count bubble-count">{{ cart.item_count }}</cart-count>
+                <cart-count class="header__cart-count bubble-count d-none">{{ cart.item_count }}</cart-count>
               </a>
             </li>
           </ul>
@@ -681,6 +681,9 @@
 {%- endcomment -%}
 
 <script>
+document.addEventListener('cart:updated', function() {
+  if($('.header__cart-count.header__cart-count--floating.bubble-count').text() != '0'){$('.header__cart-count.header__cart-count--floating.bubble-count').removeClass("d-none")}else{$('.header__cart-count.header__cart-count--floating.bubble-count').addClass("d-none")}
+});
 {%- if section.settings.gif_logo_time != 0 -%}
   let logo_timer = {{ section.settings.gif_logo_time | times: 1000 }};
      setTimeout(function(){ 
