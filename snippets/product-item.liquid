@@ -203,15 +203,7 @@
                     {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-                <p class="m-0 pr-2 off">
-                  {{-
-                      product.compare_at_price
-                    | minus: discounted_price
-                    | times: 100.0
-                    | divided_by: product.compare_at_price
-                    | round
-                    | append: '% off' -}}
-                </p>
+
                 <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -234,15 +226,23 @@
                 </span>
               {%- endif -%}
             {%- elsif product.price < product.compare_at_price -%}
-              <p class="m-0 pr-2 off">
-                {{-
-                    product.compare_at_price
-                  | minus: discounted_price
-                  | times: 100.0
-                  | divided_by: product.compare_at_price
-                  | round
-                  | append: '% off' -}}
-              </p>
+                <p class="m-0 pr-2 off">
+                  {{-
+                      product.compare_at_price
+                    | minus: discounted_price
+                    | times: 100.0
+                    | divided_by: product.compare_at_price
+                    | round
+                    | append: '% off' -}}
+                </p>
+
+              {%- else -%}
+                <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
+                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
+                </span>
+              {%- endif -%}
+            {%- elsif product.price < product.compare_at_price -%}
               <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
