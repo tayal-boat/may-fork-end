@@ -180,11 +180,7 @@
       Start automatically added Judge.me widget
       {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
       {% endcomment %}
-      {%- if settings.show_product_rating and reduced_content != true -%}
-        <a class="product-item-meta__reviews-badge text--small" href="{{ product.url }}">
-          {%- render 'product-rating', product: product -%}
-        </a>
-      {%- endif -%}
+      
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
@@ -198,15 +194,6 @@
               {%- endcapture -%}
 
               {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
-                <p class="m-0 pr-2 off">
-                  {{-
-                      product.compare_at_price
-                    | minus: discounted_price
-                    | times: 100.0
-                    | divided_by: product.compare_at_price
-                    | round
-                    | append: '% off' -}}
-                </p>
                 <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -216,7 +203,15 @@
                     {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-
+                <p class="m-0 pr-2 off">
+                  {{-
+                      product.compare_at_price
+                    | minus: discounted_price
+                    | times: 100.0
+                    | divided_by: product.compare_at_price
+                    | round
+                    | append: '% off' -}}
+                </p>
                 <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -320,8 +315,14 @@
                 </div>
               </div>
             {%- endif -%}
+            
           </div>
-          <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;">
+          {%- if settings.show_product_rating and reduced_content != true -%}
+            <a class="product-item-meta__reviews-badge text--small" href="{{ product.url }}">
+              {%- render 'product-rating', product: product -%}
+            </a>
+          {%- endif -%}
+          <p class="custom-save-price" style="font-size: 12px;margin:0;">
             {% if product.price >= 50000 %}
               Save ₹15 more on UPI payment
             {% else %}
@@ -491,6 +492,10 @@
                     </label>
                   </div>
                 {%- endfor -%}
+                {% assign remaining_variants = product_option.values.size | minus: 3 %}
+                {% if remaining_variants > 0 %}
+                  <span class='remaining-variants-count'>{{- 'collection.product.available_colors_count' | t: count: remaining_variants -}}</span>
+                {% endif %}
               </div>
             {%- endcase -%}
 
