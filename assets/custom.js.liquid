@@ -433,10 +433,8 @@ function labelsPriority() {
             'alignItems': 'center'
           });
       } 
-  })
+  });
 }
-window.addEventListener('load', labelsPriority)
-
 window.addEventListener('load', labelsPriority)
 
 // Creating cleverTap push event
@@ -632,3 +630,20 @@ $(".razorpay-checkout").click(function () {
 });
 
 /* clevertap code for clicking razor pay ends here */
+
+function colorSwatches() {
+  $('.product-item').each(function(i) {
+    let totalSwatches = $(this).find('.product-item-meta__swatch-list.color-swatch-list.color-swatch-list--mini div').length;
+    let remainingSwatches = 0
+    remainingSwatches = totalSwatches - 3
+    if(remainingSwatches <= 0) return
+    $(this).find('.product-item-meta__swatch-list.color-swatch-list.color-swatch-list--mini div:gt(2)').hide();
+    $(this).find('.remaining-variants-count').click(function() {
+      $(this).hide();
+      $(this).closest('.product-item').find('.product-item-meta__swatch-list.color-swatch-list.color-swatch-list--mini div:gt(2)').show();
+    })
+  })
+}
+$(document).ready(function() {
+  colorSwatches()
+})
