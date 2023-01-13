@@ -173,9 +173,16 @@
           </a>
         {%- endunless -%}
       {%- endif -%}
+      <div class="d-flex position-relative">
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
         {{- product.title | split: '|' | first | split: 'boAt' | last -}}
       </a>
+      {% if template contains 'collection' %}
+        {% if product.available and product.tags contains 'flash-sale' -%}
+         {%- render 'inventory-bar' with product -%}
+        {%- endif %}
+      {%- endif %}
+      </div>
       {% comment %}
       Start automatically added Judge.me widget
       {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
@@ -217,15 +224,6 @@
                     {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-
-
-              {%- else -%}
-                <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
-                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                  {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
-                </span>
-              {%- endif -%}
-            {%- elsif product.price < product.compare_at_price -%}
                 <p class="m-0 pr-2 off">
                   {{-
                       product.compare_at_price
@@ -252,7 +250,15 @@
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-
+              <p class="m-0 pr-2 off">
+                {{-
+                    product.compare_at_price
+                  | minus: discounted_price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '% off' -}}
+              </p>
               <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
@@ -434,11 +440,7 @@
                 href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer"
                 class="drawer drawer--large drawer--quick-buy hidden-phone"></quick-buy-drawer>
             {%- endif -%}
-            {% if template contains 'collection' %}
-              {% if product.available and product.tags contains 'flash-sale' -%}
-                {%- render 'inventory-bar' with product -%}
-              {%- endif %}
-            {%- endif %}
+
           </div>
         {%- endif -%}
         {% unless product.available %}
