@@ -121,7 +121,12 @@
      {%- endif -%}
      .custom_svg_icon {
        height: 18px;
-   }
+     }
+@media(max-width:768px){
+        nav.header__inline-navigation {
+            flex: 0;
+        }
+     }
 </style>
 
 <store-header
@@ -157,7 +162,7 @@
           {%- if menu.links.size > 0 -%}
             <button
               is="toggle-button"
-              class="header__icon-wrapper tap-area {% unless section.settings.header_layout == 'drawer' %}hidden-desk{% endunless %}"
+              class="header__icon-wrapper rounded-0 tap-area {% unless section.settings.header_layout == 'drawer' %}hidden-desk{% endunless %}"
               aria-controls="mobile-menu-drawer"
               aria-expanded="false"
             >
@@ -189,8 +194,8 @@
                 is="predictive-search-input"
                 type="text"
                 name="q"
-                autocomplete="new-text"
-                autocorrect="new-text"
+                autocomplete="new-password"
+                autocorrect="new-password"
                 aria-controls="search-drawer"
                 aria-expanded="false"
                 aria-label="{{ 'search.general.title' | t }}"
@@ -220,9 +225,19 @@
               </video>
             {%- elsif section.settings.gif_logo != blank -%}
                 <span class="visually-hidden">{{ shop.name }}</span>
-                <img class="header__logo-image gif_logo" loading="lazy" width="{{ section.settings.logo.width }}"
+                <img class="header__logo-image gif_logo {% if section.settings.gif_logo_time != 0 %}timeout{% endif %}" loading="lazy" width="{{ section.settings.logo.width }}"
                 height="{{ section.settings.logo.height }}" src="{{ section.settings.gif_logo | img_url: '160x40' }}"
                 alt="{{ section.settings.logo.alt | escape }}" >
+                {%- if section.settings.gif_logo_time != 0 -%}
+                  <img
+                  class="header__logo-image timein d-none"
+                  loading="lazy"
+                  width="{{ section.settings.logo.width }}"
+                  height="{{ section.settings.logo.height }}"
+                  src="{{ section.settings.logo | img_url: logo_size }}"
+                  alt="{{ section.settings.logo.alt | escape }}"
+                  >
+                {%- endif -%}  
             {%- elsif section.settings.logo != blank -%}
               
               <span class="visually-hidden">{{ shop.name }}</span>
@@ -421,8 +436,8 @@
                       class="search__input predictive-search__input predictive-search__input_desk"
                       type="text"
                       name="q"
-                      autocomplete="new-text"
-                      autocorrect="new-text"
+                      autocomplete="new-password"
+                      autocorrect="new-password"
                       aria-label="{{ 'search.general.title' | t }}"
                       placeholder=""
                     >
@@ -514,12 +529,6 @@
               </a>
             </div>
           {%- endcomment -%}
-          <div class="chatbot hidden-pocket">
-            <img
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Asset_3_288x-8_2_085646be-d961-4e85-9b6b-92eb8c02beb3.png?v=1663918129"
-              style="width: 20px;"
-            >
-          </div>
           <div class="me hidden-desk d-none">
             <a class="fixed_nav--link" href="/account">
               <img
@@ -528,6 +537,13 @@
                 height="22"
               >
             </a>
+          </div>
+          <div class="search-icon hidden-tablet-and-up">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBkPSJNNTA4LjkgNDc4LjdMMzYwLjEgMzMwYzI4LjItMzQuOCA0NS4yLTc5LjEgNDUuMi0xMjcuM0M0MDUuMyA5MC45IDMxNC40IDAgMjAyLjcgMFMwIDkwLjkgMCAyMDIuN3M5MC45IDIwMi43IDIwMi43IDIwMi43YzQ4LjIgMCA5Mi41LTE3IDEyNy4zLTQ1LjJsMTQ4LjcgMTQ4LjdjNC4yIDQuMiAxMC45IDQuMiAxNS4xIDBsMTUuMS0xNS4xYzQuMS00LjIgNC4xLTEwLjkgMC0xNS4xem0tMzA2LjItMTE2Yy04OC4yIDAtMTYwLTcxLjgtMTYwLTE2MHM3MS44LTE2MCAxNjAtMTYwIDE2MCA3MS44IDE2MCAxNjAtNzEuOCAxNjAtMTYwIDE2MHoiIGZpbGw9IiMzNDNmNDkiLz48L3N2Zz4="
+              width="15"
+              height="15"
+            ><input class="search__input predictive-search__input_1mobile" readonly type="text" name="q" autocomplete="new-password" autocorrect="new-text" aria-label="Search" placeholder="Search  Earphones">
           </div>
           {% unless template.name == 'page' and template.suffix == 'quick-checkout' %}
             <a
@@ -548,7 +564,7 @@
                   {%- render 'icon' with 'header-tote-bag' -%}
               {%- endcase -%}
 
-              <cart-count class="header__cart-count header__cart-count--floating bubble-count">
+              <cart-count class="header__cart-count header__cart-count--floating bubble-count d-none">
                 {{- cart.item_count -}}
               </cart-count>
             </a>
@@ -593,7 +609,7 @@
                 data-no-instant
               >
                 {%- render 'icon' with 'header-tote-bag' -%}
-                <cart-count class="header__cart-count bubble-count">{{ cart.item_count }}</cart-count>
+                <cart-count class="header__cart-count bubble-count d-none">{{ cart.item_count }}</cart-count>
               </a>
             </li>
           </ul>
@@ -614,17 +630,13 @@
           class="search__input predictive-search__input predictive-search__input_mobile"
           type="text"
           name="q"
-          autocomplete="new-text"
-          autocorrect="new-text"
+          autocomplete="new-password"
+          autocorrect="new-password"
           aria-label="{{ 'search.general.title' | t }}"
           placeholder=""
         >
         <div class="search-clear-icon">
-          <span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px">
-              <path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/>
-            </svg>
-          </span>
+          <p style="color:red;font-size: 12px;font-weight: 700;">Cancel</p>
         </div>
       </div>
       <form class="algolia-search__form_mobile">
@@ -669,16 +681,15 @@
 {%- endcomment -%}
 
 <script>
-  /* $('.announce .announcement-bar__message p').each(function (ind, el) {
-    $(el).on('click', function (e) {
-      var announcementText = $(this).text();
-      clevertap.event.push('Announcement bar clicked', {
-        Message: announcementText,
-        userSource: userSource,
-      });
-    });
-  }); */
-
+document.addEventListener('cart:updated', function() {
+  if($('.header__cart-count.header__cart-count--floating.bubble-count').text() != '0'){$('.header__cart-count.header__cart-count--floating.bubble-count').removeClass("d-none")}else{$('.header__cart-count.header__cart-count--floating.bubble-count').addClass("d-none")}
+});
+{%- if section.settings.gif_logo_time != 0 -%}
+  let logo_timer = {{ section.settings.gif_logo_time | times: 1000 }};
+     setTimeout(function(){ 
+       document.querySelector('.gif_logo.timeout').classList.add("d-none");document.querySelector('.header__logo-image.timein').classList.remove("d-none");
+     }, logo_timer);
+{%- endif -%}
   (() => {
     const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
       headerHeight = headerElement.clientHeight,
@@ -764,6 +775,15 @@
       "type": "image_picker",
       "id": "gif_logo",
       "label": "GIF Logo"
+    },
+    {
+      "type": "range",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "id": "gif_logo_time",
+      "label": "time in which gif logo will be replaced with actual logo",
+      "default": 0
     },
     {
       "type": "range",

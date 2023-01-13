@@ -1,9 +1,7 @@
 <style>
   .deal-of-the_day.{{ section.id }}{
-  {% unless template contains 'index' %}
     padding-top: 20px;
     padding-bottom: {{ section.settings.sectionpadding}}px;
-  {% endunless %}
     background: {{ section.settings.bg_color }};
     margin: {{ section.settings.sectionmargin }};
   }
@@ -14,7 +12,7 @@
   }
 </style>
 
-<div class="container deal-of-the_day {{ section.id }} ">
+<div class="container deal-of-the_day {{ section.id }}  image_slider_flip">
   {% if section.settings.sectionHeading != blank %}
     <div class="row">
       <div class="col-md-12 section__header text-container d-flex justify-content-between">
@@ -34,9 +32,14 @@
    {% else %}
      {% assign desk_img = block.settings.image %}
    {% endif %}
-        <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
-          <div class="item">
-          <picture>
+
+   {% if block.settings.flip_desktop_image != blank %} 
+     {% assign desk_flip_img =  block.settings.flip_desktop_image %}
+   {% else %}
+     {% assign desk_flip_img = block.settings.flip_image %}
+   {% endif %}
+        <div class="item flip-box-inner">
+          <picture class="flip-box-front">
             <source
               media="(min-width: 769px)"
               {% render 'image-attributes', image: desk_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
@@ -47,18 +50,59 @@
               alt="{{block.settings.image.alt}}" loading="lazy"
             >
           </picture>
-          </div>
-        </a>
+          <picture class="flip-box-back">
+            <source
+              media="(min-width: 769px)"
+              {% render 'image-attributes', image: desk_flip_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+            >
+            <img
+              class="image-overlay__image_"
+              {% render 'image-attributes', image: block.settings.flip_image, sizes: '200,300,400,500,600' %}
+              alt="{{block.settings.flip_image.alt}}" loading="lazy"
+            >
+          </picture>
+        </div>
       {% endfor %}
     </div>
   </div>
 </div>
 
+{% if section.settings.desktop_bg_image != blank %}
+<style>
+  @media(min-width:768px) {
+    .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.desktop_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important; }
+  }
+</style>
+{% endif %}
+
+{% if section.settings.mobile_bg_image != blank %}
+<style>
+  @media(max-width:767px) {
+    .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.mobile_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important; }
+  }
+</style>
+{% endif %}
+
+<script>
+  $(document).ready(function(){
+    $('.flip-box-inner .flip-box-back').hide();
+    
+    $('.flip-box-inner').on('click', '.flip-box-front', function(){
+      $(this).parent('.flip-box-inner').find('.flip-box-front').hide();
+      $(this).parent('.flip-box-inner').find('.flip-box-back').show();
+    });
+
+    $('.flip-box-inner').on('click', '.flip-box-back', function(){
+      $(this).parent('.flip-box-inner').find('.flip-box-front').show();
+      $(this).parent('.flip-box-inner').find('.flip-box-back').hide();
+    });
+  })
+</script>
 
 
 {% schema %}
   {
-    "name": "Image Slider",
+    "name": "Image Slider With Flip",
     "max_blocks": 28,
     "settings": [
       {
@@ -82,6 +126,16 @@
         "type": "text",
         "id": "sectionpaddingright",
         "label": "mob-padding right"
+      },
+      {
+        "type": "text",
+        "id": "desktop_bg_image",
+        "label": "Desktop background image"
+      },
+      {
+        "type": "text",
+        "id": "mobile_bg_image",
+        "label": "Mobile background image"
       }, {
         "type": "number",
         "id": "slides_no",
@@ -147,6 +201,17 @@
             "label": "desk image"
           }, 
           {
+            "type": "image_picker",
+            "id": "flip_image",
+            "label": "Primary image after flip",
+            "info": "300px wide minimum"
+          }, 
+          {
+            "type": "image_picker",
+            "id": "flip_desktop_image",
+            "label": "Desk image after flip"
+          }, 
+          {
             "type": "url",
             "id": "imageUrl",
             "label": "Image URL"
@@ -160,7 +225,7 @@
     ],
     "presets": [
       {
-        "name": "Image Slider",
+        "name": "Image Slider with flip effect",
         "category": "Image",
         "settings": {},
         "blocks": [
