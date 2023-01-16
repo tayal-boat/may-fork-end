@@ -34,6 +34,7 @@
 
 
 <product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}" {% if reveal %}reveal{% endif %}>
+  <div class="product__wrapper">
   <div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
     {%- if product.available -%}
       {%- for tag in product.tags -%}
@@ -576,7 +577,7 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-
+  </div>
   </div>
   {% if product.metafields.custom.product_card_features %}
     {% assign features = product.metafields.custom.product_card_features | split: ',' %}
@@ -586,12 +587,12 @@
       {% endfor %}
     </div>
   {% endif %}
+  {% if product.metafields.custom.product_card_features %}
+    {% assign features = product.metafields.custom.product_card_features | split: ',' %}
+    <div class="features-list only-horizontal">
+      {% for feature in features %}
+        <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
 </product-item>
-{% if product.metafields.custom.product_card_features %}
-  {% assign features = product.metafields.custom.product_card_features | split: ',' %}
-  <div class="features-list only-horizontal">
-    {% for feature in features %}
-      <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-    {% endfor %}
-  </div>
-{% endif %}
