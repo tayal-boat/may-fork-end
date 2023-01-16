@@ -34,6 +34,7 @@
 
 
 <product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}" {% if reveal %}reveal{% endif %}>
+  <div class="product__wrapper">
   <div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
     {%- if product.available -%}
       {%- for tag in product.tags -%}
@@ -329,9 +330,9 @@
           {%- endif -%}
           <p class="custom-save-price" style="font-size: 10px;margin:0;font-weight: 500;color: black;">
             {% if product.price >= 50000 %}
-              Save ₹15 more on UPI payment
+            {{ settings.card_offers | split: ',' | first }}
             {% else %}
-              Free Shipping available
+            {{ settings.card_offers | split: ',' | last }} 
             {% endif %}
           </p>
         {% endunless %}
@@ -577,6 +578,22 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-
   </div>
+  </div>
+  {% if product.metafields.custom.product_card_features %}
+    {% assign features = product.metafields.custom.product_card_features | split: ',' %}
+    <div class="features-list only-vertical">
+      {% for feature in features %}
+        <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if product.metafields.custom.product_card_features %}
+    {% assign features = product.metafields.custom.product_card_features | split: ',' %}
+    <div class="features-list only-horizontal">
+      {% for feature in features %}
+        <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
 </product-item>
