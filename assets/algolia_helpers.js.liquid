@@ -114,18 +114,17 @@
       return escapeHtml(res);
     },
     youSavePrice: function inventory() {
-      let cards_message1 = Shopify.cards_message1;
-      let cards_message2 = Shopify.cards_message2;
       var res = '';
       var compare_at_price = this.compare_at_price;
       var price = this.price;
       var price_ratio = this.price_ratio;
       var discount_ratio = 1.0 - price_ratio;
+      let card_offers = JSON.parse(Shopify.card_offers);
       if (price >= 500) {
         /* res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>'; */
-        res += ` <p class="ais-hit--price-discount">${cards_message1}</p>`;
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_1}</p>`;
       } else {
-        res += ` <p class="ais-hit--price-discount">${cards_message2}</p>`;
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_2}</p>`;
       }
       // res += ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
       //   Math.floor(discount_ratio * 100) +
