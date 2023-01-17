@@ -124,7 +124,7 @@
      }
 @media(max-width:768px){
         nav.header__inline-navigation {
-         max-width: 40px;
+            flex: 0;
         }
      }
 </style>
@@ -179,7 +179,7 @@
 
         {%- if section.settings.header_layout == 'logo_center_search_open' -%}
           <div class="header__search-bar predictive-search hidden-pocket">
-            <form class="predictive-search__form" action="{{ routes.search_url }}" method="get" role="search">
+            <form class="predictive-search__form" action="{{ routes.search_url }}" method="get" role="search" autocomplete="off">
               <input type="hidden" name="type" value="product">
               <input type="hidden" name="options[prefix]" value="last">
               <input
@@ -192,10 +192,9 @@
               <input
                 class="predictive-search__input"
                 is="predictive-search-input"
-                type="text"
+                type="search"
                 name="q"
-                autocomplete="new-password"
-                autocorrect="new-password"
+                autocomplete="off"
                 aria-controls="search-drawer"
                 aria-expanded="false"
                 aria-label="{{ 'search.general.title' | t }}"
@@ -243,7 +242,8 @@
               <span class="visually-hidden">{{ shop.name }}</span>
               <img
                 class="header__logo-image"
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
                 width="{{ section.settings.logo.width }}"
                 height="{{ section.settings.logo.height }}"
                 src="{{ section.settings.logo | img_url: logo_size }}"
@@ -434,10 +434,9 @@
                   <div class="algolia-custom-search-input">
                     <input
                       class="search__input predictive-search__input predictive-search__input_desk"
-                      type="text"
+                      type="search"
                       name="q"
-                      autocomplete="new-password"
-                      autocorrect="new-password"
+                      autocomplete="off"
                       aria-label="{{ 'search.general.title' | t }}"
                       placeholder=""
                     >
@@ -455,12 +454,11 @@
                       </span>
                     </div>
                   </div>
-                  <form id="predictive-search-form" class="algolia-search__form">
+                  <form id="predictive-search-form" class="algolia-search__form"autocomplete="off">
                     <input
-                      type="text"
+                      type="search"
                       name="q"
                       autocomplete="off"
-                      autocorrect="off"
                       aria-label="{{ 'search.general.title' | t }}"
                       placeholder="Search..."
                     >
@@ -538,13 +536,13 @@
               >
             </a>
           </div>
-          {% comment %} <div class="search-icon hidden-desk">
-            <img
+          <div class="search-icon hidden-tablet-and-up">
+            <img style="padding-bottom:2px;opacity:0.7;"
               src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBkPSJNNTA4LjkgNDc4LjdMMzYwLjEgMzMwYzI4LjItMzQuOCA0NS4yLTc5LjEgNDUuMi0xMjcuM0M0MDUuMyA5MC45IDMxNC40IDAgMjAyLjcgMFMwIDkwLjkgMCAyMDIuN3M5MC45IDIwMi43IDIwMi43IDIwMi43YzQ4LjIgMCA5Mi41LTE3IDEyNy4zLTQ1LjJsMTQ4LjcgMTQ4LjdjNC4yIDQuMiAxMC45IDQuMiAxNS4xIDBsMTUuMS0xNS4xYzQuMS00LjIgNC4xLTEwLjkgMC0xNS4xem0tMzA2LjItMTE2Yy04OC4yIDAtMTYwLTcxLjgtMTYwLTE2MHM3MS44LTE2MCAxNjAtMTYwIDE2MCA3MS44IDE2MCAxNjAtNzEuOCAxNjAtMTYwIDE2MHoiIGZpbGw9IiMzNDNmNDkiLz48L3N2Zz4="
-              width="15"
-              height="15"
-            >&nbsp;Search
-          </div> {% endcomment %}
+              width="12"
+              height="12" style='margin-left:4px;'
+            ><input class="search__input predictive-search__input_1mobile" readonly type="search" name="q" autocomplete="off" aria-label="Search" placeholder="Search  Earphones">
+          </div>
           {% unless template.name == 'page' and template.suffix == 'quick-checkout' %}
             <a
               href="{{ routes.cart_url }}"
@@ -564,7 +562,7 @@
                   {%- render 'icon' with 'header-tote-bag' -%}
               {%- endcase -%}
 
-              <cart-count class="header__cart-count header__cart-count--floating bubble-count">
+              <cart-count class="header__cart-count header__cart-count--floating bubble-count d-none">
                 {{- cart.item_count -}}
               </cart-count>
             </a>
@@ -609,7 +607,7 @@
                 data-no-instant
               >
                 {%- render 'icon' with 'header-tote-bag' -%}
-                <cart-count class="header__cart-count bubble-count">{{ cart.item_count }}</cart-count>
+                <cart-count class="header__cart-count bubble-count d-none">{{ cart.item_count }}</cart-count>
               </a>
             </li>
           </ul>
@@ -628,27 +626,21 @@
       <div class="algolia-custom-search-input">
         <input
           class="search__input predictive-search__input predictive-search__input_mobile"
-          type="text"
+          type="search"
           name="q"
-          autocomplete="new-password"
-          autocorrect="new-password"
+          autocomplete="off"
           aria-label="{{ 'search.general.title' | t }}"
           placeholder=""
         >
         <div class="search-clear-icon">
-          <span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 50 50" width="15px" height="15px">
-              <path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/>
-            </svg>
-          </span>
+          <p style="color:red;font-size: 12px;font-weight:700;z-index:99;background:white">Cancel</p>
         </div>
       </div>
-      <form class="algolia-search__form_mobile">
+      <form class="algolia-search__form_mobile" autocomplete="off">
         <input
-          type="text"
+          type="search"
           name="q"
           autocomplete="off"
-          autocorrect="off"
           aria-label="{{ 'search.general.title' | t }}"
           placeholder="Search..."
         >
@@ -685,6 +677,11 @@
 {%- endcomment -%}
 
 <script>
+function cart_bubble(){if($('.header__cart-count.header__cart-count--floating.bubble-count').text() != '0'){$('.header__cart-count.header__cart-count--floating.bubble-count').removeClass("d-none")}else{$('.header__cart-count.header__cart-count--floating.bubble-count').addClass("d-none")}}
+cart_bubble();
+document.addEventListener('cart:updated', function() {
+ cart_bubble();
+});
 {%- if section.settings.gif_logo_time != 0 -%}
   let logo_timer = {{ section.settings.gif_logo_time | times: 1000 }};
      setTimeout(function(){ 
