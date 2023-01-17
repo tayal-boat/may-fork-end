@@ -4,10 +4,15 @@
     padding-bottom: {{ section.settings.sectionpadding}}px;
     background: {{ section.settings.bg_color }};
     margin: {{ section.settings.sectionmargin }};
+    padding-left: 0px;
   }
+  .slider-with-nav .owl-nav{display: block !important;}
+  .slider-with-nav .owl-nav .owl-prev{position: absolute;font-size: 4rem !important;top: 50%;color: #f00 !important;transform: translateY(-50%);left: 30px;}
+  .slider-with-nav .owl-nav .owl-next{position: absolute;font-size: 4rem !important;top: 50%;color: #f00 !important;transform: translateY(-50%);right: 30px;}
   @media(max-width:768px) {
     .deal-of-the_day.{{ section.id }}{
       padding-right: {{ section.settings.sectionpaddingright }}px;
+      padding-left: 0px;
     }
   }
 </style>
@@ -21,7 +26,7 @@
     </div>
   {% endif %}
   <div class="row">
-    <div class="col-md-12 owl-carousel owl-theme deal-slider custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
+    <div class="col-md-12 owl-carousel owl-theme deal-slider slider-with-nav custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
       {% for block in section.blocks %}
         {% assign popup_class = "" %}
         {% if block.settings.popup_class != blank %}
@@ -70,7 +75,7 @@
 {% if section.settings.desktop_bg_image != blank %}
 <style>
   @media(min-width:768px) {
-    .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.desktop_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important; }
+    .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.desktop_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important;max-width: fit-content;padding-right: 0px;}
   }
 </style>
 {% endif %}
@@ -78,7 +83,7 @@
 {% if section.settings.mobile_bg_image != blank %}
 <style>
   @media(max-width:767px) {
-    .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.mobile_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important; }
+    .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.mobile_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important;max-width: fit-content;padding-right: 0px;}
   }
 </style>
 {% endif %}
@@ -88,13 +93,17 @@
     $('.flip-box-inner .flip-box-back').hide();
     
     $('.flip-box-inner').on('click', '.flip-box-front', function(){
-      $(this).parent('.flip-box-inner').find('.flip-box-front').hide();
+      $('.flip-box-inner .flip-box-back').css('display', 'none');
       $(this).parent('.flip-box-inner').find('.flip-box-back').show();
+      $('.flip-box-inner .flip-box-front').css('display', 'block');
+      $(this).parents('.flip-box-inner').find('.flip-box-front').hide();
     });
 
     $('.flip-box-inner').on('click', '.flip-box-back', function(){
+      $('.flip-box-inner  .flip-box-front').css('display', 'block');
       $(this).parent('.flip-box-inner').find('.flip-box-front').show();
       $(this).parent('.flip-box-inner').find('.flip-box-back').hide();
+      $(this).parent('.flip-box-inner .flip-box-front').css('display', 'block');
     });
   })
 </script>
