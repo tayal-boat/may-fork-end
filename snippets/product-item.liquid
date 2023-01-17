@@ -323,6 +323,18 @@
               {%- render 'product-rating', product: product -%}
             </a>
           {%- endif -%}
+          <div class="variants-list">
+            {% for variant in product.variants limit: 3 %}
+              <span style="width:20px;height:20px;border-radius:50%;background:{{variant.title}}"></span>
+            {% endfor %}
+            {% capture remaining_variants_string %}
+              {{ product.variants.size | minus: 3 }}
+            {% endcapture %}
+            {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
+            {% if remaining_variants_number >= 1 %}
+              <span class="more-colors">+{{- remaining_variants_string -}} more colors</span>
+            {% endif %}
+          </div>
           <p class="custom-save-price" style="font-size: 12px;margin:0;">
             {% if product.price >= 50000 %}
             {{ settings.card_offers | split: ',' | first }}
