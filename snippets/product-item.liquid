@@ -3,7 +3,12 @@
 {%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
-
+{% assign available_variants = 0 %}
+{% for variant in product.variants %}
+  {% if variant.available %}
+    {% assign available_variants = available_variants | plus: 1 %}
+  {% endif %}
+{% endfor %}
 {%- if product.url contains '?' -%}
   {%- assign product_url_contains_query = true -%}
 {%- else -%}
@@ -326,13 +331,7 @@
           {%- if settings.show_product_rating and reduced_content != true -%}
             <span class="product-item-meta__reviews-badge text--small">
               {%- render 'product-rating', product: product -%}
-              {% assign total_variants_number = 0 %}
-              {% for variant in product.variants %}
-                {% if variant.available %}
-                  {% assign total_variants_number = total_variants_number | plus: 1 %}
-                {% endif %}
-              {% endfor %}
-              {% if total_variants_number >= 1 %}
+              {% if available_variants >= 1 %}
                 <button
                   is="toggle-button"
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
@@ -376,18 +375,8 @@
             {% endif %}
           </p>
         {% endunless %}
-        {%- if request.page_type != 'password' 
- and settings.product_add_to_cart 
- and product.available 
- and reduced_content != true 
- and show_cta != true 
- -%}
-          {% assign available_variants = 0 %}
-          {% for variant in product.variants %}
-            {% if variant.available %}
-              {% assign available_variants = available_variants | plus: 1 %}
-            {% endif %}
-          {% endfor %}
+        {%- if request.page_type != 'password'  and settings.product_add_to_cart and product.available  and reduced_content != true and show_cta != true -%}
+
           <div class="d-flex align-items-center">
             {%- if available_variants == 1 -%}
               {%- capture form_id -%}
@@ -624,7 +613,7 @@
       <div class="features-list only-vertical">
         {% for feature in features %}
           <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-        {% unless forloop.last %} | {% endunless %}
+        {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
         {% endfor %}
       </div>
     {% endif %}
@@ -635,7 +624,7 @@
     <div class="features-list only-horizontal">
       {% for feature in features %}
         <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-      {% unless forloop.last %} | {% endunless %}
+      {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
       {% endfor %}
     </div>
   {% endif %}
