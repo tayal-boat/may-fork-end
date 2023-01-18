@@ -135,27 +135,35 @@
       var res = this.inventory_available;
       var flashSale = '';
       var free = '';
+      // console.log(this.inventory_quantity);
       if (this.tags.includes('flash-sale')) {
         flashSale = 'flash-sale';
       }
       if (this.tags.includes('{{ settings.products_offering_freebie }}')) {
         free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
       }
-      if (this.inventory_available) {
+      if(this.inventory_quantity < 70 && this.inventory_quantity > 0) {
+          res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+          // res = `<div class="product-item__quick-form">
+          // <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
+          // "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
+          // Notify Me
+          // </a>
+          // </div>`
+      }
+      else if (this.inventory_available) {
         res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
       } else {
         if (this.tags.includes('Coming-Soon')) {
           res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
         } else {
-          res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
-          // console.log(this);
-          // Notify me popup stop appearing after adding ("title":"${this.title}") so i remove it for now.
-          // res = `<div class="product-item__quick-form">
-          // <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","tags":[],"available":"${this.inventory_available}",
-          // "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
-          // Notify Me
-          // </a>
-          // </div>`
+          // res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+          res = `<div class="product-item__quick-form">
+          <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
+          "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
+          Notify Me
+          </a>
+          </div>`
         }
       }
       return res;

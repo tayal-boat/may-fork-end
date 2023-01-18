@@ -267,10 +267,10 @@
               aria-live="polite">
               <div class="my-2 new-price-container">
                 <div class="price-list featured_product_price custom-product-of-the-day-price">
-                    <div class="usual-price">
-                      <span>Usually at</span><br>
-                      <span class="usual_price">₹ {{ product.price | divided_by: 100 }}</span>
-                    </div>
+                  <div class="usual-price">
+                    <span>Usually at</span><br>
+                    <span class="usual_price">₹ {{ product.price | divided_by: 100 }}</span>
+                  </div>
                   {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %}
                     <div class="current-price">
                       <span>Now at</span>
@@ -300,7 +300,7 @@
               </style>
               <div class="price-container product-highlight my-3 p-3 only-desktop">
                 <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            font-weight: 700;">Product Highlights</h6>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  font-weight: 700;">Product Highlights</h6>
                 {{ product.metafields.custom.product_highlights }}
               </div>
             {% endif %}
@@ -592,6 +592,9 @@
                 onclick="quickATC()"
                 type="submit"
                 is="loader-button"
+                {% if product.selected_or_first_available_variant.inventory_quantity < 10 %}
+                disabled
+                {% endif %}
                 {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %}
                 data-product-add-to-cart-button
                 data-button-content="{{ 'product.form.pre_order' | t | escape }}"
@@ -605,7 +608,7 @@
                 onclick="quickATC()"
                 type="submit"
                 is="loader-button"
-                {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %}
+                {% if product.selected_or_first_available_variant.inventory_quantity < 10 %}disabled{% endif %}{% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %}
                 data-product-add-to-cart-button
                 data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
                 class="product-form__add-button button visually-hidden {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
