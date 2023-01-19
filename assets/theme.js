@@ -4918,6 +4918,7 @@
         addToCartButtonElement.classList.add("button--ternary");
         addToCartButtonText = window.themeVariables.strings.productFormUnavailable;
       } else {
+        console.log(variant);
         if (variant["available"]) {
           addToCartButtonElement.removeAttribute("disabled");
           addToCartButtonElement.classList.add(addToCartButtonElement.hasAttribute("data-use-primary") ? "button--primary" : "button--secondary");
