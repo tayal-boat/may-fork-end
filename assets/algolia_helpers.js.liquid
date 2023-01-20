@@ -174,12 +174,12 @@
       return res;
     },
     soldImage: function inventory() {
-      var res = this.inventory_available;
-      if (res) {
-        res = "aa-product-image"
-      } else {
+      var res = "aa-product-image";
+      if(this.inventory_quantity < Shopify.sold_out_threshold){
         res = "aa-product-image sold-out"
-      }
+      }else if (this.inventory_available) {
+        res = "aa-product-image"
+      } 
       return res;
     },
     reviews: function reviews() {
@@ -206,15 +206,17 @@
     imageClass: function imageClass() {
       var tags = this.tags;
       var res_class = ''
-      if (this.inventory_available) {
-        res_class = 'aa-product-image'
-      } else {
+      if(this.inventory_quantity < Shopify.sold_out_threshold){
         if (tags.includes('Coming-Soon')) {
           res_class = 'aa-product-image'
         } else {
           res_class = 'aa-product-image sold-out'
         }
       }
+      else if (this.inventory_available) {
+        res_class = 'aa-product-image'
+      } 
+
       return res_class;
     },
     containerClass: function containerClass() {
@@ -237,9 +239,19 @@
         Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
       var discount_ratio = 1.0 - price_ratio;
       var response = '';
-      if (this.inventory_available) {
+      if(this.inventory_quantity < Shopify.sold_out_threshold){
+        if (tags.includes('Coming-Soon')) {
+          var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+        } else if (tags.includes('Restocking-Soon')){
+          var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
+        }
+        else {
+          var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+        }
+      }
+      else if (this.inventory_available) {
         for (let i = 0; i < tags.length; i++) {
-          if (tags[i].includes('Free-')) {
+      if (tags[i].includes('Free-')) {
             res = `🎁 ${tags[i].replace('-',' ')}`;
             res_class = 'free-label label bg-green z-10';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
@@ -283,16 +295,17 @@
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           }
         }
-      } else {
-        if (tags.includes('Coming-Soon')) {
-          var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
-        } else if (tags.includes('Restocking-Soon')){
-          var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
-        }
-         else {
-          var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
-        }
       }
+      //  else {
+      //   if (tags.includes('Coming-Soon')) {
+      //     var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+      //   } else if (tags.includes('Restocking-Soon')){
+      //     var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
+      //   }
+      //    else {
+      //     var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+      //   }
+      // }
       return response;
     },
     fullHTMLTitle: function fullHTMLTitle() {
