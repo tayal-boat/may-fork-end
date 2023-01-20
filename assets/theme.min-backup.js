@@ -6231,6 +6231,10 @@
             if (!e) return;
             let t = (e, t, i, s) => {
                 let n = "";
+                console.log(e);
+                console.log(t);
+                console.log(i);
+                console.log(s);
                 switch (e.getAttribute("data-selector-type")) {
                     case "color":
                         n = `.color-swatch:nth-child(${t+1})`;
@@ -6244,6 +6248,7 @@
                     case "dropdown":
                         n = `.combo-box__option-item:nth-child(${t+1})`
                 }
+                console.log(e.querySelector(n));
                 e.querySelector(n).toggleAttribute("hidden", !s), this.hideSoldOutVariants ? e.querySelector(n).toggleAttribute("hidden", !i) : e.querySelector(n).classList.toggle("is-disabled", !i)
             };
             this.optionSelectors && this.optionSelectors[0] && this.product.options[0].values.forEach(((i, s) => {
