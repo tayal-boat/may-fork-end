@@ -227,22 +227,37 @@ let usual_price = '';
 
 Shopify.variantChange = function(e){
   // console.log(e);
-  if(e.available == false){
-    $('.custom-notify-btn').attr('data-variant-id', e.id);
-    $('.custom-notify-btn').show();
-    $('.product__info button#AddToCart.button--ternary').css('display','none')
-  }else{
-    $('.custom-notify-btn').hide();
-    $('.product__info button#AddToCart.button--primary').css('display','block')
-  }
-
-  // if($('.variant-swatch input[checked="checked"]').parent('.variant-swatch').hasClass('is-disabled')) {
-  //     $('.custom-notify-btn').show();
-  //     $('.product__info button#AddToCart').css('display','none');
+  // if(e.available == false){
+  //   $('.custom-notify-btn').attr('data-variant-id', e.id);
+  //   $('.custom-notify-btn').show();
+  //   $('.product__info button#AddToCart.button--ternary').css('display','none')
   // }else{
   //   $('.custom-notify-btn').hide();
-  //   $('.product__info button#AddToCart').css('display','block');
+  //   $('.product__info button#AddToCart.button--primary').css('display','block')
   // }
+
+let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
+for (let i = 0; i < varient_swatches_input.length; i++) {
+if(varient_swatches_input[i].checked){
+  console.dir(varient_swatches_input[i].offsetParent.dataset.varient_disabled);
+  if(JSON.parse(varient_swatches_input[i].offsetParent.dataset.varient_disabled)) {
+      $('.custom-notify-btn').show();
+      $('.product__info button#AddToCart').hide();
+      $("#gokwik-buy-now").hide();
+      $('quick-buy-drawer #AddToCart').hide();
+      $('.product-item__quick-form.quick-buy-notify-me').show();
+      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      
+  }else{
+    $('.custom-notify-btn').hide();
+    $('.product__info button#AddToCart').show();
+    $("#gokwik-buy-now").show();
+    $('quick-buy-drawer #AddToCart').show();
+    $('.product-item__quick-form.quick-buy-notify-me').hide();
+  }    
+}
+}
+
 
   let custom_price = e.price / 100;
         custom_price = custom_price - 1000;
