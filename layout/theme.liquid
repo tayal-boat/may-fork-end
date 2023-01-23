@@ -100,6 +100,10 @@
     {% render 'microdata-schema' %}
     {% render 'css-variables', direction: direction %}
     {% render 'js-variables', direction: direction %}
+    <script>
+      
+      
+    </script>
 
     <!-- content for header -->
     {%- capture h_content -%}{{ content_for_header }}{%- endcapture -%}
@@ -133,8 +137,14 @@
     
      {% render 'starter-js' %}
 
-     
+     {% capture card_offers %}
+      {
+        "offer_1" : "{{ settings.card_offers | split: ',' | first }}",
+        "offer_2" : "{{ settings.card_offers | split: ',' | last }}"
+      }
+     {% endcapture %}
      <script>
+      Shopify.card_offers = `{{ card_offers }}`;
       Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
       Shopify.tag_selector = {{ settings.tag_selector | json }};
       Shopify.fixed_discount = function(tag){
