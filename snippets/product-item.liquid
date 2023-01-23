@@ -4,6 +4,18 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
 
+{% assign product_varient = product.selected_or_first_available_variant %}
+
+{% if product.selected_or_first_available_variant.inventory_quantity < settings.sold_out_threshold %}
+{%- for variant in product.variants -%}
+  {% if variant.inventory_quantity >= settings.sold_out_threshold %}
+  {% assign product_varient = variant %}
+  {%  break  %}
+{%- endif -%}
+{%- endfor -%} 
+{%- endif -%}
+
+
 {%- if product.url contains '?' -%}
   {%- assign product_url_contains_query = true -%}
 {%- else -%}
@@ -18,14 +30,14 @@
 
 {%- if settings.enable_fixed_discount and product.tags contains settings.tag_selector -%}
   {% assign cheapest_variant_discount_price = fixed_discount | times: 100 %}
-  {% assign cheapest_variant_discount_price = product.selected_or_first_available_variant.price | minus: discount_price %}
+  {% assign cheapest_variant_discount_price = product_varient.price | minus: discount_price %}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price 
    | minus: cheapest_variant_discount_price
    | divided_by: 100
    | round
    | times: 100 %}
   {% assign discount_price = fixed_discount | times: 100 %}
-  {% assign discount_price = product.selected_or_first_available_variant.price | minus: discount_price %}
+  {% assign discount_price = product_varient.price | minus: discount_price %}
   {% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
 {%- else -%}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price %}
@@ -113,7 +125,7 @@
             loading="lazy"
             data-media-id="{{ product.featured_media.id | escape }}"
             sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product.selected_or_first_available_variant.image, sizes: '200,300' -%}>
+            {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
         {% else %}
           <img
             class="product-item__primary-image"
@@ -139,9 +151,9 @@
         {%- endif -%}
 
         {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-          {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position] 
+          {%- assign next_media_pos = product.media[product_varient.image.position] 
             | plus: 1 -%}
-          {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position] 
+          {%- assign next_media = product.media[product_varient.image.position] 
             | default: product.media[next_media_pos] -%}
           <img
             class="product-item__secondary-image"
@@ -300,22 +312,22 @@
               </span>
             {%- endif -%}
 
-            {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
+            {%- if product_varient.unit_price_measurement -%}
               <div class="price price--block text--xsmall text--subdued">
                 <div class="unit-price-measurement">
                   <span class="unit-price-measurement__price">
-                    {{- product.selected_or_first_available_variant.unit_price | money -}}
+                    {{- product_varient.unit_price | money -}}
                   </span>
                   <span class="unit-price-measurement__separator">/</span>
 
-                  {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+                  {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
                     <span class="unit-price-measurement__reference-value">
-                      {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+                      {{- product_varient.unit_price_measurement.reference_value -}}
                     </span>
                   {%- endif -%}
 
                   <span class="unit-price-measurement__reference-unit">
-                    {{- product.selected_or_first_available_variant.unit_price_measurement.reference_unit -}}
+                    {{- product_varient.unit_price_measurement.reference_unit -}}
                   </span>
                 </div>
               </div>
