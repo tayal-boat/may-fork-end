@@ -1,25 +1,21 @@
-{%- if paginate.pages > 1 -%}
-  <page-pagination {% if use_ajax %}ajax{% endif %} class="pagination">
-    <nav class="pagination__nav">
-      {%- if paginate.previous -%}
-        <a class="pagination__nav-item prev" rel="prev" aria-label="{{ 'general.pagination.previous_page' | t }}" data-page="{{ paginate.current_page | minus: 1 }}" href="{{ paginate.previous.url }}{{ hash }}">
-          {%- render 'icon' with 'nav-arrow-left', direction_aware: true -%}
-        </a>
-      {%- endif -%}
-
-      {%- for part in paginate.parts -%}
-        {%- if part.is_link -%}
-          <a href="{{ part.url }}{{ hash }}" data-page="{{ part.title }}" class="pagination__nav-item heading heading--small" aria-label="{{ 'general.pagination.go_to_page' | t: page: part.title }}">{{ part.title }}</a>
+<nav class="nt-pagination w__100 tc {{class}}">
+  <ul class="pagination-page page-numbers">
+    {%- if paginate.previous -%}
+    <li><a class="prev page-numbers{{cl_a}}" href="{{ paginate.previous.url }}">{{ 'collections.general.previous' | t }}</a></li>
+    {%- endif -%}
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+      <li><a class="page-numbers{{cl_a}}" href="{{ part.url }}">{{ part.title }}</a></li>
+      {%- else -%}
+        {%- if part.title == paginate.current_page -%}
+        <li><span class="page-numbers current">{{ part.title }}</span></li>
         {%- else -%}
-          <span class="pagination__nav-item heading heading--small" {% if part.title == paginate.current_page %}aria-current="page" {% endif %}>{{ part.title }}</span>
+        <li><span class="page-numbers lh__1">{{ part.title }}</span></li>
         {%- endif -%}
-      {%- endfor -%}
-
-      {%- if paginate.next -%}
-        <a class="pagination__nav-item next" rel="next" aria-label="{{ 'general.pagination.next_page' | t }}" data-page="{{ paginate.current_page | plus: 1 }}" href="{{ paginate.next.url }}{{ hash }}">
-          {%- render 'icon' with 'nav-arrow-right', direction_aware: true -%}
-        </a>
       {%- endif -%}
-    </nav>
-  </page-pagination>
-{%- endif -%}
+    {%- endfor -%}
+    {%- if paginate.next -%}
+    <li><a href="{{ paginate.next.url }}" class="next page-numbers{{cl_a}}">{{ 'collections.general.next' | t }}</a></li>
+    {%- endif -%}
+  </ul>
+</nav>

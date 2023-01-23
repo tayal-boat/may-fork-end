@@ -1,221 +1,343 @@
-<style>
-  #shopify-section-{{ section.id }} {
-    {%- if section.settings.text_background == 'rgba(0,0,0,0)' -%}
-      {%- assign section_block_background = settings.background -%}
-    {%- else -%}
-      {%- assign section_block_background = section.settings.text_background -%}
-    {%- endif -%}
+{%- liquid
+  assign sid = section.id
+  assign image = section.settings.image -%}
 
-    {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
-      {%- assign heading_color = settings.heading_color -%}
-      {%- assign text_color = settings.text_color -%}
-    {%- else -%}
-      {%- assign heading_color = section.settings.text_color -%}
-      {%- assign text_color = section.settings.text_color -%}
-    {%- endif -%}
-
-    {%- if section.settings.button_background == 'rgba(0,0,0,0)' -%}
-      {%- assign button_background = settings.primary_button_background -%}
-    {%- else -%}
-      {%- assign button_background = section.settings.button_background -%}
-    {%- endif -%}
-
-    {%- if section.settings.button_text_color == 'rgba(0,0,0,0)' -%}
-      {%- assign button_text_color = settings.primary_button_text_color -%}
-    {%- else -%}
-      {%- assign button_text_color = section.settings.button_text_color -%}
-    {%- endif -%}
-
-    --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
-    --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-    --primary-button-background: {{ button_background.red }}, {{ button_background.green }}, {{ button_background.blue }};
-    --primary-button-text-color: {{ button_text_color.red }}, {{ button_text_color.green }}, {{ button_text_color.blue }};
-    --section-block-background: {{ section_block_background.red }}, {{ section_block_background.green }}, {{ section_block_background.blue }};
-  }
-</style>
-
-<section class="section section--flush">
-  <image-with-text-block {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="image-with-text-block image-with-text-block--small image-with-text-block--cover">
-    <div class="image-with-text-block__image-wrapper">
-      {%- if section.settings.image != blank -%}
-        <img class="image-with-text-block__image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="100vw" {% render 'image-attributes', image: section.settings.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000' %}>
-      {%- else -%}
-        {%- capture image_classes -%}image-with-text-block__image image-with-text-block__image--placeholder placeholder-background{%- endcapture -%}
-
-        {%- if section.settings.reveal_on_scroll -%}
-          {{- 'lifestyle-1' | placeholder_svg_tag: image_classes | replace: '<svg', '<svg reveal' -}}
-        {%- else -%}
-          {{- 'lifestyle-1' | placeholder_svg_tag: image_classes -}}
-        {%- endif -%}
-      {%- endif -%}
-    </div>
-
-    <div class="container container--flush">
-      {%- assign text_position = section.settings.text_position | split: '_' | last -%}
-
-      <div {% if section.settings.reveal_on_scroll %}reveal{% endif %} class="image-with-text-block__content image-with-text-block__content--tight content-box content-box--small content-box--text-{{ section.settings.text_alignment}} content-box--{{ text_position }} text-container">
-        {%- if section.settings.subheading != blank -%}
-          <h2 class="heading heading--small">{{ section.settings.subheading | escape }}</h2>
-        {%- endif -%}
-
-        {%- if section.settings.content != blank -%}
-          {{- section.settings.content -}}
-        {%- endif -%}
-
-        {%- assign newsletter_id = 'newsletter-' | append: section.id -%}
-
-        {%- form 'customer', id: newsletter_id, class: 'form newsletter__form' -%}
-          {%- if form.posted_successfully? -%}
-            <script>
-              window.addEventListener('DOMContentLoaded', () => {
-                if (history.scrollRestoration) {
-                  history.scrollRestoration = 'manual'; // Prevent the browser to scroll on captcha page
-                }
-
-                document.getElementById('shopify-section-{{ section.id }}').scrollIntoView();
-              });
-            </script>
-
-            <div class="form__banner banner banner--success">
-              <span class="banner__ribbon">{% render 'icon' with 'form-success' %}</span>
-              <p class="banner__content">{{ 'general.newsletter.success' | t }}</p>
-            </div>
-          {%- else -%}
-            {%- if form.errors -%}
-              <div class="form__banner banner banner--error">
-                <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
-                <p class="banner__content">{{ form.errors.messages['email'] }}</p>
-              </div>
-            {%- endif -%}
-
-            <input type="hidden" name="contact[tags]" value="newsletter">
-            <input type="hidden" name="contact[context]" value="{{ newsletter_id }}">
-
-            <div class="input-row">
-              <div class="input">
-                <input type="email" id="newsletter[{{ section.id }}][contact][email]" name="contact[email]" class="input__field" required>
-                <label for="newsletter[{{ section.id }}][contact][email]" class="input__label">{{ 'general.newsletter.email' | t }}</label>
-              </div>
-
-              <div class="input">
-                <button type="submit" is="loader-button" class="button button--primary">{{ 'general.newsletter.subscribe' | t }}</button>
-              </div>
-            </div>
-          {%- endif -%}
-        {%- endform -%}
+<div class="newsletter_se {{section.settings.layout}} content_pos_{{section.settings.pos}} _color_scheme_{{section.settings.color}} newl_des_{{section.settings.newl_des}}">
+  <div class="nt_se_{{sid}} nt_bg_overlay pr oh cover_norepeat tc{%- if image != blank %} lazyloadt4s nt_parallax_{{section.settings.use_pr}}{%- endif -%}"{% if image != blank %} data-bgset="{{ image | img_url: '1x1' }}" data-ratio="{{image.aspect_ratio}}" data-sizes="auto" data-parent-fit="cover"{% endif %}>
+      <div class="container pr z_100">
+        {%- render 'section_title',section:section,section_title:'mb__30' -%}
+        {%- render 'newsletter',class:'in_flex',btn_icon:section.settings.btn_icon,newl_des:section.settings.newl_des,sid:sid -%}
       </div>
-    </div>
-  </image-with-text-block>
-</section>
-
-{% schema %}
-{
-  "name": "Newsletter",
-  "class": "shopify-section--newsletter",
-  "settings": [
-    {
-      "type": "paragraph",
-      "content": "Customers who subscribe will have their email address added to the \"accepts marketing\" [customer list](/admin/customers?query=&accepts_marketing=1)."
-    },
-    {
-      "type": "checkbox",
-      "id": "reveal_on_scroll",
-      "label": "Reveal on scroll",
-      "info": "Show animation when section becomes visible.",
-      "default": true
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Image",
-      "info": "2000 x 980px .jpg recommended"
-    },
-    {
-      "type": "text",
-      "id": "subheading",
-      "label": "Subheading",
-      "default": "Subscribe to our newsletter"
-    },
-    {
-      "type": "richtext",
-      "id": "content",
-      "label": "Content",
-      "default": "<p>Promotions, new products and sales. Directly to your inbox.</p>"
-    },
-    {
-      "type": "select",
-      "id": "text_position",
-      "label": "Desktop text position",
-      "options": [
-        {
-          "value": "left",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "right",
-          "label": "Right"
-        }
-      ],
-      "default": "right"
-    },
-    {
-      "type": "select",
-      "id": "text_alignment",
-      "label": "Text alignment",
-      "options": [
-        {
-          "value": "left",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "right",
-          "label": "Right"
-        }
-      ],
-      "default": "left"
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "text_background",
-      "label": "Text background",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "button_background",
-      "label": "Button background",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Button text",
-      "default": "rgba(0,0,0,0)"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Newsletter",
-      "settings": {}
-    }
-  ]
+  </div>
+</div>
+{%- render 'section_css' -%}
+{%- style -%}
+.nt_se_{{sid}} {background-color: {{section.settings.se_bg}};}
+.nt_se_{{sid}}.nt_bg_overlay:after{ background-color: {{section.settings.cl_overlay}};opacity: {{section.settings.cl_opacity | divided_by: 100.00}} }
+.nt_se_{{sid}} .section-title {
+  color:{{section.settings.cl_t}};
 }
+.nt_se_{{sid}} .section-subtitle {
+  color:{{section.settings.cl_st}};
+}
+.nt_se_{{sid}}{
+  color:{{section.settings.cl_all}};
+}
+.nt_se_{{sid}} .signup-newsletter-form,.nt_se_{{sid}} .signup-newsletter-form input.input-text {
+    border-color: {{section.settings.cl_bd}};
+}
+.nt_se_{{sid}} .signup-newsletter-form input.input-text {
+    color:{{section.settings.cl_ip}};
+}
+.nt_se_{{sid}} .signup-newsletter-form .submit-btn {
+    color:{{section.settings.cl_btn}};
+    background-color: {{section.settings.bg_btn}};
+}
+{%- endstyle -%}
+{%- schema -%}
+  {
+    "name": "Newsletter",
+    "class": "nt_section type_newsletter",
+    "settings": [
+      {
+        "type": "header",
+        "content": "== Title Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Subscribe to our newsletter"
+      },
+      {
+        "type": "textarea",
+        "id": "sub_title",
+        "label": "Sub Heading",
+        "default": "A short sentence describing what someone will receive by subscribing"
+      },
+      {
+        "type": "select",
+        "id": "sub_font",
+        "default": "2",
+        "options": [
+         {
+            "value": "1",
+            "label": "Body font"
+         },
+         {
+            "value": "2",
+            "label": "Sub title font"
+          }
+        ],
+        "label": "Sub Text use font:"
+      },
+      {
+        "type": "select",
+        "id": "style_title",
+        "options": [
+         {
+            "value": "title_1",
+            "label": "Design 1"
+         },
+         {
+            "value": "title_2",
+            "label": "Design 2"
+          },
+         {
+            "value": "title_3",
+            "label": "Design 3"
+          },
+         {
+            "value": "title_4",
+            "label": "Design 4"
+          },
+         {
+            "value": "title_5 lazyloadt4s",
+            "label": "Design 5"
+          },
+         {
+            "value": "title_6",
+            "label": "Design 6"
+          },
+         {
+            "value": "title_7 +la",
+            "label": "Design 7 (with line-awesome)"
+          },
+         {
+            "value": "title_8",
+            "label": "Design 8"
+          },
+         {
+            "value": "title_9",
+            "label": "Design 9"
+          },
+         {
+            "value": "title_10",
+            "label": "Design 10"
+          },
+         {
+            "value": "title_11",
+            "label": "Design 11"
+          },
+         {
+            "value": "title_12",
+            "label": "Design 12"
+          },
+         {
+            "value": "title_13",
+            "label": "Design 13"
+          }
+        ],
+        "label": "Design Title:"
+      },
+      {
+        "type": "text",
+        "id": "ic_tt",
+        "label": "Style 7 icon line-awesome",
+        "default": "pencil-alt"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_clpr",
+        "label": "Use icon color primary?",
+        "default": false
+      },
+      {
+        "type": "paragraph",
+        "content": "[Get icons Line awesome](https://icons8.com/line-awesome)"
+      },
+      {
+        "type": "header",
+        "content": "== General Settings"
+      },
+      {
+        "type": "color",
+        "id": "cl_all",
+        "label": "Color Text",
+        "default": "#878787"
+      },
+      {
+        "type": "color",
+        "id": "cl_t",
+        "label": "Color Heading",
+        "default": "#222"
+      },
+      {
+        "type": "color",
+        "id": "cl_st",
+        "label": "Color Sub Heading",
+        "default": "#8B8784"
+      },
+      {
+        "type": "color",
+        "id": "cl_bd",
+        "label": "Border Color",
+        "default": "#222"
+      },
+      {
+        "type": "color",
+        "id": "cl_ip",
+        "label": "Input Color",
+        "default": "#222"
+      },
+      {
+        "type": "color",
+        "id": "cl_btn",
+        "label": "Button Color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "bg_btn",
+        "label": "Button Background Color",
+        "default": "#222"
+      },
+      {
+        "type": "select",
+        "id": "newl_des",
+        "label": "Newsletter Design:",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "Design 1"
+          },
+          {
+            "value": "2",
+            "label": "Design 2"
+          },
+          {
+            "value": "3",
+            "label": "Design 3"
+          },
+          {
+            "value": "4",
+            "label": "Design 4"
+          },
+          {
+            "value": "5",
+            "label": "Design 5"
+          },
+          {
+            "value": "6",
+            "label": "Design 6"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "btn_icon",
+        "label": "Button icon?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "== Background Options"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Background Image"
+      },
+      {
+        "type": "color",
+        "id": "cl_overlay",
+        "label": "Overlay",
+        "default": "#000"
+      },
+      {
+        "type": "range",
+        "id": "cl_opacity",
+        "label": "Overlay opacity",
+        "default": 0,
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%"
+      },
+      {
+        "type": "color",
+        "id": "se_bg",
+        "label": "Background color",
+        "default": "#fff"
+      },
+      /*{
+        "type": "select",
+        "id": "color",
+        "options": [
+         {
+            "value": "dark",
+            "label": "Dark"
+         },
+         {
+            "value": "light",
+            "label": "Light"
+          }
+        ],
+        "label": "Color scheme"
+      },*/
+      {
+        "type": "header",
+        "content": "== Design Options"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_pr",
+        "label": "Enable parallax scroll?",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "layout",
+        "options": [
+         {
+            "value": "container",
+            "label": "Container"
+         },
+         {
+            "value": "nt_full",
+            "label": "Full Width"
+          }
+        ],
+        "label": "Layout"
+      },
+      {
+        "type": "text",
+        "id": "mg",
+        "label": "Margin",
+        "info":"Margin top, margin right, margin bottom, margin left. If you not use to blank",
+        "default": "50px,,50px,",
+        "placeholder": "50px,,50px,"
+      },
+      {
+        "type": "text",
+        "id": "pd",
+        "label": "Padding",
+        "info":"Padding top, padding right, padding bottom, padding left. If you not use to blank",
+        "placeholder": "50px,,50px,"
+      },
+     {
+        "type": "header",
+        "content": "== Design Mobile Options"
+      },
+      {
+        "type": "text",
+        "id": "mg_mb",
+        "label": "Margin",
+        "placeholder": "50px,,50px,"
+      },
+      {
+        "type": "text",
+        "id": "pd_mb",
+        "label": "Padding",
+        "placeholder": "50px,,50px,"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Newsletter",
+        "category": "VI. Promotional"
+      }
+    ]
+  }
 {% endschema %}

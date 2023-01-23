@@ -1,401 +1,682 @@
-{%- if section.settings.background != settings.background and section.settings.background != 'rgba(0,0,0,0)' -%}
-  {%- assign blends_with_background = false -%}
-{%- else -%}
-  {%- assign blends_with_background = true -%}
-{%- endif -%}
+{%- liquid
+  assign sid = section.id
+  assign se_stts = section.settings
+  assign layout = se_stts.layout
+  assign image = se_stts.image
+  assign pr_txt = se_stts.pr_txt
+  assign cimg = 'https://placehold.jp/50/f76b6a/fff/530x600.png?text=Collection+Image'
+  assign ccol = 'col-lg-1x col-md-2x col-3x' | replace: '1x', se_stts.col | replace: '2x', se_stts.col_md | replace: '3x', se_stts.col_mb
+  if layout == 'wrap'
+   assign html_layout = '<div class="container">__</div>' | split:'__'
+  else
+   assign html_layout = '__' | split:'__'
+  endif -%}
 
-<style>
-  #shopify-section-{{ section.id }} {
-    {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
-      {%- assign section_background = settings.background -%}
-    {%- else -%}
-      {%- assign section_background = section.settings.background -%}
-    {%- endif -%}
+  {%- if se_stts.cp_code and request.design_mode %}<div class="dn tc mt__40 mb__40 cp_cd_js"><input type="text" class="dcp_cd_ip" value='<div class="inc_lz inc_cat_laz" data-rendert4s="/search/?section_id={{sid}}"><div class="lds_bginfinity pr"></div></div>'><button class="dcp_cd_btn">Copy Shortcode</button></div>{% endif -%}
 
-    {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
-      {%- assign heading_color = settings.heading_color -%}
-      {%- assign text_color = settings.text_color -%}
-    {%- else -%}
-      {%- assign heading_color = section.settings.text_color -%}
-      {%- assign text_color = section.settings.text_color -%}
-    {%- endif -%}
-
-    --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
-    --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-    --prev-next-button-background: var(--text-color);
-    --prev-next-button-color: var(--section-background);
-
-    --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
-
-    {%- if section.settings.layout == 'collage' -%}
-      --section-collage-column: {{ section.blocks.size | at_most: 2 }};
-    {%- endif -%}
-  }
-
-  {%- for block in section.blocks -%}
-    #block-{{ section.id }}-{{ block.id }} {
-      {% if block.settings.text_color == 'rgba(0,0,0,0)' %}
-        {%- assign text_color_rgb = '255, 255, 255' -%}
-      {%- else -%}
-        {%- capture text_color_rgb -%}{{ block.settings.text_color.red }}, {{ block.settings.text_color.green }}, {{ block.settings.text_color.blue }}{%- endcapture -%}
-      {%- endif -%}
-
-      --heading-color: {{ text_color_rgb }};
-      --text-color: {{ text_color_rgb }};
-      --section-block-overlay: {{ block.settings.overlay_color.red }}, {{ block.settings.overlay_color.green }}, {{ block.settings.overlay_color.blue }};
-      --section-block-overlay-opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
-    }
-  {%- endfor -%}
-  
-    @media screen and (min-width: 769px) {
-    	.list-collections__item-list >a {
-            width: 48%;    border-radius: 32px;
-        }
-      .list-collections__item-list {
-      	grid-gap: 40px;
-        gap: 40px;
-        margin: auto;
-      }
-    }
-</style>
-
-<section class="section {% unless blends_with_background %}section--flush{% endunless %}">
-  <div class="section__color-wrapper">
-    <div class="{% unless blends_with_background %}vertical-breather{% endunless %}">
-      {%- if section.settings.subheading != blank or section.settings.title != blank -%}
-        <header class="section__header container text-container">
-          {%- if section.settings.subheading != blank -%}
-            <h2 class="heading heading--small">{{ section.settings.subheading | escape }}</h2>
-          {%- endif -%}
-
-          {%- if section.settings.title != blank -%}
-            <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
-          {%- endif -%}
-        </header>
-      {%- endif -%}
-
-      {%- capture section_content -%}
-        <div class="list-collections__item-list">
-          {%- for block in section.blocks -%}
-            {%- capture collection_content -%}
-              {%- if block.settings.subheading != blank -%}
-                <p class="heading heading--small" {% if section.settings.reveal_on_scroll %}reveal{% endif %}>{{ block.settings.subheading | escape }}</p>
-              {%- endif -%}
-
-              {%- if block.settings.title != blank -%}
-                <p class="heading {% if settings.heading_text_transform == 'uppercase' %}h4{% else %}h3{% endif %}" {% if section.settings.reveal_on_scroll %}reveal{% endif %}>{{ block.settings.title | escape }}</p>
-              {%- endif -%}
-
-              {%- if block.settings.link_text != blank -%}
-                <span class="heading heading--small link" {% if section.settings.reveal_on_scroll %}reveal{% endif %}>{{ block.settings.link_text | escape }}</span>
-              {%- endif -%}
-            {%- endcapture -%}
-
-            {%- if section.settings.layout == 'collage' -%}
-              {%- comment -%}
-              The logic is as follows:
-                - If we have a modulo 3 (3, 6, 9...) we highlight every modulo 3, and every 6 is shifted
-                - If we have a modulo 5 (5, 10, 15...) we highlight every modulo 5, and every 10 is shifted
-                - If we have a modulo 7 (7, 14, 21...) we highlight every modulo 7, and every 14 is shifted
-              {%- endcomment -%}
-
-              {%- assign is_highlighted = false -%}
-              {%- assign is_shifted = true -%}
-              {%- assign modulo_3 = section.blocks.size | modulo: 3 -%}
-              {%- assign modulo_5 = section.blocks.size | modulo: 5 -%}
-              {%- assign modulo_7 = section.blocks.size | modulo: 7 -%}
-
-              {%- if modulo_3 == 0 -%}
-                {%- assign index_modulo_3 = forloop.index | modulo: 3 -%}
-                {%- assign index_modulo_6 = forloop.index | modulo: 6 -%}
-
-                {%- if index_modulo_3 == 1 -%}
-                  {%- assign is_highlighted = true -%}
-                {%- endif -%}
-
-                {%- if index_modulo_6 == 1 -%}
-                  {%- assign is_shifted = false -%}
-                {%- endif -%}
-              {%- elsif modulo_5 == 0 -%}
-                {%- assign index_modulo_5 = forloop.index | modulo: 5 -%}
-                {%- assign index_modulo_10 = forloop.index | modulo: 10 -%}
-
-                {%- if index_modulo_5 == 1 -%}
-                  {%- assign is_highlighted = true -%}
-                {%- endif -%}
-
-                {%- if index_modulo_10 == 1 -%}
-                  {%- assign is_shifted = false -%}
-                {%- endif -%}
-              {%- elsif modulo_7 == 0 -%}
-                {%- assign index_modulo_7 = forloop.index | modulo: 7 -%}
-                {%- assign index_modulo_14 = forloop.index | modulo: 14 -%}
-
-                {%- if index_modulo_7 == 1 -%}
-                  {%- assign is_highlighted = true -%}
-                {%- endif -%}
-
-                {%- if index_modulo_14 == 1 -%}
-                  {%- assign is_shifted = false -%}
-                {%- endif -%}
-              {%- endif -%}
-            {%- endif -%}
-
-            {%- assign collection = block.settings.collection -%}
-
-            <a id="block-{{ section.id }}-{{ block.id }}" href="{{ block.settings.link_url | default: collection.url }}" class="list-collections__item {% if is_highlighted %}list-collections__item--highlight {% if is_shifted %}list-collections__item--shift{% endif %}{% endif %} {% if collection_content != blank %}has-overlay{% endif %} image-zoom" {{ block.shopify_attributes }}>
-              <div class="list-collections__item-image-wrapper">
-                {%- assign collection_image = block.settings.image | default: collection.featured_image -%}
-
-                {%- if collection_image != blank -%}
-                  {%- case section.settings.layout -%}
-                    {%- when 'grid' -%}
-                      {%- capture image_sizes -%}(max-width: 740px) calc(100vw - 48px), (max-width: 999px) calc(50vw - 60px), 480px{%- endcapture -%}
-
-                    {%- when 'carousel' -%}
-                      {%- capture image_sizes -%}(max-width: 740px) 80vw, (max-width: 999px) 60vw, 425px{%- endcapture -%}
-
-                    {%- when 'collage' -%}
-                      {%- capture image_sizes -%}(max-width: 740px) calc(100vw - 24px * 2), 660px{%- endcapture -%}
-                  {%- endcase -%}
-
-                  {%- if section.settings.layout == 'grid' and collection_image.aspect_ratio > 2.5 -%}
-                    {%- assign height_constraint = 800 | at_most: collection_image.height -%}
-                	<picture>
-                      <source media="(min-width: 768px)" srcset="{{block.settings.image | img_url: 'master'}}">
-                      <source media="(max-width: 767px)" srcset="{{block.settings.mobile_image | img_url: 'master'}}">
-                      <img loading="lazy" src="{{block.settings.image | img_url: 'master'}}" alt="{{collection.title}}" />
-                    </picture>
-<!--                     <img alt="{{block.settings.alt_imgtext}}" class="list-collections__item-image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="{{ image_sizes }}" {% render 'image-attributes', image: collection_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400', height_constraint: height_constraint, crop: 'center' %}> -->
-                  {%- else -%}
-                    <img alt="{{block.settings.alt_imgtext}}" class="list-collections__item-image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="{{ image_sizes }}" {% render 'image-attributes', image: collection_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800' %}>
-                  {%- endif -%}
-                {%- else -%}
-                  {%- capture collection_image -%}collection-{% cycle '1', '2', '3', '4', '5', '6' %}{%- endcapture -%}
-
-                  {%- if section.settings.reveal_on_scroll -%}
-                    {{- collection_image | placeholder_svg_tag: 'list-collections__item-image placeholder-background' | replace: '<svg', '<svg reveal' -}}
-                  {%- else -%}
-                    {{- collection_image | placeholder_svg_tag: 'list-collections__item-image placeholder-background' -}}
-                  {%- endif -%}
-                {%- endif -%}
-              </div>
-
-              {%- if collection_content != blank -%}
-                <div class="list-collections__item-info text-container">
-                  {{- collection_content -}}
-                </div>
-              {%- endif -%}
-            </a>
-          {%- endfor -%}
-        </div>
-      {%- endcapture -%}
-
-      {%- if section.settings.layout == 'grid' or section.settings.layout == 'collage' -%}
-        <collection-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--{{ section.settings.layout }}">
-          <div class="container">
-            {{- section_content -}}
-          </div>
-        </collection-list>
-      {%- elsif section.settings.layout == 'carousel' -%}
-        <collection-list scrollable {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--carousel">
-          <scrollable-content class="list-collections__scroller hide-scrollbar">
-            {{- section_content -}}
-          </scrollable-content>
-
-          <prev-next-buttons class="list-collections__prev-next prev-next-buttons hidden-pocket">
-            <button class="list-collections__arrow prev-next-button prev-next-button--prev">
-              <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
-              {%- include 'icon' with 'nav-arrow-left', block: true, direction_aware: true -%}
-            </button>
-
-            <button class="list-collections__arrow prev-next-button prev-next-button--next">
-              <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
-              {%- include 'icon' with 'nav-arrow-right', block: true, direction_aware: true -%}
-            </button>
-          </prev-next-buttons>
-        </collection-list>
-      {%- endif -%}
+  <div class="nt_se_{{sid}} {{layout}}{%- if image != blank %} hide_bgimg_{{se_stts.hide_bgimg}} lazyloadt4s se_t4_bg nt_parallax_{{se_stts.use_pr}}{%- endif -%}"{% if image != blank %} data-bgset="{{ image | img_url: '1x1' }}" data-ratio="{{image.aspect_ratio}}" data-sizes="auto" data-parent-fit="cover"{% endif %}>
+    {{-html_layout[0]-}}
+    {%- render 'section_title' -%}
+    <div class="mt__30 nt_cats_holder row fl_center equal_nt hoverz_{{se_stts.hoverz}} {{se_stts.image_ratio}} cat_space_{{se_stts.cat_space}} cat_design_{{se_stts.cat_design}}{% if se_stts.cat_layout == '2' %} nt_slider js_carousel prev_next_{{se_stts.btn_color}} btn_owl_{{se_stts.btn_owl}} dot_owl_{{se_stts.dot_owl}} dot_color_{{se_stts.dot_color}} btn_vi_{{se_stts.btn_vi}}{% endif %}"{% if se_stts.cat_layout == '2' %} data-flickityt4s-js='{"imagesLoaded": false, "adaptiveHeight": true, "contain": true, "groupCells": "100%", "dragThreshold" : 5, "cellAlign": "left","wrapAround": {{se_stts.loop}},"prevNextButtons": {{se_stts.button}},"percentPosition": true,"pageDots": {{se_stts.dot}}, "autoPlay" : {% if se_stts.autoplay %}{{ se_stts.au_time | times: 1000 }}{% else %}false{% endif %}, "pauseAutoPlayOnHover" : {{se_stts.au_hover}}, "rightToLeft": {{settings.use_rtl}} }'{% endif %}>
+      {%- for block in section.blocks -%}{%- render 'cat_grid_item',block:block,pr_txt:pr_txt,cimg:cimg,ccol:ccol,for_i:forloop.index -%}{%- endfor -%}
     </div>
+    {{-html_layout[1]-}}
   </div>
-</section>
+  {%- render 'section_css' -%}
+{%- style -%}
+.nt_se_{{sid}} .cat_grid_item__link { border-radius:{{se_stts.round}}% }
+{%- endstyle -%}
 
-<script>
-  $('.list-collections__item-list .list-collections__item').each(function(e) {
-    $(this).click(function() {
-    	let card = $(this).find('img').attr('alt');
-      	clevertap.event.push('Top Collections Section Clicked', {
-          "Card": card,
-    	  "userSource": userSource
-    	});
-    });
-  });
-</script>
-
-
-{% schema %}
-{
-  "name": "Collection list",
-  "class": "shopify-section--collection-list",
-  "blocks": [
-    {
-      "name": "Collection",
-      "type": "collection",
-      "settings": [
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Collection"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Desktop Image",
-          "info": "Grid and carousel modes: 1100 x 1400px .jpg recommended / Collage mode: 1320 x 1480px .jpg recommended (highlighted image) and 1320 x 700px .jpg recommended (normal image)"
-        },
-		{
-          "type": "image_picker",
-          "id": "mobile_image",
-          "label": "Mobile Image",
-          "info": "Grid and carousel modes: 1100 x 1400px .jpg recommended / Collage mode: 1320 x 1480px .jpg recommended (highlighted image) and 1320 x 700px .jpg recommended (normal image)"
-        },
-        {
-          "type": "text",
-          "id": "alt_imgtext",
-          "label": "alt_text"
-        },
-        {
-          "type": "text",
-          "id": "subheading",
-          "label": "Subheading"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Heading"
-        },
-        {
-          "type": "text",
-          "id": "link_text",
-          "label": "Link text"
-        },
-        {
-          "type": "url",
-          "id": "link_url",
-          "label": "Link URL",
-          "info": "If none is set, collection URL is used."
-        },
-        {
-          "type": "header",
-          "content": "Colors"
-        },
-        {
-          "type": "color",
-          "id": "text_color",
-          "label": "Text",
-          "default": "rgba(0,0,0,0)"
-        },
-        {
-          "type": "color",
-          "id": "overlay_color",
-          "label": "Overlay",
-          "default": "#000000"
-        },
-        {
-          "type": "range",
-          "id": "overlay_opacity",
-          "label": "Overlay opacity",
-          "min": 0,
-          "max": 100,
-          "step": 1,
-          "unit": "%",
-          "default": 30
-        }
-      ]
-    }
-  ],
-  "settings": [
-    {
-      "type": "checkbox",
-      "id": "reveal_on_scroll",
-      "label": "Reveal on scroll",
-      "info": "Show animation when section becomes visible.",
-      "default": false
-    },
-    {
+{%- schema -%}
+  {
+    "name": "Collection list",
+    "class": "nt_section type_carousel type_collection_list",
+    "max_blocks": 30,
+    "settings": [
+      {
+        "type": "header",
+        "content": "== Title Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Collection list"
+      },
+      {
+        "type": "textarea",
+        "id": "sub_title",
+        "label": "Sub Text",
+        "default": "Sub Text"
+      },
+      {
+        "type": "select",
+        "id": "sub_font",
+        "default": "2",
+        "options": [
+         {
+            "value": "1",
+            "label": "Body font"
+         },
+         {
+            "value": "2",
+            "label": "Sub title font"
+          }
+        ],
+        "label": "Sub Text use font:"
+      },
+      {
+        "type": "select",
+        "id": "style_title",
+        "options": [
+         {
+            "value": "title_1",
+            "label": "Design 1"
+         },
+         {
+            "value": "title_2",
+            "label": "Design 2"
+          },
+         {
+            "value": "title_3",
+            "label": "Design 3"
+          },
+         {
+            "value": "title_4",
+            "label": "Design 4"
+          },
+         {
+            "value": "title_5 lazyloadt4s",
+            "label": "Design 5"
+          },
+         {
+            "value": "title_6",
+            "label": "Design 6"
+          },
+         {
+            "value": "title_7 +la",
+            "label": "Design 7 (with line-awesome)"
+          },
+         {
+            "value": "title_8",
+            "label": "Design 8"
+          },
+         {
+            "value": "title_9",
+            "label": "Design 9"
+          },
+         {
+            "value": "title_10",
+            "label": "Design 10"
+          },
+         {
+            "value": "title_11",
+            "label": "Design 11"
+          },
+         {
+            "value": "title_12",
+            "label": "Design 12"
+          }
+        ],
+        "label": "Design Title:"
+      },
+      {
+        "type": "text",
+        "id": "ic_tt",
+        "label": "Style 7 icon line-awesome",
+        "default": "gem"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_clpr",
+        "label": "Use icon color primary?",
+        "default": false
+      },
+      {
+        "type": "paragraph",
+        "content": "[Get icons Line awesome](https://icons8.com/line-awesome)"
+      },
+      {
+        "type": "header",
+        "content": "== General Settings"
+      },
+      {
+        "type": "range",
+        "id": "round",
+        "label": "Round Image",
+        "default": 0,
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "%"
+      },
+      {
       "type": "select",
-      "id": "layout",
-      "label": "Layout",
-      "info": "Collage mode only affects desktop, and will adapt based on number of items.",
+      "id": "cat_layout",
       "options": [
+          {
+             "value": "1",
+             "label": "Grid (Default)"
+           },
+           {
+             "value": "2",
+             "label": "Slider"
+           }
+         ],
+         "label": "Layout design",
+         "default": "1"
+      },
+      {
+        "type": "checkbox",
+        "id": "hoverz",
+        "label": "Enable zoom image on hover?",
+        "default": true
+      },
+      {
+       "type": "select",
+       "id": "cat_design",
+       "options": [
         {
-          "value": "grid",
-          "label": "Grid"
-        },
+           "value": "1",
+           "label": "Default"
+         },
+         {
+           "value": "2",
+           "label": "Design 2"
+         },
+         {
+           "value": "3",
+           "label": "Design 3"
+         },
+         {
+           "value": "4",
+           "label": "Design 4"
+         },
+         {
+           "value": "5",
+           "label": "Design 5"
+         },
+         {
+           "value": "6",
+           "label": "Design 6"
+         },
+         {
+           "value": "7",
+           "label": "Design 7"
+         },
+         {
+           "value": "8",
+           "label": "Design 8"
+         }
+       ],
+       "label": "Collections design",
+       "default": "1"
+     },
+     {
+       "type": "select",
+       "id": "cat_space",
+       "options": [
         {
-          "value": "collage",
-          "label": "Collage"
-        },
-        {
-          "value": "carousel",
-          "label": "Carousel"
-        }
-      ],
-      "default": "grid"
-    },
-    {
-      "type": "text",
-      "id": "subheading",
-      "label": "Subheading",
-      "default": "Subheading"
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "Collection list"
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "background",
-      "label": "Background",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color",
-      "default": "rgba(0,0,0,0)"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Collection list",
-      "blocks": [
-        {
-          "type": "collection"
-        },
-        {
-          "type": "collection"
-        },
-        {
-          "type": "collection"
-        },
-        {
-          "type": "collection"
-        },
-        {
-          "type": "collection"
-        },
-        {
-          "type": "collection"
-        }
+           "value": "30",
+           "label": "30"
+         },
+         {
+           "value": "20",
+           "label": "20"
+         },
+         {
+           "value": "10",
+           "label": "10"
+         },
+         {
+           "value": "6",
+           "label": "6"
+         },
+         {
+           "value": "2",
+           "label": "2"
+         },
+         {
+           "value": "0",
+           "label": "0"
+         }
+       ],
+       "label": "Space between Collections",
+       "default": "30"
+     },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "label": "Aspect Ratio",
+        "default": "ratio_nt",
+        "info": "Aspect Ratio Custom will settings in General panel.",
+        "options": [
+          {
+            "group": "Landscape",
+            "value": "ratio2_1",
+            "label": "2:1"
+          },
+          {
+            "group": "Landscape",
+            "value": "ratio16_9",
+            "label": "16:9"
+          },
+          {
+            "group": "Landscape",
+            "value": "ratio8_5",
+            "label": "8:5"
+          },
+          {
+            "group": "Landscape",
+            "value": "ratio3_2",
+            "label": "3:2"
+          },
+          {
+            "group": "Landscape",
+            "value": "ratio4_3",
+            "label": "4:3"
+          },
+          {
+            "group": "Landscape",
+            "value": "ratio_nt",
+            "label": "Ratio ASOS"
+          },
+          {
+            "group": "Squared",
+            "value": "ratio1_1",
+            "label": "1:1"
+          },
+          {
+            "group": "Portrait",
+            "value": "ratio2_3",
+            "label": "2:3"
+          },
+          {
+            "group": "Portrait",
+            "value": "ratio1_2",
+            "label": "1:2"
+          },
+          {
+            "group": "Custom",
+            "value": "ratio_cus1",
+            "label": "Ratio Custom 1"
+          },
+          {
+            "group": "Custom",
+            "value": "ratio_cus2",
+            "label": "Ratio Custom 2"
+          },
+          {
+            "group": "Custom",
+            "value": "ratio_cus3",
+            "label": "Ratio Custom 3"
+          },
+          {
+            "group": "Custom",
+            "value": "ratio_cus4",
+            "label": "Ratio Custom 4"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "col",
+        "label": "Collections columns",
+        "info": "How many Collections you want to show per row",
+        "default": "3",
+        "options": [
+          {
+            "value": "6",
+            "label": "2"
+          },
+          {
+            "value": "4",
+            "label": "3"
+          },
+          {
+            "value": "3",
+            "label": "4"
+          },
+          {
+            "value": "15",
+            "label": "5"
+          },
+          {
+            "value": "2",
+            "label": "6"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "col_md",
+        "label": "Collections columns Tablet",
+        "default": "3",
+        "options": [
+          {
+            "value": "6",
+            "label": "2"
+          },
+          {
+            "value": "4",
+            "label": "3"
+          },
+          {
+            "value": "3",
+            "label": "4"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "col_mb",
+        "label": "Collections columns Mobile",
+        "default": "6",
+        "options": [
+          {
+            "value": "12",
+            "label": "1"
+          },
+          {
+            "value": "6",
+            "label": "2"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "pr_txt",
+        "label": "Products Text",
+        "default": "products"
+      },
+      {
+        "type": "header",
+        "content": "== Slider Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "Use Loop?",
+        "info": "At the end of cells, wrap-around to the other end for infinite scrolling.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Use Autoplay?",
+        "info": "Automatically advances to the next cell.",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "au_time",
+        "min": 1,
+        "max": 30,
+        "step": 0.5,
+        "label": "Autoplay Speed in second.",
+        "unit": "sec",
+        "default": 6
+      },
+      {
+        "type": "checkbox",
+        "id": "au_hover",
+        "label": "Pause Autoplay On Hover?",
+        "info": "Auto-playing will pause when the user hovers over the carousel.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "== Prev Next Button, Page Dot Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "—————————————————"
+      },
+      {
+        "type": "paragraph",
+        "content": "Prev Next Button:"
+      },
+      {
+        "type": "checkbox",
+        "id": "button",
+        "label": "Enable Prev Next Button?",
+        "info": "Creates and enables previous & next buttons.",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "btn_vi",
+        "label": "Visible:",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "always"
+          },
+          {
+            "value": "2",
+            "label": "Only hover"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "btn_owl",
+        "label": "Style",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          },
+          {
+            "value": "3",
+            "label": "Style 3"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "btn_color",
+        "label": "Color",
+        "default": "0",
+        "options": [
+          {
+            "value": "0",
+            "label": "Transparent"
+          },
+          {
+            "value": "1",
+            "label": "Gray"
+          },
+          {
+            "value": "2",
+            "label": "White"
+          },
+          {
+            "value": "3",
+            "label": "Primary"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": "—————————————————"
+      },
+      {
+        "type": "paragraph",
+        "content": "Page Dot:"
+      },
+      {
+        "type": "checkbox",
+        "id": "dot",
+        "label": "Enable Page Dot?",
+        "info": "Creates and enables page dots.",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "dot_owl",
+        "label": "Style",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          },
+          {
+            "value": "3",
+            "label": "Style 3"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "dot_color",
+        "label": "Color",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "Dark"
+          },
+          {
+            "value": "2",
+            "label": "Light"
+          },
+          {
+            "value": "3",
+            "label": "Primary"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "== Design Options"
+      },
+      {
+        "type": "checkbox",
+        "id": "cp_code",
+        "label": "Show copy shortcode?",
+        "default": false,
+        "info": "Copy shortcode only show on admin editor."
+      },
+      {
+        "type": "select","id": "layout","default": "wrap","label": "Layout",
+        "options": [
+            { "value": "container", "label": "Container"},
+            { "value": "wrap", "label": "Wrapped Container"},
+            { "value": "nt_full", "label": "Full Width"}
+        ]
+      },
+      {
+        "type": "color","id": "cl_bg","label": "Background color"
+      },
+      {
+        "type": "image_picker","id": "image","label": "Background Image"
+      },
+      {
+        "type": "checkbox","id": "hide_bgimg","label": "Hide Background Image on mobile?","default": false
+      },
+      {
+        "type": "text",
+        "id": "mg",
+        "label": "Margin",
+        "info":"Margin top, margin right, margin bottom, margin left. If you not use to blank",
+        "default": "50px,,50px,",
+        "placeholder": "50px,,50px,"
+      },
+      {
+        "type": "text",
+        "id": "pd",
+        "label": "Padding",
+        "info":"Padding top, padding right, padding bottom, padding left. If you not use to blank",
+        "placeholder": "50px,,50px,"
+      },
+     {
+        "type": "header",
+        "content": "== Design Mobile Options"
+      },
+      {
+        "type": "text",
+        "id": "mg_mb",
+        "label": "Margin",
+        "placeholder": "50px,,50px,"
+      },
+      {
+        "type": "text",
+        "id": "pd_mb",
+        "label": "Padding",
+        "placeholder": "50px,,50px,"
+      }
+    ],
+    "blocks": [{
+    "type": "collection",
+    "name": "Collection",
+    "settings": [
+      {
+        "id": "collection",
+        "type": "collection",
+        "label": "Collection"
+      },
+      {
+         "type": "image_picker",
+         "id": "image",
+         "label": "Image"
+       },
+      {
+        "type": "select",
+        "id": "img_align",
+        "default": "center",
+        "options": [
+         {
+            "value": "top",
+            "label": "Top"
+         },
+         {
+            "value": "center",
+            "label": "Middle"
+         },
+         {
+            "value": "bottom",
+            "label": "Bottom"
+         }
+        ],
+        "label": "Image alignment"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title block (optional)",
+        "info": "Leave empty to use 'collection title'. Enter key 'hide_title' to hide title"
+      },
+      {
+        "type": "url",
+        "id": "url",
+        "label": "Link (optional)",
+        "info": "Leave empty to use 'collection url'."
+      }
       ]
-    }
-  ]
-}
+    }],
+    "presets": [
+      {
+        "name": "Collection list",
+        "category": "I. Collections",
+        "blocks": [
+          { "type": "collection" },
+          { "type": "collection" },
+          { "type": "collection" },
+          { "type": "collection" }
+        ]
+      }
+    ]
+  }
 {% endschema %}
