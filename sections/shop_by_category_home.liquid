@@ -7,6 +7,15 @@
             margin: {{ section.settings.sectionmargin | default: 0 }};
         }
     }
+    @media(min-width:768px) {
+        .top-collections {
+            margin: {{ section.settings.sectionmargin | default: 0 }};
+        }
+        .row.shop-by-category-slider.hidden-pocket.custom_slider_init {flex-wrap: wrap;padding-left:0;}
+        .row.shop-by-category-slider.hidden-pocket.custom_slider_init .cat_single_column{max-width:169px;min-width:169px;}
+        .shop_by_category_section .shop_by_collection-row .shop-by-category-slider.hidden-pocket .cat_single_column:last-child a:last-child{margin-left:0;}
+    }
+    
 </style>
 <div class="shop_by_category_section container cf section-id-{{ section.id }} top-collections top-2 px-lg-0" data-section-type="custom-row">
     {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
@@ -16,12 +25,13 @@
             {%- endif -%}
         </header>
     {%- endif -%}
+
     <div class="shop_by_collection-row mx-lg-5 ">
-        <div class="row owl-carousel owl-theme shop-by-category-slider custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
+        <div class="row shop-by-category-slider hidden-desk custom_slider_init {{ section.id }}">
             {% for block in section.blocks %}
                 {% assign cat_rep = forloop.index | modulo: 2 %}
                 {% if cat_rep != 0 %}
-                    <div class="d-flex flex-column">
+                    <div class="cat_single_column">
                 <a href="{{ block.settings.imageUrl }}" class="collection-block single-collection-box">
                     <div class="collection collection-{{ forloop.index }} collection-wrapper" data-item="{{ block.settings.collection_Title }}">
                         <div class="collection_title">
@@ -47,6 +57,23 @@
                 {% endif %}
             {% endfor %}
         </div>
+      <div class="row shop-by-category-slider hidden-pocket custom_slider_init {{ section.id }}" >
+            {% for block in section.blocks %}
+                    <div class="cat_single_column">
+                <a href="{{ block.settings.imageUrl }}" class="collection-block single-collection-box">
+                    <div class="collection collection-{{ forloop.index }} collection-wrapper" data-item="{{ block.settings.collection_Title }}">
+                        <div class="collection_title">
+                            <span class="collection-title">{{ block.settings.collection_Title }}</span>
+                        </div>
+                        <div class="collection-image">
+                            <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}">
+                        </div>
+                    </div>
+                </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
     </div>
 </div>
 

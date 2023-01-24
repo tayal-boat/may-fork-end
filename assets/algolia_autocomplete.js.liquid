@@ -149,7 +149,16 @@
                   }, 2000);
                 });
                 // }
-
+                setTimeout(function() {
+                $('#btn-back-to-top').addClass('search_div');
+                $(".aa-dropdown-menu-size-sm .aa-dataset-products.container.aa-right-column").scroll(function(e){
+                this.scrollTop >= 1000?$("#btn-back-to-top").css({"display":"flex","z-index":"999"}):$("#btn-back-to-top").removeAttr('style');
+                    })
+                    $('#btn-back-to-top.search_div').click(function () {
+                      $(".aa-dropdown-menu-size-sm .aa-dataset-products.container.aa-right-column").animate({ scrollTop: 0 }, "fast");
+                      clevertap.event.push('Back to Top clicked');
+                    });
+                  }, 2000);
                 let queryList = [];
                 let storedQuery = sessionStorage.queryList;
                 if (sessionStorage.queryList) {
@@ -167,6 +176,7 @@
                   }
                 }
                 sessionStorage.setItem('queryList', queryList);
+
               }
 
               return cb(extendedHits, res);
@@ -327,7 +337,7 @@
 
     $node.style.left = '';
     $node.style.right = '';
-    $node.style.top = top + height + 2 + 'px';
+    $node.style.top = top + height + 'px';
     $node.style[align] = dist + 'px';
     $node.style.width = newWidth + 'px';
 
@@ -560,11 +570,11 @@
         document.querySelector("#shopify-section-announcement-bar").classList.remove("fixed_announcement");
         document.querySelectorAll('.aa-dataset-products.container.aa-right-column')[1].scrollTop = 0;
         document.querySelectorAll('.aa-dataset-products.container.aa-right-column')[0].scrollTop = 0;
-        // let searchPopupCont = $(".search-popup-container");
-        // searchPopupCont.css({ opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block" });
-        // $('.search-clear-icon').click(function(){
-        //   searchPopupCont.removeAttr("style");
-        // }); 
+        let searchPopupCont = $(".search-popup-container");
+        searchPopupCont.css({ opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block" });
+        $('.search-clear-icon').click(function(){
+          searchPopupCont.removeAttr("style");
+        }); 
       } else if (this.value.length > 2) {
         document.querySelector("body").classList.add("noScroll");
       }
