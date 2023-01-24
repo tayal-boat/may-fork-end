@@ -6,14 +6,15 @@
 
 {% assign product_varient = product.selected_or_first_available_variant %}
 
-{% if product.selected_or_first_available_variant.inventory_quantity < settings.sold_out_threshold %}
 {%- for variant in product.variants -%}
   {% if variant.inventory_quantity >= settings.sold_out_threshold %}
   {% assign product_varient = variant %}
   {%  break  %}
+  {% else %}
+  {% assign product_varient = product.selected_or_first_available_variant %}
 {%- endif -%}
+{% assign product_varient_length = forloop.length %}
 {%- endfor -%} 
-{%- endif -%}
 
 
 {%- if product.url contains '?' -%}
@@ -48,6 +49,11 @@
 <product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}" {% if reveal %}reveal{% endif %}>
   <div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
     {%- if product.available -%}
+    {% if product_varient_length == 1 and product_varient.inventory_quantity < settings.sold_out_threshold %}
+    <span class="label label--highlight custom-label q -out-click-to-notify">
+      <span>SOLD OUT</span>
+    </span>
+    {% else %}
       {%- for tag in product.tags -%}
         {%- if tag contains 'Free-' -%}
           <span class="priority label z-10 label--highlight custom-label free-label bg-green">
@@ -96,6 +102,7 @@
           </span>
         {%- endif -%}
       {%- endfor -%}
+    {% endif %}
     {%- else -%}
       {% if product.tags contains 'Coming-soon' %}
         <span class="label label--highlight custom-label q -out-click-to-notify">
@@ -349,12 +356,20 @@
  -%}
           {% assign available_variants = 0 %}
           {% for variant in product.variants %}
-            {% if variant.available %}
               {% assign available_variants = available_variants | plus: 1 %}
-            {% endif %}
           {% endfor %}
           <div class="d-flex align-items-center">
             {%- if available_variants == 1 -%}
+            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
+            <div class="product-item__quick-form">
+              <a
+                href="#"
+                class="BIS_trigger item_BIS"
+                data-product-data="{{ product | json | escape }}">
+                Notify Me
+              </a>
+            </div>
+            {% else %}
               {%- capture form_id -%}
                 product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
               {%- endcapture -%}
@@ -393,6 +408,7 @@
                   {% endif %}
                 </button>
               {%- endform -%}
+            {% endif %}
             {%- else -%}
               {%- comment -%}
               IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
@@ -452,16 +468,18 @@
             {%- endif %}
           </div>
         {%- endif -%}
+
         {% unless product.available %}
-          <div class="product-item__quick-form">
-            <a
-              href="#"
-              class="BIS_trigger item_BIS"
-              data-product-data="{{ product | json | escape }}">
-              Notify Me
-            </a>
-          </div>
-        {% endunless %}
+        <div class="product-item__quick-form">
+          <a
+            href="#"
+            class="BIS_trigger item_BIS"
+            data-product-data="{{ product | json | escape }}">
+            Notify Me
+          </a>
+        </div>
+      {% endunless %}
+
       </div>
 
       {%- if settings.product_color_display != 'hide' and reduced_content != true -%}
