@@ -45,15 +45,18 @@
   {% assign discounted_price = product.price %}
 {%- endif -%}
 
+{% assign available_variants = 0 %}
+{% assign product_soldout = true %}
+{% for variant in product.variants %}
+    {% assign available_variants = available_variants | plus: 1 %}
+    {% if variant.inventory_quantity >= settings.sold_out_threshold %}
+    {% assign product_soldout = false %}
+{% endif %}
+{% endfor %}
 
 <product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}" {% if reveal %}reveal{% endif %}>
   <div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
-    {%- if product.available -%}
-    {% if product_varient_length == 1 and product_varient.inventory_quantity < settings.sold_out_threshold %}
-    <span class="label label--highlight custom-label q -out-click-to-notify">
-      <span>SOLD OUT</span>
-    </span>
-    {% else %}
+    {% if product_soldout == false %}
       {%- for tag in product.tags -%}
         {%- if tag contains 'Free-' -%}
           <span class="priority label z-10 label--highlight custom-label free-label bg-green">
@@ -102,7 +105,6 @@
           </span>
         {%- endif -%}
       {%- endfor -%}
-    {% endif %}
     {%- else -%}
       {% if product.tags contains 'Coming-soon' %}
         <span class="label label--highlight custom-label q -out-click-to-notify">
@@ -350,14 +352,11 @@
         {% endunless %}
         {%- if request.page_type != 'password' 
  and settings.product_add_to_cart 
- and product.available 
  and reduced_content != true 
  and show_cta != true 
  -%}
-          {% assign available_variants = 0 %}
-          {% for variant in product.variants %}
-              {% assign available_variants = available_variants | plus: 1 %}
-          {% endfor %}
+
+          {% if product_soldout == false %}
           <div class="d-flex align-items-center">
             {%- if available_variants == 1 -%}
             {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
@@ -467,18 +466,18 @@
               {%- endif %}
             {%- endif %}
           </div>
+          {% else %}
+          <div class="product-item__quick-form">
+            <a
+              href="#"
+              class="BIS_trigger item_BIS"
+              data-product-data="{{ product | json | escape }}">
+              Notify Me
+            </a>
+          </div>
+          {% endif %}
         {%- endif -%}
 
-        {% unless product.available %}
-        <div class="product-item__quick-form">
-          <a
-            href="#"
-            class="BIS_trigger item_BIS"
-            data-product-data="{{ product | json | escape }}">
-            Notify Me
-          </a>
-        </div>
-      {% endunless %}
 
       </div>
 
