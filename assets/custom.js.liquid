@@ -636,29 +636,132 @@ $(".razorpay-checkout").click(function () {
 /* clevertap code for clicking razor pay ends here */
 
 
-let slideIndex = 1;
-showSlides(slideIndex);
+// Custom JavaScript slider
 
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
+$(document).ready(function () {
 
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
+  let section_id = '';
+let sliderSelector = document.querySelectorAll('.MultiCarousel');
+for (let i = 0; i < sliderSelector.length; i++) {
+  section_id = sliderSelector[i].getAttribute('data-sliderId');
+  var itemsMainDiv = ('.MultiCarousel.' + section_id);
+var selector = 'MultiCarousel';
+  var itemsDiv = '.MultiCarousel-inner.' + section_id;
+  var itemWidth = "";
+  var slider_leftBtn = $('.leftLst.' + section_id);
+  var slider_rightBtn = $('.rightLst.' + section_id);
 
-function showSlides(n) {
-  let i;
-  let slides = document.getElementsByClassName("mySlides");
-  let dots = document.getElementsByClassName("dot");
-  if (n > slides.length) {slideIndex = 1}    
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";  
+  slider_leftBtn.click(function () {
+    console.log('left slider btn clicked');
+      var condition = $(this).hasClass("leftLst");
+      if (condition)
+          click(0, this);
+      else
+          click(1, this)
+  });
+  slider_rightBtn.click(function () {
+    console.log('right slider btn clicked');
+    var condition = $(this).hasClass("leftLst");
+    if (condition)
+        click(0, this);
+    else
+        click(1, this)
+});
+
+ ResCarouselSize(itemsMainDiv, selector);
+
+
+  $(window).resize(function () {
+      ResCarouselSize(itemsMainDiv, selector);
+  });
+
+
+  //this function define the size of the items
+  function ResCarouselSize(itemsMainDiv, selector) {
+      var incno = 0;
+      var dataItems = ("data-items");
+      var itemClass = ('.item');
+      var id = 0;
+      var btnParentSb = '';
+      var itemsSplit = '';
+      var sampwidth = $(itemsMainDiv).width();
+      var bodyWidth = $('body').width();
+      $(itemsDiv).each(function () {
+          id = id + 1;
+          var itemNumbers = $(this).find(itemClass).length;
+          btnParentSb = $(this).parent().attr(dataItems);
+          itemsSplit = btnParentSb.split(',');
+          $(this).parent().attr("id", selector + id);
+          console.dir($(this).parent());
+let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
+let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
+console.log(desktop_slide);
+console.log(mobile_slide);
+          if (bodyWidth >= 992) {
+              incno = itemsSplit[desktop_slide];
+              itemWidth = sampwidth / incno;
+          }
+          else if (bodyWidth >= 768) {
+              incno = itemsSplit[mobile_slide];
+              itemWidth = sampwidth / incno;
+          }
+          else {
+              incno = itemsSplit[mobile_slide];;
+              itemWidth = sampwidth / incno;
+          }
+          $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+          $(this).find(itemClass).each(function () {
+              $(this).outerWidth(itemWidth);
+          });
+
+          slider_leftBtn.addClass("over");
+          slider_rightBtn.removeClass("over");
+
+      });
   }
-  for (i = 0; i < dots.length; i++) {
-    dots[i].className = dots[i].className.replace(" active", "");
+
+
+  //this function used to move the items
+  function ResCarousel(e, el, s) {
+      var leftBtn = ('.leftLst');
+      var rightBtn = ('.rightLst');
+      console.log(leftBtn);
+      console.log(rightBtn);
+      console.log(e);
+      console.log(el);
+      console.log(s);
+      var translateXval = '';
+      var divStyle = $(el + ' ' + itemsDiv).css('transform');
+      var values = divStyle.match(/-?[\d\.]+/g);
+      var xds = Math.abs(values[4]);
+      if (e == 0) {
+          translateXval = parseInt(xds) - parseInt(itemWidth * s);
+          $(el + ' ' + rightBtn).removeClass("over");
+
+          if (translateXval <= itemWidth / 2) {
+              translateXval = 0;
+              $(el + ' ' + leftBtn).addClass("over");
+          }
+      }
+      else if (e == 1) {
+          var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+          translateXval = parseInt(xds) + parseInt(itemWidth * s);
+          $(el + ' ' + leftBtn).removeClass("over");
+
+          if (translateXval >= itemsCondition - itemWidth / 2) {
+              translateXval = itemsCondition;
+              $(el + ' ' + rightBtn).addClass("over");
+          }
+      }
+      $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
   }
-  slides[slideIndex-1].style.display = "block";  
-  dots[slideIndex-1].className += " active";
+
+  //It is used to get some elements from btn
+  function click(ell, ee) {
+      var Parent = "#" + $(ee).parent().attr("id");
+      var slide = $(Parent).attr("data-slide");
+      ResCarousel(ell, Parent, slide);
+  }
 }
+
+});

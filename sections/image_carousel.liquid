@@ -1,15 +1,19 @@
 <style>
   .deal-of-the_day.{{ section.id }}{
-  {% unless template contains 'index' %}
-    padding-top: 20px;
-    padding-bottom: {{ section.settings.sectionpadding}}px;
-  {% endunless %}
-    background: {{ section.settings.bg_color }};
-    margin: {{ section.settings.sectionmargin }};
+    {% unless template contains 'index' %}
+      padding-top: 20px;
+      padding-bottom: {{ section.settings.sectionpadding}}
+      px;
+    {% endunless %}
+    background: {{ section.settings.bg_color }}
+    ;
+    margin: {{ section.settings.sectionmargin }}
+    ;
   }
   @media(max-width:768px) {
     .deal-of-the_day.{{ section.id }}{
-      padding-right: {{ section.settings.sectionpaddingright }}px;
+      padding-right: {{ section.settings.sectionpaddingright }}
+      px;
     }
   }
 </style>
@@ -23,33 +27,42 @@
     </div>
   {% endif %}
   <div class="row">
-    <div class="col-md-12 owl-carousel owl-theme deal-slider custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
-      {% for block in section.blocks %}
-        {% assign popup_class = "" %}
-        {% if block.settings.popup_class != blank %}
-          {% assign popup_class = block.settings.popup_class %}
-        {% endif %}
-   {% if block.settings.desktop_image != blank %} 
-     {% assign desk_img =  block.settings.desktop_image %}
-   {% else %}
-     {% assign desk_img = block.settings.image %}
-   {% endif %}
-        <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
+    <div
+      class="col-md-12 owl-carousel owl-theme MultiCarousel {{ section.id }}"
+      data-items="0,1,2,3,4,5,6"
+      data-slide="1"
+      data-interval="1000"
+      id="MultiCarousel"
+      {% render 'carousel-js' %}>
+      <div class="MultiCarousel-inner {{ section.id }}">
+        {% for block in section.blocks %}
+          {% assign popup_class = "" %}
+          {% if block.settings.popup_class != blank %}
+            {% assign popup_class = block.settings.popup_class %}
+          {% endif %}
+          {% if block.settings.desktop_image != blank %}
+            {% assign desk_img = block.settings.desktop_image %}
+          {% else %}
+            {% assign desk_img = block.settings.image %}
+          {% endif %}
           <div class="item">
-          <picture>
-            <source
-              media="(min-width: 769px)"
-              {% render 'image-attributes', image: desk_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
-            >
-            <img
-              class="image-overlay__image_"
-              {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600' %}
-              alt="{{block.settings.image.alt}}" loading="lazy"
-            >
-          </picture>
+            <a href="{% if popup_class == blank %}{% if block.settings.imageUrl != blank %}{{block.settings.imageUrl}}{% else %}javascript:void(0){% endif %}{% else %}#{% endif %}" class="slide-url {{ popup_class }}">
+              <div>
+                <picture>
+                  <source media="(min-width: 769px)" {% render 'image-attributes', image: desk_img, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}>
+                  <img
+                    class="image-overlay__image_"
+                    {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600' %}
+                    alt="{{block.settings.image.alt}}"
+                    loading="lazy">
+                </picture>
+              </div>
+            </a>
           </div>
-        </a>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary leftLst {{ section.id }}"><</button>
+            <button class="btn btn-primary rightLst {{ section.id }}">></button>
     </div>
   </div>
 </div>
@@ -140,13 +153,11 @@
             "id": "image",
             "label": "Primary image",
             "info": "300px wide minimum"
-          }, 
-          {
+          }, {
             "type": "image_picker",
             "id": "desktop_image",
             "label": "desk image"
-          }, 
-          {
+          }, {
             "type": "url",
             "id": "imageUrl",
             "label": "Image URL"
