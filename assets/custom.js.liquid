@@ -645,13 +645,11 @@ let sliderSelector = document.querySelectorAll('.MultiCarousel');
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
   var itemsMainDiv = ('.MultiCarousel.' + section_id);
-var selector = 'MultiCarousel';
+var selector = 'MultiCarousel_' + section_id;
   var itemsDiv = '.MultiCarousel-inner.' + section_id;
   var itemWidth = "";
-  var slider_leftBtn = $('.leftLst.' + section_id);
-  var slider_rightBtn = $('.rightLst.' + section_id);
 
-  slider_leftBtn.click(function () {
+  $('.leftLst, .rightLst').click(function () {
     console.log('left slider btn clicked');
       var condition = $(this).hasClass("leftLst");
       if (condition)
@@ -659,13 +657,11 @@ var selector = 'MultiCarousel';
       else
           click(1, this)
   });
-  slider_rightBtn.click(function () {
-    console.log('right slider btn clicked');
-    var condition = $(this).hasClass("leftLst");
-    if (condition)
-        click(0, this);
-    else
-        click(1, this)
+
+$('.multiCarousel_dots').click(function () {
+  console.log('dits slider btn clicked');
+  var curr = $(this).attr('data-index');
+  changeCurrent(curr, this);
 });
 
  ResCarouselSize(itemsMainDiv, selector);
@@ -675,6 +671,7 @@ var selector = 'MultiCarousel';
       ResCarouselSize(itemsMainDiv, selector);
   });
 
+  slideAutoplay(itemsMainDiv , 4000);
 
   //this function define the size of the items
   function ResCarouselSize(itemsMainDiv, selector) {
@@ -692,21 +689,18 @@ var selector = 'MultiCarousel';
           btnParentSb = $(this).parent().attr(dataItems);
           itemsSplit = btnParentSb.split(',');
           $(this).parent().attr("id", selector + id);
-          console.dir($(this).parent());
-let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
-let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
-console.log(desktop_slide);
-console.log(mobile_slide);
+          let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
+          let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
           if (bodyWidth >= 992) {
-              incno = itemsSplit[desktop_slide];
+              incno = desktop_slide;
               itemWidth = sampwidth / incno;
           }
           else if (bodyWidth >= 768) {
-              incno = itemsSplit[mobile_slide];
+              incno = mobile_slide;
               itemWidth = sampwidth / incno;
           }
           else {
-              incno = itemsSplit[mobile_slide];;
+              incno = mobile_slide;
               itemWidth = sampwidth / incno;
           }
           $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
@@ -714,26 +708,22 @@ console.log(mobile_slide);
               $(this).outerWidth(itemWidth);
           });
 
-          slider_leftBtn.addClass("over");
-          slider_rightBtn.removeClass("over");
+          $(".leftLst").addClass("over");
+          $(".rightLst").removeClass("over");
 
       });
   }
 
 
   //this function used to move the items
-  function ResCarousel(e, el, s) {
+  function ResCarousel(e, el, s, slide_container) {
       var leftBtn = ('.leftLst');
       var rightBtn = ('.rightLst');
-      console.log(leftBtn);
-      console.log(rightBtn);
-      console.log(e);
-      console.log(el);
-      console.log(s);
       var translateXval = '';
-      var divStyle = $(el + ' ' + itemsDiv).css('transform');
+      var divStyle = $(slide_container).css('transform');
       var values = divStyle.match(/-?[\d\.]+/g);
       var xds = Math.abs(values[4]);
+      var itemWidth = $(slide_container).children().width();
       if (e == 0) {
           translateXval = parseInt(xds) - parseInt(itemWidth * s);
           $(el + ' ' + rightBtn).removeClass("over");
@@ -744,7 +734,7 @@ console.log(mobile_slide);
           }
       }
       else if (e == 1) {
-          var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+          var itemsCondition = $(slide_container).width() - $(el).width();
           translateXval = parseInt(xds) + parseInt(itemWidth * s);
           $(el + ' ' + leftBtn).removeClass("over");
 
@@ -753,15 +743,39 @@ console.log(mobile_slide);
               $(el + ' ' + rightBtn).addClass("over");
           }
       }
-      $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
+      $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
   }
 
   //It is used to get some elements from btn
   function click(ell, ee) {
+    console.log(ee, 'ee');
       var Parent = "#" + $(ee).parent().attr("id");
       var slide = $(Parent).attr("data-slide");
-      ResCarousel(ell, Parent, slide);
+      var slide_container = $(Parent).children('.MultiCarousel-inner');
+      ResCarousel(ell, Parent, slide, slide_container);
   }
+
+  /* slide number click function */  
+
+function changeCurrent(curr, dot) {
+  var Parent = "#" + $(dot).parent().parent().attr("id");
+  var slide_container = $(Parent).children('.MultiCarousel-inner');
+  var slide_itemWidth = $(slide_container).children().width();
+var translateXval = parseInt(itemWidth * curr);
+if (translateXval <= slide_itemWidth / 2) {
+  translateXval = 0;
+}
+  $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
+}
+
+function slideAutoplay(selector , duration) {
+var newIndex = $(selector).attr("data-slide");
+var slides_container = $(selector).children('.MultiCarousel-inner');
+
+setInterval(function() {
+  ResCarousel(1, selector, newIndex, slides_container);
+}, duration);
+}
 }
 
 });
