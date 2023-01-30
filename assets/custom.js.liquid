@@ -640,14 +640,33 @@ $(".razorpay-checkout").click(function () {
 
 $(document).ready(function () {
 
-  let section_id = '';
-let sliderSelector = document.querySelectorAll('.MultiCarousel');
+var section_id = '',
+sliderSelector = document.querySelectorAll('.MultiCarousel'),
+slidePre = '',
+slidePost = '',
+slideItem = '',
+numberOfSlides = '',
+clonedPre,
+clonedPost;
+
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
   var itemsMainDiv = ('.MultiCarousel.' + section_id);
 var selector = 'MultiCarousel_' + section_id;
   var itemsDiv = '.MultiCarousel-inner.' + section_id;
   var itemWidth = "";
+  slidePre = document.createDocumentFragment();
+  slidePost = document.createDocumentFragment();
+  slideItem = document.querySelectorAll(itemsDiv + ' .item');
+  numberOfSlides = document.querySelector(itemsMainDiv).getAttribute("data-slide");
+
+  /* Cloning first items and appending to first */  
+
+  for(var k = 0 ; k <= numberOfSlides-1 ; k++) {
+    clonedPost = slideItem[k].cloneNode(true);
+    slidePost.append(clonedPost);
+  }
+  document.querySelector(itemsDiv).appendChild(slidePost);
 
   $('.leftLst, .rightLst').click(function () {
     console.log('left slider btn clicked');
@@ -663,6 +682,7 @@ $('.multiCarousel_dots').click(function () {
   var curr = $(this).attr('data-index');
   changeCurrent(curr, this);
 });
+
 
  ResCarouselSize(itemsMainDiv, selector);
 
@@ -703,6 +723,7 @@ $('.multiCarousel_dots').click(function () {
               incno = mobile_slide;
               itemWidth = sampwidth / incno;
           }
+
           $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
           $(this).find(itemClass).each(function () {
               $(this).outerWidth(itemWidth);
@@ -772,10 +793,23 @@ function slideAutoplay(selector , duration) {
 var newIndex = $(selector).attr("data-slide");
 var slides_container = $(selector).children('.MultiCarousel-inner');
 
-setInterval(function() {
-  ResCarousel(1, selector, newIndex, slides_container);
-}, duration);
+// setInterval(function() {
+//   ResCarousel(1, selector, newIndex, slides_container);
+// }, duration);
 }
+
+
+let target = document.getElementsByClassName("MultiCarousel-inner")[0];
+target.addEventListener('dragleave', (event) => {
+    console.log('slider drag');
+    console.log(drag_direction);
+    if( drag_direction == 'right' ){
+      $(section_id + '.rightLst').click();
+    }
+    else if( drag_direction == 'left' ){$(section_id + '.leftLst').click();}
+});
+
 }
 
 });
+
