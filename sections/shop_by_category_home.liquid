@@ -1,134 +1,172 @@
 <style>
-  .top-collections {
-    margin: {{ section.settings.sectiondeskmargin | default: 0 }};
-  }
-  @media(max-width:768px) {
     .top-collections {
-      margin: {{ section.settings.sectionmargin | default: 0 }};
+        margin: {{ section.settings.sectiondeskmargin | default: 0 }};
     }
-  }
+    @media(max-width:768px) {
+        .top-collections {
+            margin: {{ section.settings.sectionmargin | default: 0 }};
+        }
+    }
+    @media(min-width:768px) {
+        .row.shop-by-category-slider.hidden-pocket.custom_slider_init {flex-wrap: wrap;padding-left:0;}
+        .row.shop-by-category-slider.hidden-pocket.custom_slider_init .cat_single_column{max-width:169px;min-width:169px;}
+        .shop_by_category_section .shop_by_collection-row .shop-by-category-slider.hidden-pocket .cat_single_column:last-child a:last-child{margin-left:0;}
+    }
+    
 </style>
 <div class="shop_by_category_section container cf section-id-{{ section.id }} top-collections top-2 px-lg-0" data-section-type="custom-row">
-  {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
-      <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 shop-heading">
-          {%- if section.settings.title != blank -%}
-              <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
-          {%- endif -%}
-      </header>
-  {%- endif -%}
-  <div class="shop_by_collection-row mx-lg-5 ">
-      <div class="row owl-carousel owl-theme shop-by-category-slider custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
-          {% for block in section.blocks %}
+    {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
+        <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 shop-heading">
+            {%- if section.settings.title != blank -%}
+                <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
+            {%- endif -%}
+        </header>
+    {%- endif -%}
 
-                  <a href="{{ block.settings.imageUrl }}" class="collection-block">
-                      <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
-                          <span class="collection-image">
-                              <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}">
-                          </span>
-                      </div>
-                      <span class="collection-text text-center text-white">
-                          <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
-                      </span>
-                  </a>
-
-          {% endfor %}
-      </div>
-  </div>
+    <div class="shop_by_collection-row mx-lg-5 ">
+        <div class="row shop-by-category-slider hidden-desk {{ section.id }}">
+            {% for block in section.blocks %}
+                {% assign cat_rep = forloop.index | modulo: 2 %}
+                {% if cat_rep != 0 %}
+                    <div class="cat_single_column">
+                <a href="{{ block.settings.imageUrl }}" class="collection-block single-collection-box">
+                    <div class="collection collection-{{ forloop.index }} collection-wrapper" data-item="{{ block.settings.collection_Title }}">
+                        <div class="collection_title">
+                            <span class="collection-title">{{ block.settings.collection_Title }}</span>
+                        </div>
+                        <div class="collection-image">
+                            <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}">
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                    <a href="{{ block.settings.imageUrl }}" class="collection-block single-collection-box">
+                        <div class="collection collection-{{ forloop.index }} collection-wrapper" data-item="{{ block.settings.collection_Title }}">
+                            <div class="collection_title">
+                                <span class="collection-title ">{{ block.settings.collection_Title }}</span>
+                            </div>
+                            <div class="collection-image">
+                                <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}">
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+      <div class="row shop-by-category-slider custom_slider_init hidden-pocket {{ section.id }}" >
+            {% for block in section.blocks %}
+                    <div class="cat_single_column">
+                <a href="{{ block.settings.imageUrl }}" class="collection-block single-collection-box">
+                    <div class="collection collection-{{ forloop.index }} collection-wrapper" data-item="{{ block.settings.collection_Title }}">
+                        <div class="collection_title">
+                            <span class="collection-title">{{ block.settings.collection_Title }}</span>
+                        </div>
+                        <div class="collection-image">
+                            <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}">
+                        </div>
+                    </div>
+                </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    </div>
 </div>
 
 {% schema %}
 {
-"name": "Shop by category",
-"settings": [
-    {
-        "type": "text",
-        "id": "title",
-        "label": "Heading",
-        "default": "Your title"
-    },
-    {
-        "type": "url",
-        "id": "view_Url",
-        "label": "viewall URL"
-    },
-    {
-        "type": "number",
-        "id": "slides_no",
-        "label": "mobile slides",
-        "default": 1
-    },
-    {
-        "type": "number",
-        "id": "deskslides_no",
-        "label": "desk slides",
-        "default": 3
-    }, {
-        "type": "checkbox",
-        "id": "loop",
-        "label": "infinite loop",
-        "default": true
-      }, {
-        "type": "checkbox",
-        "id": "autoplay",
-        "label": "autoplay",
-        "default": true
-      }, {
-        "type": "number",
-        "id": "slideBy",
-        "label": "number of slides drag in one screen",
-        "default": 1
-      }, {
-        "type": "number",
-        "id": "margin",
-        "label": "margin",
-        "default": 0
-      }, {
-        "type": "checkbox",
-        "id": "show_dots_on_mobile",
-        "label": "Show Dots on Mobile",
-        "default": true
-      }, {
-        "type": "checkbox",
-        "id": "show_dots_on_desktop",
-        "label": "Show Dots on Desktop",
-        "default": true
-      }
-],
-"blocks": [
-    {
-        "type": "image",
-        "name": "Slide",
-        "settings": [
-            {
-                "type": "image_picker",
-                "id": "image",
-                "label": "Primary image",
-                "info": "300px wide minimum"
-            },
-            {
-                "type": "url",
-                "id": "imageUrl",
-                "label": "imageUrl"
-            },
-            {
-                "type": "text",
-                "id": "collection_Title",
-                "label": "Collection Title"
-            }
-        ]
-    }
-],
-"presets": [
-    {
-        "name": "Shop by category",
-        "category": "Image",
-        "settings": {},
-        "blocks": [
-            {
-                "type": "image"
-            }
-        ]
-    }
-]
+    "name": "Shop by category",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Your title"
+        },
+        {
+            "type": "url",
+            "id": "view_Url",
+            "label": "viewall URL"
+        },
+        {
+            "type": "number",
+            "id": "slides_no",
+            "label": "mobile slides",
+            "default": 1
+        },
+        {
+            "type": "number",
+            "id": "deskslides_no",
+            "label": "desk slides",
+            "default": 3
+        }, {
+            "type": "checkbox",
+            "id": "loop",
+            "label": "infinite loop",
+            "default": true
+        }, {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": "autoplay",
+            "default": true
+        }, {
+            "type": "number",
+            "id": "slideBy",
+            "label": "number of slides drag in one screen",
+            "default": 1
+        }, {
+            "type": "number",
+            "id": "margin",
+            "label": "margin",
+            "default": 0
+        }, {
+            "type": "checkbox",
+            "id": "show_dots_on_mobile",
+            "label": "Show Dots on Mobile",
+            "default": true
+        }, {
+            "type": "checkbox",
+            "id": "show_dots_on_desktop",
+            "label": "Show Dots on Desktop",
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "type": "image",
+            "name": "Slide",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Primary image",
+                    "info": "300px wide minimum"
+                },
+                {
+                    "type": "url",
+                    "id": "imageUrl",
+                    "label": "imageUrl"
+                },
+                {
+                    "type": "text",
+                    "id": "collection_Title",
+                    "label": "Collection Title"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Shop by category",
+            "category": "Image",
+            "settings": {},
+            "blocks": [
+                {
+                    "type": "image"
+                }
+            ]
+        }
+    ]
 }
 {% endschema %}
