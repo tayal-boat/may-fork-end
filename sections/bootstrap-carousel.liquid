@@ -1,120 +1,214 @@
 <style>
-{% if template != 'index' %}
-#saleModal,.c-new{padding:0!important}.custom_gform_modal .gform_modal_content{height:100%;width:100%;max-width:70%;background-size:100% 100%!important;background-repeat:no-repeat!important;margin:0 auto}.custom_gform_modal .gform_modal_content .modal-content{background:0 0;height:100%}.custom_gform_modal .gform_modal_content .modal-content .close{font-size:30px!important;color:#fff;position:absolute;right:10px}.custom_gform_modal .gform_modal_content .modal-content a{position:absolute;bottom:10px;color:#fff;background:#ed1c26;padding:10px 20px;border-radius:6px}.custom_gform_modal .gform_modal_content .modal-content .modal-body{height:100%;text-align:center}.watch_video_modal img{width:25px!important;margin-right:10px}.watch_video_modal{float:right;z-index:99999999;display:flex;margin:10px;font-size:12px;font-weight:700;align-items:center;text-transform:uppercase;opacity:0!important;cursor:unset}.watch_video_modal.video_unavailable{opacity:.1}.banner_video_modal{background:rgba(12,0,0,.86)}.banner_video_modal .video_container{position:relative;padding-bottom:56.25%;padding-top:30px;height:0;overflow:hidden}.banner_video_modal .video_container iframe{border:0;position:absolute;top:0;left:0;width:100%;height:100%}.banner_video_modal .modal-dialog{max-width:75%;height:auto;margin:auto;position:absolute;top:0;bottom:0;left:0;right:0;height:fit-content}.banner_video_modal .close{position:absolute;right:0;top:0;font-size:24px!important;color:#000;border:1px solid #fff;background:#fff;border-radius:50%!important;padding:0 4px;z-index:9}.modal-backdrop.fade.show{display:none}#homepage-carousel{position:relative}#homepage-carousel .slide-progress{width:0;max-width:100%;height:2px;background:red;z-index:1;position:relative;bottom:44px}.timer{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:9;width:100%}#homepage-carousel .owl-next,#homepage-carousel .owl-prev{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:100%;text-align:center;opacity:.4;transition:.4s ease-in-out;border:0!important}#homepage-carousel .owl-next:hover,#homepage-carousel .owl-prev:hover{opacity:1}#homepage-carousel .owl-next{right:0}#homepage-carousel .owl-prev{left:0}#homepage-carousel .owl-next span,#homepage-carousel .owl-prev span{line-height:30px;font-size:100px;position:relative;color:red}#homepage-carousel .owl-dots{display:flex;align-items:center;position:absolute;bottom:4px;width:100%;height:35px;justify-content:center;padding-top:36px}#homepage-carousel button.owl-dot{width:8px;height:8px;background:#44444478!important;margin:0 5px;border-radius:50%!important}#homepage-carousel button.owl-dot.active{background:#7f7f7f!important;width:40px;border-radius:12px!important}#saleModal{z-index:9999;background:#0009}#saleModal .modal-dialog,#saleModals-1 .modal-dialog,#saleModals-2 .modal-dialog{top:20%}#saleModal .close{position:absolute;top:0;right:0;width:30px;height:30px;background:#eb1c24;color:#fff;line-height:30px;font-weight:400;opacity:1;text-align:center;font-size:30px!important}#saleModal .close:focus{border:0;outline:0}.aluser-msg-sale,.error-msg-sale,.thankyou-msg-sale{text-align:center;margin:0;font-size:12px;color:#fff;opacity:.8}.sale-btn:focus{outline:0}#saleModal img{display:block}#saleModal .modal-content{border:0}.modal-form{background:#000}#saleModal input{border:1px solid #ccc;background:0 0;color:#ccc;margin-right:4px;padding:0 12px}#saleModal input::-webkit-input-placeholder{color:#ccc}#saleModal .sale-btn:hover{background:#eb1c24!important}.modal{transform:translateY(0)}@media screen and (max-width:767px){.owl-dots{display:block!important}.bootstrap-carousel{margin-top:0}#homepage-carousel .owl-next,.owl-prev{display:none}#homepage-carousel .owl-dots{bottom:4px;margin:auto;width:100%;text-align:center;padding-bottom:30px}.banner_video_modal .modal-dialog{max-width:96%}}@media screen and (max-width:600px){#saleModal .modal-dialog,#saleModals-1 .modal-dialog,#saleModals-2 .modal-dialog{top:25%}}
-
-/* Main Banner slider css ends here  */
-{% endif %}
-  </style>
-
-
-<div id="homepage-carousel_new" class="container c-new">
-  <!-- The slideshow -->
-  <div class="carousel-inner owl-carousel owl-theme main_banner_slider custom_slider_init {{ section.id }}" id="main_banner_slider" {%- render 'carousel-js' -%}>
-    {% for block in section.blocks %}
-      <div class="carousel--item px-2 pt-3 p-md-0 slide_{{forloop.index}}">
-        {% if block.settings.show_timer %}
-          {% render 'countdown-timer', banner_title: block.settings.timer_title , banner_end_date: block.settings.end_date , time_background: block.settings.timer_background , time_inline: block.settings.timer_inline %}
-        {% endif %}
-        <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
-        <a
-          href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}"
-          class="slide-url"
-        >
-          <picture>
-            <source
-              media="(min-width: 769px)"
-              {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
-            >
-            <img width="91%" style="border-radius:6px;border:1px solid #e3e3e3"
-              class="image-overlay__image_"
-              {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
-              alt="{{block.settings.desktop_image.alt}}" {% if forloop.first %}loading="eager" fetchpriority="high"{% endif %}
-            >
-          </picture>
-        </a>
-      
-        {%- assign video_class_name = "video_unavailable" -%}
-        {%- assign video_url = "" -%}
-         {% if template == 'index' %}
-        {% if block.settings.video_url != blank %}
-          {%- assign video_class_name = "video_available" -%}
-          {%- assign video_url = block.settings.video_url -%}
-               {% endif %}
-        <span
-          class="video_ text-black watch_video_modal {{ video_class_name }}"
-          onclick="openVideoPopup('{{ video_url }}')"
-        >
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/youtube_icon_5fb3a807-e70e-41e4-9f86-9b24d39758a4.png?v=1662370296">
-          watch video
-        </span>
-        {% endif %}
-        {% if block.settings.splitbanner_buttons %}
-          <div
-            style="top:0; bottom:0;"
-            class="{% if block.settings.splitbanner_url %}col-12 row position-absolute w-100 p-0 {% else %}d-none{% endif %}"
+  {% if template != 'index' %}
+  #saleModal,.c-new{padding:0!important}.custom_gform_modal .gform_modal_content{height:100%;width:100%;max-width:70%;background-size:100% 100%!important;background-repeat:no-repeat!important;margin:0 auto}.custom_gform_modal .gform_modal_content .modal-content{background:0 0;height:100%}.custom_gform_modal .gform_modal_content .modal-content .close{font-size:30px!important;color:#fff;position:absolute;right:10px}.custom_gform_modal .gform_modal_content .modal-content a{position:absolute;bottom:10px;color:#fff;background:#ed1c26;padding:10px 20px;border-radius:6px}.custom_gform_modal .gform_modal_content .modal-content .modal-body{height:100%;text-align:center}.watch_video_modal img{width:25px!important;margin-right:10px}.watch_video_modal{float:right;z-index:99999999;display:flex;margin:10px;font-size:12px;font-weight:700;align-items:center;text-transform:uppercase;opacity:0!important;cursor:unset}.watch_video_modal.video_unavailable{opacity:.1}.banner_video_modal{background:rgba(12,0,0,.86)}.banner_video_modal .video_container{position:relative;padding-bottom:56.25%;padding-top:30px;height:0;overflow:hidden}.banner_video_modal .video_container iframe{border:0;position:absolute;top:0;left:0;width:100%;height:100%}.banner_video_modal .modal-dialog{max-width:75%;height:auto;margin:auto;position:absolute;top:0;bottom:0;left:0;right:0;height:fit-content}.banner_video_modal .close{position:absolute;right:0;top:0;font-size:24px!important;color:#000;border:1px solid #fff;background:#fff;border-radius:50%!important;padding:0 4px;z-index:9}.modal-backdrop.fade.show{display:none}#homepage-carousel{position:relative}#homepage-carousel .slide-progress{width:0;max-width:100%;height:2px;background:red;z-index:1;position:relative;bottom:44px}.timer{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:9;width:100%}#homepage-carousel .owl-next,#homepage-carousel .owl-prev{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:100%;text-align:center;opacity:.4;transition:.4s ease-in-out;border:0!important}#homepage-carousel .owl-next:hover,#homepage-carousel .owl-prev:hover{opacity:1}#homepage-carousel .owl-next{right:0}#homepage-carousel .owl-prev{left:0}#homepage-carousel .owl-next span,#homepage-carousel .owl-prev span{line-height:30px;font-size:100px;position:relative;color:red}#homepage-carousel .owl-dots{display:flex;align-items:center;position:absolute;bottom:4px;width:100%;height:35px;justify-content:center;padding-top:36px}#homepage-carousel button.owl-dot{width:8px;height:8px;background:#44444478!important;margin:0 5px;border-radius:50%!important}#homepage-carousel button.owl-dot.active{background:#7f7f7f!important;width:40px;border-radius:12px!important}#saleModal{z-index:9999;background:#0009}#saleModal .modal-dialog,#saleModals-1 .modal-dialog,#saleModals-2 .modal-dialog{top:20%}#saleModal .close{position:absolute;top:0;right:0;width:30px;height:30px;background:#eb1c24;color:#fff;line-height:30px;font-weight:400;opacity:1;text-align:center;font-size:30px!important}#saleModal .close:focus{border:0;outline:0}.aluser-msg-sale,.error-msg-sale,.thankyou-msg-sale{text-align:center;margin:0;font-size:12px;color:#fff;opacity:.8}.sale-btn:focus{outline:0}#saleModal img{display:block}#saleModal .modal-content{border:0}.modal-form{background:#000}#saleModal input{border:1px solid #ccc;background:0 0;color:#ccc;margin-right:4px;padding:0 12px}#saleModal input::-webkit-input-placeholder{color:#ccc}#saleModal .sale-btn:hover{background:#eb1c24!important}.modal{transform:translateY(0)}@media screen and (max-width:767px){.owl-dots{display:block!important}.bootstrap-carousel{margin-top:0}#homepage-carousel .owl-next,.owl-prev{display:none}#homepage-carousel .owl-dots{bottom:4px;margin:auto;width:100%;text-align:center;padding-bottom:30px}.banner_video_modal .modal-dialog{max-width:96%}}@media screen and (max-width:600px){#saleModal .modal-dialog,#saleModals-1 .modal-dialog,#saleModals-2 .modal-dialog{top:25%}}
+  
+  /* Main Banner slider css ends here  */
+  {% endif %}
+    </style>
+  <div id="homepage-carousel" class="container c-new">
+    <!-- The slideshow -->
+    <div class="carousel-inner owl-carousel main_banner_slider custom_slider_init {{ section.id }}" id="main_banner_slider" {%- render 'carousel-js' -%}>
+      {% for block in section.blocks %}
+        <div class="carousel--item px-2 pt-3 p-md-0 slide_{{forloop.index}}">
+          {% if block.settings.show_timer %}
+            {% render 'countdown-timer', banner_title: block.settings.timer_title , banner_end_date: block.settings.end_date , time_background: block.settings.timer_background , time_inline: block.settings.timer_inline %}
+          {% endif %}
+          <span class="image_alt visually-hidden">{{ block.settings.desktop_image.alt | escape }}</span>
+          <a
+            href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}"
+            class="slide-url"
           >
-            <a style="width:100%;" class="col-6" href="{{block.settings.splitbanner_url}}"></a>
-            <a style="width:100%;" class="col-6" href="{{block.settings.splitbanner_url2}}"></a>
-          </div>
-        {% endif %}
-      </div>
-    {% endfor %}
+            <picture>
+              <source
+                media="(min-width: 769px)"
+                {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+              >
+              <img width="91%" style="border-radius:6px;border:1px solid #e3e3e3"
+                class="image-overlay__image_"
+                {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
+                alt="{{block.settings.desktop_image.alt}}" {% if forloop.first %}loading="eager" fetchpriority="high"{% endif %}
+              >
+            </picture>
+          </a>
+        
+          {%- assign video_class_name = "video_unavailable" -%}
+          {%- assign video_url = "" -%}
+           {% if template == 'index' %}
+          {% if block.settings.video_url != blank %}
+            {%- assign video_class_name = "video_available" -%}
+            {%- assign video_url = block.settings.video_url -%}
+                 {% endif %}
+          <span
+            class="video_ text-black watch_video_modal {{ video_class_name }}"
+            onclick="openVideoPopup('{{ video_url }}')"
+          >
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/youtube_icon_5fb3a807-e70e-41e4-9f86-9b24d39758a4.png?v=1662370296">
+            watch video
+          </span>
+          {% endif %}
+          {% if block.settings.splitbanner_buttons %}
+            <div
+              style="top:0; bottom:0;"
+              class="{% if block.settings.splitbanner_url %}col-12 row position-absolute w-100 p-0 {% else %}d-none{% endif %}"
+            >
+              <a style="width:100%;" class="col-6" href="{{block.settings.splitbanner_url}}"></a>
+              <a style="width:100%;" class="col-6" href="{{block.settings.splitbanner_url2}}"></a>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+   {% if section.settings.enable_progressbar %} <div class="slide-progress"></div> {% endif %}
   </div>
- {% if section.settings.enable_progressbar %} <div class="slide-progress"></div> {% endif %}
-</div>
-{% if section.settings.show_popup %}
-  <div id="saleModal" class="modal fade" role="dialog">
+  {% if section.settings.show_popup %}
+    <div id="saleModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body p-0">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-body-content">
+              {% if section.settings.popup_image %}
+                <div class="modal-image">
+                  <img
+                    class="image-overlay__image_"
+                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}
+                    alt="Popup Image"
+                  >
+                </div>
+              {% endif %}
+              <div class="modal-form p-3">
+                <div class="sale-pop-form">
+                  <div class="form-group" style="margin: 0;">
+                    {% if section.settings.show_splitpopup %}
+                      <div class="d-flex justify-content-center">
+                        <span>
+                          <button type="button" id="btn1st" class="btn btn-primary">
+                            {{ section.settings.split_button }}
+                          </button>
+                        </span>
+                        <span>
+                          <button type="button" id="btn2nd" class="btn btn-info">
+                            {{ section.settings.split_buttontwo }}
+                          </button>
+                        </span>
+                      </div>
+                      <style>
+                        .myform{color:black;}
+                        #myform, .modal-backdrop.show{display:none!important;}
+                      </style>
+                    {% endif %}
+                    <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: center;">
+                      <input
+                        style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
+                        type="email"
+                        name="email"
+                        id="sale_email"
+                        placeholder="Email Address"
+                      >
+                      <button
+                        style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
+                        class="button sale-btn"
+                        type="submit"
+                      >
+                        YES
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if section.settings.show_splitpopup %}
+      <div id="saleModals-1" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body p-0">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <div class="modal-body-content">
+                <div class="modal-form p-3">
+                  <div class="sale-pop-form">
+                    <div class="form-groups-1" style="margin: 0;">
+                      <div class="myform" style="display: flex;margin: 0;justify-content: center;">
+                        <input
+                          style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
+                          type="email"
+                          name="email"
+                          id="sale_emails-1"
+                          placeholder="Email Address"
+                        >
+                        <button
+                          style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
+                          class="button sale-btns-1"
+                          type="submit"
+                        >
+                          YES
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div id="saleModals-2" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body p-0">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <div class="modal-body-content">
+                <div class="modal-form p-3">
+                  <div class="sale-pop-form">
+                    <div class="form-groups-2" style="margin: 0;">
+                      <div class="myform" style="display: flex;margin: 0;justify-content: center;">
+                        <input
+                          style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
+                          type="email"
+                          name="email"
+                          id="sale_emails-2"
+                          placeholder="Email Address"
+                        >
+                        <button
+                          style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
+                          class="button sale-btns-2"
+                          type="submit"
+                        >
+                          YES
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+  {% if block.settings.video_url != blank %}
+  <div class="modal fade videoModals_ banner_video_modal" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body p-0">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <div class="modal-body-content">
-            {% if section.settings.popup_image %}
-              <div class="modal-image">
-                <img
-                  class="image-overlay__image_"
-                  {% render 'image-attributes', image: section.settings.popup_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}
-                  alt="Popup Image"
-                >
-              </div>
-            {% endif %}
             <div class="modal-form p-3">
               <div class="sale-pop-form">
-                <div class="form-group" style="margin: 0;">
-                  {% if section.settings.show_splitpopup %}
-                    <div class="d-flex justify-content-center">
-                      <span>
-                        <button type="button" id="btn1st" class="btn btn-primary">
-                          {{ section.settings.split_button }}
-                        </button>
-                      </span>
-                      <span>
-                        <button type="button" id="btn2nd" class="btn btn-info">
-                          {{ section.settings.split_buttontwo }}
-                        </button>
-                      </span>
-                    </div>
-                    <style>
-                      .myform{color:black;}
-                      #myform, .modal-backdrop.show{display:none!important;}
-                    </style>
-                  {% endif %}
-                  <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: center;">
-                    <input
-                      style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
-                      type="email"
-                      name="email"
-                      id="sale_email"
-                      placeholder="Email Address"
-                    >
-                    <button
-                      style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
-                      class="button sale-btn"
-                      type="submit"
-                    >
-                      YES
-                    </button>
-                  </div>
+                <div class="form-groups-1 video_container" style="margin: 0;">
+                  <iframe
+                    width="100%"
+                    height="400px"
+                    src=""
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
                 </div>
               </div>
             </div>
@@ -123,366 +217,274 @@
       </div>
     </div>
   </div>
-  {% if section.settings.show_splitpopup %}
-    <div id="saleModals-1" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body p-0">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <div class="modal-body-content">
-              <div class="modal-form p-3">
-                <div class="sale-pop-form">
-                  <div class="form-groups-1" style="margin: 0;">
-                    <div class="myform" style="display: flex;margin: 0;justify-content: center;">
-                      <input
-                        style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
-                        type="email"
-                        name="email"
-                        id="sale_emails-1"
-                        placeholder="Email Address"
-                      >
-                      <button
-                        style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
-                        class="button sale-btns-1"
-                        type="submit"
-                      >
-                        YES
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="saleModals-2" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body p-0">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <div class="modal-body-content">
-              <div class="modal-form p-3">
-                <div class="sale-pop-form">
-                  <div class="form-groups-2" style="margin: 0;">
-                    <div class="myform" style="display: flex;margin: 0;justify-content: center;">
-                      <input
-                        style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
-                        type="email"
-                        name="email"
-                        id="sale_emails-2"
-                        placeholder="Email Address"
-                      >
-                      <button
-                        style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
-                        class="button sale-btns-2"
-                        type="submit"
-                      >
-                        YES
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   {% endif %}
-{% endif %}
-{% if block.settings.video_url != blank %}
-<div class="modal fade videoModals_ banner_video_modal" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-body p-0">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <div class="modal-body-content">
-          <div class="modal-form p-3">
-            <div class="sale-pop-form">
-              <div class="form-groups-1 video_container" style="margin: 0;">
-                <iframe
-                  width="100%"
-                  height="400px"
-                  src=""
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </div>
+  <div class="modal fade custom_gform_modal" role="dialog">
+    <div
+      class="modal-dialog gform_modal_content"
+      style="background: url('https://cdn.shopify.com/s/files/1/0057/8938/4802/files/mob-new.jpg?v=1662359287');"
+    >
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body">
+            <a href="">Submit now</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-{% endif %}
-<div class="modal fade custom_gform_modal" role="dialog">
-  <div
-    class="modal-dialog gform_modal_content"
-    style="background: url('https://cdn.shopify.com/s/files/1/0057/8938/4802/files/mob-new.jpg?v=1662359287');"
-  >
-    <div class="modal-content">
-      <div class="modal-body p-0">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <div class="modal-body">
-          <a href="">Submit now</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<script type="deferjs">
-
-    {% if section.settings.show_popup %}
-      var slide_num = '{{ section.settings.banner_number}}';
-      $(`.slide_${slide_num} a`).click(function(e){
-          e.preventDefault();
-          $("#saleModal").modal("show");
-        });
-          {% if customer %}
-            document.getElementById("sale_email").value = '{{customer.email}}'
-        {% endif %}
-        {% if section.settings.show_splitpopup %}
-      $("#btn1st").click(function(e){
-                  $("#saleModal").modal("hide");
-          // $(".modal-backdrop.show").css("display", "none");
-          $("#saleModals-1").modal("show");
-        });
-
-        $(".sale-btns-1").click(function () {
-        var e = document.getElementById("sale_emails-1").value;
-        "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
-            ? localStorage.getItem("userEmailIdSale1") === e
-                ? $(".form-groups-1").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
-                : (localStorage.setItem("userEmailIdSale1", e),
-                  clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
-                  clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
-                  $("#saleModals-1 .form-groups-1").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
-            : $(".form-groups-1").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
-        setTimeout(function () {
-            $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
-        }, 5e3);
-    });
-        $("#btn2nd").click(function(e){
-               $("#saleModal").modal("hide");
-                  // $(".modal-backdrop.show").css("display", "none");
-          $("#saleModals-2").modal("show");
-        });
-        $(".sale-btns-2").click(function () {
-        var e = document.getElementById("sale_emails-2").value;
-        "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
-            ? localStorage.getItem("userEmailIdSale2") === e
-                ? $(".form-groups-2").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
-                : (localStorage.setItem("userEmailIdSale2", e),
-                  clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
-                  clevertap.event.push("Notify Me {{ section.settings.clevertap_split }}", { Email: e, Source: "HomePage Banner Popup" }),
-                  $("#saleModals-2 .form-groups-2").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
-            : $(".form-groups-2").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
-        setTimeout(function () {
-            $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
-        }, 5e3);
-    });
-  {% else %}
-          $(".sale-btn").click(function () {
-        var e = document.getElementById("sale_email").value;
-        "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
-            ? localStorage.getItem("userEmailIdSale") === e
-                ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
-                : (localStorage.setItem("userEmailIdSale", e),
-                  clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
-                  clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
-                  $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
-            : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
-        setTimeout(function () {
-            $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
-        }, 5e3);
-    });
-   {% endif %}
-   {% endif %}
-</script>
-
-{% schema %}
-{
-  "name": "Bootstrap Slideshow",
-  "class": "bootstrap-carousel",
-  "max_blocks": 5,
-  "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_popup",
-      "label": "Enable popup on banner",
-      "default": false
-    },
-    {
-      "type": "image_picker",
-      "id": "popup_image",
-      "label": "Popup Image"
-    },
-    {
-      "type": "text",
-      "id": "banner_number",
-      "label": "Enter banner number on which you want to show popup"
-    },
-    {
-      "type": "text",
-      "id": "clevertap_id",
-      "label": "clever tap event"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_splitpopup",
-      "label": "only for split products",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "split_button",
-      "label": "botton1 textsplit products",
-      "default": "primary"
-    },
-    {
-      "type": "text",
-      "id": "split_buttontwo",
-      "label": "botton2 textsplit products",
-      "default": "primary2"
-    },
-    {
-      "type": "text",
-      "id": "clevertap_split",
-      "label": "clevertap event only for split products"
-    },
-    {
-      "type": "text",
-      "id": "autoplay_timeout",
-      "label": "autoplay_timeout in 5000 = 5sec"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_progressbar",
-      "label": "Enable progressbar on slider",
-      "default": true
-    }, {
-        "type": "number",
-        "id": "slides_no",
-        "label": "mobile slides",
-        "default": 1
-      }, {
-        "type": "number",
-        "id": "deskslides_no",
-        "label": "desk slides",
-        "default": 1
-      }, {
+  <script type="deferjs">
+  
+      {% if section.settings.show_popup %}
+        var slide_num = '{{ section.settings.banner_number}}';
+        $(`.slide_${slide_num} a`).click(function(e){
+            e.preventDefault();
+            $("#saleModal").modal("show");
+          });
+            {% if customer %}
+              document.getElementById("sale_email").value = '{{customer.email}}'
+          {% endif %}
+          {% if section.settings.show_splitpopup %}
+        $("#btn1st").click(function(e){
+                    $("#saleModal").modal("hide");
+            // $(".modal-backdrop.show").css("display", "none");
+            $("#saleModals-1").modal("show");
+          });
+  
+          $(".sale-btns-1").click(function () {
+          var e = document.getElementById("sale_emails-1").value;
+          "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+              ? localStorage.getItem("userEmailIdSale1") === e
+                  ? $(".form-groups-1").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+                  : (localStorage.setItem("userEmailIdSale1", e),
+                    clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                    clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
+                    $("#saleModals-1 .form-groups-1").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+              : $(".form-groups-1").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          setTimeout(function () {
+              $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          }, 5e3);
+      });
+          $("#btn2nd").click(function(e){
+                 $("#saleModal").modal("hide");
+                    // $(".modal-backdrop.show").css("display", "none");
+            $("#saleModals-2").modal("show");
+          });
+          $(".sale-btns-2").click(function () {
+          var e = document.getElementById("sale_emails-2").value;
+          "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+              ? localStorage.getItem("userEmailIdSale2") === e
+                  ? $(".form-groups-2").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+                  : (localStorage.setItem("userEmailIdSale2", e),
+                    clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                    clevertap.event.push("Notify Me {{ section.settings.clevertap_split }}", { Email: e, Source: "HomePage Banner Popup" }),
+                    $("#saleModals-2 .form-groups-2").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+              : $(".form-groups-2").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          setTimeout(function () {
+              $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          }, 5e3);
+      });
+    {% else %}
+            $(".sale-btn").click(function () {
+          var e = document.getElementById("sale_email").value;
+          "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+              ? localStorage.getItem("userEmailIdSale") === e
+                  ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+                  : (localStorage.setItem("userEmailIdSale", e),
+                    clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                    clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
+                    $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+              : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          setTimeout(function () {
+              $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          }, 5e3);
+      });
+     {% endif %}
+     {% endif %}
+  </script>
+  
+  {% schema %}
+  {
+    "name": "Bootstrap Slideshow",
+    "class": "bootstrap-carousel",
+    "max_blocks": 5,
+    "settings": [
+      {
         "type": "checkbox",
-        "id": "loop",
-        "label": "infinite loop",
+        "id": "show_popup",
+        "label": "Enable popup on banner",
+        "default": false
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_image",
+        "label": "Popup Image"
+      },
+      {
+        "type": "text",
+        "id": "banner_number",
+        "label": "Enter banner number on which you want to show popup"
+      },
+      {
+        "type": "text",
+        "id": "clevertap_id",
+        "label": "clever tap event"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_splitpopup",
+        "label": "only for split products",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "split_button",
+        "label": "botton1 textsplit products",
+        "default": "primary"
+      },
+      {
+        "type": "text",
+        "id": "split_buttontwo",
+        "label": "botton2 textsplit products",
+        "default": "primary2"
+      },
+      {
+        "type": "text",
+        "id": "clevertap_split",
+        "label": "clevertap event only for split products"
+      },
+      {
+        "type": "text",
+        "id": "autoplay_timeout",
+        "label": "autoplay_timeout in 5000 = 5sec"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_progressbar",
+        "label": "Enable progressbar on slider",
         "default": true
       }, {
-        "type": "checkbox",
-        "id": "autoplay",
-        "label": "autoplay",
-        "default": true
-      }, {
-        "type": "number",
-        "id": "slideBy",
-        "label": "number of slides drag in one screen",
-        "default": 1
-      }, {
-        "type": "number",
-        "id": "margin",
-        "label": "margin",
-        "default": 0
-      }, {
-        "type": "checkbox",
-        "id": "show_dots_on_mobile",
-        "label": "Show Dots on Mobile",
-        "default": true
-      }, {
-        "type": "checkbox",
-        "id": "show_dots_on_desktop",
-        "label": "Show Dots on Desktop",
-        "default": true
-      }
-  ],
-  "blocks": [
-    {
-      "name": "slideshow",
-      "type": "slideshow",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "desktop_image",
-          "label": "Desktop Image"
-        },
-        {
-          "type": "image_picker",
-          "id": "mobile_image",
-          "label": "Mobile Image"
-        },
-        {
-          "type": "url",
-          "id": "video_url",
-          "label": "video_url"
-        },
-        {
-          "type": "url",
-          "id": "slide_url",
-          "label": "Slide URL"
-        },
-        {
+          "type": "number",
+          "id": "slides_no",
+          "label": "mobile slides",
+          "default": 1
+        }, {
+          "type": "number",
+          "id": "deskslides_no",
+          "label": "desk slides",
+          "default": 1
+        }, {
           "type": "checkbox",
-          "id": "show_timer",
-          "label": "Show Timer",
+          "id": "center_slide",
+          "label": "Enable center slide?",
           "default": false
-        },
-        {
-          "type": "text",
-          "id": "timer_title",
-          "label": "timer_title"
-        },
-        {
-          "type": "color",
-          "id": "timer_background",
-          "label": "timer_background"
-        },
-        {
+        }, {
           "type": "checkbox",
-          "id": "timer_inline",
-          "label": "get_timer_inline"
-        },
-        {
-          "type": "text",
-          "id": "end_date",
-          "label": "timer End Date (Ex: Apr 30, 2022)"
-        },
-        {
+          "id": "loop",
+          "label": "infinite loop",
+          "default": true
+        }, {
           "type": "checkbox",
-          "id": "splitbanner_buttons",
-          "label": "Enable splitbanner"
-        },
-        {
-          "type": "url",
-          "id": "splitbanner_url",
-          "label": "Enter splitbanner_url"
-        },
-        {
-          "type": "url",
-          "id": "splitbanner_url2",
-          "label": "Enter splitbanner_url 2"
+          "id": "autoplay",
+          "label": "autoplay",
+          "default": true
+        }, {
+          "type": "number",
+          "id": "slideBy",
+          "label": "number of slides drag in one screen",
+          "default": 1
+        }, {
+          "type": "number",
+          "id": "margin",
+          "label": "margin",
+          "default": 0
+        }, {
+          "type": "checkbox",
+          "id": "show_dots_on_mobile",
+          "label": "Show Dots on Mobile",
+          "default": true
+        }, {
+          "type": "checkbox",
+          "id": "show_dots_on_desktop",
+          "label": "Show Dots on Desktop",
+          "default": true
         }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Bootstrap Slideshow",
-      "category": "image",
-      "settings": {}
-    }
-  ]
-}
-{% endschema %}
-
+    ],
+    "blocks": [
+      {
+        "name": "slideshow",
+        "type": "slideshow",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "desktop_image",
+            "label": "Desktop Image"
+          },
+          {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile Image"
+          },
+          {
+            "type": "url",
+            "id": "video_url",
+            "label": "video_url"
+          },
+          {
+            "type": "url",
+            "id": "slide_url",
+            "label": "Slide URL"
+          },
+          {
+            "type": "checkbox",
+            "id": "show_timer",
+            "label": "Show Timer",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "timer_title",
+            "label": "timer_title"
+          },
+          {
+            "type": "color",
+            "id": "timer_background",
+            "label": "timer_background"
+          },
+          {
+            "type": "checkbox",
+            "id": "timer_inline",
+            "label": "get_timer_inline"
+          },
+          {
+            "type": "text",
+            "id": "end_date",
+            "label": "timer End Date (Ex: Apr 30, 2022)"
+          },
+          {
+            "type": "checkbox",
+            "id": "splitbanner_buttons",
+            "label": "Enable splitbanner"
+          },
+          {
+            "type": "url",
+            "id": "splitbanner_url",
+            "label": "Enter splitbanner_url"
+          },
+          {
+            "type": "url",
+            "id": "splitbanner_url2",
+            "label": "Enter splitbanner_url 2"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Bootstrap Slideshow",
+        "category": "image",
+        "settings": {}
+      }
+    ]
+  }
+  {% endschema %}  
