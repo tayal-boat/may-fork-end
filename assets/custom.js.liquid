@@ -647,7 +647,11 @@ slidePost = '',
 slideItem = '',
 numberOfSlides = '',
 clonedPre,
-clonedPost;
+clonedPost,
+slide_length = '',
+autoplay = false,
+infinite_loop = false,
+autoplay_timeout = '';
 
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
@@ -655,18 +659,23 @@ for (let i = 0; i < sliderSelector.length; i++) {
 var selector = 'MultiCarousel_' + section_id;
   var itemsDiv = '.MultiCarousel-inner.' + section_id;
   var itemWidth = "";
+  autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
+  autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
+  infinite_loop = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-loop'));
   slidePre = document.createDocumentFragment();
   slidePost = document.createDocumentFragment();
   slideItem = document.querySelectorAll(itemsDiv + ' .item');
-  numberOfSlides = document.querySelector(itemsMainDiv).getAttribute("data-slide");
-
+  slide_length = slideItem.length;
+// console.log(autoplay_timeout);
   /* Cloning first items and appending to first */  
-
-  for(var k = 0 ; k <= numberOfSlides-1 ; k++) {
-    clonedPost = slideItem[k].cloneNode(true);
-    slidePost.append(clonedPost);
-  }
-  document.querySelector(itemsDiv).appendChild(slidePost);
+//   numberOfSlides = 2 * document.querySelector(itemsMainDiv).getAttribute("data-slide");
+// if(autoplay || infinite_loop){
+//   for(var k = 0 ; k <= numberOfSlides-1 ; k++) {
+//     clonedPost = slideItem[k].cloneNode(true);
+//     slidePost.append(clonedPost);
+//   }
+//   document.querySelector(itemsDiv).appendChild(slidePost);
+// }
 
   $('.leftLst, .rightLst').click(function () {
     console.log('left slider btn clicked');
@@ -690,9 +699,9 @@ $('.multiCarousel_dots').click(function () {
   $(window).resize(function () {
       ResCarouselSize(itemsMainDiv, selector);
   });
-
-  slideAutoplay(itemsMainDiv , 4000);
-
+  if(autoplay){
+  slideAutoplay(itemsMainDiv , autoplay_timeout);
+  }
   //this function define the size of the items
   function ResCarouselSize(itemsMainDiv, selector) {
       var incno = 0;
@@ -703,7 +712,9 @@ $('.multiCarousel_dots').click(function () {
       var itemsSplit = '';
       var sampwidth = $(itemsMainDiv).width();
       var bodyWidth = $('body').width();
+      var slider_dots = '';
       $(itemsDiv).each(function () {
+        slider_dots = $(this).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
           id = id + 1;
           var itemNumbers = $(this).find(itemClass).length;
           btnParentSb = $(this).parent().attr(dataItems);
@@ -716,22 +727,29 @@ $('.multiCarousel_dots').click(function () {
               itemWidth = sampwidth / incno;
           }
           else if (bodyWidth >= 768) {
-              incno = mobile_slide;
+              incno = desktop_slide;
               itemWidth = sampwidth / incno;
           }
           else {
               incno = mobile_slide;
               itemWidth = sampwidth / incno;
           }
+          if(incno > 1){
+          for(var j = 1 ; j <= incno-1; j++) {
+            console.log(slider_dots.length-j);
+            slider_dots[slider_dots.length-j].remove();
+          }
+          }
 
           $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
           $(this).find(itemClass).each(function () {
               $(this).outerWidth(itemWidth);
           });
-
+          if(autoplay == false && infinite_loop == false) {
           $(".leftLst").addClass("over");
           $(".rightLst").removeClass("over");
-
+          }
+          
       });
   }
 
@@ -741,35 +759,55 @@ $('.multiCarousel_dots').click(function () {
       var leftBtn = ('.leftLst');
       var rightBtn = ('.rightLst');
       var translateXval = '';
+      console.log(slide_container);
       var divStyle = $(slide_container).css('transform');
+      setTimeout(function() {
+        console.log(divStyle);
+      },500);
+      
       var values = divStyle.match(/-?[\d\.]+/g);
+      console.log(values);
       var xds = Math.abs(values[4]);
+      console.log(xds);
       var itemWidth = $(slide_container).children().width();
+      var itemsCondition = $(slide_container).width() - $(el).width();
       if (e == 0) {
           translateXval = parseInt(xds) - parseInt(itemWidth * s);
+          if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + rightBtn).removeClass("over");
-
+          }
           if (translateXval <= itemWidth / 2) {
-              translateXval = 0;
-              $(el + ' ' + leftBtn).addClass("over");
+            console.log('hii 1');
+            translateXval = itemsCondition;
+            if(autoplay == false && infinite_loop == false) {
+            $(el + ' ' + leftBtn).addClass("over");
+            }
           }
       }
       else if (e == 1) {
-          var itemsCondition = $(slide_container).width() - $(el).width();
           translateXval = parseInt(xds) + parseInt(itemWidth * s);
+          if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + leftBtn).removeClass("over");
-
-          if (translateXval >= itemsCondition - itemWidth / 2) {
-              translateXval = itemsCondition;
-              $(el + ' ' + rightBtn).addClass("over");
           }
+          if (translateXval > itemsCondition) {
+            translateXval = 0;
+          }else if(translateXval > itemsCondition - itemWidth / 2){
+              translateXval = itemsCondition;
+              if(autoplay == false && infinite_loop == false) {
+              $(el + ' ' + rightBtn).addClass("over");
+              }
+          }
+      }else{
+        translateXval = parseInt(itemWidth * s);
+        if (translateXval <= itemWidth / 2) {
+          translateXval = 0;
+        }
       }
       $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
   }
 
   //It is used to get some elements from btn
   function click(ell, ee) {
-    console.log(ee, 'ee');
       var Parent = "#" + $(ee).parent().attr("id");
       var slide = $(Parent).attr("data-slide");
       var slide_container = $(Parent).children('.MultiCarousel-inner');
@@ -781,32 +819,27 @@ $('.multiCarousel_dots').click(function () {
 function changeCurrent(curr, dot) {
   var Parent = "#" + $(dot).parent().parent().attr("id");
   var slide_container = $(Parent).children('.MultiCarousel-inner');
-  var slide_itemWidth = $(slide_container).children().width();
-var translateXval = parseInt(itemWidth * curr);
-if (translateXval <= slide_itemWidth / 2) {
-  translateXval = 0;
-}
-  $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
+ResCarousel(e=null, Parent, curr, slide_container);
 }
 
 function slideAutoplay(selector , duration) {
 var newIndex = $(selector).attr("data-slide");
 var slides_container = $(selector).children('.MultiCarousel-inner');
 
-// setInterval(function() {
-//   ResCarousel(1, selector, newIndex, slides_container);
-// }, duration);
+setInterval(function() {
+  ResCarousel(1, selector, newIndex, slides_container);
+}, duration);
 }
 
-
-let target = document.getElementsByClassName("MultiCarousel-inner")[0];
-target.addEventListener('dragleave', (event) => {
-    console.log('slider drag');
-    console.log(drag_direction);
-    if( drag_direction == 'right' ){
-      $(section_id + '.rightLst').click();
-    }
-    else if( drag_direction == 'left' ){$(section_id + '.leftLst').click();}
+let target = document.querySelectorAll(".MultiCarousel-inner.draggable")[0];
+target.addEventListener('dragend', (event) => {
+  // alert('hii drag slide');
+  console.log(event);
+    var Parent = event.target.offsetParent.parentElement;
+      var slide = $(Parent).attr("data-slide");
+      var slide_container = event.target.offsetParent;
+        ResCarousel(1, Parent, slide, slide_container);
+      
 });
 
 }
