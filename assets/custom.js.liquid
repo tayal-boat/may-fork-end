@@ -651,6 +651,7 @@ clonedPost,
 slide_length = '',
 autoplay = false,
 infinite_loop = false,
+autoplay_delay = false,
 autoplay_timeout = '';
 
 for (let i = 0; i < sliderSelector.length; i++) {
@@ -759,16 +760,10 @@ $('.multiCarousel_dots').click(function () {
       var leftBtn = ('.leftLst');
       var rightBtn = ('.rightLst');
       var translateXval = '';
-      console.log(slide_container);
       var divStyle = $(slide_container).css('transform');
-      setTimeout(function() {
-        console.log(divStyle);
-      },500);
       
       var values = divStyle.match(/-?[\d\.]+/g);
-      console.log(values);
-      var xds = Math.abs(values[4]);
-      console.log(xds);
+      var xds = Math.abs(values[4])
       var itemWidth = $(slide_container).children().width();
       var itemsCondition = $(slide_container).width() - $(el).width();
       if (e == 0) {
@@ -776,9 +771,12 @@ $('.multiCarousel_dots').click(function () {
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + rightBtn).removeClass("over");
           }
-          if (translateXval <= itemWidth / 2) {
-            console.log('hii 1');
+
+          if (translateXval < 0) {
             translateXval = itemsCondition;
+          }else if (translateXval <= itemWidth / 2) {
+            console.log('hii 1');
+            translateXval = 0;
             if(autoplay == false && infinite_loop == false) {
             $(el + ' ' + leftBtn).addClass("over");
             }
@@ -811,6 +809,8 @@ $('.multiCarousel_dots').click(function () {
       var Parent = "#" + $(ee).parent().attr("id");
       var slide = $(Parent).attr("data-slide");
       var slide_container = $(Parent).children('.MultiCarousel-inner');
+      autoplay_delay = true;
+      setTimeout(function() {autoplay_delay = false},5000);
       ResCarousel(ell, Parent, slide, slide_container);
   }
 
@@ -819,6 +819,8 @@ $('.multiCarousel_dots').click(function () {
 function changeCurrent(curr, dot) {
   var Parent = "#" + $(dot).parent().parent().attr("id");
   var slide_container = $(Parent).children('.MultiCarousel-inner');
+  autoplay_delay = true;
+  setTimeout(function() {autoplay_delay = false},5000);
 ResCarousel(e=null, Parent, curr, slide_container);
 }
 
@@ -827,20 +829,76 @@ var newIndex = $(selector).attr("data-slide");
 var slides_container = $(selector).children('.MultiCarousel-inner');
 
 setInterval(function() {
+  if(!autoplay_delay){
   ResCarousel(1, selector, newIndex, slides_container);
+}
 }, duration);
 }
 
-let target = document.querySelectorAll(".MultiCarousel-inner.draggable")[0];
-target.addEventListener('dragend', (event) => {
-  // alert('hii drag slide');
-  console.log(event);
-    var Parent = event.target.offsetParent.parentElement;
+
+let target = document.querySelector('.MultiCarousel-inner.' + section_id);
+function sliderDrag(event, slide_direction) {
+  if(event.target.offsetParent.classList.contains('draggable')){
+    var Parent = "#" + event.target.offsetParent.parentElement.id;
+  }else{
+    var Parent = "#" + event.target.parentElement.id;
+  }
       var slide = $(Parent).attr("data-slide");
-      var slide_container = event.target.offsetParent;
-        ResCarousel(1, Parent, slide, slide_container);
-      
+      var slide_container = $(Parent).children('.MultiCarousel-inner');
+      autoplay_delay = true;
+      setTimeout(function() {autoplay_delay = false},5000);
+        ResCarousel(slide_direction, Parent, slide, slide_container);
+  }
+
+
+
+var oldX = 0;
+var oldY = 0;
+target.addEventListener('dragstart', (e) => {
+  oldX = e.pageX;
+  oldY = e.pageY;
 });
+
+target.addEventListener('touchstart', (e) => {
+  oldX = e.changedTouches[0].pageX;
+  oldY = e.changedTouches[0].pageY;
+});
+
+target.addEventListener("dragend", getMouseDirection, false);
+
+target.addEventListener('touchend', (event) => {
+  let touch_event = event.changedTouches[0]; 
+  getMouseDirection(touch_event)
+});
+
+var xDirection = "";
+var yDirection = "";
+
+function getMouseDirection(e) {
+    //deal with the horizontal case
+    if (oldX < e.pageX) {
+        xDirection = "right";
+    } else {
+        xDirection = "left";
+    }
+ 
+    //deal with the vertical case
+    if (oldY < e.pageY) {
+        yDirection = "down";
+    } else {
+        yDirection = "up";
+    }
+ 
+    oldX = e.pageX;
+    oldY = e.pageY;
+
+ if(xDirection == "right"){
+  sliderDrag(e, 0)
+ }else{
+  sliderDrag(e, 1)
+ }
+    // console.log(xDirection + " " + yDirection);
+}
 
 }
 
