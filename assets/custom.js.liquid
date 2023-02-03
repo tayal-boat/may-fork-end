@@ -649,10 +649,12 @@ numberOfSlides = '',
 clonedPre,
 clonedPost,
 slide_length = '',
+slider_dots = '',
 autoplay = false,
 infinite_loop = false,
 autoplay_delay = false,
 autoplay_timeout = '';
+
 
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
@@ -667,6 +669,7 @@ var selector = 'MultiCarousel_' + section_id;
   slidePost = document.createDocumentFragment();
   slideItem = document.querySelectorAll(itemsDiv + ' .item');
   slide_length = slideItem.length;
+  slider_dots = $(itemsDiv).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
 // console.log(autoplay_timeout);
   /* Cloning first items and appending to first */  
 //   numberOfSlides = 2 * document.querySelector(itemsMainDiv).getAttribute("data-slide");
@@ -677,6 +680,11 @@ var selector = 'MultiCarousel_' + section_id;
 //   }
 //   document.querySelector(itemsDiv).appendChild(slidePost);
 // }
+// console.log(slideItem);
+for(var l = 0 ; l < slideItem.length; l++) {
+  // console.log(slideItem[l]);
+  slideItem[l].setAttribute('data-index', [l]);
+}
 
   $('.leftLst, .rightLst').click(function () {
     console.log('left slider btn clicked');
@@ -713,9 +721,7 @@ $('.multiCarousel_dots').click(function () {
       var itemsSplit = '';
       var sampwidth = $(itemsMainDiv).width();
       var bodyWidth = $('body').width();
-      var slider_dots = '';
       $(itemsDiv).each(function () {
-        slider_dots = $(this).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
           id = id + 1;
           var itemNumbers = $(this).find(itemClass).length;
           btnParentSb = $(this).parent().attr(dataItems);
@@ -750,7 +756,6 @@ $('.multiCarousel_dots').click(function () {
             slider_dots[k].classList.add('active');
           }
 
-
           $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
           $(this).find(itemClass).each(function () {
               $(this).outerWidth(itemWidth);
@@ -768,13 +773,38 @@ $('.multiCarousel_dots').click(function () {
   function ResCarousel(e, el, s, slide_container) {
       var leftBtn = ('.leftLst');
       var rightBtn = ('.rightLst');
+      var itemClass = ('.item');
       var translateXval = '';
       var divStyle = $(slide_container).css('transform');
+      var slider_item = $(slide_container).find(itemClass);
+      var slider_dots = $(el).find('.multiCarousel_dots');
       
       var values = divStyle.match(/-?[\d\.]+/g);
       var xds = Math.abs(values[4])
       var itemWidth = $(slide_container).children().width();
       var itemsCondition = $(slide_container).width() - $(el).width();
+      var active_slide = $(slide_container).find('.active');
+      var active_slide_number = active_slide.length;
+      var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
+
+      if(active_slide_position > slider_item.length - 1){
+        active_slide_position = 0;
+      }
+
+      console.log(active_slide);
+      console.log(active_slide_position);
+      
+      slider_item.removeClass("active");
+      slider_dots.removeClass("active");
+        for(var k = 0 ; k < slider_item.length; k++) {
+        console.log(slider_item[k]);
+        // slider_item[k-1].classList.remove('active'); 
+        if(k == active_slide_position){ 
+          slider_item[k].classList.add('active');
+          slider_dots[k].classList.add('active');   
+        }     
+      }
+
       if (e == 0) {
           translateXval = parseInt(xds) - parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
@@ -810,6 +840,7 @@ $('.multiCarousel_dots').click(function () {
           translateXval = 0;
         }
       }
+
       $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
   }
 
