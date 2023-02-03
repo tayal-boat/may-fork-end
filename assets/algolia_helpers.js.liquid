@@ -99,8 +99,8 @@
 
         var res = '<b>' + formatPrice(price) + '</b>';
         if (comparing) {
-          res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>'
-        + '<b style="padding-left:8px;">' + formatPrice(price) + '</b>'
+          res = '<b style="padding-right:4px;">' + formatPrice(price) + '</b>'
+          +  ' <span style="color:#05A143;font-size:14px;font-weight:500;">' + Math.floor(discount_ratio * 100) + '% off </span>'
             + ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
         }
     
@@ -137,11 +137,12 @@
       var price = this.price;
       var price_ratio = this.price_ratio;
       var discount_ratio = 1.0 - price_ratio;
+      let card_offers = JSON.parse(Shopify.card_offers);
       if (price >= 500) {
         /* res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>'; */
-        res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>';
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_1}</p>`;
       } else {
-        res += ' <p class="ais-hit--price-discount">Free Shipping available</p>';
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_2}</p>`;
       }
       // res += ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
       //   Math.floor(discount_ratio * 100) +
@@ -200,7 +201,7 @@
         rating_value = Math.round(rating_value * 10) / 10;
         var rating_count = reviews.rating_count;
         res = `<div class="rating"><div class="rating__stars" role="img" aria-label="${rating_value} out of 5.0 stars">
-            <span style="color:#05A143;font-size:16px;">★</span>
+            <span style="color:#05A143;">★</span>
             ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
             </div>`;
       } else {
@@ -414,7 +415,7 @@
             }
 
             let copy_icon = '<svg class="coupon_code_wrapper 456456456" id="copy_svg_icon" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 312.36 389.98"><path d="M322.17,242c6.91,1.86,13.4,4.44,18.37,9.94,6,6.67,8.32,14.57,8.31,23.41q-.06,86,0,172.09c0,28.05.05,56.09,0,84.14,0,15.73-9,27.44-23.86,31.22a28,28,0,0,1-7.91.74c-5.1-.19-8.91-4-9.64-9.12a10.62,10.62,0,0,1,6.82-11.49,14.33,14.33,0,0,1,1.46-.41c10.72-2.64,11.64-3.83,11.64-14.93q0-125.27,0-250.53a36.9,36.9,0,0,0-.42-5.66,8.29,8.29,0,0,0-7.45-7.46,29.74,29.74,0,0,0-4.9-.42q-87.19,0-174.4,0a20.55,20.55,0,0,0-6.75.82c-4.2,1.48-5.56,5.12-6.14,9.26-1,6.74-5.89,10.67-12,9.82s-9.9-5.94-9.22-12.64c1.48-14.74,10.62-25,25.15-28.19a8,8,0,0,0,1.34-.6Z" transform="translate(-36.49 -242)"/><path d="M36.5,471.23q0-64.17,0-128.33c0-13.34,5.43-23.76,17.73-29.44a37.27,37.27,0,0,1,15.06-3.11q88.74-.32,177.48-.1c19.85,0,32.7,13.22,32.71,33.15q0,127.76,0,255.52c0,20.07-13.05,33-33.2,33.05q-88.35,0-176.71,0c-20.07,0-33.07-13.05-33.08-33.17Q36.47,535,36.5,471.23Zm21.43-.37v74.26q0,26.83,0,53.69c0,4.61,1.12,8.74,5.76,10.59a19.78,19.78,0,0,0,7.1,1q87,.06,174.05,0c9.95,0,13-3,13-12.9V344.63c0-9.75-3-12.82-12.65-12.82H70.8c-9.83,0-12.87,3.07-12.87,13Z" transform="translate(-36.49 -242)"/></svg>';
-            res = `<div class="algolia-no-result-container algolia-no-result-festive ${text_alignment_class}"  style="background-image:url(${algolia_festive[i].coupon_url});background-repeat:no-repeat;"> <h3> ${algolia_festive[i].message}</h3> <div class="algolia-coupon-container"><p class="para_1"> ${algolia_festive[i].message2}</p> <div class="coupon-code"> <span class="coupon_code_wrapper">USE CODE : <span class="coupon_code">${algolia_festive[i].coupon_code}</span> </span>` + copy_icon + `</div> <p> ${algolia_festive[i].coupon_value}</p> </div> </div>`;
+            res = `<div class="algolia-no-result-container algolia-no-result-festive ${text_alignment_class}"  style="background-image:url(${algolia_festive[i].coupon_url});background-repeat:no-repeat;"> <h3> ${algolia_festive[i].message}</h3> <div class="algolia-coupon-container"><p class="para_1"> ${algolia_festive[i].message2}</p> <div class="coupon-code"> <span class="coupon_code_wrapper">Use Code&nbsp;<span class="coupon_code">${algolia_festive[i].coupon_code}</span>&nbsp;${copy_icon}</span></div> <p> ${algolia_festive[i].coupon_value}</p> </div> </div>`;
             break
           }
         }
