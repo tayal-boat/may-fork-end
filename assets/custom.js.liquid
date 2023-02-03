@@ -670,29 +670,22 @@ var selector = 'MultiCarousel_' + section_id;
   slideItem = document.querySelectorAll(itemsDiv + ' .item');
   slide_length = slideItem.length;
   slider_dots = $(itemsDiv).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
-// console.log(autoplay_timeout);
-  /* Cloning first items and appending to first */  
-//   numberOfSlides = 2 * document.querySelector(itemsMainDiv).getAttribute("data-slide");
-// if(autoplay || infinite_loop){
-//   for(var k = 0 ; k <= numberOfSlides-1 ; k++) {
-//     clonedPost = slideItem[k].cloneNode(true);
-//     slidePost.append(clonedPost);
-//   }
-//   document.querySelector(itemsDiv).appendChild(slidePost);
-// }
-// console.log(slideItem);
+  let leftBth = '#' + selector + ' .leftLst';
+  let RightBth = '#' + selector + ' .rightLst';
+
 for(var l = 0 ; l < slideItem.length; l++) {
-  // console.log(slideItem[l]);
   slideItem[l].setAttribute('data-index', [l]);
 }
 
-  $('.leftLst, .rightLst').click(function () {
+  $(RightBth).click(function () {
+    console.log('right slider btn clicked');
+    click(1, this)
+  });
+
+  $(leftBth).click(function () {
     console.log('left slider btn clicked');
       var condition = $(this).hasClass("leftLst");
-      if (condition)
-          click(0, this);
-      else
-          click(1, this)
+      if (condition)click(0, this);
   });
 
 $('.multiCarousel_dots').click(function () {
@@ -786,26 +779,31 @@ $('.multiCarousel_dots').click(function () {
       var active_slide = $(slide_container).find('.active');
       var active_slide_number = active_slide.length;
       var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
+      var slider_dots_length = slider_dots.length;
+
+      // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
+
+      if(active_slide_number > 1){
+        slider_dots_length = slider_dots_length - active_slide_number - 1;
+        }
 
       if(active_slide_position > slider_item.length - 1){
         active_slide_position = 0;
       }
-
-      console.log(active_slide);
-      console.log(active_slide_position);
       
       slider_item.removeClass("active");
       slider_dots.removeClass("active");
         for(var k = 0 ; k < slider_item.length; k++) {
-        console.log(slider_item[k]);
-        // slider_item[k-1].classList.remove('active'); 
         if(k == active_slide_position){ 
-          slider_item[k].classList.add('active');
-          slider_dots[k].classList.add('active');   
+          for(var j = 0 ; j < active_slide_number; j++) {
+          slider_item[k + j].classList.add('active');
+          slider_dots[k + j].classList.add('active');   
+          }
         }     
       }
 
       if (e == 0) {
+        console.log('hii 1');
           translateXval = parseInt(xds) - parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + rightBtn).removeClass("over");
@@ -814,7 +812,6 @@ $('.multiCarousel_dots').click(function () {
           if (translateXval < 0) {
             translateXval = itemsCondition;
           }else if (translateXval <= itemWidth / 2) {
-            console.log('hii 1');
             translateXval = 0;
             if(autoplay == false && infinite_loop == false) {
             $(el + ' ' + leftBtn).addClass("over");
@@ -822,6 +819,7 @@ $('.multiCarousel_dots').click(function () {
           }
       }
       else if (e == 1) {
+        console.log('hii 2');
           translateXval = parseInt(xds) + parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + leftBtn).removeClass("over");
