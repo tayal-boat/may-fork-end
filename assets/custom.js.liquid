@@ -734,17 +734,16 @@ $('.multiCarousel_dots').click(function () {
               incno = mobile_slide;
               itemWidth = sampwidth / incno;
           }
-          if(incno > 1){
-          for(var j = 1 ; j <= incno-1; j++) {
-            console.log(slider_dots.length-j);
-            slider_dots[slider_dots.length-j].remove();
-          }
-          }
+          // if(incno > 1){
+          // for(var j = 1 ; j <= incno-1; j++) {
+          //   console.log(slider_dots.length-j);
+          //   slider_dots[slider_dots.length-j].remove();
+          // }
+          // }
 
           console.dir($(this).find(itemClass));
 
           for(var k = 0 ; k <= incno-1; k++) {
-            console.log('hii slide');
             $(this).find(itemClass)[k].classList.add('active');
             slider_dots[k].classList.add('active');
           }
@@ -778,32 +777,66 @@ $('.multiCarousel_dots').click(function () {
       var itemsCondition = $(slide_container).width() - $(el).width();
       var active_slide = $(slide_container).find('.active');
       var active_slide_number = active_slide.length;
-      var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
-      var slider_dots_length = slider_dots.length;
+      var slider_dots_length = slider_dots_length;
 
       // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
-
-      if(active_slide_number > 1){
-        slider_dots_length = slider_dots_length - active_slide_number - 1;
-        }
-
-      if(active_slide_position > slider_item.length - 1){
-        active_slide_position = 0;
+      if(active_slide.length > 1){
+        // active_slide = $(slide_container)[0];
+        // active_slide.classList.add('active');
+      slider_dots_length = slider_dots_length - active_slide_number - 1;
       }
-      
+      function active_slider_dots(e){
+
+        if(e == 0){
+      var active_slide_position = parseInt(active_slide[active_slide_number - 1].dataset.index) - 1;
+      if(active_slide_position < 0){
+        active_slide_position = slider_item.length - 1;
+      }
+
       slider_item.removeClass("active");
       slider_dots.removeClass("active");
         for(var k = 0 ; k < slider_item.length; k++) {
         if(k == active_slide_position){ 
           for(var j = 0 ; j < active_slide_number; j++) {
-          slider_item[k + j].classList.add('active');
-          slider_dots[k + j].classList.add('active');   
+            if(k - active_slide_number + 1 >= 0){
+              counter = k - j; 
+            }else{
+              counter = slider_item.length - j - 1; 
+            }
+          slider_item[counter].classList.add('active');
+          slider_dots[counter].classList.add('active');     
           }
         }     
       }
 
+    }else if(e == 1){
+      var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
+      if(active_slide_position > slider_item.length - 1){
+        active_slide_position = 0;
+      }
+
+      slider_item.removeClass("active");
+      slider_dots.removeClass("active");
+      let counter = 0;
+        for(var k = 0 ; k < slider_item.length; k++) {
+        if(k == active_slide_position){ 
+          for(var j = 0 ; j < active_slide_number; j++) {
+            if(k + active_slide_number - 1 < slider_item.length){
+              counter = k + j; 
+            }else{
+              counter = j; 
+            }
+          slider_item[counter].classList.add('active');
+          slider_dots[counter].classList.add('active');  
+          }
+        }     
+      }
+    }else{
+      var active_slide_position = parseInt(active_slide[0].dataset.index) 
+    }
+    }
       if (e == 0) {
-        console.log('hii 1');
+        active_slider_dots(0);
           translateXval = parseInt(xds) - parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + rightBtn).removeClass("over");
@@ -819,7 +852,7 @@ $('.multiCarousel_dots').click(function () {
           }
       }
       else if (e == 1) {
-        console.log('hii 2');
+        active_slider_dots(1);
           translateXval = parseInt(xds) + parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + leftBtn).removeClass("over");
@@ -833,6 +866,7 @@ $('.multiCarousel_dots').click(function () {
               }
           }
       }else{
+
         translateXval = parseInt(itemWidth * s);
         if (translateXval <= itemWidth / 2) {
           translateXval = 0;
