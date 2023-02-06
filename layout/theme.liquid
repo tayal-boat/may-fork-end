@@ -57,13 +57,15 @@
     <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     {%- unless settings.heading_font.system? and settings.text_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {% endunless %}
     <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
+
+    {% render 'speedsize'; %}
+
     {%- if request.page_type == 'product' -%}
       {%- assign selected_media = product.selected_or_first_available_variant.image
         | default: product.selected_or_first_available_variant.image
@@ -74,14 +76,12 @@
       {%- endif -%}
     {%- elsif request.page_type == 'collection' and collection.image -%}
       <link
-        rel="preload"
         as="image"
         media="(max-width: 740px)"
         imagesizes="100vw"
         imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}"
       >
       <link
-        rel="preload"
         as="image"
         media="(min-width: 741px)"
         imagesizes="100vw"
