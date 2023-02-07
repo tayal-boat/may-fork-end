@@ -28,14 +28,15 @@ END of Namogoo Snippet
 
        {%- if section.settings.enable_sticky_header -%}
          position: -webkit-sticky;
-         position: sticky;
+         position: fixed;
+         width:100%;
+         transition: all 0.5s ease-in-out;
        {%- else -%}
          position: relative;
        {%- endif -%}
-
-       // top: {% if section.settings.enable_sticky_header %}calc(var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)){% else %}0{% endif %};
+       {% comment %} top: {% if section.settings.enable_sticky_header %}calc(var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)){% else %}0{% endif %}; {% endcomment %}
        top: 0;
-      z-index: 100;
+       z-index: 100;
      }
      {%- if request.page_type == 'index' -%}
        .section__header {
@@ -124,11 +125,10 @@ END of Namogoo Snippet
      .custom_svg_icon {
        height: 18px;
      }
-@media(max-width:768px){
-        nav.header__inline-navigation {
-            flex: 0;
-        }
+     @media(max-width:768px){
+        nav.header__inline-navigation { flex: 0;}
      }
+     div#shopify-section-announcement-bar.announcement-non-sticky~#shopify-section-header{position: sticky; }
 </style>
 
 <store-header
@@ -699,6 +699,24 @@ document.addEventListener('cart:updated', function(){cart_bubble() });
       headerHeightWithoutBottomNav + 'px'
     );
   })();
+   // mobile menu drawer height and top setup
+ 
+ const documentStyle = getComputedStyle(document.documentElement);
+ let mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+ document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+ $('button.header__icon-wrapper.rounded-0.tap-area.hidden-desk').click(function(){
+    if ($(window).scrollTop() == 0){
+      mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+    }else if(mobilemenuHeight - $(window).scrollTop() > 0.1){
+      {% comment %} $("html, body").animate({ scrollTop: $('#shopify-section-announcement-bar').height() }, 0); {% endcomment %}
+      mobilemenuHeight =  $('.shopify-section--header .container').height();
+      console.log(">0" ,  mobilemenuHeight);
+    }else{
+      mobilemenuHeight = $('.shopify-section--header .container').height();
+      console.log("else" ,  mobilemenuHeight);
+    }
+      document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+  });
 </script>
 
 <script type="application/ld+json">
