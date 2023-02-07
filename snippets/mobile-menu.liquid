@@ -94,7 +94,7 @@
                     is="toggle-button"
                     class="mobile-nav__link heading {% if settings.heading_text_transform == 'uppercase' %}h6{% else %}h5{% endif %}"
                     aria-controls="mobile-menu-{{ forloop.index }}"
-                    aria-expanded="{% if forloop.index != 1 %}false{% endif %}"
+                    aria-expanded="{% if forloop.index != 1 %}false{% else %}true{% endif %}"
                   >
                     {{- link.title -}}
                     <span class="animated-arrow">
@@ -488,6 +488,20 @@
 
 
 </mobile-navigation>
+
+<script type>
+  setTimeout(menu_open_close, 5000);
+
+  function menu_open_close(){
+    $('#mobile-menu-drawer .mobile-nav .mobile-nav__item button').on('click', function(e){
+      e.preventDefault();
+      $('#mobile-menu-drawer .mobile-nav .mobile-nav__item button').attr('aria-expanded', false);
+      $(this).attr('aria-expanded', true);
+    });
+  }
+  
+</script>
+
 
 <script type="lazyScript">
   Shopify.customLazy = function() {
