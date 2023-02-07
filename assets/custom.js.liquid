@@ -734,14 +734,16 @@ $('.multiCarousel_dots').click(function () {
               incno = mobile_slide;
               itemWidth = sampwidth / incno;
           }
-          // if(incno > 1){
+          if(incno > 1){
           // for(var j = 1 ; j <= incno-1; j++) {
           //   console.log(slider_dots.length-j);
           //   slider_dots[slider_dots.length-j].remove();
           // }
-          // }
-
-          console.dir($(this).find(itemClass));
+          console.log('itemClass');
+          let centerIndex = Math.floor(incno / 2);
+          console.log(centerIndex);
+          $(this).find(itemClass)[centerIndex].classList.add('center');
+          }
 
           for(var k = 0 ; k <= incno-1; k++) {
             $(this).find(itemClass)[k].classList.add('active');
@@ -778,6 +780,8 @@ $('.multiCarousel_dots').click(function () {
       var active_slide = $(slide_container).find('.active');
       var active_slide_number = active_slide.length;
       var slider_dots_length = slider_dots_length;
+      let counter = 0;
+  
 
       // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
       if(active_slide.length > 1){
@@ -792,8 +796,10 @@ $('.multiCarousel_dots').click(function () {
       if(active_slide_position < 0){
         active_slide_position = slider_item.length - 1;
       }
-
+      let centerIndex = active_slide_position;
+      let centerFlag = true;
       slider_item.removeClass("active");
+      slider_item.removeClass("center");
       slider_dots.removeClass("active");
         for(var k = 0 ; k < slider_item.length; k++) {
         if(k == active_slide_position){ 
@@ -804,7 +810,13 @@ $('.multiCarousel_dots').click(function () {
               counter = slider_item.length - j - 1; 
             }
           slider_item[counter].classList.add('active');
-          slider_dots[counter].classList.add('active');     
+          slider_dots[counter].classList.add('active');
+          if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
+            centerIndex = Math.floor(active_slide_number / 2);
+            console.log(centerIndex,'centerIndex');
+            slider_item[counter - centerIndex].classList.add('center');
+            centerFlag = false;
+          }     
           }
         }     
       }
@@ -814,10 +826,12 @@ $('.multiCarousel_dots').click(function () {
       if(active_slide_position > slider_item.length - 1){
         active_slide_position = 0;
       }
-
+      let centerIndex = active_slide_position;
+      let centerFlag = true;
       slider_item.removeClass("active");
+      slider_item.removeClass("center");
       slider_dots.removeClass("active");
-      let counter = 0;
+      
         for(var k = 0 ; k < slider_item.length; k++) {
         if(k == active_slide_position){ 
           for(var j = 0 ; j < active_slide_number; j++) {
@@ -827,7 +841,13 @@ $('.multiCarousel_dots').click(function () {
               counter = j; 
             }
           slider_item[counter].classList.add('active');
-          slider_dots[counter].classList.add('active');  
+          slider_dots[counter].classList.add('active');
+          if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
+            centerIndex = Math.floor(active_slide_number / 2);
+            console.log(centerIndex,'centerIndex');
+            slider_item[counter + centerIndex].classList.add('center');
+            centerFlag = false;
+          }  
           }
         }     
       }
