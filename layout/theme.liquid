@@ -27,7 +27,7 @@
     <meta name="facebook-domain-verification" content="qad1e3gldwmxjf6luncdygpvcpduub">
     <link rel="canonical" href="{{ canonical_url }}">
     {%- if settings.favicon -%}
-      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
+      <link rel="shortcut icon" href="{{- settings.speedsize_url_pfx_https -}}{{ settings.favicon | img_url: '96x96' }}" type="image/png">
     {%- endif -%}
     <title>
       {% if page_title == blank -%}
@@ -40,7 +40,7 @@
       {%- endif %}
     </title>
     {%- if page_description -%}
-      <meta name="description" content="{{ page_description | escape }}">
+      <meta name="description" content="{{ page_description | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
     {%- endif -%}
     {%- comment -%}
        IMPLEMENTATION NOTE: for improving performance,
@@ -55,15 +55,16 @@
     {%- endcomment -%}
     <link rel="preconnect" href="https://cdn.shopify.com">
     <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
-    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+<!--     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
 
     {%- unless settings.heading_font.system? and settings.text_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {% endunless %}
-    <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
+<!--     <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin> -->
+    {% render 'speedsize' %}
     {%- if request.page_type == 'product' -%}
       {%- assign selected_media = product.selected_or_first_available_variant.image
         | default: product.selected_or_first_available_variant.image
@@ -105,25 +106,29 @@
           h_content
           | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
           | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com' 
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
+          | remove: 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: 'src="//cdn.shopify.com/shopifycloud/shopify/assets/storefront/bars/preview_bar_injector'
         -}}
       {% when 'product' %}
         {{-
           h_content
           | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com' 
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
+          | remove: 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: 'src="//cdn.shopify.com/shopifycloud/shopify/assets/storefront/bars/preview_bar_injector'                  
         -}}
       {% when 'article', 'collection', 'blog' %}
         {{-
           h_content
           | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com' 
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
+          | remove: 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
+          | remove: 'src="//cdn.shopify.com/shopifycloud/shopify/assets/storefront/bars/preview_bar_injector'
         -}}
       {% else %}
-        {{- content_for_header -}}
+        {%- capture content_for_header_filter -%}{{ content_for_header }}{%- endcapture -%}
+        {{- content_for_header_filter | remove: 'src="//cdn.shopify.com/shopifycloud/shopify/assets/storefront/bars/preview_bar_injector' -}}
     {% endcase %}
     <!-- content for header -->
     
@@ -353,7 +358,7 @@
           <div class="loading_icon">
             <img loading="lazy"
               class="lazyload"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
+              src="{{- settings.speedsize_url_pfx -}}https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
               alt="Load More"
               style="width: 50px;"
             >

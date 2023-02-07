@@ -112,7 +112,7 @@
     </title>
 
     {%- if page_description -%}
-      <meta name="description" content="{{ page_description | escape }}">
+      <meta name="description" content="{{ page_description | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
     {%- endif -%}
 
     <link rel="canonical" href="{{ canonical_url }}">
@@ -120,7 +120,7 @@
     {%- if settings.favicon -%}
       <link
         rel="shortcut icon"
-        href="{{ settings.favicon | img_url: '96x96' }}"
+        href="{{- settings.speedsize_url_pfx_https -}}{{ settings.favicon | img_url: '96x96' }}"
         type="image/png">
     {%- endif -%}
     {% render 'css-variables', direction: direction %}
