@@ -786,6 +786,7 @@ $('.multiCarousel_dots').click(function () {
       var xds = Math.abs(values[4])
       var itemWidth = $(slide_container).children().width();
       var itemsCondition = $(slide_container).width() - $(el).width();
+      var itemsCondition_lastSlide = $(slide_container).width() - $(el).innerWidth();
       var active_slide = $(slide_container).find('.active');
       var active_slide_number = active_slide.length;
       var slider_dots_length = slider_dots_length;
@@ -873,15 +874,15 @@ console.log(s,'s');
       var active_slide_position = parseInt(active_slide[0].dataset.index);
     }
     }
+    active_slider_dots(e);
       if (e == 0) {
-        active_slider_dots(0);
           translateXval = parseInt(xds) - parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + rightBtn).removeClass("over");
           }
 
           if (translateXval < 0) {
-            translateXval = itemsCondition;
+            translateXval = itemsCondition_lastSlide;
           }else if (translateXval <= itemWidth / 2) {
             translateXval = 0;
             if(autoplay == false && infinite_loop == false) {
@@ -890,7 +891,6 @@ console.log(s,'s');
           }
       }
       else if (e == 1) {
-        active_slider_dots(1);
           translateXval = parseInt(xds) + parseInt(itemWidth * s);
           if(autoplay == false && infinite_loop == false) {
           $(el + ' ' + leftBtn).removeClass("over");
@@ -898,15 +898,21 @@ console.log(s,'s');
           if (translateXval > itemsCondition) {
             translateXval = 0;
           }else if(translateXval > itemsCondition - itemWidth / 2){
-              translateXval = itemsCondition;
+              translateXval = itemsCondition_lastSlide;
               if(autoplay == false && infinite_loop == false) {
               $(el + ' ' + rightBtn).addClass("over");
               }
           }
       }else{
         translateXval = parseInt(itemWidth * s);
-        if (translateXval <= itemWidth / 2) {
+        console.log('translateXval', translateXval);
+          console.log('itemsCondition', itemsCondition);
+        if (translateXval > itemsCondition - itemWidth / 2) {
+          translateXval = itemsCondition_lastSlide;
+          console.log('translateXval > itemsCondition');
+        }else if (translateXval <= itemWidth / 2) {
           translateXval = 0;
+          console.log('translateXval <= itemWidth / 2');
         }
         console.log('slider dots active_slide_position');
         if(!center_slide_scale || active_slide_number == 1){
