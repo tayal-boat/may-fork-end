@@ -57,22 +57,84 @@ img[src="https://aax-eu.amazon-adsystem.com/s/iui3?d=forester-did&ex-fargs=%3Fid
 .MultiCarousel .MultiCarousel-inner { transition: 0.5s ease all; float: left; }
     .MultiCarousel .MultiCarousel-inner .item { float: left;}
     .MultiCarousel .MultiCarousel-inner .item > div { text-align: center; padding:10px; margin:10px; background:#f1f1f1; color:#666;}
-.MultiCarousel .leftLst, .MultiCarousel .rightLst { position:absolute; border-radius:50%;top:calc(50% - 20px); }
+    .MultiCarousel .leftLst, .MultiCarousel .rightLst {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        visibility: hidden;
+    }
+    .MultiCarousel .leftLst::before, .MultiCarousel .rightLst::before {
+        visibility: visible;
+        font-size: 100px !important;
+        color: red;
+    }
+    .leftLst:before {
+        content: '\2039';
+    }
+    .rightLst::before{
+        content: '\203a';
+    }
 .MultiCarousel .leftLst { left:0; }
 .MultiCarousel .rightLst { right:0; }
 
     .MultiCarousel .leftLst.over, .MultiCarousel .rightLst.over { pointer-events: none; background:#ccc; }
-
-    .multiCarousel_dots.active {
-        background-color: red;
-    }
     .MultiCarousel_dots_container {
         display: flex;
         height: fit-content;
         gap: 10px;
         justify-content: center;
         list-style: none;
+        align-items: center;
     }
-    .MultiCarousel .MultiCarousel-inner .item.center.active {
+    .MultiCarousel[data-centerslidescale="true"] .MultiCarousel-inner .item.center.active {
         scale: 1.15;
+    }
+    .multiCarousel_dots {
+        visibility: hidden;
+        width: 8px;
+        height: 8px;
+        position: relative;
+        margin: 0 5px;
+        font-size: 0;
+    }
+    .MultiCarousel[data-showactivedots="false"] .multiCarousel_dots {
+        width: 8px;
+        height: 8px;
+    }
+    .multiCarousel_dots:after {
+        content: '';
+        background: #44444478;
+        border-radius: 50%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        visibility: visible;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .multiCarousel_dots.active {
+        visibility: visible;
+        width: 40px !important;
+        height: 8px;
+        border-radius: 12px;
+    }
+    .MultiCarousel[data-showactivedots="false"] .multiCarousel_dots.active {
+        height: 16px;
+        background: #222;
+        text-align: center;
+        color: #fff;
+        font-weight: 500;
+        font-size: 12px;
+       }
+       .MultiCarousel[data-showactivedots=false] .multiCarousel_dots.active::after {
+        background: transparent;
+    }
+    @media screen and (min-width:768px) {
+    .MultiCarousel[data-centerslidescale="true"] .multiCarousel_dots {
+        display: none;
+    }
     }

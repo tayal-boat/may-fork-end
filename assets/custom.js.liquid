@@ -653,6 +653,8 @@ slider_dots = '',
 autoplay = false,
 infinite_loop = false,
 autoplay_delay = false,
+center_slide_scale = false,
+show_active_dots = false,
 autoplay_timeout = '';
 
 
@@ -665,6 +667,8 @@ var selector = 'MultiCarousel_' + section_id;
   autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
   autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
   infinite_loop = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-loop'));
+  center_slide_scale = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-centerSlideScale'));
+  show_active_dots = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-showActiveDots'));
   slidePre = document.createDocumentFragment();
   slidePost = document.createDocumentFragment();
   slideItem = document.querySelectorAll(itemsDiv + ' .item');
@@ -720,14 +724,16 @@ $('.multiCarousel_dots').click(function () {
           btnParentSb = $(this).parent().attr(dataItems);
           itemsSplit = btnParentSb.split(',');
           $(this).parent().attr("id", selector + id);
-          let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
+          
+          let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_desk_items'));
+          let mid_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
           let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
           if (bodyWidth >= 992) {
               incno = desktop_slide;
               itemWidth = sampwidth / incno;
           }
           else if (bodyWidth >= 768) {
-              incno = desktop_slide;
+              incno = mid_slide;
               itemWidth = sampwidth / incno;
           }
           else {
@@ -735,10 +741,10 @@ $('.multiCarousel_dots').click(function () {
               itemWidth = sampwidth / incno;
           }
           if(incno > 1){
-          // for(var j = 1 ; j <= incno-1; j++) {
-          //   console.log(slider_dots.length-j);
-          //   slider_dots[slider_dots.length-j].remove();
-          // }
+          for(var j = 1 ; j <= incno-1; j++) {
+            console.log(slider_dots.length-j);
+            slider_dots[slider_dots.length-j].remove();
+          }
           console.log('itemClass');
           let centerIndex = Math.floor(incno / 2);
           console.log(centerIndex);
@@ -747,7 +753,10 @@ $('.multiCarousel_dots').click(function () {
 
           for(var k = 0 ; k <= incno-1; k++) {
             $(this).find(itemClass)[k].classList.add('active');
+            console.log(center_slide_scale);
+            if(!center_slide_scale || incno == 1){
             slider_dots[k].classList.add('active');
+          }
           }
 
           $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
@@ -781,8 +790,9 @@ $('.multiCarousel_dots').click(function () {
       var active_slide_number = active_slide.length;
       var slider_dots_length = slider_dots_length;
       let counter = 0;
+      center_slide_scale = JSON.parse(document.querySelector(el).getAttribute('data-centerSlideScale'));
   
-
+console.log(s,'s');
       // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
       if(active_slide.length > 1){
         // active_slide = $(slide_container)[0];
@@ -800,7 +810,9 @@ $('.multiCarousel_dots').click(function () {
       let centerFlag = true;
       slider_item.removeClass("active");
       slider_item.removeClass("center");
+      if(!center_slide_scale || active_slide_number == 1){
       slider_dots.removeClass("active");
+      }
         for(var k = 0 ; k < slider_item.length; k++) {
         if(k == active_slide_position){ 
           for(var j = 0 ; j < active_slide_number; j++) {
@@ -810,7 +822,9 @@ $('.multiCarousel_dots').click(function () {
               counter = slider_item.length - j - 1; 
             }
           slider_item[counter].classList.add('active');
+          if(!center_slide_scale || active_slide_number == 1){
           slider_dots[counter].classList.add('active');
+          }
           if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
             centerIndex = Math.floor(active_slide_number / 2);
             console.log(centerIndex,'centerIndex');
@@ -830,8 +844,9 @@ $('.multiCarousel_dots').click(function () {
       let centerFlag = true;
       slider_item.removeClass("active");
       slider_item.removeClass("center");
+      if(!center_slide_scale || active_slide_number == 1){
       slider_dots.removeClass("active");
-      
+      }
         for(var k = 0 ; k < slider_item.length; k++) {
         if(k == active_slide_position){ 
           for(var j = 0 ; j < active_slide_number; j++) {
@@ -841,7 +856,10 @@ $('.multiCarousel_dots').click(function () {
               counter = j; 
             }
           slider_item[counter].classList.add('active');
+          console.log(center_slide_scale);
+          if(!center_slide_scale || active_slide_number == 1){
           slider_dots[counter].classList.add('active');
+          }
           if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
             centerIndex = Math.floor(active_slide_number / 2);
             console.log(centerIndex,'centerIndex');
@@ -852,7 +870,7 @@ $('.multiCarousel_dots').click(function () {
         }     
       }
     }else{
-      var active_slide_position = parseInt(active_slide[0].dataset.index) 
+      var active_slide_position = parseInt(active_slide[0].dataset.index);
     }
     }
       if (e == 0) {
@@ -886,11 +904,16 @@ $('.multiCarousel_dots').click(function () {
               }
           }
       }else{
-
         translateXval = parseInt(itemWidth * s);
         if (translateXval <= itemWidth / 2) {
           translateXval = 0;
         }
+        console.log('slider dots active_slide_position');
+        if(!center_slide_scale || active_slide_number == 1){
+          slider_dots.removeClass("active");
+          console.log(s , 'slider dots active s');
+        slider_dots[s].classList.add('active');
+      } 
       }
 
       $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
