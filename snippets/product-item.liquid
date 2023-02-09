@@ -379,9 +379,16 @@
             {% endif %}
           </p>
         {% endunless %}
-        {%- if request.page_type != 'password'  and settings.product_add_to_cart and product.available  and reduced_content != true and show_cta != true -%}
+        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
+          {% assign available_variants = 0 %}
+          {% for variant in product.variants %}
 
+            {% if variant.available %}
+              {% assign available_variants = available_variants | plus: 1 %}
+            {% endif %}
+          {% endfor %}
           <div class="d-flex align-items-center">
+
             {%- if available_variants == 1 -%}
               {%- capture form_id -%}
                 product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
@@ -410,9 +417,10 @@
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
                     {{- 'product.form.add_to_cart' | t -}}
+
                   {% endif %}
                 </button>
-                <button type="submit" class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
+                <button type="submit" class="{%- if product.tags contains settings.tag_selector -%}custom-offer-add-to-cart{% endif %} product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
                   <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}

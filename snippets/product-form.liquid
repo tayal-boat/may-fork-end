@@ -173,6 +173,9 @@
           </product-variants>
         {%- endunless -%}
     {%- if template.suffix != 'quick-buy-popover'  -%}
+    {% capture fixed_pod_discount %}
+      {% render 'fixed-discount-by-tag', product: product %}
+  {% endcapture %}
     {% unless product.tags contains 'NO-PRICE' %}
       <div class="product-meta__price-list-container custom-product-price-mobile" role="region" aria-live="polite">
         <div class="d-flex align-items-end justify-content-between">
@@ -548,9 +551,6 @@
           <div class="product-form__buy-buttons" {{ block.shopify_attributes }}>
             {%- form 'product', product, is: 'product-form', id: product_form_id -%}
               <input type="hidden" disabled name="id" value="{{ product.selected_or_first_available_variant.id }}">
-            {%- if product.tags contains settings.tag_selector -%}
-            <input class="flash_sale_enable" type="hidden" name="properties[{{ settings.tag_selector | handleize }}]" value="true">
-            {%- endif -%}
             {%- if product.tags contains settings.products_offering_freebie -%}
               <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
             {%- endif -%}
