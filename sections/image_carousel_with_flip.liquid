@@ -18,16 +18,13 @@
   .image_slider_flip .flip_icons_wrapper .single_icon img{width: 80%;border-radius: 50%;background: #494949;}
 
   @media(max-width:768px) {
-    .deal-of-the_day.{{ section.id }}{
-      padding-right: {{ section.settings.sectionpaddingright }}px;
-      padding-left: 0px;
-    }
-    .image_slider_flip .flip_icons_wrapper .single_icon{width: -webkit-fill-available;}
-    .image_slider_flip .flip_icons_wrapper .single_icon.active_icon{margin-right: 10px;margin-top: -6px;}
+    .deal-of-the_day.{{ section.id }}{padding-right: {{ section.settings.sectionpaddingright }}px;padding-left: 0px;}
+    .image_slider_flip .flip_icons_wrapper .single_icon{width: -webkit-fill-available;display: none;}
+    .image_slider_flip .flip_icons_wrapper .single_icon.active_icon{margin-right: 10px;margin-top: -6px;display: block;}
   }
 </style>
-
-<div class="container deal-of-the_day {{ section.id }}  image_slider_flip">
+ 
+<div class="container deal-of-the_day {{ section.id }}  image_slider_flip {% if section.settings.additional_class %} {{ section.settings.additional_class }}{% endif %}">
   {% if section.settings.sectionHeading != blank %}
     <div class="row">
       <div class="col-md-12 section__header text-container d-flex justify-content-between">
@@ -113,6 +110,8 @@
 
 {% if section.settings.mobile_bg_image != blank %}
 <style>
+  
+
   @media(max-width:767px) {
     .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.mobile_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important;max-width: fit-content;padding-right: 0px;}
   }
@@ -131,42 +130,15 @@
     */
     $('.flip-box-inner .flip-box-back').hide();
 
-    /* $('.flip-box-inner').on('click', '.flip-box-front', function(){
-      let flip_element = $(this);
-      $('.flip-box-inner .flip-box-back').css('display', 'none');
-      flip_element.parent('.flip-box-inner').find('.flip-box-back').show();
-      $('.flip-box-inner .flip-box-front').css('display', 'block');
-      flip_element.parents('.flip-box-inner').find('.flip-box-front').hide();
-      
-
-      var $speed = 300;  // in ms
-      $('.deal-of-the_day .deal-slider').trigger('to.owl.carousel', [$(this).data( 'position' ), $speed] );
-
-      flip_element.parent('.flip-box-inner').addClass('item-clicked');
-      setTimeout(function () {
-        $('.flip-box-inner.item-clicked .flip-box-front').show();
-        $('.flip-box-inner.item-clicked .flip-box-back').hide();
-        $('.flip-box-inner').removeClass('item-clicked');
-      }, 5000);
-    });
-
-    
-
-    $('.flip-box-inner').on('click', '.flip-box-back', function(){
-      $('.flip-box-inner  .flip-box-front').css('display', 'block');
-      $(this).parent('.flip-box-inner').find('.flip-box-front').show();
-      $(this).parent('.flip-box-inner').find('.flip-box-back').hide();
-      $(this).parent('.flip-box-inner .flip-box-front').css('display', 'block');
-    }); */
 
     /* Code for showing active icon(small icons before flip slider) for current slide */
-    let $owl = $('.deal-of-the_day .deal-slider.owl-carousel');
+    let $owl = $('.deal-of-the_day.{{ section.id }} .deal-slider.owl-carousel');
     
     $owl.children().each( function( index ) {
       $(this).attr( 'data-position', index );
     });
 
-    let sliderSelector = document.querySelectorAll('.custom_slider_init');
+    let sliderSelector = document.querySelectorAll('.{{ section.id }}.custom_slider_init');
     for (let i = 0; i < sliderSelector.length; i++) {
       
       $owl.owlCarousel({
@@ -186,12 +158,10 @@
         responsive: {
             300: {
                 items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_items')),
-                dots: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_dots')),
-                rows: 2
+                dots: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_dots'))
             },
             1024: {
-              items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_mid_items')),
-              rows: 2
+              items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_mid_items'))
             }
         }
       });
@@ -341,6 +311,11 @@
         "id": "bg_color",
         "label": "Background color",
         "default": "#FFFFFF"
+      },
+      {
+        "type": "text",
+        "id": "additional_class",
+        "label": "Custom Class"
       }
 
     ],
