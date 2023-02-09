@@ -81,8 +81,8 @@
 
         var res = '<b>' + formatPrice(price) + '</b>';
         if (comparing) {
-          res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>'
-        + '<b style="padding-left:8px;">' + formatPrice(price) + '</b>'
+          res = '<b style="padding-right:4px;">' + formatPrice(price) + '</b>'
+          +  ' <span style="color:#05A143;font-size:14px;font-weight:500;">' + Math.floor(discount_ratio * 100) + '% off </span>'
             + ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
         }
     
@@ -119,11 +119,12 @@
       var price = this.price;
       var price_ratio = this.price_ratio;
       var discount_ratio = 1.0 - price_ratio;
+      let card_offers = JSON.parse(Shopify.card_offers);
       if (price >= 500) {
         /* res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>'; */
-        res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>';
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_1}</p>`;
       } else {
-        res += ' <p class="ais-hit--price-discount">Free Shipping available</p>';
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_2}</p>`;
       }
       // res += ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
       //   Math.floor(discount_ratio * 100) +
@@ -178,7 +179,7 @@
         rating_value = Math.round(rating_value * 10) / 10;
         var rating_count = reviews.rating_count;
         res = `<div class="rating"><div class="rating__stars" role="img" aria-label="${rating_value} out of 5.0 stars">
-            <span style="color:#05A143;font-size:16px;">★</span>
+            <span style="color:#05A143;">★</span>
             ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
             </div>`;
       } else {
