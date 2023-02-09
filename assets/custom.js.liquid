@@ -328,29 +328,31 @@ for (let i = 0; i < sliderSelector.length; i++) {
 
  
 Shopify.homepageLazyload = function(){
-  $('.explore_now_slider').owlCarousel({
-    loop: true,
-    responsiveClass: true,
-    autoplay:true,
-    items: 6,
-    nav: false,
-    dots: false,
-    responsive: {
-      300: {
-        items: 2.3,
-        margin: 10
-      },
-      600: {
-        items: 5.2,
-        margin: 10
-      },
-      1000: {
-        items: 6,
-        loop: true,
-        margin: 10
-      }
-    }
-  })
+  Shopify.custom_slider(e);
+  // $('.explore_now_slider').owlCarousel({
+  //   loop: true,
+  //   responsiveClass: true,
+  //   autoplay:true,
+  //   items: 6,
+  //   nav: false,
+  //   dots: false,
+  //   responsive: {
+  //     300: {
+  //       items: 2.3,
+  //       margin: 10
+  //     },
+  //     600: {
+  //       items: 5.2,
+  //       margin: 10
+  //     },
+  //     1000: {
+  //       items: 6,
+  //       loop: true,
+  //       margin: 10
+  //     }
+  //   }
+  // })
+  
 
 // Explore our slide section
 var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item');
@@ -639,7 +641,7 @@ $(".razorpay-checkout").click(function () {
 // Custom JavaScript slider
 
 $(document).ready(function () {
-
+Shopify.custom_slider = function(e){
 var section_id = '',
 sliderSelector = document.querySelectorAll('.MultiCarousel'),
 slidePre = '',
@@ -748,7 +750,8 @@ $('.multiCarousel_dots').click(function () {
 
           for(var k = 0 ; k <= incno-1; k++) {
             $(this).find(itemClass)[k].classList.add('active');
-            if(!center_slide_scale || incno == 1){
+            if(!center_slide_scale && incno < 2){
+              console.log(incno, 'incno');
             slider_dots[k].classList.add('active');
           }
           }
@@ -757,6 +760,7 @@ $('.multiCarousel_dots').click(function () {
           $(this).find(itemClass).each(function () {
               $(this).outerWidth(itemWidth);
           });
+          $(this).addClass('MultiCarousel_loaded');
           if(autoplay == false && infinite_loop == false) {
           $(".leftLst").addClass("over");
           $(".rightLst").removeClass("over");
@@ -804,7 +808,7 @@ $('.multiCarousel_dots').click(function () {
       let centerFlag = true;
       slider_item.removeClass("active");
       slider_item.removeClass("center");
-      if(!center_slide_scale || active_slide_number == 1){
+      if(!center_slide_scale && active_slide_number < 2){
       slider_dots.removeClass("active");
       }
         for(var k = 0 ; k < slider_item.length; k++) {
@@ -816,7 +820,7 @@ $('.multiCarousel_dots').click(function () {
               counter = slider_item.length - j - 1; 
             }
           slider_item[counter].classList.add('active');
-          if(!center_slide_scale || active_slide_number == 1){
+          if(!center_slide_scale && active_slide_number < 2){
           slider_dots[counter].classList.add('active');
           }
           if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
@@ -837,7 +841,7 @@ $('.multiCarousel_dots').click(function () {
       let centerFlag = true;
       slider_item.removeClass("active");
       slider_item.removeClass("center");
-      if(!center_slide_scale || active_slide_number == 1){
+      if(!center_slide_scale && active_slide_number < 2){
       slider_dots.removeClass("active");
       }
         for(var k = 0 ; k < slider_item.length; k++) {
@@ -849,7 +853,7 @@ $('.multiCarousel_dots').click(function () {
               counter = j; 
             }
           slider_item[counter].classList.add('active');
-          if(!center_slide_scale || active_slide_number == 1){
+          if(!center_slide_scale && active_slide_number < 2){
           slider_dots[counter].classList.add('active');
           }
           if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
@@ -901,7 +905,7 @@ $('.multiCarousel_dots').click(function () {
         }else if (translateXval <= itemWidth / 2) {
           translateXval = 0;
         }
-        if(!center_slide_scale || active_slide_number == 1){
+        if(!center_slide_scale && active_slide_number < 2){
           slider_dots.removeClass("active");
         slider_dots[s].classList.add('active');
       } 
@@ -1007,6 +1011,8 @@ function getMouseDirection(e) {
 }
 
 }
-
+  }
+  
+  Shopify.custom_slider(e);
 });
 
