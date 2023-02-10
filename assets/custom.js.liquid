@@ -370,15 +370,15 @@ explore_now_slider_img.forEach((slide, i) => {
   });
 
 // Press section
-    $('.custom_press_slider').owlCarousel({
-      loop: true,
-      responsiveClass: true,
-      autoplay: true,
-      items: 1,
-      slideBy: 1,
-      nav: false,
-      dots: true
-    });
+    // $('.custom_press_slider').owlCarousel({
+    //   loop: true,
+    //   responsiveClass: true,
+    //   autoplay: true,
+    //   items: 1,
+    //   slideBy: 1,
+    //   nav: false,
+    //   dots: true
+    // });
 
   $('.shopify-section shopify-section--press').on('click', function() {
     clevertap.event.push("In the Press section clicked", {"userSource": userSource});
@@ -643,6 +643,7 @@ $(".razorpay-checkout").click(function () {
 $(document).ready(function () {
 Shopify.custom_slider = function(e){
 var section_id = '',
+itemsDiv,
 sliderSelector = document.querySelectorAll('.MultiCarousel'),
 slidePre = '',
 slidePost = '',
@@ -662,9 +663,10 @@ autoplay_timeout = '';
 
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
+   itemsDiv = '.MultiCarousel-inner.' + section_id;
+  // if(document.querySelector(itemsDiv).classList.contains('MultiCarousel_loaded')){
   var itemsMainDiv = ('.MultiCarousel.' + section_id);
-var selector = 'MultiCarousel_' + section_id;
-  var itemsDiv = '.MultiCarousel-inner.' + section_id;
+  var selector = 'MultiCarousel_' + section_id;
   var itemWidth = "";
   autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
   autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
@@ -948,11 +950,8 @@ setInterval(function() {
 
 let target = document.querySelector('.MultiCarousel-inner.' + section_id);
 function sliderDrag(event, slide_direction) {
-  if(event.target.offsetParent.classList.contains('draggable')){
-    var Parent = "#" + event.target.offsetParent.parentElement.id;
-  }else{
-    var Parent = "#" + event.target.parentElement.id;
-  }
+    var Parent = "#" + $(event.target).parents('.MultiCarousel').attr('id');
+  // console.log(Parent);
       var slide = $(Parent).attr("data-slide");
       var slide_container = $(Parent).children('.MultiCarousel-inner');
       autoplay_delay = true;
@@ -1009,7 +1008,7 @@ function getMouseDirection(e) {
  }
     // console.log(xDirection + " " + yDirection);
 }
-
+// }
 }
   }
   
