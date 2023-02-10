@@ -72,10 +72,28 @@
         price_ratio = this.price_ratio;
         var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
         var discount_ratio = 1.0 - price_ratio;
-        
         if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
-          let discount = price - Shopify.fixed_discount(this.tags);
-          price = price - discount; 
+          let variantId = this.objectID;
+          let pod_price = Shopify.fixed_discount(this.tags);
+          let offerVariantdata = sessionStorage.getItem('variantQtys');
+          let OfferProperty= [];
+          let varient_pod_units = [];
+          offerVariantdata = JSON.parse(offerVariantdata);
+
+           for (var key in offerVariantdata) {
+              if (offerVariantdata.hasOwnProperty(variantId)) {
+               let OfferPropertyArr = offerVariantdata[variantId];
+                OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+                varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+                break;
+               }
+             }
+             let varient_pod_unit = varient_pod_units[0];
+             varient_pod_unit = parseInt(varient_pod_unit);
+             OfferProperty = OfferProperty[0];
+             if(varient_pod_unit > 0 && OfferProperty == 'true'){
+              price = pod_price; 
+             }
           discount_ratio = (compare_at_price - price) / compare_at_price;
       }
 
@@ -142,7 +160,11 @@
         free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
       }
       if (this.inventory_available) {
-        res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
+        if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
+          res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-offer-add-to-cart algolia_pod_offer add-to-cart-button ' + ${flashSale} + '" />`;
+        }else{
+          res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
+        }
       } else {
         if (this.tags.includes('Coming-Soon')) {
           res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
