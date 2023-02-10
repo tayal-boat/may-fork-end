@@ -2,7 +2,8 @@
 
 <div class="product__info">
   <!-- PRODUCT META -->
-  <product-meta form-id="{{ product_form_id }}" price-class="price--large" class="product-meta" data-product-price-list>
+  {% capture product_info %}
+  <product-meta form-id="{{ product_form_id }}" price-class="price--large" class="product-meta">
     {%- if section.settings.show_vendor -%}
       <h2 class="product-meta__vendor heading heading--small">
         {%- assign vendor_handle = product.vendor | handle -%}
@@ -93,8 +94,9 @@
 
     
   </product-meta>
-
-  {%- render 'product-form', product: product, update_url: update_url -%}
+{% endcapture %}
+<div class="d-lg-none">{{ product_info }}</div>
+{%- render 'product-form', product: product, update_url: update_url , product-info: product_info -%}
 
 
   {%- assign help_page = section.settings.help_page -%}
