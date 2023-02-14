@@ -24,7 +24,7 @@
         {%- unless product.has_only_default_variant or block.settings.hide_sold_out_variants and product.available == false -%}
           {%- assign size_chart_page = block.settings.size_chart_page -%}
           {%- assign found_size_option = false -%}
-
+{% capture varaint_swatches %}
           <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" {% if update_url %}update-url{% endif %} {% if block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-form__variants" {{ block.shopify_attributes }}>
             {%- for option in product.options_with_values -%}
               {%- assign option_downcase = option.name | downcase -%}
@@ -61,7 +61,7 @@
                     <button type="button" is="toggle-button" class="product-form__option-link link text--subdued hidden-tablet-and-up" aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-popover" aria-expanded="false">{{ 'product.general.size_chart' | t }}</button>
                   {%- endif -%}
                 </div>
-                    {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
+                    {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
                   <img class="varnt-drop h-100" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1_968e75a2-9de8-4f80-9b47-1136ad3beb50.png?v=1654760428">
                  {% endif %}
                 </div>
@@ -171,6 +171,11 @@
               </div>
             </noscript>
           </product-variants>
+  {% endcapture %}
+  <div
+    class="{% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}d-lg-none{% endif %}">
+    {{ varaint_swatches }}
+  </div>
         {%- endunless -%}
     {%- if template.suffix != 'quick-buy-popover' -%}
     {% unless product.tags contains 'NO-PRICE' %}
@@ -193,6 +198,7 @@
 {%- endif -%}
 {% endcapture %}
 {%- endif -%}
+{% capture pdp_price %}
       <div class="product-meta__price-list-container custom-product-price-mobile" role="region" aria-live="polite">
         <div class="d-flex align-items-end justify-content-between">
           <div
@@ -267,6 +273,8 @@
                 </div>
         </div>
       </div>
+{% endcapture %}
+<div class="d-lg-none">{{ pdp_price }}</div>
 {% endunless %}
     {% endif %}
       {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
@@ -285,75 +293,18 @@
 
 
 <!--  for desktop layout -->
-    <div class="amazon custom-product-price">
+    <div class="pdp-inner custom-product-price">
       {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}{% capture product_images %}{%- render 'product-media', product: product -%}{% endcapture %}       
         <div class="d-none d-lg-block">{{ product_images }}</div>
         <div class="w-lg-50">
-          <div class="d-none d-lg-block">{{ flashsale }} {{ product-info }}</div>
+          <div class="d-none d-lg-block">{{ flashsale }} {{ product-info }} {{ varaint_swatches }}</div>
       {% endif %}
+    <div class="new-pdp">
+      <div class="amazon">
       <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
-         <div class="price-list align-items-center {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom_product_pod_price {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list data-pod="{{ fixed_pod_discount | strip }}">
-           {%- if product.tags contains 'flash-sale' -%}
-          	<span class="flash-icon"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group-2.png?v=1655107410" alt="thunder" /></span>&nbsp;
-           {%- endif -%}
-           {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
-          <span class="price price--highlight price--large">
-            <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-
-            {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- endif -%}
-          </span>
-
-          <span class="price price--compare line-through">
-            <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-
-            {%- if settings.currency_code_enabled -%}
-              {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- else -%}
-              {{- product.selected_or_first_available_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- endif -%}
-          </span>
-        {%- else -%}
-          <span class="price price--large">
-            <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-            {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- endif -%}
-          </span>
-        {%- endif -%}
-
-        {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
-          <div class="price text--subdued">
-            <div class="unit-price-measurement">
-              <span class="unit-price-measurement__price">{{ product.selected_or_first_available_variant.unit_price | money }}</span>
-              <span class="unit-price-measurement__separator">/</span>
-
-              {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
-                <span class="unit-price-measurement__reference-value">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_value }}</span>
-              {%- endif -%}
-
-              <span class="unit-price-measurement__reference-unit">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}</span>
-            </div>
-          </div>
-        {%- endif -%}
-      </div>
-
-
-
-        <div class="d-flex w-lg-50 mt-2 align-items-baseline justify-content-between">
-          {% if product.compare_at_price > discounted_price %}     
-        <p class="custom-saved-price" style="letter-spacing: -0.045em;  color: #00C68C;  font-weight: 600; font-size: 14px; line-height: 20px;"> You Save: ₹ {{ product.compare_at_price | minus: discounted_price | divided_by: 100 }} ({{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '%' }})  </p>     
-         {% endif %}
-        <p class="inclusive">Inclusive of all taxes</p>
-
-       
-    </div>
-        <div class="amazon-c w-lg-50 d-flex align-items-baseline justify-content-between" style="background: #DCDCDC;padding: 4px 16px;">
+          {{ pdp_price }}
+          <div class="amazon-c d-flex align-items-baseline justify-content-between"
+            style="background: #DCDCDC;padding: 4px 16px;">
          <span class="stock-label-side" style="font-weight: 700; color: #00C68C;">{% if product.available %}In Stock{% else %}Out of Stock{% endif %}</span>
             {{ random_cart }}
             </div>
@@ -580,7 +531,7 @@
                 <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}data-use-primary{% endunless %} data-product-add-to-cart-button data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full" {% unless product.selected_or_first_available_variant.available %} disabled{% endunless %} data-price="{{ product.price }}">
                   {%- if product.selected_or_first_available_variant.available -%}
                       {{- 'product.form.add_to_cart' | t -}}
-                      <span class="pdp-btn-price">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
                         {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
@@ -597,7 +548,9 @@
 
                 {% unless product.tags contains settings.products_offering_freebie %} 
                 <div class="amazon-c d-flex align-items-baseline justify-content-between">
-                  <button type="button" onclick="onBuyNowClick(this)" class="w-50" id="gokwik-buy-now"{% if settings.hideFlow %} style="display:none !important;" {% endif %}  {% unless product.selected_or_first_available_variant.available %}disabled  style="display:none !important;" {% endunless %}>
+                  <button type="button" onclick="onBuyNowClick(this)" class="w-50 w-lg-100" id="gokwik-buy-now" {% if settings.hideFlow %}
+                    style="display:none !important;" {% endif %} {% unless product.selected_or_first_available_variant.available
+                    %}disabled style="display:none !important;" {% endunless %}>
                     {{ settings.buynow-titile }}
                     <div style="display:none"><div class="cir-loader">Loading..</div></div>
                   </button>
@@ -611,6 +564,7 @@
                   <button id="BIS_trigger" type="button" class="custom-notify-btn" data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
                     Notify me
                   </button>
+          </div>
                  {% comment %} {% if product.metafields.custom.product_highlights %} {%- endif -%}{% endcomment %}
                    <div class="price-container product-highlight mt-1 p-3">
                     <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey; font-weight: 700;">Product Highlights</h6>
@@ -625,7 +579,7 @@
                       tempor incidunt ut labore et.</li>
                    </div>
                   {% comment %}  {% endcomment %}
-
+          </div>
 
                {%- endif -%}
 
