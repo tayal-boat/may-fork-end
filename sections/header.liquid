@@ -125,15 +125,18 @@ END of Namogoo Snippet
      }
     @media(max-width:768px){
       nav.header__inline-navigation {flex: 0;}
-      nav.header__inline-navigation .header__icon-list button.header__icon-wrapper {position: absolute;top: 50%;transform: translateY(-50%);}
-      nav.header__inline-navigation .header__icon-list button.header__icon-wrapper img{height: 19px;width: 22px;}
+      {% comment %} nav.header__inline-navigation .header__icon-list button.header__icon-wrapper {position: absolute;top: 50%;transform: translateY(-50%);}
+      nav.header__inline-navigation .header__icon-list button.header__icon-wrapper img{height: 16px;width: 22px;}
       store-header .header__wrapper{gap: 36px;}
       .header__logo .header__logo-link .header__logo-image{margin-top: -7px;}
-      .header__secondary-links .header__icon-list .search-icon{height: 32px;}
+      .header__secondary-links .header__icon-list .search-icon{height: 32px;} {% endcomment %}
 
-      .custom_drawer_close_btn{display: none;background: #f00;padding: 5px 4px;color: #fff;border-radius: 50% !important;position: absolute;}
-      button.header__icon-wrapper.tap-area.hidden-desk[aria-expanded="true"] ~ .custom_drawer_close_btn {Display: block;}
-      button.header__icon-wrapper.tap-area.hidden-desk[aria-expanded="false"] ~ .custom_drawer_close_btn {Display: none;}
+      #mobile-menu-drawer.drawer{max-width: fit-content;height: -webkit-fill-available;}
+      .header__icon-list  .header__icon-wrapper[aria-expanded="true"]{display: none;}
+      .header__icon-list  .header__icon-wrapper[aria-expanded="false"]~span{display: none;}
+      .custom_drawer_close_btn {position: absolute;z-index: 9;}
+      .custom_drawer_close_btn img{height: 26px;background: #f00;border-radius: 50%;padding: 4px;}
+      html.lock-all .header__wrapper .header__logo{margin-left: 18px;}
     }
 </style>
 
@@ -179,14 +182,13 @@ END of Namogoo Snippet
               
             </button>
 
-            <button
-                type="button"
+            <span 
                 class="custom_drawer_close_btn drawer__close-button drawer__close-button--block tap-area"
                 data-action="close"
                 title="{{ 'general.accessibility.close' | t | escape }}"
               >
                 {%- render 'icon' with 'nav-arrow-left' -%}
-            </button>
+              </span>
 
           {%- endif -%}
           {% comment %}
@@ -735,6 +737,15 @@ document.addEventListener('cart:updated', function(){cart_bubble() });
       document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
   });
 </script>
+
+<script>
+  $('.custom_drawer_close_btn').on('click', function(e){
+    e.preventDefault();
+    $('.header__icon-list .header__icon-wrapper').attr('aria-expanded', 'false')
+    return false;
+  })
+</script>
+
 
 <script type="application/ld+json">
   {
