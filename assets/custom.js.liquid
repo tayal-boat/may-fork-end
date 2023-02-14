@@ -134,7 +134,7 @@
  * CLEVERTAP EVENTS
  * ------------------------------------------------------------------------------------------------------------
  *
-*/
+ */
 
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 
@@ -232,34 +232,33 @@ Shopify.variantChange = function(e){
     $('.custom-notify-btn').hide();
     $('.product__info button#AddToCart.button--primary').css('display','block')
   }
-  $("#AddToCart .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
-  // $(".pdp-btn-price").text(e.price / 100)
-  let custom_price = e.price / 100;
-        custom_price = custom_price - 1000;
-        if( document.querySelector('.custom-product-of-the-day-price .current_price')){
- document.querySelector('.custom-product-of-the-day-price .current_price').innerHTML = '₹'+ custom_price;
+  let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
+  if(home_pod_price){
+  let custom_price = '';
+let offerVariantdata = sessionStorage.getItem('variantQtys');
+let OfferProperty= [];
+let varient_pod_units = [];
+offerVariantdata = JSON.parse(offerVariantdata);
+ for (var key in offerVariantdata) {
+    if (offerVariantdata.hasOwnProperty(e.id)) {
+     let OfferPropertyArr = offerVariantdata[e.id];
+      OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+      varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+      break;
+     }
+   }
+   let varient_pod_unit = varient_pod_units[0];
+   varient_pod_unit = parseInt(varient_pod_unit);
+   OfferProperty = OfferProperty[0];
+   if(varient_pod_unit > 0 && OfferProperty == 'true'){  
+    custom_price = parseInt(home_pod_price.dataset.pod)
+   }else{
+    custom_price = e.price / 100;
+   }
+ 
+    home_pod_price.innerHTML = '₹ '+ custom_price;
 }
- let variantQtys = sessionStorage.getItem('variantQtys');
-//  variantQtys = JSON.parse(variantQtys);
-//  console.log(variantQtys);
-//  unitsLeft = document.querySelector('.p-units');
- usual_price = document.querySelector('.usual_price');
-      if(usual_price){
-        usual_price.innerHTML = '₹'+ e.price / 100;
-      }
-  //  for (var key in variantQtys) {
-  //   if (variantQtys.hasOwnProperty(e.id)) {
-  //     let pod_units = variantQtys[e.id];
-  //     // if(unitsLeft){
-  //     //  unitsLeft.innerHTML = pod_units[0]['pod_units'];
-  //     // }
-  //     if(usual_price){
-  //       usual_price.innerHTML = '₹'+ pod_units[0]['pod_revertprice'];
-  //     }
-  //    }
-  //  }
 }
-
 
 // Creating cleverTap push event
 function createCleverTapEvent( event_name, event_data ){
@@ -268,16 +267,16 @@ function createCleverTapEvent( event_name, event_data ){
   }
 }
 
-// ! Owl slider 
-// ? Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
+// Owl slider 
+// Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
 
 $("#homepage-carousel .custom_slider_init").on('initialized.owl.carousel', async () => {
   $("#homepage-carousel .owl-item img").each(function(){$(this).css({"width":"100%"});$(this).removeClass("ml-3") })
 })
 
 
-let section_̥id = '';
-let sliderSelector = document.querySelectorAll('.custom_slider_init');̥
+let section_id = '';
+let sliderSelector = document.querySelectorAll('.custom_slider_init');
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
   let slider_section_id = '.custom_slider_init.' + section_id;
@@ -686,3 +685,65 @@ $(".razorpay-checkout").click(function () {
 });
 
 /* clevertap code for clicking razor pay ends here */
+
+$(document).on("click", ".custom-offer-add-to-cart", function(e) {
+  e.preventDefault();
+  let offerForm = $(this).parents("form")[0];
+  let offerId = offerForm.querySelector('[name="id"]').value;
+  let offerVariantData = sessionStorage.getItem('variantQtys');
+  let OfferProperty= [];
+  let varient_pod_units = [];
+  let podData = {};
+  offerVariantData = JSON.parse(offerVariantData);
+    for (var key in offerVariantData) {
+     if (offerVariantData.hasOwnProperty(offerId)) {
+      let OfferPropertyArr = offerVariantData[offerId];
+       OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+       varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+       break;
+      }
+    }
+  let varient_pod_unit = varient_pod_units[0];
+  varient_pod_unit = parseInt(varient_pod_unit);
+  OfferProperty = OfferProperty[0];
+  if(varient_pod_unit > 0){
+   podData = {'quantity': 1,'id': offerId,'properties': {'_POD': OfferProperty }}
+  }else{
+   podData = {'quantity': 1,'id': offerId} 
+  }
+    if($(this).hasClass( "algolia_pod_offer" )){
+      $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: podData,
+        success: function(e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                bubbles: !0
+            }));
+            setTimeout(function() {
+              $(".header__cart-count").html($("#mini-cart input.cart--count").val())
+          }, 1500)
+            // console.log('hiii');
+            document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex')
+        }
+    })
+    }else{
+      $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: podData,
+        success: function(e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                bubbles: !0
+            }));
+            setTimeout(function() {
+              $(".header__cart-count").html($("#mini-cart input.cart--count").val())
+          }, 1500)
+        }
+    })
+    }
+});
