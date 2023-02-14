@@ -24,7 +24,6 @@
         {%- unless product.has_only_default_variant or block.settings.hide_sold_out_variants and product.available == false -%}
           {%- assign size_chart_page = block.settings.size_chart_page -%}
           {%- assign found_size_option = false -%}
-{% capture varaint_swatches %}
           <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" {% if update_url %}update-url{% endif %} {% if block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-form__variants" {{ block.shopify_attributes }}>
             {%- for option in product.options_with_values -%}
               {%- assign option_downcase = option.name | downcase -%}
@@ -171,11 +170,6 @@
               </div>
             </noscript>
           </product-variants>
-  {% endcapture %}
-  <div
-    class="{% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}d-lg-none{% endif %}">
-    {{ varaint_swatches }}
-  </div>
         {%- endunless -%}
     {%- if template.suffix != 'quick-buy-popover' -%}
     {% unless product.tags contains 'NO-PRICE' %}
@@ -297,7 +291,7 @@
       {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}{% capture product_images %}{%- render 'product-media', product: product -%}{% endcapture %}       
         <div class="d-none d-lg-block">{{ product_images }}</div>
         <div class="w-lg-50">
-          <div class="d-none d-lg-block">{{ flashsale }} {{ product-info }} {{ varaint_swatches }}</div>
+          <div class="d-none d-lg-block">{{ flashsale }} {{ product-info }}</div>
       {% endif %}
     <div class="new-pdp">
       <div class="amazon">
