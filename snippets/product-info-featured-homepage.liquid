@@ -2,9 +2,10 @@
 
 {% assign pod_units = 0 %}
 {% for variant in product.variants %}
-  {% assign variant_pod_units = variant.metafields.custom.pod_variant_unit.value | plus: 0 %}
-
-  {% if variant.metafields.custom.pod_deal_applicability == true and variant_pod_units > 0 and variant.inventory_quantity > 0 %}
+  {% if variant.metafields.custom.pod_units %}
+    {% capture variant_pod_units %}
+      {{ variant.metafields.custom.pod_units }}
+    {% endcapture %}
     {% assign pod_units = pod_units | plus: variant_pod_units %}
   {% endif %}
 {% endfor %}
@@ -32,12 +33,12 @@
 
     {% unless featured %}
       <p class="units_text text-uppercase">only
-        <span class="p-units">{{ pod_units }}</span>
+        <span class="p-units">{{ product.metafields.custom.pod_units }}</span>
         units left</p>
       <h1 class="product-meta__title heading h3">{{ product.title | split: '|' | first }}</h1>
     {% else %}
       <p class="units_text text-uppercase">only
-        <span class="p-units">{{ pod_units }}</span>
+        <span class="p-units">{{ product.metafields.custom.pod_units }}</span>
         units left</p>
       <h2 class="product-meta__title heading h3 test">
         <a href="{{ product.url }}">{{ product.title | split: '|' | first | split: 'boAt' | last }}</a>
@@ -87,6 +88,9 @@
         {{- form | payment_terms -}}
       {%- endform -%}
     </product-payment-terms>
+
+
+  </product-meta>
 
   {%- render 'product-form-featured-homepage', product: product, update_url: update_url -%}
 
