@@ -23,6 +23,21 @@
   {% render 'fixed-discount-by-tag', product: product %}
 {% endcapture %}
 
+{% comment %} info: Code for Swatch List begins {% endcomment %}
+{% capture remaining_variants_string %}
+  {{ product.variants.size | minus: 2 }}
+{% endcapture %}
+{% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
+{% assign total_swatches_to_show = 2 %}
+{% capture swatch_list %}
+  {% for variant in product.variants limit: total_swatches_to_show %}
+    <span class='swatch-circle' style="background:{% if variant.option2 %}{{variant.option2}}{% else %}{{variant.option1}}{% endif %}"></span>
+  {% endfor %}
+  {% if remaining_variants_number >= 1 %}
+    &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
+  {% endif %}
+{% endcapture %}
+{% comment %} info: Code for Swatch List ends {% endcomment %}
 {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
 {%- if settings.enable_fixed_discount and product.tags contains settings.tag_selector -%}
@@ -341,32 +356,14 @@
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
                   aria-expanded="false"
                   class="variants-list hidden-tablet-and-up custom_atoc_btn">
-                  {% for variant in product.variants limit: 3 %}
-                      <span class='swatch-circle' style="background:{% if variant.option2 %}{{variant.option2}}{% else %}{{variant.option1}}{% endif %}"></span>
-                  {% endfor %}
-                  {% capture remaining_variants_string %}
-                    {{ product.variants.size | minus: 3 }}
-                  {% endcapture %}
-                  {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
-                  {% if remaining_variants_number >= 1 %}
-                    &nbsp;<span class="more-colors" style="font-size:11px">+{{- remaining_variants_number -}}</span>
-                  {% endif %}
+                    {{ swatch_list }}
                 </button>
                 <button
                   is="toggle-button"
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
                   aria-expanded="false"
                   class="variants-list hidden-phone">
-                  {% for variant in product.variants limit: 3 %}
-                    <span class='swatch-circle' style="background:{% if variant.option2 %}{{variant.option2}}{% else %}{{variant.option1}}{% endif %}"></span>
-                  {% endfor %}
-                  {% capture remaining_variants_string %}
-                    {{ product.variants.size | minus: 3 }}
-                  {% endcapture %}
-                  {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
-                  {% if remaining_variants_number >= 1 %}
-                    &nbsp;<span class="more-colors" style="font-size:9px">+{{- remaining_variants_number -}}</span>
-                  {% endif %}
+                  {{ swatch_list }}
                 </button>
               {% endif %}
             </span>
