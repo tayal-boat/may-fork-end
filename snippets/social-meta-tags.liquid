@@ -31,13 +31,13 @@ Validate your Pinterest rich pins
 
 {%- if page_image -%}
   <meta property="og:image" content="http:{{ page_image | img_url: 'master' }}">
-  <meta property="og:image:secure_url" content="https:{{ page_image | img_url: 'master' }}">
+  <meta property="og:image:secure_url" content="{{- settings.speedsize_url_pfx -}}https:{{ page_image | img_url: 'master' }}">
   <meta property="og:image:width" content="{{ page_image.width }}">
   <meta property="og:image:height" content="{{ page_image.height }}">
 {%- endif -%}
 
 {%- if page_description -%}
-  <meta property="og:description" content="{{ page_description | escape }}">
+  <meta property="og:description" content="{{ page_description | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
 {%- endif -%}
 
 <meta property="og:url" content="{{ canonical_url }}">
@@ -58,19 +58,19 @@ More information:
 
 {%- if request.page_type == 'product' -%}
   <meta name="twitter:title" content="{{ product.title | escape }}">
-  <meta name="twitter:description" content="{{ product.description | strip_html | truncatewords: 140, '' | escape }}">
+  <meta name="twitter:description" content="{{ product.description | strip_html | truncatewords: 140, '' | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
 {%- elsif request.page_type == 'article' -%}
   <meta name="twitter:title" content="{{ article.title }}">
   <meta name="twitter:description" content="{{ article.excerpt_or_content | strip_html | truncatewords: 140, '' | escape }}">
 {%- elsif request.page_type == 'collection' -%}
   <meta name="twitter:title" content="{{ collection.title }}">
-  <meta name="twitter:description" content="{{ collection.description | strip_html | truncatewords: 140, '' | escape }}">
+  <meta name="twitter:description" content="{{ collection.description | strip_html | truncatewords: 140, '' | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
 {%- else -%}
   <meta name="twitter:title" content="{{ page_title | escape }}">
-  <meta name="twitter:description" content="{{ page_description | default: page_title | escape }}">
+  <meta name="twitter:description" content="{{ page_description | default: page_title | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
 {%- endif -%}
 
 {%- if page_image -%}
-  <meta name="twitter:image" content="https:{{ page_image | img_url: '1200x1200', crop: 'center' }}">
+  <meta name="twitter:image" content="{{- settings.speedsize_url_pfx -}}https:{{ page_image | img_url: '1200x1200', crop: 'center' }}">
   <meta name="twitter:image:alt" content="{{ page_image.alt | escape }}">
 {%- endif -%}
