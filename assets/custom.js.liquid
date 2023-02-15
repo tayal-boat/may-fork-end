@@ -640,11 +640,19 @@ $(".razorpay-checkout").click(function () {
 
 // Custom JavaScript slider
 
-$(document).ready(function () {
+var autoplay = false,
+infinite_loop = false,
+autoplay_delay = false,
+center_slide_scale = false,
+show_active_dots = false,
+oldX = 0,
+oldY = 0,
+autoplay_timeout = '';
+
 Shopify.custom_slider = function(e){
 var section_id = '',
 itemsDiv,
-sliderSelector = document.querySelectorAll('.MultiCarousel'),
+sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)'),
 slidePre = '',
 slidePost = '',
 slideItem = '',
@@ -652,18 +660,11 @@ numberOfSlides = '',
 clonedPre,
 clonedPost,
 slide_length = '',
-slider_dots = '',
-autoplay = false,
-infinite_loop = false,
-autoplay_delay = false,
-center_slide_scale = false,
-show_active_dots = false,
-autoplay_timeout = '';
-
-
+slider_dots = '';
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
    itemsDiv = '.MultiCarousel-inner.' + section_id;
+   console.dir(document.querySelector(itemsDiv));
   // if(document.querySelector(itemsDiv).classList.contains('MultiCarousel_loaded')){
   var itemsMainDiv = ('.MultiCarousel.' + section_id);
   var selector = 'MultiCarousel_' + section_id;
@@ -699,270 +700,80 @@ $('.multiCarousel_dots').click(function () {
   changeCurrent(curr, this);
 });
 
-
  ResCarouselSize(itemsMainDiv, selector);
 
+$(window).resize(function () {
+  ResCarouselSize(itemsMainDiv, selector);
+});
+if(autoplay){
+slideAutoplay(itemsMainDiv , autoplay_timeout);
+}
 
-  $(window).resize(function () {
-      ResCarouselSize(itemsMainDiv, selector);
-  });
-  if(autoplay){
-  slideAutoplay(itemsMainDiv , autoplay_timeout);
-  }
-  //this function define the size of the items
-  function ResCarouselSize(itemsMainDiv, selector) {
-      var incno = 0;
-      var dataItems = ("data-items");
-      var itemClass = ('.item');
-      var id = 0;
-      var btnParentSb = '';
-      var itemsSplit = '';
-      var sampwidth = $(itemsMainDiv).width();
-      var bodyWidth = $('body').width();
-      $(itemsDiv).each(function () {
-          id = id + 1;
-          var itemNumbers = $(this).find(itemClass).length;
-          btnParentSb = $(this).parent().attr(dataItems);
-          itemsSplit = btnParentSb.split(',');
-          $(this).parent().attr("id", selector + id);
-          
-          let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_desk_items'));
-          let mid_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
-          let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
-          if (bodyWidth >= 992) {
-              incno = desktop_slide;
-              itemWidth = sampwidth / incno;
-          }
-          else if (bodyWidth >= 768) {
-              incno = mid_slide;
-              itemWidth = sampwidth / incno;
-          }
-          else {
-              incno = mobile_slide;
-              itemWidth = sampwidth / incno;
-          }
-          $(this).addClass('MultiCarousel_loaded');
-          if(incno > 1){
-          for(var j = 1 ; j <= incno-1; j++) {
-            slider_dots[slider_dots.length-j].remove();
-          }
-          let centerIndex = Math.floor(incno / 2);
-          $(this).find(itemClass)[centerIndex].classList.add('center');
-          }
-
-          for(var k = 0 ; k <= incno-1; k++) {
-            $(this).find(itemClass)[k].classList.add('active');
-            if(!center_slide_scale && incno < 2){
-              console.log(incno, 'incno');
-            slider_dots[k].classList.add('active');
-          }
-          }
-
-          $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
-          $(this).find(itemClass).each(function () {
-              $(this).outerWidth(itemWidth);
-          });
-          $(this).addClass('MultiCarousel_loaded');
-          if(autoplay == false && infinite_loop == false) {
-          $(".leftLst").addClass("over");
-          $(".rightLst").removeClass("over");
-          }
-          
-      });
-  }
-
-
-  //this function used to move the items
-  function ResCarousel(e, el, s, slide_container) {
-      var leftBtn = ('.leftLst');
-      var rightBtn = ('.rightLst');
-      var itemClass = ('.item');
-      var translateXval = '';
-      var divStyle = $(slide_container).css('transform');
-      var slider_item = $(slide_container).find(itemClass);
-      var slider_dots = $(el).find('.multiCarousel_dots');
+//this function define the size of the items
+function ResCarouselSize(itemsMainDiv, selector) {
+  var incno = 0;
+  var dataItems = ("data-items");
+  var itemClass = ('.item');
+  var id = 0;
+  var btnParentSb = '';
+  var itemsSplit = '';
+  var sampwidth = $(itemsMainDiv).width();
+  var bodyWidth = $('body').width();
+  $(itemsDiv).each(function () {
+      id = id + 1;
+      var itemNumbers = $(this).find(itemClass).length;
+      btnParentSb = $(this).parent().attr(dataItems);
+      itemsSplit = btnParentSb.split(',');
+      $(this).parent().attr("id", selector + id);
       
-      var values = divStyle.match(/-?[\d\.]+/g);
-      var xds = Math.abs(values[4])
-      var itemWidth = $(slide_container).children().innerWidth();
-      var itemsCondition = $(slide_container).width() - $(el).width();
-      var itemsCondition_lastSlide = $(slide_container).width() - $(el).innerWidth();
-      var active_slide = $(slide_container).find('.active');
-      var active_slide_number = active_slide.length;
-      var slider_dots_length = slider_dots_length;
-      let counter = 0;
-      center_slide_scale = JSON.parse(document.querySelector(el).getAttribute('data-centerSlideScale'));
-
-      // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
-      if(active_slide.length > 1){
-        // active_slide = $(slide_container)[0];
-        // active_slide.classList.add('active');
-      slider_dots_length = slider_dots_length - active_slide_number - 1;
+      let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_desk_items'));
+      let mid_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
+      let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
+      if (bodyWidth >= 992) {
+          incno = desktop_slide;
+          itemWidth = sampwidth / incno;
       }
-      function active_slider_dots(e){
-
-        if(e == 0){
-      var active_slide_position = parseInt(active_slide[active_slide_number - 1].dataset.index) - 1;
-      if(active_slide_position < 0){
-        active_slide_position = slider_item.length - 1;
+      else if (bodyWidth >= 768) {
+          incno = mid_slide;
+          itemWidth = sampwidth / incno;
       }
-      let centerIndex = active_slide_position;
-      let centerFlag = true;
-      slider_item.removeClass("active");
-      slider_item.removeClass("center");
-      if(!center_slide_scale && active_slide_number < 2){
-      slider_dots.removeClass("active");
+      else {
+          incno = mobile_slide;
+          itemWidth = sampwidth / incno;
       }
-        for(var k = 0 ; k < slider_item.length; k++) {
-        if(k == active_slide_position){ 
-          for(var j = 0 ; j < active_slide_number; j++) {
-            if(k - active_slide_number + 1 >= 0){
-              counter = k - j; 
-            }else{
-              counter = slider_item.length - j - 1; 
-            }
-          slider_item[counter].classList.add('active');
-          if(!center_slide_scale && active_slide_number < 2){
-          slider_dots[counter].classList.add('active');
-          }
-          if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
-            centerIndex = Math.floor(active_slide_number / 2);
-            slider_item[counter - centerIndex].classList.add('center');
-            centerFlag = false;
-          }     
-          }
-        }     
+      $(this).addClass('MultiCarousel_loaded');
+      $(this).parent().addClass('MultiCarousel_load');
+      if(incno > 1){
+      for(var j = 1 ; j <= incno-1; j++) {
+        slider_dots[slider_dots.length-j].remove();
+      }
+      let centerIndex = Math.floor(incno / 2);
+      $(this).find(itemClass)[centerIndex].classList.add('center');
       }
 
-    }else if(e == 1){
-      var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
-      if(active_slide_position > slider_item.length - 1){
-        active_slide_position = 0;
+      for(var k = 0 ; k <= incno-1; k++) {
+        $(this).find(itemClass)[k].classList.add('active');
+        if(!center_slide_scale && incno < 2){
+          console.log(incno, 'incno');
+        slider_dots[k].classList.add('active');
       }
-      let centerIndex = active_slide_position;
-      let centerFlag = true;
-      slider_item.removeClass("active");
-      slider_item.removeClass("center");
-      if(!center_slide_scale && active_slide_number < 2){
-      slider_dots.removeClass("active");
-      }
-        for(var k = 0 ; k < slider_item.length; k++) {
-        if(k == active_slide_position){ 
-          for(var j = 0 ; j < active_slide_number; j++) {
-            if(k + active_slide_number - 1 < slider_item.length){
-              counter = k + j; 
-            }else{
-              counter = j; 
-            }
-          slider_item[counter].classList.add('active');
-          if(!center_slide_scale && active_slide_number < 2){
-          slider_dots[counter].classList.add('active');
-          }
-          if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
-            centerIndex = Math.floor(active_slide_number / 2);
-            slider_item[counter + centerIndex].classList.add('center');
-            centerFlag = false;
-          }  
-          }
-        }     
-      }
-    }else{
-      var active_slide_position = parseInt(active_slide[0].dataset.index);
-    }
-    }
-    active_slider_dots(e);
-      if (e == 0) {
-          translateXval = parseInt(xds) - parseInt(itemWidth * s);
-          if(autoplay == false && infinite_loop == false) {
-          $(el + ' ' + rightBtn).removeClass("over");
-          }
-
-          if (translateXval < 0 - itemWidth / 2) {
-            translateXval = itemsCondition_lastSlide;
-          }else if (translateXval <= itemWidth / 2 ) {
-            translateXval = 0;
-            if(autoplay == false && infinite_loop == false) {
-            $(el + ' ' + leftBtn).addClass("over");
-            }
-          }
-      }
-      else if (e == 1) {
-          translateXval = parseInt(xds) + parseInt(itemWidth * s);
-          if(autoplay == false && infinite_loop == false) {
-          $(el + ' ' + leftBtn).removeClass("over");
-          }
-
-          if (translateXval > itemsCondition) {
-            translateXval = 0;
-          }else if(translateXval > itemsCondition - itemWidth / 2){
-              translateXval = itemsCondition_lastSlide;
-              if(autoplay == false && infinite_loop == false) {
-              $(el + ' ' + rightBtn).addClass("over");
-              }
-          }
-      }else{
-        translateXval = parseInt(itemWidth * s);
-        if (translateXval > itemsCondition - itemWidth / 2) {
-          translateXval = itemsCondition_lastSlide;
-        }else if (translateXval <= itemWidth / 2) {
-          translateXval = 0;
-        }
-        if(!center_slide_scale && active_slide_number < 2){
-          slider_dots.removeClass("active");
-        slider_dots[s].classList.add('active');
-      } 
       }
 
-      $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
-  }
-
-  //It is used to get some elements from btn
-  function click(ell, ee) {
-      var Parent = "#" + $(ee).parent().attr("id");
-      var slide = $(Parent).attr("data-slide");
-      var slide_container = $(Parent).children('.MultiCarousel-inner');
-      autoplay_delay = true;
-      setTimeout(function() {autoplay_delay = false},5000);
-      ResCarousel(ell, Parent, slide, slide_container);
-  }
-
-  /* slide number click function */  
-
-function changeCurrent(curr, dot) {
-  var Parent = "#" + $(dot).parent().parent().attr("id");
-  var slide_container = $(Parent).children('.MultiCarousel-inner');
-  autoplay_delay = true;
-  setTimeout(function() {autoplay_delay = false},5000);
-ResCarousel(e=null, Parent, curr, slide_container);
+      $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+      $(this).find(itemClass).each(function () {
+          $(this).outerWidth(itemWidth);
+      });
+      $(this).addClass('MultiCarousel_loaded');
+      if(autoplay == false && infinite_loop == false) {
+      $(".leftLst").addClass("over");
+      $(".rightLst").removeClass("over");
+      }
+      
+  });
 }
-
-function slideAutoplay(selector , duration) {
-var newIndex = $(selector).attr("data-slide");
-var slides_container = $(selector).children('.MultiCarousel-inner');
-
-setInterval(function() {
-  if(!autoplay_delay){
-  ResCarousel(1, selector, newIndex, slides_container);
-}
-}, duration);
-}
-
 
 let target = document.querySelector('.MultiCarousel-inner.' + section_id);
-function sliderDrag(event, slide_direction) {
-    var Parent = "#" + $(event.target).parents('.MultiCarousel').attr('id');
-  // console.log(Parent);
-      var slide = $(Parent).attr("data-slide");
-      var slide_container = $(Parent).children('.MultiCarousel-inner');
-      autoplay_delay = true;
-      setTimeout(function() {autoplay_delay = false},5000);
-        ResCarousel(slide_direction, Parent, slide, slide_container);
-  }
 
-
-
-var oldX = 0;
-var oldY = 0;
 target.addEventListener('dragstart', (e) => {
   oldX = e.pageX;
   oldY = e.pageY;
@@ -980,9 +791,207 @@ target.addEventListener('touchend', (event) => {
   getMouseDirection(touch_event)
 });
 
+// }
+}
+  }
+  
+//this function used to move the items
+function ResCarousel(e, el, s, slide_container) {
+    var leftBtn = ('.leftLst');
+    var rightBtn = ('.rightLst');
+    var itemClass = ('.item');
+    var translateXval = '';
+    var divStyle = $(slide_container).css('transform');
+    var slider_item = $(slide_container).find(itemClass);
+    var slider_dots = $(el).find('.multiCarousel_dots');
+    
+    var values = divStyle.match(/-?[\d\.]+/g);
+    var xds = Math.abs(values[4])
+    var itemWidth = $(slide_container).children().innerWidth();
+    var itemsCondition = $(slide_container).width() - $(el).width();
+    var itemsCondition_lastSlide = $(slide_container).width() - $(el).innerWidth();
+    var active_slide = $(slide_container).find('.active');
+    var active_slide_number = active_slide.length;
+    var slider_dots_length = slider_dots_length;
+    let counter = 0;
+    center_slide_scale = JSON.parse(document.querySelector(el).getAttribute('data-centerSlideScale'));
+
+    // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
+    if(active_slide.length > 1){
+      // active_slide = $(slide_container)[0];
+      // active_slide.classList.add('active');
+    slider_dots_length = slider_dots_length - active_slide_number - 1;
+    }
+    function active_slider_dots(e){
+
+      if(e == 0){
+    var active_slide_position = parseInt(active_slide[active_slide_number - 1].dataset.index) - 1;
+    if(active_slide_position < 0){
+      active_slide_position = slider_item.length - 1;
+    }
+    console.log(active_slide_position);
+    let centerIndex = active_slide_position;
+    let centerFlag = true;
+    slider_item.removeClass("active");
+    slider_item.removeClass("center");
+    if(!center_slide_scale && active_slide_number < 2){
+    slider_dots.removeClass("active");
+    }
+      for(var k = 0 ; k < slider_item.length; k++) {
+      if(k == active_slide_position){ 
+        for(var j = 0 ; j < active_slide_number; j++) {
+          if(k - active_slide_number + 1 >= 0){
+            counter = k - j; 
+          }else{
+            counter = slider_item.length - j - 1; 
+          }
+        slider_item[counter].classList.add('active');
+        if(!center_slide_scale && active_slide_number < 2){
+        slider_dots[counter].classList.add('active');
+        }
+        if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
+          centerIndex = Math.floor(active_slide_number / 2);
+          slider_item[counter - centerIndex].classList.add('center');
+          centerFlag = false;
+        }     
+        }
+      }     
+    }
+
+  }else if(e == 1){
+    var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
+    if(active_slide_position > slider_item.length - 1){
+      active_slide_position = 0;
+    }
+    console.log(active_slide_position);
+    let centerIndex = active_slide_position;
+    let centerFlag = true;
+    slider_item.removeClass("active");
+    slider_item.removeClass("center");
+    if(!center_slide_scale && active_slide_number < 2){
+    slider_dots.removeClass("active");
+    }
+      for(var k = 0 ; k < slider_item.length; k++) {
+      if(k == active_slide_position){ 
+        for(var j = 0 ; j < active_slide_number; j++) {
+          if(k + active_slide_number - 1 < slider_item.length){
+            counter = k + j; 
+          }else{
+            counter = j; 
+          }
+        slider_item[counter].classList.add('active');
+        if(!center_slide_scale && active_slide_number < 2){
+        slider_dots[counter].classList.add('active');
+        }
+        if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
+          centerIndex = Math.floor(active_slide_number / 2);
+          slider_item[counter + centerIndex].classList.add('center');
+          centerFlag = false;
+        }  
+        }
+      }     
+    }
+  }else{
+    console.log(s);
+    var active_slide_position = s;
+    if(!center_slide_scale && active_slide_number < 2){
+      slider_dots.removeClass("active");
+    slider_dots[active_slide_position].classList.add('active');
+  } 
+  }
+  }
+  active_slider_dots(e);
+    if (e == 0) {
+        translateXval = parseInt(xds) - parseInt(itemWidth * s);
+        if(autoplay == false && infinite_loop == false) {
+        $(el + ' ' + rightBtn).removeClass("over");
+        }
+
+        if (translateXval < 0 - itemWidth / 2) {
+          translateXval = itemsCondition_lastSlide;
+        }else if (translateXval <= itemWidth / 2 ) {
+          translateXval = 0;
+          if(autoplay == false && infinite_loop == false) {
+          $(el + ' ' + leftBtn).addClass("over");
+          }
+        }
+    }
+    else if (e == 1) {
+        translateXval = parseInt(xds) + parseInt(itemWidth * s);
+        if(autoplay == false && infinite_loop == false) {
+        $(el + ' ' + leftBtn).removeClass("over");
+        }
+
+        if (translateXval > itemsCondition) {
+          translateXval = 0;
+        }else if(translateXval > itemsCondition - itemWidth / 2){
+            translateXval = itemsCondition_lastSlide;
+            if(autoplay == false && infinite_loop == false) {
+            $(el + ' ' + rightBtn).addClass("over");
+            }
+        }
+    }else{
+      
+      translateXval = parseInt(itemWidth * s);
+      if (translateXval > itemsCondition - itemWidth / 2) {
+        translateXval = itemsCondition_lastSlide;
+      }else if (translateXval <= itemWidth / 2) {
+        translateXval = 0;
+      }
+      
+    }
+
+    $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
+}
+
+//It is used to get some elements from btn
+function click(ell, ee) {
+    var Parent = "#" + $(ee).parent().attr("id");
+    var slide = $(Parent).attr("data-slide");
+    var slide_container = $(Parent).children('.MultiCarousel-inner');
+    autoplay_delay = true;
+    setTimeout(function() {autoplay_delay = false},5000);
+    ResCarousel(ell, Parent, slide, slide_container);
+}
+
+/* slide number click function */  
+function changeCurrent(curr, dot) {
+var Parent = "#" + $(dot).parent().parent().attr("id");
+var slide_container = $(Parent).children('.MultiCarousel-inner');
+autoplay_delay = true;
+setTimeout(function() {autoplay_delay = false},5000);
+ResCarousel(e=null, Parent, curr, slide_container);
+}
+
+/* slide autoplay function */  
+function slideAutoplay(selector , duration) {
+var newIndex = $(selector).attr("data-slide");
+var slides_container = $(selector).children('.MultiCarousel-inner');
+console.log(selector);
+console.log(slides_container);
+console.log(newIndex);
+setInterval(function() {
+if(!autoplay_delay){
+ResCarousel(1, selector, newIndex, slides_container);
+}
+}, duration);
+}
+
+/* slide Drag function */  
+
+function sliderDrag(event, slide_direction) {
+  var Parent = "#" + $(event.target).parents('.MultiCarousel').attr('id');
+// console.log(Parent);
+    var slide = $(Parent).attr("data-slide");
+    var slide_container = $(Parent).children('.MultiCarousel-inner');
+    autoplay_delay = true;
+    setTimeout(function() {autoplay_delay = false},5000);
+      ResCarousel(slide_direction, Parent, slide, slide_container);
+}
+
 var xDirection = "";
 var yDirection = "";
-
+// function to get the drag_direction
 function getMouseDirection(e) {
     //deal with the horizontal case
     if (oldX < e.pageX) {
@@ -1008,10 +1017,6 @@ function getMouseDirection(e) {
  }
     // console.log(xDirection + " " + yDirection);
 }
-// }
-}
-  }
-  
-  Shopify.custom_slider(e);
-});
 
+
+Shopify.custom_slider(e);
