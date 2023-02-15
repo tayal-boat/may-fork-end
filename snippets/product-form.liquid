@@ -4,7 +4,7 @@
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
 
 <div class="product-form">
-  <div {% if template.suffix != 'quick-buy-drawer' %} class="" {% endif %}>
+
   {%- for block in section.blocks -%}
     {%- case block.type -%}
       {%- comment -%}
@@ -171,15 +171,13 @@
             </noscript>
           </product-variants>
         {%- endunless -%}
-    {%- if template.suffix != 'quick-buy-popover' -%}
-    {% unless product.tags contains 'NO-PRICE' %}
+{%- if template.suffix != 'quick-buy-popover' -%}
+{% unless product.tags contains 'NO-PRICE' %}
 {% capture fixed_pod_discount %}{% render 'fixed-discount-by-tag', product: product %}{% endcapture %}
 {% if product.available %}
 {% capture random_cart %} {% render 'random-carts' %}{% endcapture %}
+        {%- endif -%}
 
-
-{%- endif -%}
-{% capture pdp_price %}
       <div class="product-meta__price-list-container custom-product-price-mobile" role="region" aria-live="polite">
         <div class="d-flex align-items-end justify-content-between">
           <div
@@ -254,46 +252,32 @@
                 </div>
         </div>
       </div>
-{% endcapture %}
-<div class="d-lg-none">{{ pdp_price }}</div>
+
 {% endunless %}
     {% endif %}
       {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-        <div class="seo-new pr-lg-1" style="overflow-y: auto;">
-          <div class="price-container mt-lg-4 mb-2 d-none">{% render 'product-payment-partner' %}</div> 
-          {% if product.metafields.custom.product_highlights %}
-          <style>@media (min-width: 991px) {.seo-new {height: 16rem;}}</style>  
-          <div class="price-container product-highlight my-3 p-3 only-desktop">
-            <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;font-weight: 700;">Product Highlights</h6>
-              {{ product.metafields.custom.product_highlights }}
-          </div>
-        </div>  
-      {% endif %}
-            
-   </div>   
-
 
 <!--  for desktop layout -->
     <div class="pdp-inner custom-product-price">
-      {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}{% capture product_images %}{%- render 'product-media', product: product -%}{% endcapture %}       
-        <div class="d-none d-lg-block">{{ product_images }}</div>
+      {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
+   
         <div class="w-lg-50">
-          <div class="d-none d-lg-block"> {{ product-info }}</div>
+          
       {% endif %}
     <div class="new-pdp">
       <div class="amazon">
       <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
-          {{ pdp_price }}
+          pdp_price--product-meta__price-list-container custom-product-price-mobile
           <div class="amazon-c d-flex align-items-baseline justify-content-between"
             style="background: #DCDCDC;padding: 4px 16px;">
          <span class="stock-label-side" style="font-weight: 700; color: #00C68C;">{% if product.available %}In Stock{% else %}Out of Stock{% endif %}</span>
             {{ random_cart }}
             </div>
+            <div class="price-container mt-lg-4 mb-2 d-lg-none">{% render 'product-payment-partner' %}</div>
             </div>
 
     {% endif %}
     
-<!--                         -->
       {%- comment -%}
       ----------------------------------------------------------------------------------------------------------------
       LINE ITEM PROPERTY
@@ -522,9 +506,7 @@
 
                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%} 
 
-              <div class="d-lg-none">
-                {{ product_images }}
-              </div>
+              {%- render 'product-media', product: product -%}
 
                 {% unless product.tags contains settings.products_offering_freebie %} 
                 <div class="amazon-c d-flex align-items-baseline justify-content-between">
@@ -540,7 +522,10 @@
                   </div>
                 </div>
                 {% endunless %} 
-                {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}</div>{% endif %}
+                {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
+                <div class="price-container mt-lg-4 mb-2">{% render 'product-payment-partner' %}</div>
+                </div>
+                {% endif %}
                   <button id="BIS_trigger" type="button" class="custom-notify-btn" data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
                     Notify me
                   </button>
