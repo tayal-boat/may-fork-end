@@ -1,7 +1,7 @@
 
 <!-- Shop by section starts here -->
 <div class="explore_now_section container">
-  <div class="container">
+  <div class="container MultiCarousel_container">
     {%- if section.settings.sectionHeading != blank -%}
         <div class="row">
           <div class="col-md-12 section__header text-container d-flex justify-content-between">
@@ -10,7 +10,8 @@
         </div>
     {%- endif -%}
     <div class="row">
-    <div class="col-md-12 owl-carousel owl-theme explore_now_slider">
+    <div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}> 
+    <div class="col-md-12 MultiCarousel-inner {{ section.id }} draggable explore_now_slider" draggable="true">
       {%- for block in section.blocks -%}
       <div class="item">
         <div class="explore_item">
@@ -31,16 +32,100 @@
       </div>
       {%- endfor -%}
     </div>
+    <button class="btn btn-primary leftLst {{ section.id }}"><</button>
+    <button class="btn btn-primary rightLst {{ section.id }}">></button>
+    <ul class="MultiCarousel_dots_container">
+      {% for block in section.blocks %}
+       <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">{{ forloop.index }}/{{ forloop.length }}</li> 
+      {% endfor %} 
+      </ul>
+    </div>
   </div>
   </div>
 </div>
 <!-- Shop by section ends here -->
 
+{% render 'carousel-css' %}
+
 {% schema %}
   {
     "name": "Explore Now",
 	"max_blocks": 28,
-    "settings": [],
+    "settings": [
+      {
+        "type": "number",
+        "id": "slides_no",
+        "label": "mobile slides",
+        "default": 1
+      },{
+        "type": "number",
+        "id": "midslides_no",
+        "label": "medium slides",
+        "default": 3
+      }, {
+        "type": "number",
+        "id": "deskslides_no",
+        "label": "desk slides",
+        "default": 3
+      }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "scale_center_slide",
+        "label": "scale cente slide",
+        "default": false
+      },{
+        "type": "checkbox",
+        "id": "show_active_dots",
+        "label": "show active dots with index",
+        "default": false
+      },{
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "text",
+        "id": "item_space_desk",
+        "label": "Space between items in desktop",
+        "default": "1rem"
+      },
+      {
+        "type": "text",
+        "id": "item_space_mobile",
+        "label": "Space between items in mobile",
+        "default": "1rem"
+      },{
+        "type": "text",
+        "id": "next_item_visibility_desk",
+        "label": "Next item visibility in desktop",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "next_item_visibility_mobile",
+        "label": "Next item visibility in mobile",
+        "default": "1rem"
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      }
+    ],
 	"blocks": [
 		{
 			"type": "image",
