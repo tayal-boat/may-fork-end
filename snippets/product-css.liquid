@@ -459,7 +459,6 @@ body{overflow-x:hidden}
 }
 .product-form__quantity{display:flex;gap:12px;align-items:center}
 .amazon .quantity-selector__input{color:red;font-size:20px;font-weight:700}
-.product.product--thumbnails-left{display: grid;margin: 0;}
 body{background:#0c0c0c}
 .product-meta__price-list-container{margin-bottom:20px}
 .product__thumbnail{border:1px solid #e1e1e1}
@@ -480,9 +479,7 @@ body{background:#0c0c0c}
 img.varnt-drop.toggle{transform:rotate(0deg)}
 .stock-label-side,.currently-in-cart{visibility:hidden}
 @media(min-width: 991px) {
-div[role=progressbar]{position: relative;right:unset;}
-.product__info {grid-column: 2;}
-.product:not(.product--featured) {grid-template-columns: repeat(3, 1fr);}
+
 span.pdp-btn-price {display: none;}
 .w-lg-50{width:50%;}
 .w-lg-100{width:100%!important;}
@@ -530,5 +527,30 @@ span.variant-name{display:none;font-size: 12px;line-height: 1;padding-right: 6px
 .color-swatch__radio:checked~label~span.variant-name{display:block;}
 .product__info .product-form__option-selector{border-bottom:1px solid #ededed;border-top:1px solid #ededed;padding-bottom: 10px;padding-top: 10px;}
 .container.pdp .price--large{font-weight:600!important;font-size:14px;line-height:29px;letter-spacing:-0.63px;color:#1d1d1d}
+.product.product--thumbnails-left {margin: 0;display: grid !important;
+     grid-template-areas:
+        'info'
+        'swatch'
+        'price'
+        'media'
+        'flash'
+        'cta';
+}
+.product-form__option-selector {display: flex;align-items: center;gap: 8px;padding-block: 8px;}
+product-media.product__media {grid-area: media;}
+.product__info {grid-area: info;width: 100% !important;}
+product-variants.product-form__variants {grid-area: swatch;}
+.product-meta__price-list-container {grid-area: price;}
+.flash-sale-lable {grid-area: flash;}
+.pdp-inner.custom-product-price {grid-area: cta;}
+@media (min-width: 991px) {
+.product.product--thumbnails-left {
+    grid-template-areas:
+        'media flash'
+        'media info'
+        'media swatch'
+        'media cta';
+}
+}
 </style>
 {% comment %} !NEW PDP LAYOUT CSS ENDS {% endcomment %}
