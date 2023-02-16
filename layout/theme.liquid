@@ -72,14 +72,6 @@
       {%- if product.media.size > 1 -%}
         <link rel="preload" as="script" href="{{ 'flickity.js' | asset_url }}">
       {%- endif -%}
-      
-      <link rel="preload" as="image"
-      imagesrcset="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Deals_11fbb0ba-406e-4de3-be09-137a2ea6899e_600x.jpg?v=1673003545"
-      media="(max-width: 768px)">
-      <link rel="preload" as="image"
-      imagesrcset="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Deals-Desktop_149d42e2-bd86-4106-becd-674cc77ce61a_1600x.jpg?v=1673003529"
-      media="(min-width: 769px)">
-
     {%- elsif request.page_type == 'collection' and collection.image -%}
       <link
         rel="preload"
@@ -100,7 +92,10 @@
     {% render 'microdata-schema' %}
     {% render 'css-variables', direction: direction %}
     {% render 'js-variables', direction: direction %}
-
+    <script>
+      
+      
+    </script>
 
     <!-- content for header -->
     {%- capture h_content -%}{{ content_for_header }}{%- endcapture -%}
@@ -141,12 +136,12 @@
       }
      {% endcapture %}
      <script>
+      Shopify.sold_out_threshold = {{ settings.sold_out_threshold | json }};
       Shopify.card_offers = `{{ card_offers }}`;
       Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
       Shopify.tag_selector = {{ settings.tag_selector | json }};
       Shopify.fixed_discount = function(tag){
         let tagArr = tag;
-        console.log(tagArr, 'tagArr');
         let pod_price = 0;
         for (let i = 0; i < tagArr.length; i++) {
           if(tagArr[i].includes('PoD Price|')){
@@ -158,8 +153,7 @@
       }
      </script>
         <!-- Google Tag Manager -->
-    <script type="lazyScript">
-      console.log('hiiii 1');
+    <script>
       (function (w, d, s, l, i) {
         w[l] = w[l] || [];
         w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
@@ -178,7 +172,7 @@
       src="https://www.googletagmanager.com/gtag/js?id=AW-816285276"
     >
     </script>
-    <script type="lazyScript">
+    <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
@@ -198,8 +192,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){window.dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-6LGXJKGVE2');
+      gtag('config', 'G-6LGXJKGVE2',{ 'groups': 'GA4','debug_mode':false });
     </script>
     <!-- Global site tag (gtag.js) - Google Analytics Ends -->
     
@@ -245,12 +238,14 @@
     </script>
 
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
+
     {% render 'starter-css' %}
     <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
     {%- if template == 'index' -%}
-    <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
-  {%- endif %}
+      <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
+    {%- endif %}
     {%- render 'wizrocket_variables_generator' -%}
+    {%- render 'ms-clarity' -%}
 
     {% if template contains 'product' %}
       {% render 'product-css' %}
@@ -372,13 +367,10 @@
     {%- endif -%}
 
 
-    {% comment %} {%- if template == 'index' -%}
-    {% render 'starter-css' %}
-    <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
-      <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
-    {%- endif %} {% endcomment %}
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
-    <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    {% unless page.handle == 'dwfyb' %}
+      <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    {% endunless %}
 
     {% if template contains 'product' or template contains 'index' %}
       {% render 'back-in-stock-helper' %}
@@ -415,14 +407,14 @@
         @media screen and (max-width: 767px) {
           #main, .footer {
          background: url({{ settings.home_bg_image }}) !important;
-         background-repeat: repeat-y;
-         background-size: contain !important;
+    background-repeat: repeat-y;
+    background-size: contain !important;
         }
       </style>
     {% endif %}
 
     
     {%- render 'auto_atoc_items' -%}
-  {{ '//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23' | script_tag }}
+    <script src="//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23" async></script>
 </body>
 </html>
