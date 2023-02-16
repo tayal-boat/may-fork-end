@@ -3,8 +3,7 @@
 {%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
-{% assign available_variants = 0 %}
-{% assign has_color_code = false %}
+
 {% assign product_varient = product.selected_or_first_available_variant %}
 
 {%- for variant in product.variants -%}
@@ -17,14 +16,7 @@
 {% assign product_varient_length = forloop.length %}
 {%- endfor -%} 
 
-{% for variant in product.variants %}
-  {% if variant.inventory_quantity >= settings.sold_out_threshold %}
-    {% assign available_variants = available_variants | plus: 1 %}
-  {% endif %}
-  {% if variant.option2 %}
-    {% assign has_color_code = true %}
-  {% endif %}
-{% endfor %}
+
 {%- if product.url contains '?' -%}
   {%- assign product_url_contains_query = true -%}
 {%- else -%}
@@ -35,21 +27,6 @@
   {% render 'fixed-discount-by-tag', product: product %}
 {% endcapture %}
 
-{% comment %} info: Code for Swatch List begins {% endcomment %}
-{% capture remaining_variants_string %}
-  {{ product.variants.size | minus: 2 }}
-{% endcapture %}
-{% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
-{% assign total_swatches_to_show = 2 %}
-{% capture swatch_list %}
-  {% for variant in product.variants limit: total_swatches_to_show %}
-    <span class='swatch-circle' style="background:{% if variant.option2 %}{{variant.option2}}{% else %}{{variant.option1}}{% endif %}"></span>
-  {% endfor %}
-  {% if remaining_variants_number >= 1 %}
-    &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
-  {% endif %}
-{% endcapture %}
-{% comment %} info: Code for Swatch List ends {% endcomment %}
 {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
 {%- if settings.enable_fixed_discount and product.tags contains settings.tag_selector -%}
@@ -370,22 +347,40 @@
           {%- if settings.show_product_rating and reduced_content != true -%}
             <span class="product-item-meta__reviews-badge text--small">
               {%- render 'product-rating', product: product -%}
-              {% if available_variants >= 1 and has_color_code %}
+              {% comment %} {% if available_variants >= 1 %}
                 <button
                   is="toggle-button"
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
                   aria-expanded="false"
                   class="variants-list hidden-tablet-and-up custom_atoc_btn">
-                    {{ swatch_list }}
+                  {% for variant in product.variants limit: 3 %}
+                    <span class='swatch-circle' style="background:{{variant.title | split: '/' | last}}"></span>
+                  {% endfor %}
+                  {% capture remaining_variants_string %}
+                    {{ product.variants.size | minus: 3 }}
+                  {% endcapture %}
+                  {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
+                  {% if remaining_variants_number >= 1 %}
+                    &nbsp;<span class="more-colors" style="font-size:11px">+{{- remaining_variants_number -}}</span>
+                  {% endif %}
                 </button>
                 <button
                   is="toggle-button"
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
                   aria-expanded="false"
                   class="variants-list hidden-phone">
-                  {{ swatch_list }}
+                  {% for variant in product.variants limit: 3 %}
+                    <span class='swatch-circle' style="background:{{variant.title | split: '/' | last}}"></span>
+                  {% endfor %}
+                  {% capture remaining_variants_string %}
+                    {{ product.variants.size | minus: 3 }}
+                  {% endcapture %}
+                  {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
+                  {% if remaining_variants_number >= 1 %}
+                    &nbsp;<span class="more-colors" style="font-size:9px">+{{- remaining_variants_number -}}</span>
+                  {% endif %}
                 </button>
-              {% endif %}
+              {% endif %} {% endcomment %}
             </span>
           {%- endif -%}
           <p class="custom-save-price" style="font-size: 11px;margin:0;font-weight: 500;color: black;">
@@ -396,16 +391,14 @@
             {% endif %}
           </p>
         {% endunless %}
-        {%- if request.page_type != 'password' and settings.product_add_to_cart and product.available and reduced_content != true and show_cta != true -%}
-          {% assign available_variants = 0 %}
-          {% for variant in product.variants %}
+        {%- if request.page_type != 'password'
+        and settings.product_add_to_cart
+        and reduced_content != true
+        and show_cta != true
+        -%}
 
-            {% if variant.available %}
-              {% assign available_variants = available_variants | plus: 1 %}
-            {% endif %}
-          {% endfor %}
+          {% if product_soldout == false %}
           <div class="d-flex align-items-center">
-
             {%- if available_variants == 1 -%}
             {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
             <div class="product-item__quick-form">
@@ -444,10 +437,10 @@
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
                     {{- 'product.form.add_to_cart' | t -}}
-
                   {% endif %}
                 </button>
-                <button type="submit" class="{%- if product.tags contains settings.tag_selector -%}custom-offer-add-to-cart{% endif %} product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
+                <button type="submit"
+                  class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
                   <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
