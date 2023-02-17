@@ -3,7 +3,19 @@
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
 
-
+{% assign product_varient = product.selected_or_first_available_variant %}
+{%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
+{% if product.selected_or_first_available_variant.inventory_quantity < settings.sold_out_threshold %}
+{%- for variant in product.variants -%}
+  {% if variant.inventory_quantity >= settings.sold_out_threshold %}
+  {% assign product_varient = variant %}
+  {%  break  %}
+{%- endif -%}
+{%- endfor -%} 
+{%- endif -%}
+{%- endif -%}
+<div class="product-form">
+  <div {% if template.suffix != 'quick-buy-drawer'  %} class="w-lg-50" {% endif %}>
   {%- for block in section.blocks -%}
   {%- case block.type -%}
   {%- comment -%}
@@ -209,7 +221,7 @@
         {%- endif -%}
 
   <div class="product-meta__price-list-container custom-product-price-mobile d-lg-none" role="region" aria-live="polite">
-    <div class="d-flex align-items-end justify-content-between">
+    <div class="d-flex align-items-center justify-content-between">
       <div
         class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}"
         data-product-price-list>
@@ -282,6 +294,7 @@
             </div>
             {%- endif -%}
             </div>
+            {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
             </div>
             </div>
 
@@ -563,8 +576,8 @@
                         <span class="inventory inventory--low">{{ 'product.form.low_stock_with_quantity_count' | t: count: variant.inventory_quantity }}</span>
                       {%- else -%}
                         {%- if variant.inventory_policy == 'continue' and variant.inventory_quantity <= 0 and variant.requires_shipping -%}
-                          {%- if product.selected_or_first_available_variant.incoming -%}
-                            {%- capture next_incoming_date -%}{{ product.selected_or_first_available_variant.next_incoming_date | date: format: 'date' }}{%- endcapture -%}
+                          {%- if product_varient.incoming -%}
+                            {%- capture next_incoming_date -%}{{ product_varient.next_incoming_date | date: format: 'date' }}{%- endcapture -%}
                             <span class="inventory inventory--low">{{ 'product.form.incoming_stock' | t: next_incoming_date: next_incoming_date }}</span>
                           {%- else -%}
                             <span class="inventory inventory--low">{{ 'product.form.oversell_stock' | t }}</span>
@@ -665,8 +678,8 @@
     </product-payment-container>
     {%- endform -%}
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
-    <div class="d-flex flex-column">
-      <div class="price-container mt-lg-4 mb-2">{% render 'product-payment-partner' %}</div>
+    <div class="d-flex flex-column" aria-role="additonal-info">
+      <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>
       {% comment %} {% if product.metafields.custom.product_highlights %} {%- endif -%}{% endcomment %}
       <div class="price-container product-highlight mt-1 p-3 order-1 d-none d-lg-block">
         <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey; font-weight: 700;">Product
