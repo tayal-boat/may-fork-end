@@ -27,7 +27,7 @@
     <meta name="facebook-domain-verification" content="qad1e3gldwmxjf6luncdygpvcpduub">
     <link rel="canonical" href="{{ canonical_url }}">
     {%- if settings.favicon -%}
-      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
+      <link rel="shortcut icon" href="{{- settings.speedsize_url_pfx_https -}}{{ settings.favicon | img_url: '96x96' }}" type="image/png">
     {%- endif -%}
     <title>
       {% if page_title == blank -%}
@@ -40,7 +40,7 @@
       {%- endif %}
     </title>
     {%- if page_description -%}
-      <meta name="description" content="{{ page_description | escape }}">
+      <meta name="description" content="{{ page_description | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  | escape }}">
     {%- endif -%}
     {%- comment -%}
        IMPLEMENTATION NOTE: for improving performance,
@@ -353,7 +353,7 @@
           <div class="loading_icon">
             <img loading="lazy"
               class="lazyload"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
+              src="{{- settings.speedsize_url_pfx -}}https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
               alt="Load More"
               style="width: 50px;"
             >

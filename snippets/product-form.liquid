@@ -73,7 +73,7 @@
                   {%- endif -%}
                 </div>
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer'  -%}
-                  <img class="varnt-drop h-100" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1_968e75a2-9de8-4f80-9b47-1136ad3beb50.png?v=1654760428">
+                  <img class="varnt-drop h-100" src="{{- settings.speedsize_url_pfx -}}https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1_968e75a2-9de8-4f80-9b47-1136ad3beb50.png?v=1654760428">
                  {% endif %}
                 </div>
                 {%- case selector_type -%}
@@ -289,7 +289,7 @@
       <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
          <div class="price-list align-items-center {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom_product_pod_price {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list data-pod="{{ fixed_pod_discount | strip }}">
            {%- if product.tags contains 'flash-sale' -%}
-          	<span class="flash-icon"><img loading="lazy" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group-2.png?v=1655107410" alt="thunder" /></span>&nbsp;
+          	<span class="flash-icon"><img loading="lazy" src="{{- settings.speedsize_url_pfx -}}https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group-2.png?v=1655107410" alt="thunder" /></span>&nbsp;
            {%- endif -%}
            {%- if product_varient.compare_at_price > product_varient.price -%}
           <span class="price price--highlight price--large">
@@ -489,7 +489,7 @@
       {%- when 'description' -%}
         {%- if product.description != blank -%}
           <div class="product-form__description rte" {{ block.shopify_attributes }}>
-            {{- product.description -}}
+            {{- product.description | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  -}}
           </div>
         {%- endif -%}
 
@@ -668,7 +668,7 @@ IMPLEMENTATION NOTE: if during the iteration of the options we have found an opt
 
     <div class="drawer__content drawer__content--padded-start">
       <div class="rte">
-        {{- size_chart_page.content -}}
+        {{- size_chart_page.content | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  -}}
       </div>
     </div>
   </drawer-content>
@@ -687,7 +687,7 @@ IMPLEMENTATION NOTE: if during the iteration of the options we have found an opt
 
     <div class="popover__content">
       <div class="rte">
-        {{- size_chart_page.content -}}
+        {{- size_chart_page.content | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  -}}
       </div>
     </div>
   </popover-content>
