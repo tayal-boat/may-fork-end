@@ -92,8 +92,7 @@
         {%- comment -%}We search for the first variant that has an image for this color{%- endcomment -%}
         {%- for variant in product.variants -%}
         {%- if variant.options[option_position0] == value -%}
-        <div class="variant-swatch {% if variant.available == false %}is-disabled{% endif %}" {% if
-          variant.metafields.custom.variant_url !=blank %}data-var-url="{{variant.metafields.custom.variant_url}}" {% endif %}>
+      <div class="variant-swatch {% if variant.inventory_quantity < settings.sold_out_threshold %}is-disabled{% endif %}" {% if variant.metafields.custom.variant_url != blank %}data-var-url="{{variant.metafields.custom.variant_url}}"{% endif %} data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
           <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
             form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}"
             data-bind-value="{{ option_id }}-value" {% if value==option.selected_value %}checked="checked" {% endif %}
@@ -121,10 +120,13 @@
       <span style="font-size: 12px;color: #666565;">Select Color: </span>
       <div class="color-swatch-list">
         {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
-
+        {%- assign option_position0 = option.position | minus: 1 -%}
         {%- for value in option.values -%}
         {%- assign color_value_downcase = value | downcase -%}
-
+        {% for variant in product.variants %}
+          {% comment %} {{ value }}
+          {{ variant.options[option_position0] }} {% endcomment %}
+          {%- if variant.options[option_position0] == value -%}
         <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}">
           <input class="color-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
             form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" {% if
@@ -135,6 +137,8 @@
           </label>
           <span class="variant-name">{{ value | remove: ' ' | escape }}</span>
           </div>
+        {%- endif -%}
+        {% endfor %}
           {%- endfor -%}
           </div>
 
@@ -572,8 +576,8 @@
                         <span class="inventory inventory--low">{{ 'product.form.low_stock_with_quantity_count' | t: count: variant.inventory_quantity }}</span>
                       {%- else -%}
                         {%- if variant.inventory_policy == 'continue' and variant.inventory_quantity <= 0 and variant.requires_shipping -%}
-                          {%- if product.selected_or_first_available_variant.incoming -%}
-                            {%- capture next_incoming_date -%}{{ product.selected_or_first_available_variant.next_incoming_date | date: format: 'date' }}{%- endcapture -%}
+                          {%- if product_varient.incoming -%}
+                            {%- capture next_incoming_date -%}{{ product_varient.next_incoming_date | date: format: 'date' }}{%- endcapture -%}
                             <span class="inventory inventory--low">{{ 'product.form.incoming_stock' | t: next_incoming_date: next_incoming_date }}</span>
                           {%- else -%}
                             <span class="inventory inventory--low">{{ 'product.form.oversell_stock' | t }}</span>
@@ -666,6 +670,15 @@
 
     {%- endif -%}
 
+  <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+    <a
+      href="#"
+      class="BIS_trigger item_BIS"
+      data-product-data="{{ product | json | escape }}">
+      Notify Me
+    </a>
+  </div>
+  
     {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix !=
     'quick-buy-drawer' -%}
     {%- comment -%} {{ form | payment_button }} {%- endcomment -%}
