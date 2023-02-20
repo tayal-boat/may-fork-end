@@ -1366,6 +1366,14 @@
         });
   
         $(document).on(`page:load page:change`, function () {
+          {% assign line_discount = 0 %}
+          {% for line_item in checkout.line_items %}
+            {% assign line_discount =  line_item.line_level_total_discount | plus: line_discount %}
+          {% endfor %}
+          {% if line_discount > 0 %}
+            $('#checkout_reduction_code').css('pointer-events', 'none')
+            $('.order-summary__section--discount').append(`<p style="color:red;padding:0;line-height:1">Two discounts can't be applied</p>`)
+          {% endif %}
           $('ol li').last().prev().hide();
           if (Shopify.Checkout.step == 'contact_information') {
             $('[data-address-fields]').append(
