@@ -136,6 +136,7 @@
       }
      {% endcapture %}
      <script>
+      Shopify.sold_out_threshold = {{ settings.sold_out_threshold | json }};
       Shopify.card_offers = `{{ card_offers }}`;
       Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
       Shopify.tag_selector = {{ settings.tag_selector | json }};
@@ -381,7 +382,7 @@
     {% if template contains 'product' %}
       {%- render 'judgeme_core' -%}
     {% endif %}
-    {% unless template contains 'customers' %}
+    {% unless template contains 'product' or template contains 'customers' %}
       {%- render 'bottom-navbar-mobile' -%}
     {% endunless %}
     <!-- Magic Checkout Code Starts -->
