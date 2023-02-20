@@ -3,19 +3,7 @@
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
 
-{% assign product_varient = product.selected_or_first_available_variant %}
-{%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
-{% if product.selected_or_first_available_variant.inventory_quantity < settings.sold_out_threshold %}
-{%- for variant in product.variants -%}
-  {% if variant.inventory_quantity >= settings.sold_out_threshold %}
-  {% assign product_varient = variant %}
-  {%  break  %}
-{%- endif -%}
-{%- endfor -%} 
-{%- endif -%}
-{%- endif -%}
-<div class="product-form">
-  <div {% if template.suffix != 'quick-buy-drawer'  %} class="w-lg-50" {% endif %}>
+
   {%- for block in section.blocks -%}
   {%- case block.type -%}
   {%- comment -%}
@@ -576,8 +564,8 @@
                         <span class="inventory inventory--low">{{ 'product.form.low_stock_with_quantity_count' | t: count: variant.inventory_quantity }}</span>
                       {%- else -%}
                         {%- if variant.inventory_policy == 'continue' and variant.inventory_quantity <= 0 and variant.requires_shipping -%}
-                          {%- if product_varient.incoming -%}
-                            {%- capture next_incoming_date -%}{{ product_varient.next_incoming_date | date: format: 'date' }}{%- endcapture -%}
+                          {%- if product.selected_or_first_available_variant.incoming -%}
+                            {%- capture next_incoming_date -%}{{ product.selected_or_first_available_variant.next_incoming_date | date: format: 'date' }}{%- endcapture -%}
                             <span class="inventory inventory--low">{{ 'product.form.incoming_stock' | t: next_incoming_date: next_incoming_date }}</span>
                           {%- else -%}
                             <span class="inventory inventory--low">{{ 'product.form.oversell_stock' | t }}</span>
