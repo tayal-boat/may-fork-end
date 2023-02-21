@@ -248,7 +248,12 @@
                     {{- discounted_price | money | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-
+                {% if product.compare_at_price > discounted_price %}
+                <p class="custom-saved-price" style="margin:0 10px 0 0;font-weight:500;font-size: 14px;color: #05AE52;">{{
+                  product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
+                  round
+                  | append: '% Off' }} </p>
+                {% endif %}
                 <span class="price price--compare line-through">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
