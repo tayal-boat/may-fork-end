@@ -26,14 +26,12 @@ END of Namogoo Snippet
        --header-border-color: {{ header_border_color.red }}, {{ header_border_color.green }}, {{ header_border_color.blue }};
        --reduce-header-padding: {% if section.settings.reduce_desktop_padding %}1{% else %}0{% endif %};
 
-       {%- if section.settings.enable_sticky_header -%}
-         position: -webkit-sticky;
-         position: fixed;
-         width:100%;
-         transition: all 0.5s ease-in-out;
-       {%- else -%}
-         position: relative;
-       {%- endif -%}
+      {%- if section.settings.enable_sticky_header -%}
+        position: -webkit-sticky;
+        position: fixed;width: 100%;
+      {%- else -%}
+        position: relative;
+      {%- endif -%}
        {% comment %} top: {% if section.settings.enable_sticky_header %}calc(var(--enable-sticky-announcement-bar) * var(--announcement-bar-height, 0px)){% else %}0{% endif %}; {% endcomment %}
        top: 0;
        z-index: 100;
@@ -125,10 +123,37 @@ END of Namogoo Snippet
      .custom_svg_icon {
        height: 18px;
      }
-     @media(max-width:768px){
-        nav.header__inline-navigation { flex: 0;}
-     }
-     div#shopify-section-announcement-bar.announcement-non-sticky~#shopify-section-header{position: sticky; }
+    @media(max-width:768px){
+      .header__wrapper{/* align-items:flex-end;*/ align-items: unset}
+      nav.header__inline-navigation {flex: 0;position: relative;top: -2.5px;}
+      .header__logo{top:-1px;}
+      /* .search-icon{padding:0 10px!important;height:27.5px;line-height:27.5px;} */
+      .search-icon img{padding-bottom:0!important;}
+      {% comment %} nav.header__inline-navigation .header__icon-list button.header__icon-wrapper {position: absolute;top: 50%;transform: translateY(-50%);}
+      nav.header__inline-navigation .header__icon-list button.header__icon-wrapper img{height: 16px;width: 22px;}
+      store-header .header__wrapper{gap: 36px;}
+      .header__logo .header__logo-link .header__logo-image{margin-top: -7px;}
+      .header__secondary-links .header__icon-list .search-icon{height: 32px;} {% endcomment %}
+
+      #mobile-menu-drawer.drawer{max-width: fit-content;height: 90%;z-index: 9;} 
+      #mobile-menu-drawer.drawer .drawer__content{margin-top: 4px;}
+      
+      .header__icon-list  .header__icon-wrapper[aria-expanded="false"]~span{display: none;}
+      .custom_drawer_close_btn {position: absolute;z-index: 9;top: 54% !important;transform: translateY(-50%);}
+      .custom_drawer_close_btn img{height: 26px;border-radius: 50%;padding: 2px;transform: rotate(180deg);}
+      /* html.lock-all .header__wrapper .header__logo{margin-left: 18px;} */
+      html.lock-all .header__wrapper nav.header__inline-navigation{position: inherit;}
+      
+      #mobile-menu-drawer .mobile-nav li button.heading[aria-expanded="true"]{border-bottom: none;}
+      #mobile-menu-drawer ul.mobile-nav li.mobile-nav__item .submenu_icon {width: 29px;}
+
+      .mobile_hamburger_btn[aria-expanded="true"] img{width: 18px !important;height: auto !important;max-width: fit-content !important;}
+      #mobile-menu-drawer .mobile-nav__item[data-level="2"] p{max-width: 95%;margin: 0px auto;}
+
+      #mobile-menu-drawer .mobile-nav .mobile-nav{margin: 12px 32px 0!important;}
+    }
+
+    div#shopify-section-announcement-bar.announcement-non-sticky~#shopify-section-header{position: sticky;}
 </style>
 
 <store-header
@@ -164,13 +189,23 @@ END of Namogoo Snippet
           {%- if menu.links.size > 0 -%}
             <button
               is="toggle-button"
-              class="header__icon-wrapper rounded-0 tap-area {% unless section.settings.header_layout == 'drawer' %}hidden-desk{% endunless %}"
+              class="mobile_hamburger_btn header__icon-wrapper rounded-0 tap-area {% unless section.settings.header_layout == 'drawer' %}hidden-desk{% endunless %}"
               aria-controls="mobile-menu-drawer"
               aria-expanded="false"
             >
               <span class="visually-hidden">{{ 'header.general.navigation' | t }}</span>
               {%- render 'icon' with 'header-hamburger' -%}
+              
             </button>
+
+            {% comment %} <span 
+                class="custom_drawer_close_btn drawer__close-button drawer__close-button--block tap-area hidden-desk"
+                data-action="close"
+                title="{{ 'general.accessibility.close' | t | escape }}"
+              >
+                {%- render 'icon' with 'nav-arrow-left' -%}
+              </span> {% endcomment %}
+
           {%- endif -%}
           {% comment %}
             <a href="" is="toggle-link" class="header__icon-wrapper tap-area {% if section.settings.header_layout == 'logo_center_search_open' %}hidden-lap{% endif %} hidden-desk" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'search.general.title' | t | escape }}">
@@ -679,45 +714,72 @@ END of Namogoo Snippet
 {%- endcomment -%}
 
 <script>
-function cart_bubble(){if($('.header__cart-count.header__cart-count--floating.bubble-count').text() != '0'){$('.header__cart-count.header__cart-count--floating.bubble-count').removeClass("d-none")}else{$('.header__cart-count.header__cart-count--floating.bubble-count').addClass("d-none")}}
-cart_bubble();
-document.addEventListener('cart:updated', function(){cart_bubble() });
-{%- if section.settings.gif_logo_time != 0 -%}
-  let logo_timer = {{ section.settings.gif_logo_time | times: 1000 }};
-     setTimeout(function(){ 
-       document.querySelector('.gif_logo.timeout').classList.add("d-none");document.querySelector('.header__logo-image.timein').classList.remove("d-none");
-     }, logo_timer);
-{%- endif -%}
-  (() => {
-    const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
-      headerHeight = headerElement.clientHeight,
-      headerHeightWithoutBottomNav = headerElement.querySelector('.header__wrapper').clientHeight;
+    function cart_bubble(){if($('.header__cart-count.header__cart-count--floating.bubble-count').text() != '0'){$('.header__cart-count.header__cart-count--floating.bubble-count').removeClass("d-none")}else{$('.header__cart-count.header__cart-count--floating.bubble-count').addClass("d-none")}}
+    cart_bubble();
+    document.addEventListener('cart:updated', function(){cart_bubble() });
+    {%- if section.settings.gif_logo_time != 0 -%}
+      let logo_timer = {{ section.settings.gif_logo_time | times: 1000 }};
+        setTimeout(function(){ 
+          document.querySelector('.gif_logo.timeout').classList.add("d-none");document.querySelector('.header__logo-image.timein').classList.remove("d-none");
+        }, logo_timer);
+    {%- endif -%}
+      (() => {
+        const headerElement = document.getElementById('shopify-section-{{ section.id }}'),
+          headerHeight = headerElement.clientHeight,
+          headerHeightWithoutBottomNav = headerElement.querySelector('.header__wrapper').clientHeight;
 
-    document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
-    document.documentElement.style.setProperty(
-      '--header-height-without-bottom-nav',
-      headerHeightWithoutBottomNav + 'px'
-    );
-  })();
-   // mobile menu drawer height and top setup
+        document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+        document.documentElement.style.setProperty(
+          '--header-height-without-bottom-nav',
+          headerHeightWithoutBottomNav + 'px'
+        );
+      })();
+      // mobile menu drawer height and top setup
  
- const documentStyle = getComputedStyle(document.documentElement);
- let mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
- document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
- $('button.header__icon-wrapper.rounded-0.tap-area.hidden-desk').click(function(){
-    if ($(window).scrollTop() == 0){
-      mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
-    }else if(mobilemenuHeight - $(window).scrollTop() > 0.1){
-      {% comment %} $("html, body").animate({ scrollTop: $('#shopify-section-announcement-bar').height() }, 0); {% endcomment %}
-      mobilemenuHeight =  $('.shopify-section--header .container').height();
-      console.log(">0" ,  mobilemenuHeight);
-    }else{
-      mobilemenuHeight = $('.shopify-section--header .container').height();
-      console.log("else" ,  mobilemenuHeight);
-    }
-      document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+    const documentStyle = getComputedStyle(document.documentElement);
+    let mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+    document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+    $('button.header__icon-wrapper.rounded-0.tap-area.hidden-desk').click(function(){
+        if ($(window).scrollTop() == 0){
+          mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+        }else if(mobilemenuHeight - $(window).scrollTop() > 0.1){
+          {% comment %} $("html, body").animate({ scrollTop: $('#shopify-section-announcement-bar').height() }, 0); {% endcomment %}
+          mobilemenuHeight =  $('.shopify-section--header .container').height();
+          console.log(">0" ,  mobilemenuHeight);
+        }else{
+          mobilemenuHeight = $('.shopify-section--header .container').height();
+          console.log("else" ,  mobilemenuHeight);
+        }
+          document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+      });
+</script>
+
+<script>
+
+  $(document).ready(function(){
+    $('.mobile_hamburger_btn').on('click', function(e){
+      e.preventDefault();
+      if( $(this).attr('aria-expanded') == 'true' ){
+        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+      }else{
+        // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
+        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/submenu-icon_d57a4496-0922-48e9-86b1-581ab9796ab8.png?v=1676542718');
+        $(this).find('.mobile_hamburger_icon').css('height', 'auto');
+      }
+      return false;
+    })
+
+
+    $('store-header').on('click', function(){
+      
+      $(this).find(".mobile_hamburger_btn").click();
+      $(this).find(".mobile_hamburger_btn").attr('aria-expanded', 'false');
+      $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+    })
+
   });
 </script>
+
 
 <script type="application/ld+json">
   {

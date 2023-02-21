@@ -72,10 +72,28 @@
         price_ratio = this.price_ratio;
         var comparing = Number(compare_at_price) && Number(compare_at_price) > Number(price);
         var discount_ratio = 1.0 - price_ratio;
-        
         if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
-          let discount = price - Shopify.fixed_discount(this.tags);
-          price = price - discount; 
+          let variantId = this.objectID;
+          let pod_price = Shopify.fixed_discount(this.tags);
+          let offerVariantdata = sessionStorage.getItem('variantQtys');
+          let OfferProperty= [];
+          let varient_pod_units = [];
+          offerVariantdata = JSON.parse(offerVariantdata);
+
+           for (var key in offerVariantdata) {
+              if (offerVariantdata.hasOwnProperty(variantId)) {
+               let OfferPropertyArr = offerVariantdata[variantId];
+                OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+                varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+                break;
+               }
+             }
+             let varient_pod_unit = varient_pod_units[0];
+             varient_pod_unit = parseInt(varient_pod_unit);
+             OfferProperty = OfferProperty[0];
+             if(varient_pod_unit > 0 && OfferProperty == 'true'){
+              price = pod_price; 
+             }
           discount_ratio = (compare_at_price - price) / compare_at_price;
       }
 
@@ -135,38 +153,55 @@
       var res = this.inventory_available;
       var flashSale = '';
       var free = '';
+      // console.log(this.inventory_quantity);
       if (this.tags.includes('flash-sale')) {
         flashSale = 'flash-sale';
       }
       if (this.tags.includes('{{ settings.products_offering_freebie }}')) {
         free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
       }
-      if (this.inventory_available) {
-        res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
-      } else {
+      if(this.inventory_quantity < Shopify.sold_out_threshold) {
         if (this.tags.includes('Coming-Soon')) {
           res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
         } else {
-          res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
-          // console.log(this);
-          // Notify me popup stop appearing after adding ("title":"${this.title}") so i remove it for now.
-          // res = `<div class="product-item__quick-form">
-          // <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","tags":[],"available":"${this.inventory_available}",
-          // "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
-          // Notify Me
-          // </a>
-          // </div>`
+          // res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+          res = `<div class="product-item__quick-form">
+          <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
+          "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
+          Notify Me
+          </a>
+          </div>`
         }
       }
+      else if (this.inventory_available) {
+        if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
+          res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-offer-add-to-cart algolia_pod_offer add-to-cart-button ' + ${flashSale} + '" />`;
+        }else{
+          res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
+        }
+      } 
+      // else {
+      //   if (this.tags.includes('Coming-Soon')) {
+      //     res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
+      //   } else {
+      //     // res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+      //     res = `<div class="product-item__quick-form">
+      //     <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
+      //     "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
+      //     Notify Me
+      //     </a>
+      //     </div>`
+      //   }
+      // }
       return res;
     },
     soldImage: function inventory() {
-      var res = this.inventory_available;
-      if (res) {
-        res = "aa-product-image"
-      } else {
+      var res = "aa-product-image";
+      if(this.inventory_quantity < Shopify.sold_out_threshold){
         res = "aa-product-image sold-out"
-      }
+      }else if (this.inventory_available) {
+        res = "aa-product-image"
+      } 
       return res;
     },
     reviews: function reviews() {
@@ -193,15 +228,17 @@
     imageClass: function imageClass() {
       var tags = this.tags;
       var res_class = ''
-      if (this.inventory_available) {
-        res_class = 'aa-product-image'
-      } else {
+      if(this.inventory_quantity < Shopify.sold_out_threshold){
         if (tags.includes('Coming-Soon')) {
           res_class = 'aa-product-image'
         } else {
           res_class = 'aa-product-image sold-out'
         }
       }
+      else if (this.inventory_available) {
+        res_class = 'aa-product-image'
+      } 
+
       return res_class;
     },
     containerClass: function containerClass() {
@@ -224,9 +261,19 @@
         Number(this.compare_at_price) && Number(this.compare_at_price) > Number(this.price);
       var discount_ratio = 1.0 - price_ratio;
       var response = '';
-      if (this.inventory_available) {
+      if(this.inventory_quantity < Shopify.sold_out_threshold){
+        if (tags.includes('Coming-Soon')) {
+          var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+        } else if (tags.includes('Restocking-Soon')){
+          var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
+        }
+        else {
+          var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+        }
+      }
+      else if (this.inventory_available) {
         for (let i = 0; i < tags.length; i++) {
-          if (tags[i].includes('Free-')) {
+      if (tags[i].includes('Free-')) {
             res = `🎁 ${tags[i].replace('-',' ')}`;
             res_class = 'free-label label bg-green z-10';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
@@ -270,16 +317,17 @@
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           }
         }
-      } else {
-        if (tags.includes('Coming-Soon')) {
-          var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
-        } else if (tags.includes('Restocking-Soon')){
-          var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
-        }
-         else {
-          var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
-        }
       }
+      //  else {
+      //   if (tags.includes('Coming-Soon')) {
+      //     var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+      //   } else if (tags.includes('Restocking-Soon')){
+      //     var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
+      //   }
+      //    else {
+      //     var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+      //   }
+      // }
       return response;
     },
     fullHTMLTitle: function fullHTMLTitle() {
