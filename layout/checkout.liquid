@@ -737,8 +737,11 @@
                 {% endfor %}
   
                 $('.product__price .original__price').each(function () {
+                  console.log($(this));
                     var innerPdId = $(this).data('product-id');
                     var pdId = $(this).closest('.product').data('product-id');
+                    console.log(innerPdId,'innerPdId');
+                    console.log(pdId,'pdId');
                     if (innerPdId !== pdId) {
                         $(this).addClass('unmatched');
                         $('.unmatched').remove();
@@ -1270,6 +1273,11 @@
           bottom: 0;
           color: red;
           font-weight: 500;
+        }
+        .error_message {
+          color: red;
+          font-weight: 500;
+          margin-top: 5px;
         }
       </style>
       <!-- Single Checkout Page Styling-2 Begins -->
@@ -2672,6 +2680,19 @@
           }
           return "";
         }
+
+        let lineItem_dis_length = $('[data-order-summary-section] .reduction-code');
+        let dis_tag_length = $('.order-summary__section--discount .tags-list .tag');
+        let dis_section = $('.order-summary__section--discount .edit_checkout .fieldset');
+        let dis_input_section = $('#checkout_reduction_code');
+
+        if(dis_tag_length.length == 0 && lineItem_dis_length.length > 0 && dis_section){
+          dis_input_section.css('pointer-events','none');
+          if(dis_section.find('.error_message').length == 0){
+          dis_section.append('<p class="error_message">Error Message</p>');
+          }
+        } 
+
   
       </script>
     </body>
