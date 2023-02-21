@@ -287,8 +287,14 @@
                 </line-item>
               {%- endfor -%}
             </form>
+
           {% render 'freebie-cart_gift' %} 
-  
+          {% capture priceitemTags %}
+          {% for item in cart.items %}
+          {{ item.product.tags }},
+          {% endfor %}
+          {% endcapture %}
+
             {%- if section.settings.show_recommendations -%}
               {% for item in cart.items %}
                 {% if item.product.tags contains 'gift-box' %}
@@ -494,7 +500,28 @@
               <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
               <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' -}}</b></span>
             </div>
-  
+                    <!--       freebie-offer -->
+                    {% assign gift-product = collections['freebie-offer'].products[0] %}
+                    {% assign gift-product_variant = gift-product.variants[0].id %}
+
+                    {% unless priceitemTags contains 'freebie-offer' %}
+                    {% unless settings.products_offering_freebie != blank %}
+                    {% if cart.total_price >= 400000 %}
+                    {%- form 'product', gift-product, is: 'product-form', id: form_id, class: 'product-item__quick-form d-none' -%}
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="id" value="{{ gift-product_variant }}">
+                    <button is="loader-button" type="submit"
+                      class="button button--outline price-gift-button button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch">
+                      ADD YOUR FREE GIFT
+                    </button>
+                    <button type="submit" class="product-item__quick-buy-button price-gift-button hidden-no-touch ">
+                      <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
+                      ADD YOUR FREE GIFT
+                    </button>
+                    {%- endform -%}
+                    {% endif %}
+                    {% endunless %}
+                    {% endunless %}
         {%- if section.settings.show_checkout_button -%}
               {% if cart.total_price <= 4900000 %}
                   {%- assign magic_ok = true -%}
@@ -583,100 +610,97 @@
           </openable-element>
         {%- endif -%}
       </cart-drawer>
-  
- 
-  <!--       freebie-offer -->
-  {% assign gift-product = collections['freebie-offer'].products[0] %}
-  {% assign gift-product_variant = gift-product.variants[0].id %}
 
   <script>
-   {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
-    $(window).on("load", function(){
-    // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
-    let giftId = "{{ gift-product_variant }}";
-    var cartItem;
-    var onloadfreeqnty = 0;
-    jQuery.getJSON('/cart.js', function(cart) {
-     cartItem = cart.items;
-     let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
-     $(onloadfreeItems).each(function(ind, el){
-      onloadfreeqnty += el.quantity;
-     })
-     console.log("onloadfreeqnty", onloadfreeqnty)
-    })
-  
-  const targNode = document.getElementById('mini-cart');
-  const config_ = { attributes: false, childList: true, subtree: false };
-  const callback_ = (mutationList, observer) => {
-   for (const mutation of mutationList) {
-    let updatedqnty = 0;
-    jQuery.getJSON('/cart.js', function(cart) {
-       cartI = cart.items;
-       let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
-       $(updatedfreeitems).each(function(ind, el){
-        updatedqnty += el.quantity;
-       })
-       console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty",updatedqnty)
-       if(updatedqnty > onloadfreeqnty) {
-       console.log("add free product");  $('.custom-gift-button')[0].click();  onloadfreeqnty += 1;
-       }
-       else if (updatedqnty < onloadfreeqnty){
-        console.log("remove free product");
-        $('#mini-cart-form .line-item').each(function() {
-         let dataItemId = $(this).data('item-id');
-         if (dataItemId == giftId){
-           $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+    {% comment %} if (document.readyState === 'loading') { console.log("loading"); } {% endcomment %}
+    $(window).on("load", function () {
+      // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
+      let giftId = "{{ gift-product_variant }}";
+      var cartItem;
+      var onloadfreeqnty = 0;
+      jQuery.getJSON('/cart.js', function (cart) {
+        cartItem = cart.items;
+        let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
+        $(onloadfreeItems).each(function (ind, el) {
+          onloadfreeqnty += el.quantity;
+        })
+        console.log("onloadfreeqnty", onloadfreeqnty)
+      })
+
+      const targNode = document.getElementById('mini-cart');
+      const config_ = { attributes: false, childList: true, subtree: false };
+      const callback_ = (mutationList, observer) => {
+        for (const mutation of mutationList) {
+          let updatedqnty = 0;
+          jQuery.getJSON('/cart.js', function (cart) {
+            cartI = cart.items;
+            let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
+            $(updatedfreeitems).each(function (ind, el) {
+              updatedqnty += el.quantity;
+            })
+            console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty", updatedqnty)
+            if (updatedqnty > onloadfreeqnty) {
+              console.log("add free product"); $('.custom-gift-button')[0].click(); onloadfreeqnty += 1;
+            }
+            else if (updatedqnty < onloadfreeqnty) {
+              console.log("remove free product");
+              $('#mini-cart-form .line-item').each(function () {
+                let dataItemId = $(this).data('item-id');
+                if (dataItemId == giftId) {
+                  $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+                }
+              });
+              onloadfreeqnty -= 1;
+            }
+          })
+          $('.price-gift-button')[0] ? $('.price-gift-button')[0].click() : '';
+          // let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace(/^\D+/g, '').replace(/,/g, "").slice(0, -3));
+          // console.log('price', total_price);
+          // if ($('.custom-gift-button').length > 0) { $('.custom-gift-button')[0].click(); }
+          // $('#mini-cart-form .line-item').each(function () {
+          //   let dataItemId = $(this).data('item-id');
+          //   if (dataItemId == giftId) {
+          //     let remove_price = $(`.line-item[data-item-id="${dataItemId}"] .price.price--highlight`).text().replace(/^\D+/g, '').replace(/,/g, "").slice(0, -3);
+          //     $(`.line-item[data-item-id="${dataItemId}"] ul, .line-item[data-item-id="${dataItemId}"] span.price.price--compare.line-through`).each(function () { $(this).css("display", "none") })
+          //     if (total_price - remove_price < 1000) {
+          //       $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+          //     }
+          //   }
+          // }
+          //   })
+      
          }
-        });
-        onloadfreeqnty -= 1;
-       }
-    })
-   {% comment %} 
-     let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3));
-     console.log('price',total_price);
-     if ($('.custom-gift-button').length > 0) {$('.custom-gift-button')[0].click();}
-     $('#mini-cart-form .line-item').each(function() 
-     let dataItemId = $(this).data('item-id');
-     if (dataItemId == giftId){
-        let remove_price = $(`.line-item[data-item-id="${dataItemId}"] .price.price--highlight`).text().replace( /^\D+/g, '' ).replace(/,/g,"").slice(0,-3);
-        $(`.line-item[data-item-id="${dataItemId}"] ul, .line-item[data-item-id="${dataItemId}"] span.price.price--compare.line-through`).each(function() {$(this).css("display", "none") })
-         if(total_price - remove_price < 1000) {
-          $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
-         }
-      }
-     })
-    {% endcomment %}
-   }
-  };
-  const observer_ = new MutationObserver(callback_);
-  observer_.observe(targNode, config_);
+        };
+        const observer_ = new MutationObserver(callback_);
+        observer_.observe(targNode, config_);
+
+
+            // const customer_id = "{{customer.id}}"
+            // $('#mini-cart-form .line-item').each(function () {
+            //   let dataItemId = $(this).data('item-id');
+            //   if (dataItemId == giftId) {
+            //     if (customer_id.trim().length == 0) {
+            //       $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+            //     }
+            //   }
+            // })
+
   
-  {% comment %}
-    const customer_id = "{{customer.id}}"
-    $('#mini-cart-form .line-item').each(function() {
-     let dataItemId = $(this).data('item-id');
-      if (dataItemId == giftId){
-         if(customer_id.trim().length == 0) {
-           $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
-          }
-        }
-    })
-   {% endcomment %}
-    /* $(".razorpay-checkout").click(function () {
-      let productsincart = line_item.product;
-      clevertap.event.push("razor/magic Button Clicked",{
-        "cart products": productsincart,
-        "Amount": cart_total_price
-      });
-    }); */
-  });
-  /* $(".razorpay-checkout").click(function () {
-    let productsincart = line_item.product;
-    clevertap.event.push("razor/magic Button Clicked",{
-      "cart products": productsincart,
-      "Amount": cart_total_price
     });
-  }); */
+                /* $(".razorpay-checkout").click(function () {
+                  let productsincart = line_item.product;
+                  clevertap.event.push("razor/magic Button Clicked",{
+                    "cart products": productsincart,
+                    "Amount": cart_total_price
+                  });
+                  }); */
+                      /* $(".razorpay-checkout").click(function () {
+                      let productsincart = line_item.product;
+                      clevertap.event.push("razor/magic Button Clicked",{
+                        "cart products": productsincart,
+                        "Amount": cart_total_price
+                      });
+                    }); */
   </script>
   
   {% schema %}
