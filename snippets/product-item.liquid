@@ -36,10 +36,10 @@
 {% assign total_swatches_to_show = 2 %}
 {% capture swatch_list %}
   {% for variant in product.variants limit: total_swatches_to_show %}
-    {% if variant.option2 %}
-    {% assign has_color_code = true %}
-  {% endif %}
-    <span class='swatch-circle' style="background:{% if variant.option2 %}{{variant.option2}}{% else %}{{variant.option1}}{% endif %}"></span>
+    {% if variant.metafields.my_fields.variantcolorcode %}
+      {% assign has_color_code = true %}
+    {% endif %}
+    <span class='swatch-circle' style="background:{{ variant.metafields.my_fields.variantcolorcode }}"></span>
   {% endfor %}
   {% if remaining_variants_number >= 1 %}
     &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
