@@ -68,7 +68,7 @@
               <input type="hidden" name="checkout">
   
               {%- for line_item in cart.items -%}
-                <line-item class="line-item" data-item-id="{{ line_item.id }}">
+                <line-item class="line-item" data-item-id="{{ line_item.id }}" data-item-key="{{ line_item.key }}">
                   <div class="line-item__content-wrapper">
                     <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
                       <span class="line-item__loader" hidden>
@@ -287,7 +287,7 @@
                 </line-item>
               {%- endfor -%}
             </form>
-          {% render 'freebie-cart_gift' %} 
+          {% comment %} {% render 'freebie-cart_gift' %}  {% endcomment %}
   
             {%- if section.settings.show_recommendations -%}
               {% for item in cart.items %}
@@ -584,11 +584,19 @@
         {%- endif -%}
       </cart-drawer>
   
- 
-  <!--       freebie-offer -->
-  {% assign gift-product = collections['freebie-offer'].products[0] %}
-  {% assign gift-product_variant = gift-product.variants[0].id %}
+ {% comment %} #Freebie Offer: Surabhi {% endcomment %}
+ {% assign gift-product_variant = gift-product.variants[0].id %}
 
+  <script>
+    let giftId = "{{ gift_product }}";
+    sessionStorage.setItem('giftId', giftId );
+  </script>
+
+  {% comment %}
+  <!--       freebie-offer -->
+  {% assign gift_product = settings.giftProduct.selected_or_first_available_variant.id %}
+  {% assign gift-product = collections['freebie-offer'].products[0] %}
+  
   <script>
    {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
     $(window).on("load", function(){
@@ -678,7 +686,7 @@
     });
   }); */
   </script>
-  
+{% endcomment %}
   {% schema %}
       {
         "name": "Cart drawer",

@@ -779,3 +779,86 @@ $(document).on("click", ".custom-offer-add-to-cart", function(e) {
     })
     }
 });
+
+// info: Freebie Solution
+Shopify.enable_freegift = {{ settings.enable_freegift }};
+
+Shopify.customCart = {
+  cartFreebie : function(cartJson){
+    // Shopify.customCart.cartFreebie(cartJson) is rendering on cart update and update the freebie quantity on cart
+    let freebieQt = 0;
+    let freeGiftId = sessionStorage.giftId ? sessionStorage.giftId : '';
+    let freeGiftKey = [];
+  
+    // freeGiftId is comming from sessionStorage which is defined in mini-cart.js
+  
+  if(freeGiftId){
+  for (let i = 0; i < cartJson.items.length; i++) {
+    let properties = cartJson.items[i].properties;
+    if(properties !== null && Object.keys(properties).includes("Free")){
+        freebieQt += cartJson.items[i].quantity ;
+      }
+      if(cartJson.items[i].id == freeGiftId){
+        freeGiftKey.push(cartJson.items[i].key)
+      }
+    }
+    // freeGiftKey is the key of free products in cart
+  
+    console.log(freeGiftKey);
+    $.ajax({
+      url: '/cart/update.js',
+      dataType: 'json',
+      type: 'post',      
+      data: 'updates['+freeGiftId+']='+freebieQt,   
+      success: function(cart) {
+        if(freeGiftKey.length > 1){
+          $.ajax({
+            url: '/cart/change.js',
+            dataType: 'json',
+            type: 'post',      
+            data: {'id':freeGiftKey[0], 'quantity': 0},   
+            success: function(cart) {
+              console.log(cart);
+              document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+              $(".header__cart-count").html(cart.item_count);
+            }
+          });
+        }else{
+          document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+          $(".header__cart-count").html(cart.item_count);
+        }
+      }
+    });
+  }
+  },
+  cartUpdate : function(cartJson){
+    // Shopify.customCart.cartUpdate(cartJson) is rendering on theme.min.js when cart is updated
+    console.log(cartJson);
+    if(cartJson && Shopify.enable_freegift){
+      Shopify.customCart.cartFreebie(cartJson);
+    }
+  }
+  }
+  $(document).on("click", ".custom-search-cta", function (e) {
+    e.preventDefault();
+    // this is for algolia add to cart button. if free fift is eligible for adding.
+    var t = $(this).parents("form").serialize();
+    let freeSale = $(this).parents("form").find('[name="properties[Free]"]');
+    $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: t,
+        success: function (e) {
+        document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+        (document.getElementById("mini-cart").open = !0);
+        if(freeSale.length == 1 && Shopify.enable_freegift){ 
+          // If free gift is eligible to add then we are getting cart json and running the free gift function
+          $.getJSON('/cart.js', function(cart) {
+            Shopify.customCart.cartFreebie(cart);
+        });
+        }
+        }
+    });
+  });

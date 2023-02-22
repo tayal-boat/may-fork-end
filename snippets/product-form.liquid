@@ -564,12 +564,12 @@
           <div class="product-form__buy-buttons" {{ block.shopify_attributes }}>
             {%- form 'product', product, is: 'product-form', id: product_form_id -%}
               <input type="hidden" disabled name="id" value="{{ product_varient.id }}">
-            {%- if product.tags contains settings.tag_selector -%}
-            <input class="flash_sale_enable" type="hidden" name="properties[{{ settings.tag_selector | handleize }}]" value="true">
-            {%- endif -%}
-            {%- if product.tags contains settings.products_offering_freebie -%}
-              <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
-            {%- endif -%}
+              {% if product.tags contains settings.products_offering_freebie %}
+                <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
+              {%- elsif product.tags contains settings.tag_selector -%}
+                <input class="flash_sale_enable" type="hidden" name="properties[{{ settings.tag_selector | handleize }}]" value="true">
+              {%- endif -%}
+            
             
             <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer"{% endif %} class="product-form__payment-container" {{ block.shopify_attributes }}>
              {%- if product.tags contains 'prebooking' -%}  
