@@ -288,12 +288,7 @@
               {%- endfor -%}
             </form>
 
-          {% render 'freebie-cart_gift' %} 
-          {% capture priceitemTags %}
-          {% for item in cart.items %}
-          {{ item.product.tags }},
-          {% endfor %}
-          {% endcapture %}
+          {% render 'freebie-cart_gift' %}
 
             {%- if section.settings.show_recommendations -%}
               {% for item in cart.items %}
@@ -500,28 +495,7 @@
               <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
               <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' -}}</b></span>
             </div>
-                    <!--       freebie-offer -->
-                    {% assign gift-product = collections['freebie-offer'].products[0] %}
-                    {% assign gift-product_variant = gift-product.variants[0].id %}
 
-                    {% unless priceitemTags contains 'freebie-offer' %}
-                    {% unless settings.products_offering_freebie != blank %}
-                    {% if cart.total_price >= 400000 %}
-                    {%- form 'product', gift-product, is: 'product-form', id: form_id, class: 'product-item__quick-form d-none' -%}
-                    <input type="hidden" name="quantity" value="1">
-                    <input type="hidden" name="id" value="{{ gift-product_variant }}">
-                    <button is="loader-button" type="submit"
-                      class="button button--outline price-gift-button button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch">
-                      ADD YOUR FREE GIFT
-                    </button>
-                    <button type="submit" class="product-item__quick-buy-button price-gift-button hidden-no-touch ">
-                      <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
-                      ADD YOUR FREE GIFT
-                    </button>
-                    {%- endform -%}
-                    {% endif %}
-                    {% endunless %}
-                    {% endunless %}
         {%- if section.settings.show_checkout_button -%}
               {% if cart.total_price <= 4900000 %}
                   {%- assign magic_ok = true -%}
@@ -610,7 +584,9 @@
           </openable-element>
         {%- endif -%}
       </cart-drawer>
-
+<!--       freebie-offer -->
+{% assign gift-product = collections['freebie-offer'].products[0] %}
+{% assign gift-product_variant = gift-product.variants[0].id %}
   <script>
     {% comment %} if (document.readyState === 'loading') { console.log("loading"); } {% endcomment %}
     $(window).on("load", function () {
@@ -653,7 +629,10 @@
               onloadfreeqnty -= 1;
             }
           })
+
+          // for one time adding product to the cart like cart.price n all
           $('.price-gift-button')[0] ? $('.price-gift-button')[0].click() : '';
+          
           // let total_price = parseInt($('.mini-cart__drawer-footer .cart-total-text')[0].textContent.replace(/^\D+/g, '').replace(/,/g, "").slice(0, -3));
           // console.log('price', total_price);
           // if ($('.custom-gift-button').length > 0) { $('.custom-gift-button')[0].click(); }
