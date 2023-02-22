@@ -27,10 +27,11 @@
     ADD YOUR FREE GIFT
   </button>
 {%- endform -%}
-{%- endif -%}
+{%- else -%}
+
 {% comment %} for one time adding product to the cart like cart.price n all{% endcomment %}
 {% unless itemTags contains 'freebie-offer' %}
-{% unless settings.products_offering_freebie != blank %}
+
 {% if cart.total_price >= 400000 %}
 {%- form 'product', gift-product, is: 'product-form', id: form_id, class: 'product-item__quick-form d-none' -%}
 <input type="hidden" name="quantity" value="1">
@@ -44,10 +45,14 @@
   ADD YOUR FREE GIFT
 </button>
 {%- endform -%}
+{% else %}
+<p class="upsell"> add items worths {{ 400000 | minus: cart.total_price | divided_by: 100 }} to get a freebie </p>
+
 {% endif %}
-{% endunless %}
+
 {% endunless %}
 
+{%- endif -%}
 {% comment %} 
 {% if cart.total_price > 100000 %}
   {% if customer %}
