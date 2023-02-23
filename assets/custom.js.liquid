@@ -709,6 +709,56 @@ $(".razorpay-checkout").click(function () {
     return maskedEmail.join('');
   }
 
+  function signup_window(session_id){
+    $('.customer-login-section').attr('new_customer', 'true');
+    $('.otp-login-message h3').html('Continue with Email');
+    $('.otp-timer-container').hide();
+    $('.otp-login-error').html('');
+    $('.otp-login-submit-btn').click(function(){
+      let full_name = $('.otp-fullName #full_name').val();
+      let email = $('.otp-email #email').val();
+      let phone = $('#otp-mobile-number').val();
+      let register_url = sessionStorage.getItem('login_location');
+      otpSignUp(full_name, email, phone, session_id, register_url);
+    })
+  }
+
+  function verifyemail(session_id, otp, url){
+    let base_Url = 'https://otp.boat-lifestyle.com/email/verify';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "session_id": session_id,
+        "url": url,
+        "otp": otp
+      }),
+    };
+    
+    $.ajax(settings).done(function (response) {
+      // console.log(response);
+      if(response.code == 200 && response.message == 'login URL sent'){
+        $('.customer-login-section.customer--section').hide();
+        $('.oto-login-success-container').show();
+        localStorage.setItem('boatHead_input', response.Token);
+        countdown(5, response.URL);
+        
+      }else if(response.code == 422 && response.message == 'validation_error'){
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }else if(response.code == 401){
+        $('.otp-login-error').html(response.message);
+      }else if(response.code == 406){
+        $('.otp-login-error').html('Otp expired.');
+      }else{
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }
+    });
+  }
+  
   function selectEmail(email, session_id, url){
     let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
     var settings = {
@@ -727,10 +777,17 @@ $(".razorpay-checkout").click(function () {
     $.ajax(settings).done(function (response) {
       // console.log(response);
       if(response.code == 200 && response.message == 'login URL sent'){
+        if(response.message == 'This email already exists , OTP sent to email'){
+          var session_id = response.session_id;
+  
+  // email varify code
+  
+          }else{
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
         localStorage.setItem('boatHead_input', response.Token);
         countdown(5, response.URL);
+          }
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401 || response.code == 404 ){
@@ -759,10 +816,17 @@ $(".razorpay-checkout").click(function () {
     $.ajax(settings).done(function (response) {
       // console.log(response);
       if(response.code == 200){
+        if(response.message == 'This email already exists , OTP sent to email'){
+        var session_id = response.session_id;
+
+// email varify code
+
+        }else{
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
         localStorage.setItem('boatHead_input', response.Token);
         countdown(5, response.URL);
+      }
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401){
@@ -808,18 +872,7 @@ function verifyotp(session_id, otp, url){
       $('.otp-login-error').html(response.message);
     }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
       $('.otp-login-error').html(response.message);
-      $('.customer-login-section').attr('new_customer', 'true');
-      $('.otp-login-message h3').html('Continue with Email');
-      $('.otp-timer-container').hide();
-      $('.otp-login-error').html('');
-      $('.otp-login-submit-btn').click(function(){
-        let full_name = $('.otp-fullName #full_name').val();
-        let email = $('.otp-email #email').val();
-        let phone = $('#otp-mobile-number').val();
-        let register_url = sessionStorage.getItem('login_location');
-        otpSignUp(full_name, email, phone, session_id, register_url);
-      })
-      
+      signup_window(session_id);
     }else if(response.code == 406){
       $('.otp-login-error').html('Otp expired.');
     }else if(response.code == 300 && response.message == 'emailId list'){
@@ -830,10 +883,11 @@ function verifyotp(session_id, otp, url){
       let emailList = response.emailList;
       let emailListHtml = '', i ;
       let emailListContainer = document.querySelector('.email-list-container');
+      if(emailList.length > 0){
       for (let i = 0; i < emailList.length; i++) {
         emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
       }
-      emailListContainer.innerHTML = emailListHtml;
+      emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
       let selectedEmail = '';
       let emailSelector = $('.email-list-container span');
       emailSelector[0].setAttribute('selected','true');
@@ -846,10 +900,16 @@ function verifyotp(session_id, otp, url){
     }
       $(this).attr('selected','true'); 
       });
+      $('.redirect_to_signup').click(function(){
+        signup_window(session_id);
+      });
       let selectedEmail_url = sessionStorage.getItem('login_location');
       $('.otp-login-submit-btn').click(function(){
       selectEmail(selectedEmail, session_id, selectedEmail_url);
       });
+    }else{
+      signup_window(session_id);
+    }
     }else{
       $('.otp-login-error').html('Something went wrong please try again.');
     }
