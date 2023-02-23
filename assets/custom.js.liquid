@@ -1,4 +1,5 @@
-/*
+{% comment %}
+/**
  * DEVELOPER DOCUMENTATION
  *
  * Include your custom JavaScript here.
@@ -135,6 +136,7 @@
  * ------------------------------------------------------------------------------------------------------------
  *
  */
+{% endcomment %}
 
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 
@@ -224,41 +226,19 @@ let unitsLeft = '';
 let usual_price = '';
 
 Shopify.variantChange = function(e){
-  // console.log(e);
-  // if(e.available == false){
-  //   $('.custom-notify-btn').attr('data-variant-id', e.id);
-  //   $('.custom-notify-btn').show();
-  //   $('.product__info button#AddToCart.button--ternary').css('display','none')
-  // }else{
-  //   $('.custom-notify-btn').hide();
-  //   $('.product__info button#AddToCart.button--primary').css('display','block')
-  // }
-
-let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
-for (let i = 0; i < varient_swatches_input.length; i++) {
-if(varient_swatches_input[i].checked){
-  console.dir(varient_swatches_input[i].offsetParent.dataset.varient_disabled);
-  if(JSON.parse(varient_swatches_input[i].offsetParent.dataset.varient_disabled)) {
-      $('.custom-notify-btn').show();
-      $('.product__info button#AddToCart').hide();
-      $("#gokwik-buy-now").hide();
-      $('#AddToCart').hide();
-      $('quick-buy-drawer #AddToCart').hide();
-      $('quick-buy-popover #AddToCart').hide();
-      $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
-      
+  $('.pdp-btn-price').remove()
+  $("#AddToCart .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
+ // console.log(e);
+  if(e.available == false){
+    $('.custom-notify-btn').attr('data-variant-id', e.id);
+    $('.custom-notify-btn').show();
+    $('.d-lg-none.current-in-cart, .desktop.current-in-cart').hide();
   }else{
     $('.custom-notify-btn').hide();
-    $('.product__info button#AddToCart').show();
-    $("#gokwik-buy-now").show();
-    $('#AddToCart').show();
-    $('quick-buy-drawer #AddToCart').show();
-    $('quick-buy-popover #AddToCart').show();
-    $('.product-item__quick-form.quick-buy-notify-me').hide();
-  }    
-}
-}
+    $('.d-lg-none.current-in-cart, .desktop.current-in-cart').show();
+  }
+
+
 
 let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
 if(home_pod_price){

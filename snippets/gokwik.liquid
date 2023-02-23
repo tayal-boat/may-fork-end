@@ -6,7 +6,7 @@
     		storeId: "{{shop.id}}",
     		fbpixel: "{{settings.fbpixel}}",
         }
-  var productFormSelector = '.product-form';
+  var productFormSelector = '.shopify-product-form';
   var cart = {{ cart | json }}
   var templateName = '{{template.name}}'
 </script> 
@@ -68,34 +68,14 @@ new MutationObserver((mutation) => {
 }
   const sizeCallback = function(mutationList){
     mutationList.forEach((mutation) => {
-      var allForms = document.querySelectorAll('.drawer__content .product-form .product-form__buy-buttons form.shopify-product-form')
-        mutation.addedNodes.forEach((added_node) => {
-          allForms.forEach(form => {
-            if(isInViewport(form)){
-              var gokwikBuyNowButton= form.querySelector('#gokwik-buy-now')
-              if(gokwikBuyNowButton){
-              if (form.querySelector('.loader-button__text').innerHTML == 'Sold out'){
-              	gokwikBuyNowButton.style.display = 'none'
-              }else{
-              	gokwikBuyNowButton.style.display = 'block'
-              }}
-            }
-          })
-        })
-        mutation.removedNodes.forEach((removed_node) => {
-          allForms.forEach(form => {
-            if(isInViewport(form)){
-              
-               var gokwikBuyNowButton= form.querySelector('#gokwik-buy-now')
-              if(gokwikBuyNowButton){
-              if (form.querySelector('.loader-button__text').innerHTML == 'Sold out'){
-              	gokwikBuyNowButton.style.display = 'none'
-              }else{
-              	gokwikBuyNowButton.style.display = 'block'
-              }}
-            }
-          })
-        })
+       let check=document.querySelector('.custom-notify-btn')?.innerText;
+      var gokwikBuyNowButton= document.querySelector('#gokwik-buy-now')
+      if(check=="NOTIFY ME"){
+        gokwikBuyNowButton.style.display = 'none'
+      }else{
+        gokwikBuyNowButton.style.display = 'block'
+      }
+    
     })
 }
    {% comment %} const sizeCallback2 = function(mutationList){
@@ -116,11 +96,11 @@ new MutationObserver((mutation) => {
     })
 } {% endcomment %}
 const config = { attributes: true, childList: true, subtree: true };
-const sizeObserver2 = new MutationObserver(sizeCallback2);
-sizeObserver2.observe(targetNode, config);
+//const sizeObserver2 = new MutationObserver(sizeCallback2);
+//sizeObserver2.observe(targetNode, config);
 
-//const sizeObserver = new MutationObserver(sizeCallback);
-//sizeObserver.observe(targetNode, config); 
+const sizeObserver = new MutationObserver(sizeCallback);
+sizeObserver.observe(targetNode, config); 
      
 const removeOverlay = new MutationObserver(hideFoldieCallback)
 removeOverlay?.observe(targetNode, config)
