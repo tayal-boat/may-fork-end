@@ -649,9 +649,9 @@
               </div>
               </button>
               <button id="BIS_trigger" type="button" class="custom-notify-btn"
-                data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if
-                product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
-                Notify me
+              data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if
+              product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
+              Notify me
               </button>
               <div class="d-lg-none current-in-cart" {% unless product.selected_or_first_available_variant.available %}
                 style="display: none;" {% endunless %}>
@@ -665,7 +665,13 @@
     </div>
 
     {%- endif -%}
-
+    {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+    <button id="BIS_trigger" type="button" class="custom-notify-btn"
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if
+      product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
+      Notify me
+    </button>
+    {% endunless %}
     {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix !=
     'quick-buy-drawer' -%}
     {%- comment -%} {{ form | payment_button }} {%- endcomment -%}
@@ -675,23 +681,15 @@
     {%- endform -%}
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
     <div class="d-flex flex-column" aria-role="additonal-info">
-      {% comment %} <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>
-      {% if product.metafields.custom.product_highlights %} {%- endif -%}{% endcomment %}
+      {% comment %} <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>{% endcomment %}
+      {% if product.metafields.custom.product_highlights %}
       <div class="price-container product-highlight mt-3 desktop">
         <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
           Highlights
         </h6>
         {{ product.metafields.custom.product_highlights }}
-        <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-          tempor incidunt ut labore et.</li>
-        <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-          tempor incidunt ut labore et.</li>
-        <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-          tempor incidunt ut labore et.</li>
-        <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-          tempor incidunt ut labore et.</li>
       </div>
-      {% comment %} {% endcomment %}
+    {%- endif -%}
     </div>
     </div>
     {% endif %}
