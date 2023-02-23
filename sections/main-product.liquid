@@ -47,7 +47,7 @@
       --secondary-button-text-color: {{ secondary_button_text_color.red }}, {{ secondary_button_text_color.green }}, {{ secondary_button_text_color.blue }};
     }
     {% if product.tags contains 'Coming-Soon' %}
-      #gokwik-buy-now, #AddToCart, .amazon-c, .stock-label {display: none;}
+      #gokwik-buy-now, #AddToCart, .amazon-c, .stock-label {display: none!important;}
     {% endif %}
     {% if product.tags contains 'NO-PRICE' %}  
      .product-meta__price-list-container, .price-container {display:none!important;}
@@ -84,14 +84,14 @@
         </ol>
       </nav>
 
-      <div class="d-lg-none" style="width:100%; height:70px; background:grey;border-radius:10px;">
-        {% comment %} <img {% render 'image-attributes' , image: product.metafields.custom.product_banner, sizes: '700' ,
-          ignore_src: true %}> {% endcomment %}
-      </div>
-
+    {% if product.metafields.custom.product_banner %}
+    <img {% render 'image-attributes' , image: product.metafields.custom.product_banner, sizes: '700' , ignore_src: true %}
+      style="border-radius:10px;">
+    {% endif %}
 
 <!-- PRODUCT TOP PART -->
-<div class="product py-lg-2 mt-3 mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
+  <div
+    class="product py-lg-2 {% if product.metafields.custom.product_banner %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
   {% comment %}
   ! Changed the position of 'product-info' & 'product-media' in New PDP Design
   {% endcomment %}
@@ -181,21 +181,13 @@
               </div>
               </div>
               </div>
-                {% comment %} {% if product.metafields.custom.product_highlights %} {%- endif -%}{% endcomment %}
+              {% if product.metafields.custom.product_highlights %}
                 <div class="price-container product-highlight mt-1 pt-3 d-lg-none">
                   <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product Highlights
                   </h6>
                   {{ product.metafields.custom.product_highlights }}
-                  <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-                    tempor incidunt ut labore et.</li>
-                  <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-                    tempor incidunt ut labore et.</li>
-                  <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-                    tempor incidunt ut labore et.</li>
-                  <li> Lorem ipsum dolor sit amet, consectetur adipisci elit,
-                    tempor incidunt ut labore et.</li>
                 </div>
-                {% comment %} {% endcomment %}
+              {%- endif -%}
   </section>
 {%- else -%}
   {%- comment -%}
