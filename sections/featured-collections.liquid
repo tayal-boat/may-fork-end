@@ -41,7 +41,7 @@
       --prev-next-button-color: {{ settings.text_color.red }}, {{ settings.text_color.green }}, {{ settings.text_color.blue }};
 
       background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }});
-      --section-products-per-row: 2;
+    --section-products-per-row:   {% if section.settings.horizontal_ui %}1 {% else %} 2{% endif %};
       margin: {{ section.settings.padding }};
     }
     .tabs-nav__item-list button {
@@ -76,8 +76,19 @@
       #shopify-section-{{ section.id }} {
         --section-products-per-row: {{ section.settings.products_per_row }}; margin: {{ section.settings.padding_desktop }};
       }
-     .product-item-meta__color-count {margin-bottom: 5px;} }
-
+     .product-item-meta__color-count {margin-bottom: 5px;} 
+   }
+  {% if section.settings.horizontal_ui %}
+     .item-horizontal .product-item {flex-direction: row;}
+     .item-horizontal .product-item{flex-direction: column!important;}
+     .item-horizontal .product__wrapper{display:flex;min-height:170px;}
+     .product-list__inner.item-horizontal .product-item__info{border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 8px;border-bottom-right-radius: 8px;margin: 0 ;padding: 10px 12px 8px 16px;}
+     .product-list__inner.item-horizontal .product-item__info .product-item-meta__reviews-badge{padding: 0 8px;border-radius: 15px;border: solid 0.5px #adadad;background-color: #f1efef;margin: 8px 2px;    line-height: 1.8rem;display: flex;justify-content: space-between;}
+     .item-horizontal .product-item{border-radius: 8px; border: 1px solid #E7E7E7;background: #e7e7e7;}
+     .product-horizontal {width: 60%;}
+     .features-list.only-horizontal{margin: 0;border-top: 1px solid #e7e7e7;padding:0.8rem 0.5rem;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;background-color:white;}  
+     .features-list.only-horizontal span.feature{font-weight: 500;}
+  {% endif %}
 {% if section.settings.header_ui %}
  #shopify-section-{{ section.id }} .tabs-nav__item-list {justify-content: center;}
  #shopify-section-{{ section.id }} .tabs-nav--center .tabs-nav__scroller-inner {margin-left: auto;}
@@ -183,7 +194,8 @@
                 class="scroller"
               {% endunless %}
             >
-              <div class="product-list__inner {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
+              <div
+                class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
                 {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
                 {%- assign gap_width = 24.0
                   | divided_by: section.settings.products_per_row
@@ -349,6 +361,12 @@
       "default": 8
     },
     {
+      "type": "checkbox",
+      "id": "horizontal_ui",
+      "label": "horizontal-ui",
+      "default": false
+      },
+      {
       "type": "range",
       "id": "products_per_row",
       "label": "Products per row (desktop)",
