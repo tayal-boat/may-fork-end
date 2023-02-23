@@ -135,7 +135,7 @@ END of Namogoo Snippet
       .header__logo .header__logo-link .header__logo-image{margin-top: -7px;}
       .header__secondary-links .header__icon-list .search-icon{height: 32px;} {% endcomment %}
 
-      #mobile-menu-drawer.drawer{max-width: fit-content;height: 90%;} 
+      #mobile-menu-drawer.drawer{max-width: fit-content;z-index: 9;} 
       #mobile-menu-drawer.drawer .drawer__content{margin-top: 4px;}
       
       .header__icon-list  .header__icon-wrapper[aria-expanded="false"]~span{display: none;}
@@ -149,6 +149,8 @@ END of Namogoo Snippet
 
       .mobile_hamburger_btn[aria-expanded="true"] img{width: 18px !important;height: auto !important;max-width: fit-content !important;}
       #mobile-menu-drawer .mobile-nav__item[data-level="2"] p{max-width: 95%;margin: 0px auto;}
+
+      #mobile-menu-drawer .mobile-nav .mobile-nav{margin: 12px 32px 0!important;}
     }
 
     div#shopify-section-announcement-bar.announcement-non-sticky~#shopify-section-header{position: sticky;}
@@ -753,17 +755,29 @@ END of Namogoo Snippet
 </script>
 
 <script>
-  $('.mobile_hamburger_btn').on('click', function(e){
-    e.preventDefault();
-    if( $(this).attr('aria-expanded') == 'true' ){
+
+  $(document).ready(function(){
+    $('.mobile_hamburger_btn').on('click', function(e){
+      e.preventDefault();
+      if( $(this).attr('aria-expanded') == 'true' ){
+        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+      }else{
+        // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
+        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/submenu-icon_d57a4496-0922-48e9-86b1-581ab9796ab8.png?v=1676542718');
+        $(this).find('.mobile_hamburger_icon').css('height', 'auto');
+      }
+      return false;
+    })
+
+
+    $('store-header').on('click', function(){
+      
+      $(this).find(".mobile_hamburger_btn").click();
+      $(this).find(".mobile_hamburger_btn").attr('aria-expanded', 'false');
       $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
-    }else{
-      // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
-      $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/submenu-icon.png?v=1676374713');
-      $(this).find('.mobile_hamburger_icon').css('height', 'auto');
-    }
-    return false;
-  })
+    })
+
+  });
 </script>
 
 
