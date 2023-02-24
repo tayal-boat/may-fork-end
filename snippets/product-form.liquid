@@ -108,24 +108,27 @@
             </div>
 
       {%- when 'color' -%}
-      <span style="font-size: 12px;color: #666565;">Select Color: </span>
+      <span style="font-size: 12px;color: #666565;"> Color: </span>
       <div class="color-swatch-list">
         {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
-
+        {%- assign option_position0 = option.position | minus: 1 -%}
         {%- for value in option.values -%}
-        {%- assign color_value_downcase = value | downcase -%}
-
+          {%- for variant in product.variants -%}
+            {%- if variant.options[option_position0] == value -%}
         <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}">
           <input class="color-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
             form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" {% if
             value==option.selected_value %}checked="checked" {% endif %} data-bind-value="{{ option_id }}-value">
           <label class="color-swatch__item" for="{{ option_id }}-{{ forloop.index }}" title="{{ value | remove: ' ' | escape }}"
-            style="{% render 'color-swatch-style', color_swatch_config: color_swatch_config, value: value %}">
+            style="background-color:{{ variant.metafields.my_fields.variantcolorcode }}">
             <span class="visually-hidden">{{ value }}</span>
           </label>
           <span class="variant-name">{{ value | remove: ' ' | escape }}</span>
           </div>
-          {%- endfor -%}
+          {%- break -%}
+        {% endif %}
+        {%- endfor -%}
+        {%- endfor -%}
           </div>
 
       {%- when 'block' -%}
@@ -283,6 +286,9 @@
             {%- endif -%}
             </div>
             {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
+            <div class="d-lg-none restocking" style="{% if product.selected_or_first_available_variant.available %}
+              display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
+            </div>
             </div>
             </div>
 
@@ -362,6 +368,10 @@
               <div class="desktop current-in-cart" {% unless product.selected_or_first_available_variant.available %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
+              </div>
+              <div class="desktop restocking" style="{% if product.selected_or_first_available_variant.available %}
+                display: none; {% endif %}background: #D6D6D6;color: #FF0000;
+                padding-inline: 30px;border-radius: 5px;font-weight:600;"> Restocking Soon
               </div>
 
 
