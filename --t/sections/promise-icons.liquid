@@ -1,0 +1,89 @@
+<style>
+
+    #shopify-section-{{ section.id }} {margin: {{ section.settings.padding }}}
+    @media screen and (min-width: 1200px) {
+     #shopify-section-{{ section.id }} {margin: {{ section.settings.padding_desktop }};}
+    }
+
+</style>
+
+
+<div class="container c-new {{ section.settings.media_query }}" style="background:white;">
+    <div class="section__color-wrapper promise-icons">
+        <div class="mySect py-2">
+            <div class="img-row text-center row justify-content-around pb-1 pb-lg-0" style="max-width: 100%;margin: auto;">
+                {% for block in section.blocks %}
+                    <div class="col-2 pipe p-0">
+                        <div class="row myIconRow">
+                            <div class="col-md-6 myIcon">
+                                <img alt="" loading="lazy" src="{{block.settings.image | img_url }}">
+                            </div>
+                            <div class="col-md-6 myText">
+                                <p class="mb-0">{{ block.settings.collection_Title }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+{% schema %}
+{
+  "name": "promise icons",
+  "max_blocks": 5,
+  "class": "shopify-section--promise-icons",
+  "settings": [
+    	{
+            "type": "text",
+            "id": "media_query",
+            "label": "media-query class"
+        },
+        {
+            "type": "text",
+            "id": "padding",
+            "label": "margin",
+            "default": "0"
+        },
+        {
+            "type": "text",
+            "id": "padding_desktop",
+            "label": "margin-desktop",
+            "default": "input"
+        }
+  ],
+  "blocks": [
+		{
+			"type": "image",
+        	"name": "icon",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image"
+              },
+			  {
+                  "type": "liquid",
+                  "id": "collection_Title",
+                  "label": "icon text"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "promise icons",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+}
+{% endschema %}

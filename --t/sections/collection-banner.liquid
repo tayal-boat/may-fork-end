@@ -1,0 +1,226 @@
+<style>
+  #shopify-section-{{ section.id }}.image-overlay {
+    --heading-color: 
+    {{ section.settings.image_text_color.red }},
+    {{ section.settings.image_text_color.green }}, {{ section.settings.image_text_color.blue }};
+    --text-color: 
+    {{ section.settings.image_text_color.red }},
+    {{ section.settings.image_text_color.green }}, {{ section.settings.image_text_color.blue }};
+    --section-items-alignment: center;
+    --section-overlay-color: 
+    {{ section.settings.image_overlay_color.red }},
+    {{ section.settings.image_overlay_color.green }}, {{ section.settings.image_overlay_color.blue }};
+    --section-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+  }
+
+  @media screen and (max-width: 767px) {
+    .collection-mobile-banner-section .collection-image-slider{padding: 10px;}
+    .collection-image-slider .item img{border-radius: 10px;height:200px;}
+    .collection_mobile_banner_section .mobile-only{padding: 0px 12px;}
+  }
+</style>
+
+<section class="collection_mobile_banner_section">
+  {%- comment -%}
+    ------------------------------------------------------------------------------------------
+    TOP PART (IMAGE AND BREADCRUMB)
+    ------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  {%- capture breadcrumb -%}
+    <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb breadcrumb--floating text--xsmall hidden-phone">
+      <ol class="breadcrumb__list" role="list">
+        <li class="breadcrumb__item">
+          <a class="breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+        </li>
+
+        <li class="breadcrumb__item">
+          <span class="breadcrumb__link" aria-current="page">
+            {%- if collection.handle == 'all' -%}
+              {{- 'collection.general.all_products' | t -}}
+            {%- else -%}
+              {{- collection.title -}}
+            {%- endif -%}
+          </span>
+        </li>
+      </ol>
+    </nav>
+  {%- endcapture -%}
+
+  <div class="container">
+    <div class="page-header">
+      {{- breadcrumb -}}
+    </div>
+  </div>
+  
+      {%- if collection.metafields.custom.mobile_image_slider -%}
+        {%- assign all_banners = collection.metafields.custom.mobile_image_slider | split: "," -%}
+            <div class="mobile-only pt-3">
+              <div class="collection-image-slider {{ section.id }}">
+                {% for single_banner in all_banners %}
+                  {% comment %} <a class="custom-collection-banner {%- if template contains 'notify-me-collection' -%}buttonbtnexplore{%- endif -%}"> {% endcomment %}
+                    <div class="item">
+                      <img src="{{ single_banner }}" class="collection_single_image" style="width:100%;" />
+                    </div>
+                  {% comment %} </a>     {% endcomment %}
+                {% endfor %}
+              </div>
+            </div>
+     {%- endif -%} 
+  
+
+
+
+  {%- comment -%}
+    ------------------------------------------------------------------------------------------
+    QUICK LINKS PART
+    ------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  {%- assign quick_links_menu = section.settings.quick_links -%}
+
+  {%- if quick_links_menu.links.size > 0 -%}
+    <link-bar class="link-bar">
+      <div class="container">
+        <div class="link-bar__wrapper">
+          <span class="link-bar__title heading heading--small text--subdued">{{ quick_links_menu.title }}</span>
+
+          <div class="link-bar__scroller hide-scrollbar">
+            <ul class="link-bar__linklist list--unstyled" role="list">
+              {%- for link in quick_links_menu.links -%}
+                <li class="link-bar__link-item {% if link.active %}link-bar__link-item--selected{% endif %}">
+                  <a href="{{ link.url }}" class="link-bar__link link--animated {% if link.active %}text--underlined{% endif %}">{{ link.title }}</a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </link-bar>
+  {%- endif -%}
+
+</section>
+{% comment %} <script>
+  $(document).ready(function() {
+    $('.collection-image-slider').owlCarousel({
+      loop: false,
+      responsiveClass: true,
+      autoplay: true,
+      items: 4,
+      nav: false,
+      dots: true,
+      responsive: {
+        300: {
+          dots: false,
+          items: 1
+        },
+        800: {
+          items: 1
+        },
+        1000: {
+          dots: false,
+          items: 1,
+          loop: true,
+          margin: 10
+        }
+      }
+    })
+  });
+</script> {% endcomment %}
+{% schema %}
+  {
+    "name": "Collection banner",
+    "class": "shopify-section--collection-banner",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "To change collection descriptions or collection images, [edit your collections](/admin/collections)."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_image",
+        "label": "Show collection image",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_description",
+        "label": "Show collection description",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "section_height",
+        "label": "Image height",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Original image ratio"
+          }, {
+            "value": "small",
+            "label": "Small"
+          }, {
+            "value": "medium",
+            "label": "Medium"
+          }, {
+            "value": "large",
+            "label": "Large"
+          }
+        ],
+        "info": "Choose \"Original image ratio\" to not cut images. [Learn more](https://help.shopify.com/en/manual/online-store/images/theme-images#best-practices-for-slideshows-and-full-width-images)",
+        "default": "small"
+      }, {
+        "type": "select",
+        "id": "text_width",
+        "label": "Text width",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small"
+          }, {
+            "value": "medium",
+            "label": "Medium"
+          }, {
+            "value": "large",
+            "label": "Large"
+          }, {
+            "value": "fill",
+            "label": "Fill screen"
+          }
+        ],
+        "default": "medium"
+      }, {
+        "type": "header",
+        "content": "Color",
+        "info": "Only applicable when collection image is used."
+      }, {
+        "type": "color",
+        "id": "image_text_color",
+        "label": "Text",
+        "default": "#ffffff"
+      }, {
+        "type": "color",
+        "id": "image_overlay_color",
+        "label": "Overlay",
+        "default": "#000000"
+      }, {
+        "type": "range",
+        "id": "image_overlay_opacity",
+        "label": "Overlay opacity",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 30
+      }, {
+        "type": "header",
+        "content": "Navigation"
+      }, {
+        "type": "link_list",
+        "id": "quick_links",
+        "label": "Quick links",
+        "info": "This menu won't show dropdown items."
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,26 @@
+{%- if settings.enable_flash_sale -%}
+{% liquid
+    assign product = inventory-bar
+        if settings.inventory_bar_min != blank and settings.inventory_bar_max != blank 
+            assign min = settings.inventory_bar_min 
+            assign max = settings.inventory_bar_max 
+            assign diff = max | minus: min 
+            assign sold_percentage = "now" | date: "%N" | modulo: diff | plus: min 
+        else
+            assign second_last = product.id | slice: 11 
+            assign last = product.id | slice: 12
+            assign total = second_last | plus: last
+            assign current_hours = "now" | date: "%H"
+            assign current_date = "now" | date: "%d"
+
+            if settings.flash_end_date == blank
+                assign sold_percentage = current_hours | times: 2 | plus: current_date | plus: total
+            else
+                assign sold_percentage = current_hours | times: 1.9 | plus: last | plus: 47 | floor
+            endif
+        endif 
+ 
+%}
+    <div role="progressbar" class="{% if template contains 'collection' %}ml-2{%- endif %}" style="--value:{{sold_percentage}}">{{sold_percentage}}%  sold</div>
+
+{%- endif -%}

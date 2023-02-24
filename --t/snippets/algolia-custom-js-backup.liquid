@@ -1,0 +1,432 @@
+<script>
+    function debounce(e, n, t) {
+    var i;
+    return function u() {
+        var r = this,
+            l = arguments,
+            a = function() {
+                i = null, t || e.apply(r, l)
+            },
+            c = t && !i;
+        clearTimeout(i), i = setTimeout(a, n), c && e.apply(r, l)
+    }
+}
+if (window.innerWidth < 1200) {
+    let e = document.querySelector(".predictive-search__input_mobile"),
+        n = document.querySelector(".algolia-search__form_mobile input");
+    var t = debounce(function() {
+        n.value = e.value, n.dispatchEvent(new Event("input", {
+            bubbles: !0
+        }))
+    }, 800);
+    e.addEventListener("input", t)
+} else {
+    let i = document.querySelector(".predictive-search__input_desk"),
+        u = document.querySelector(".algolia-search__form input");
+    var r = debounce(function() {
+        u.value = i.value, u.dispatchEvent(new Event("input", {
+            bubbles: !0
+        }))
+    }, 800);
+    i.addEventListener("input", r)
+};
+
+    var n = new IntersectionObserver(function(e) {
+    !0 === e[0].isIntersecting ? $("#shopify-section-announcement-bar").addClass("announcement-non-sticky") : $("#shopify-section-announcement-bar").removeClass("announcement-non-sticky")
+}, {
+    threshold: [1]
+});
+null !== document.querySelector("#shopify-section-announcement-bar") && n.observe(document.querySelector("#shopify-section-announcement-bar")), 
+$(".algolia-header-search-input .predictive-search__input").click(function() {
+    $('body').addClass('noScroll');
+    $('.clear-recent-search').click(function() {
+        sessionStorage.setItem('queryList', '');
+        $(".algolia-recently-search").removeAttr("style");
+        $('.algolia-recently-search-container').html('');
+        $('.algolia-recently-search-container').removeAttr("style");
+        $('.algolia-recently-search-header').hide()
+    });
+    let recentSearches = sessionStorage.queryList;
+    let recentSearchHtml = '';
+    if (recentSearches) {
+        recentSearches = recentSearches.split(',');
+        for (let i = 0; i < recentSearches.length; i++) {
+            recentSearchHtml += '<div>' + recentSearches[i] + '</div>';
+        }
+        $('.algolia-recently-search-header').show();
+        $(".algolia-recently-search, .algolia-trending-search").css("display", "block");
+    } else {
+        $('.algolia-recently-search-header').hide()
+    }
+    $('.algolia-recently-search-container').html(recentSearchHtml);
+
+    $(".algolia-trending-item , .algolia-recently-search-container div").click(function() {
+      console.log('hiiiiii');
+        if (null !== this.offsetParent) {
+            let e = this.offsetParent.previousElementSibling.firstElementChild.querySelector(".predictive-search__input");
+            let algolia_trending = '';
+            if ($(this) == $('.algolia-trending-item')) {
+                algolia_trending = $(this).children('.algolia-trending-label').text();
+            } else {
+                algolia_trending = $(this).text()
+            };
+            e.value = algolia_trending.trim(), e.dispatchEvent(new Event("input", {
+                bubbles: !0
+            }))
+        }
+    });
+    
+    let e = $(".shopify-section--header .container").height();
+    $("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") && (e += $("#shopify-section-announcement-bar").height()), $(".search-popup-container").css({
+        opacity: "1",
+        transform: "translateY(0px) translateZ(0px)",
+        display: "block"
+    }), $(".search-clear-icon").css('display', 'flex'), setTimeout(function() {
+        $('.fixed_nav').css({
+            'display': 'block',
+            'z-index': '999'
+        });
+        $(".algolia-autocomplete .aa-dataset-products").show();
+    }, 1e3), setTimeout(function() {
+        let recentlySearchContainer = "";
+        (recentlySearchContainer = window.innerWidth < 1200 ? document.querySelectorAll(".algolia-recently-search-container")[1] : document.querySelectorAll(".algolia-recently-search-container")[0]).offsetHeight > 38 && $(".algolia-recently-search-container").css("height", "76px");
+    }, 300),
+    $('.algoinput').css("display", "none");
+}), $(".search-clear-icon").click(function() {
+    $('.fixed_nav').removeAttr('style');
+    let e = this.offsetParent;
+    var t = $(this).closest(".algolia-header-custom-search").find(".search-popup-container");
+    $(this).removeAttr("style");
+    e.querySelector(".predictive-search__input").value = "", e.querySelector(".predictive-search__input").dispatchEvent(new Event("input", {
+        bubbles: !0
+    })), setTimeout(function() {
+        $('body').removeClass('noScroll');
+        t.removeAttr("style"), $(".algolia-autocomplete .aa-dataset-products").hide()
+    }, 100)
+}), $(document).click(function(e) {
+    $(e.target).closest(".algolia-header-custom-search").length || $(".search-popup-container").removeAttr("style");
+      if (document.querySelectorAll('.algolia-autocomplete').length && document.querySelectorAll('.algolia-autocomplete')[0].style.display == 'none' && document.querySelectorAll('.algolia-autocomplete')[1].style.display == 'none') {
+      $(e.target).closest(".algolia-header-custom-search").length || [$('body').removeClass('noScroll'), $(".search-clear-icon").removeAttr("style")];
+  }
+}), $(".algolia-search__form, .algolia-search__form_mobile ").submit(function(e) {
+    e.preventDefault()
+});
+let i = $("#shopify-section-header").height() + 60;
+$(".algolia-autocomplete").css("top", i + "px");
+
+$(".predictive-search__input_mobile, .predictive-search__input_desk").on('input', function (){
+  let algoInput = $(this).val();
+  let input_character = algoInput.length;
+  let wordsleft = 3 - input_character;
+  let datasetProducts = document.querySelectorAll(".aa-dataset-products .aa-suggestions");
+  let searchPopupCont = $(".search-popup-container");
+      if(datasetProducts.length > 0){
+      searchPopupCont.removeAttr("style");
+      }else{
+        if(input_character > 0){
+          searchPopupCont.css({ opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block" });
+          $('.algoinput').css("display", "block");
+          $(".algolia-recently-search, .algolia-trending-search").css("display", "none");
+          let algoMessage = '';
+          if(input_character == 1 ){
+            algoMessage = 'Type in another '+ wordsleft +' characters to unveil the magic…'
+          }else if(input_character == 2){
+            algoMessage = 'Type in '+ wordsleft +' more character to unveil the magic…'
+          }else if(input_character >= 3){
+            algoMessage = 'Personalizing products to your taste…'
+          }
+          $(".algoinput .algoMessage").html(algoMessage);
+        }else{
+          searchPopupCont.css({ opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block" });
+          $('.algoinput').css("display", "none");
+          $(".algolia-recently-search, .algolia-trending-search").css("display", "block");
+        }
+      }
+});
+
+var actualDimension = $(window).width() + $(window).height();
+$(window).resize(function(){
+if($(window).width() + $(window).height() < actualDimension) {
+$('.fixed_nav.fixed_nav_mobile').css('position','relative')
+} else {
+$('.fixed_nav.fixed_nav_mobile').removeAttr('style')
+}
+});
+
+// Search Placeholder Animation Old Code
+/* const getInputClass = () => {
+    if (window.matchMedia('(max-width: 767px)').matches)
+      return document.querySelector('.predictive-search__input_mobile');
+    return document.querySelector('.predictive-search__input_desk');
+  };
+
+  const texts = ['Search Earphones', 'Search Smartwatches', 'Search Speakers', 'Search Neckbands'];
+  const input = getInputClass();
+  const animationWorker = function (input, texts) {
+    this.input = input;
+    this.defaultPlaceholder = this.input.getAttribute('placeholder');
+    this.texts = texts;
+    this.curTextNum = 0;
+    this.curPlaceholder = '';
+    this.blinkCounter = 0;
+    this.animationFrameId = 0;
+    this.animationActive = false;
+    this.input.setAttribute('placeholder', this.curPlaceholder);
+
+    this.switch = (timeout) => {
+      this.input.classList.add('imitatefocus');
+      setTimeout(() => {
+        this.input.classList.remove('imitatefocus');
+        if (this.curTextNum == 0) this.input.setAttribute('placeholder', this.defaultPlaceholder);
+        else this.input.setAttribute('placeholder', this.curPlaceholder);
+
+        setTimeout(() => {
+          this.input.setAttribute('placeholder', this.curPlaceholder);
+          if (this.animationActive) this.animationFrameId = window.requestAnimationFrame(this.animate);
+        }, timeout);
+      }, timeout);
+    };
+ 
+    this.animate = () => {
+      if (!this.animationActive) return;
+      let curPlaceholderFullText = this.texts[this.curTextNum];
+      let timeout = 500;
+      if (this.curPlaceholder == curPlaceholderFullText + '|' && this.blinkCounter == 1) {
+        this.blinkCounter = 0;
+        this.curTextNum = this.curTextNum >= this.texts.length - 1 ? 0 : this.curTextNum + 1;
+        this.curPlaceholder = '|';
+        this.switch(600);
+        return;
+      } else if (this.curPlaceholder == curPlaceholderFullText + '|' && this.blinkCounter < 1) {
+        this.curPlaceholder = curPlaceholderFullText;
+        this.blinkCounter++;
+      } else if (this.curPlaceholder == curPlaceholderFullText && this.blinkCounter < 1) {
+        this.curPlaceholder = this.curPlaceholder + '|';
+      } else {
+        this.curPlaceholder =
+          curPlaceholderFullText
+            .split('')
+            .slice(0, this.curPlaceholder.length + 1)
+            .join('') + '|';
+        timeout = 300;
+      }
+      this.input.setAttribute('placeholder', this.curPlaceholder);
+      setTimeout(() => {
+        if (this.animationActive) this.animationFrameId = window.requestAnimationFrame(this.animate);
+      }, timeout);
+    };
+
+    this.stop = () => {
+      this.animationActive = false;
+      window.cancelAnimationFrame(this.animationFrameId);
+    };
+
+    this.start = () => {
+      this.animationActive = true;
+      this.animationFrameId = window.requestAnimationFrame(this.animate);
+      return this;
+    };
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    let aw = new animationWorker(input, texts).start();
+    input.addEventListener('focusin', (e) => aw.stop());
+    input.addEventListener('focusout', (e) => {
+      setTimeout(aw.start, 500);
+    });
+    $('.search-clear-icon').click(function() {
+      setTimeout(aw.start, 500);
+    })
+    input.addEventListener('blur', (e) => {
+      aw = new animationWorker(input, texts);
+      if (e.target.value == '') setTimeout(aw.start, 500);
+    });
+  }); */
+
+  // Search Placeholder Animation New Code
+  "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+//default settings
+var typewriterSettings = {
+    writeDelay: 80,
+    deleteDelay: 40,
+    holdOnceWritten: 1000,
+    holdOnceDeleted: 300,
+    stopAfterOnce: false
+};
+var TypewriterProps = /** @class */ (function () {
+    function TypewriterProps(selector, phrases, settings) {
+        var _this = this;
+        this.phrasesLength = 0;
+        this.currentPhrase = 'Search '
+        this.updateCurrentPhrase = function () {
+            _this.currentPhrase === _this.phrasesLength - 1
+                ? _this.resetPhrases()
+                : _this.nextPhrase();
+        };
+        this.resetPhrases = function () {
+            _this.currentPhrase = 0;
+        };
+        this.nextPhrase = function () {
+            _this.currentPhrase++;
+        };
+        this.settings = __assign({}, typewriterSettings, (settings || {}));
+        this.element = document.querySelector(selector);
+        this.phrases = phrases;
+        this.phrasesLength = phrases.length;
+    }
+    return TypewriterProps;
+}());
+var TypeWriter = /** @class */ (function (_super) {
+    __extends(TypeWriter, _super);
+    function TypeWriter(selector, phrases, settings) {
+        if (settings === void 0) { settings = {}; }
+        var _this = _super.call(this, selector, phrases, settings) || this;
+        _this.write = function () {
+            _this.element.setAttribute("placeholder", "Search ");
+            _this.phrases[_this.currentPhrase].split(" ").forEach(function (letter, index) {
+                setTimeout(function () {
+                    _this.element.setAttribute("placeholder", _this.element.getAttribute("placeholder") + letter);
+                    if (index === _this.phrases[_this.currentPhrase].length - 1) {
+                        setTimeout(function () {
+                            _this.remove();
+                        }, _this.settings.holdOnceWritten);
+                    }
+                }, _this.settings.writeDelay * index);
+            });
+        };
+        _this.remove = function () {
+            var currentWrittenPhrase = _this.phrases[_this.currentPhrase];
+            var _loop_1 = function (letterIndex) {
+                setTimeout(function () {
+                    _this.element.setAttribute("placeholder", _this.element.getAttribute("placeholder").slice(0, -1));
+                    if (letterIndex === currentWrittenPhrase.length - 1) {
+                        setTimeout(function () {
+                            _this.newPhrase();
+                        }, _this.settings.holdOnceDeleted);
+                    }
+                }, _this.settings.deleteDelay * letterIndex);
+            };
+            for (var letterIndex = 0; letterIndex < currentWrittenPhrase.length; letterIndex++) {
+                _loop_1(letterIndex);
+            }
+        };
+        _this.newPhrase = function () {
+            _this.currentPhrase++;
+            if (_this.currentPhrase === _this.phrases.length) {
+                _this.currentPhrase = 0;
+                if (_this.settings.stopAfterOnce) {
+                    _this.element.setAttribute("placeholder", _this.phrases[0]);
+                    return;
+                }
+            }
+            _this.write();
+        };
+        _this.write();
+        return _this;
+    }
+    return TypeWriter;
+}(TypewriterProps));
+new TypeWriter(".predictive-search__input_desk",["Search Earphones","Search Smartwatches","Search Speakers","Search Neckbands"],{writeDelay:60,deleteDelay:40}),new TypeWriter(".predictive-search__input_mobile",["Search Earphones","Search Smartwatches","Search Speakers","Search Neckbands"],{writeDelay:60,deleteDelay:40});
+
+
+
+// Custom search animation *****
+    var customPlaceholder = function(options) {  
+    this.options = options;
+    this.element = options.element
+    this.placeholderIdx = 0;
+    this.charIdx = 0;
+  
+    this.setPlaceholder = function() {
+        placeholder = options.placeholders[this.placeholderIdx];
+        var placeholderChunk = placeholder.substring(0, this.charIdx+1);
+        document.querySelector(this.element).setAttribute("placeholder", this.options.preText + " " + placeholderChunk)
+    };
+    
+    this.onTickReverse = function(afterReverse) {
+        if (this.charIdx === 0) {
+        afterReverse.bind(this)();
+        clearInterval(this.intervalId); 
+        this.init(); 
+        } else {
+        this.setPlaceholder();
+        this.charIdx--;
+        }
+    };
+    
+    this.goReverse = function() {
+        clearInterval(this.intervalId);
+        this.intervalId = setInterval(this.onTickReverse.bind(this, function() {
+            this.charIdx = 0;
+            this.placeholderIdx++;
+            if (this.placeholderIdx === options.placeholders.length) {
+            // end of all placeholders reached
+            this.placeholderIdx = 0;
+            }
+        }), this.options.speed)
+    };
+    
+    this.onTick = function() {
+        var placeholder = options.placeholders[this.placeholderIdx];
+        if (this.charIdx === placeholder.length) {
+            // end of a placeholder sentence reached
+            setTimeout(this.goReverse.bind(this), this.options.stay);
+        }
+        
+        this.setPlaceholder();
+        
+        this.charIdx++;
+        }
+    
+    this.init = function() {
+        this.intervalId = setInterval(this.onTick.bind(this), this.options.speed);
+    }
+    
+    this.kill = function() {
+        clearInterval(this.intervalId); 
+    }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var search_mobile = new customPlaceholder({
+            placeholders: ['Earphones|', 'Smartwatches|', 'Speakers|', 'Neckbands|'],
+            preText: "Search ",
+            stay: 500,
+            speed: 100,
+            element: '.predictive-search__input_mobile'
+        });
+        search_mobile.init();
+        var search_desk = new customPlaceholder({
+            placeholders: ['Earphones|', 'Smartwatches|', 'Speakers|', 'Neckbands|'],
+            preText: "Search ",
+            stay: 500,
+            speed: 100,
+            element: '.predictive-search__input_desk'
+        });
+        search_desk.init();
+    });
+
+</script>

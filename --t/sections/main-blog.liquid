@@ -1,0 +1,170 @@
+
+<section>
+  <div class="main-banner-img">
+    <picture>
+        <source media="(min-width: 768px)" srcset="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-desktop.jpg?v=1604480765">
+        <source media="(max-width: 767px)" srcset="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-Mobile.jpg?v=1604480761">
+        <img loading="eager" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Blog-Header-desktop.jpg?v=1604480765" alt="Blogs" />
+      </picture>
+    {% comment %}
+    {% if blog.url == "/blogs/blog" %}
+      <h1 class="majortitle text-white">the boAt blog</h1>
+    {% else %}
+      <h1 class="majortitle text-white">Trending News at boAt</h1>
+    {% endif %}
+    {% endcomment %}
+  </div>
+  {%- if blog.articles_count == 0 -%}
+    <div class="empty-state text-container">
+      <h1 class="heading h1">{{ blog.title }}</h1>
+
+      <p class="text--large">{{ 'blog.general.empty' | t }}</p>
+
+      <div class="button-wrapper">
+        <a href="{{ routes.root_url }}" class="button button--primary">{{ 'blog.general.back_to_home' | t }}</a>
+      </div>
+    </div>
+  {%- else -%}
+    {%- if section.settings.show_blog_title -%}
+      <div class="container visually-hidden">
+        <div class="page-header">
+          <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb breadcrumb--floating text--xsmall hidden-phone">
+            <ol class="breadcrumb__list" role="list">
+              <li class="breadcrumb__item">
+                <a class="breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+              </li>
+
+              <li class="breadcrumb__item">
+                {%- if current_tags -%}
+                  <a class="breadcrumb__link" href="{{ collection.url }}">{{ blog.title }}</a>
+                {%- else -%}
+                  <span class="breadcrumb__link" aria-current="page">{{ blog.title }}</span>
+                {%- endif -%}
+              </li>
+
+              {%- if current_tags -%}
+                <li class="breadcrumb__item">
+                  <span class="breadcrumb__link" aria-current="page">{{ current_tags.first | split: '_' | last }}</span>
+                </li>
+              {%- endif -%}
+            </ol>
+          </nav>
+
+          <div class="page-header__text-wrapper text-container visually-hidden">
+            <h1 class="heading h1">{{ blog.title }}</h1>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_tags and blog.all_tags.size > 0 -%}
+      <link-bar class="link-bar">
+        <div class="container">
+          <div class="link-bar__wrapper">
+            <span class="link-bar__title heading heading--small text--subdued">{{ 'blog.general.view' | t }}</span>
+
+            <div class="link-bar__scroller hide-scrollbar">
+              <ul class="link-bar__linklist list--unstyled" role="list">
+                <li class="link-bar__link-item {% if current_tags == blank %}link-bar__link-item--selected{% endif %}">
+                  <a href="{{ blog.url }}" class="link-bar__link link--animated {% if current_tags == blank %}text--underlined{% endif %}">{{ 'blog.general.all_posts' | t }}</a>
+                </li>
+
+                {%- for tag in blog.all_tags -%}
+                {% unless tag contains 'meta-' %}
+                  <li class="link-bar__link-item {% if current_tags contains tag %}link-bar__link-item--selected{% endif %}">
+                    {%- capture link_to_tag_replacement -%}class="link-bar__link link--animated {% if current_tags contains tag %}text--underlined{% endif %}" title={%- endcapture -%}
+
+                    {%- if current_tags contains tag -%}
+                      {{ tag | link_to_remove_tag: tag | replace: 'title=', link_to_tag_replacement }}
+                    {%- else -%}
+                      {{- tag | link_to_tag: tag | replace: 'title=', link_to_tag_replacement -}}
+                    {%- endif -%}
+                  </li>
+                  {% endunless %}
+                {%- endfor -%}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </link-bar>
+    {%- endif -%}
+
+    <div class="vertical-breather vertical-breather--margin vertical-breather--extra-tight mt-5 mb-0">
+      <div class="container">
+        {%- paginate blog.articles by section.settings.articles_per_page -%}
+        <article-list {% if settings.stagger_blog_posts_apparition %}stagger-apparition{% endif %} class="article-list article-list--stacked {% if paginate.pages > 1 %} load-more__inner {% endif %}" id="Huratips-Loop">
+              {%- for article in blog.articles -%}
+                {%- render 'article-item', article: article, heading_size: 'h4' -%}
+              {%- endfor -%}
+            
+          </article-list>
+        {% if paginate.pages > 1 %}
+        <input type="hidden" value="{{ paginate.next.url }}" data-next-url>
+        <input type="hidden" value="{{ paginate.pages }}" data-total-pages>
+          <input type="hidden" value="{{ paginate.current_page  }}" data-current-page>
+          <div class="load-more_wrap">
+            <button class="btn js-load-more">
+              <span class="load-more-icon" loader> <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;" /></span>
+            </button>
+
+          {%- comment -%}
+		  <div id="Huratips-Pagination">
+                {% if paginate.next %}
+                <a href="{{ paginate.next.url }}">Loading More</a>
+                {% endif %}  
+              </div>
+          {%- render 'pagination', paginate: paginate -%}{%- endcomment -%}
+        {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+<style>
+  div[reveal] {opacity: 1;}
+</style>
+
+{% schema %}
+{
+  "name": "Blog",
+  "class": "shopify-section--main-blog",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_blog_title",
+      "label": "Show blog title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_category",
+      "label": "Show category",
+      "info": "The first article's tag will be shown as category.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "info": "Change excerpts by editing your blog posts. [Learn more](https://help.shopify.com/en/manual/online-store/blogs/writing-blogs#display-an-excerpt-from-a-blog-post)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Blog posts per page",
+      "min": 3,
+      "max": 48,
+      "step": 3,
+      "default": 9
+    }
+  ]
+}
+{% endschema %}

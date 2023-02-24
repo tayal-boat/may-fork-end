@@ -1,0 +1,119 @@
+
+{%- if request.page_type == 'collection' -%}
+  {% comment %} Added css for only collection pages {% endcomment %}
+  <style>
+    .top-navigation-box{display: none;}
+
+    @media screen and (max-width: 767px) {
+      .top-navigation-box{display: block;padding-top: 10px;padding-bottom: 0px;padding-left: 0px;padding-right: 0px;background: transparent;}
+      .top-navigation-box .inner-collections-row.row::-webkit-scrollbar-thumb {background: #E5E3E3;}
+      .top-navigation-box .single_collection_box.active{margin-left: 30px;order: 0;margin-right: 12px !important;}
+      .top-navigation-box .single_collection_box:last-child{margin-right: 25px;}
+      .top-navigation-box .inner-collections-row {width: auto; overflow-x: auto;flex-wrap: nowrap;min-height: 114px;line-height: 12px;}
+      .top-navigation-box .single_collection_box{min-width: 60px;display: block;font-size: 10px;margin-right: 12px;text-align: center;order: 1;}
+      .top-navigation-box .single_collection_box .collection{width: 100%; text-align: center; background: rgba(9,75,250,.1); border-radius: 10px;margin-bottom: 8px;height: 60px;}
+      .top-navigation-box .single_collection_box.active .collection{border: 1px solid #ED1C24;}
+      .top-navigation-box .top-collections-row .collection-text span{color: #404040;font-weight: 700;}
+      .top-navigation-box .single_collection_box .collection-image img{height: 100%; padding: 5px;max-width: 60px;width:100%;}
+    }
+  </style>
+
+{%- endif -%}
+
+
+<div class="top-navigation-box container cf section-id-{{ section.id }} top-collections top-2 px-lg-0 " data-section-type="custom-row">
+  {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
+    <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3">
+      {%- if section.settings.title != blank -%}
+        <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
+      {%- endif -%}
+    </header>
+  {%- endif -%}
+  <div class="top-collections-row">
+    <div class="inner-collections-row row">
+      {% for block in section.blocks %}
+        <div class="single_collection_box {% if block.settings.imageUrl == collection.url %} active{% endif %}" >
+          <a href="{{ block.settings.imageUrl }}" class="collection-block">
+            <div class="collection collection-{{ forloop.index }}" data-item="{{ block.settings.collection_Title }}">
+              <span class="collection-image">
+                <img loading="eager" src="{{ block.settings.image | img_url: '150x' }}" alt="{{ block.settings.collection_Title }}">
+              </span>
+            </div>
+            <span class="collection-text text-center text-white">
+              <span class="collection-title text-center">{{ block.settings.collection_Title }}</span>
+            </span>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  $('.top-collections.top-2 .collection').each(function () {
+      $(this).click(function () {
+          let item = $(this).data('item');
+          clevertap.event.push('Top Collections Clicked', {
+              "Item": item,
+              {% if template contains 'collection' %}
+                "Source": "collection"
+              {% endif %}
+          });
+      });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Top Collections Box",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Your title"
+    },
+    {
+      "type": "url",
+      "id": "view_Url",
+      "label": "viewall URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Primary image",
+          "info": "300px wide minimum"
+        },
+        {
+          "type": "url",
+          "id": "imageUrl",
+          "label": "imageUrl"
+        },
+        {
+          "type": "text",
+          "id": "collection_Title",
+          "label": "Collection Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Top Collections Box",
+      "category": "Image",
+      "settings": {},
+      "blocks": [
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

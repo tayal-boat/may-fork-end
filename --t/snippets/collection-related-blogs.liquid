@@ -1,0 +1,107 @@
+{% assign coll = collection.handle %}
+{% assign tag_article = 'meta-' | append: coll %}
+{% assign related_header = false %}
+{% for article in blogs.blog.articles %}
+  {% if article.tags contains tag_article %}
+    {% assign related_header = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+  <div class="RelatedPosts">
+        <gallery-list class="gallery related-article-list boat-custom-gallery">
+        {% if related_header == true %}
+         <h3 style="font-size: 18px;" class="heading h2 text-center">bo<span class="text-red">A</span>t BLOGS</h3>
+        {% endif %}
+          <scrollable-content draggable class="gallery__list-wrapper {% if section.blocks.size >= 3 %}is-scrollable{% endif %} hide-scrollbar">
+            <div class="container">
+              <div class="gallery__list">
+                {% paginate blogs.blog.articles by 100000 %}
+                {% for article in blogs.blog.articles %}
+                  {% if article.tags contains tag_article %}
+                  <gallery-item class="related-article">
+                      <a href="{{ article.url }}">
+                       <img loading="lazy" class="lazyload" src="{{ article.image | img_url: '' }}" alt="{{ article.title }}" />
+                      </a>
+                      <p class="addin_title"><a class="" href="{{ article.url }}">{{ article.title }}</a></p>
+{% comment %}            <p class="excerpt">
+                        <a href="{{ article.url }}">
+                          Read More
+                        </a>
+                      </p>
+{% endcomment %}                          
+                  </gallery-item>
+                  {% endif %}
+                {% endfor %}
+                {% endpaginate %}
+              </div>
+            </div>
+          </scrollable-content>
+{% comment %}<prev-next-buttons class="gallery__prev-next-buttons prev-next-buttons">
+            <button class="gallery__arrow prev-next-button prev-next-button--prev">
+              <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
+              {%- render 'icon' with 'nav-arrow-left', direction_aware: true -%}
+            </button>
+
+            <button class="gallery__arrow prev-next-button prev-next-button--next">
+              <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+              {%- render 'icon' with 'nav-arrow-right', direction_aware: true -%}
+            </button>
+          </prev-next-buttons>
+{% endcomment %} 
+        </gallery-list>
+    </div>
+<style>
+
+.related-article-list {
+  display: block;
+  flex-wrap: nowrap;
+  margin-bottom: 3em;
+  position: relative;
+}
+.related-article {
+  width: 30%;
+  display: inline-block;
+  float: left;
+  padding: 0px;
+  margin: 10px 5px;
+  min-width: 280px;
+  margin-right:1rem;
+}
+.related-article a {display:block;}
+.related-article img {display:block;width: 100%;    border-radius: 10px;}
+.section_title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 25px;
+}
+.addin_title {
+  font-size: 14px!important;
+  line-height: 17px;
+  font-weight: 500;opacity:1!important;
+}
+
+.addin_title a {text-decoration:none!important;margin-top:10px;}
+.addin_title a:hover {color:#ff0000!important;}
+.excerpt {
+  font-size: 12px;
+  line-height: normal;
+  margin-top:12px;
+  text-align: left !important;
+  padding: 0 12px;
+}
+.excerpt a {
+  font-style: normal;
+  border: 1px solid #000;
+  padding: 10px 10px;
+  display: inline-block;
+  border-radius: 5px;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.excerpt a:hover {text-decoration:none;}
+
+@media screen and (min-width:768px) {    
+    .RelatedPosts { padding: 0 35px;}   
+    .RelatedPosts h3.heading.h2{font-size:24px;}
+}
+</style>

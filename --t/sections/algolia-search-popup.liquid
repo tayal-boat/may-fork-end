@@ -1,0 +1,50 @@
+<div class="search-popup-container" style=" display: none;">
+  <div class="algolia-custom-search-popup-container">
+    <div class="algolia-custom-search-popup">
+      <form id="predictive-search-form" action="{{ routes.search_url }}" method="get" class="predictive-search__form algolia-search__form">
+        <div class="algolia-custom-search-input">
+          <input class="predictive-search__input" type="text" name="q" autofocus autocomplete="new-text" autocorrect="new-text" aria-label="{{ 'search.general.title' | t }}" placeholder="Search...">
+          <div class="search-clear-icon">
+            <span>CLOSE</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <ul class="algolia-trending-list">
+    {% for block in section.blocks %}
+      {% if block.settings.text %}
+        <li class="algolia-trending-label">{{ block.settings.text }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+{% schema %}
+  {
+    "name": "algolia search suggestion",
+    "settings": [],
+    "max_blocks": 16,
+    "blocks": [
+      {
+        "type": "text",
+        "name": "algolia search",
+        "settings": [
+          {
+            "type": "text",
+            "id": "text",
+            "label": "text"
+          }
+        ]
+      }
+    ],
+
+    "presets": [
+      {
+        "category": "Image",
+        "name": "image with text",
+        "settings": {}
+      }
+    ]
+  }
+{% endschema %}

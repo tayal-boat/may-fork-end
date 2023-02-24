@@ -1,0 +1,45 @@
+<div class="search-popup-container" style=" display: none;">
+  <div class="algolia-recently-search">
+    <div class="algolia-recently-search-header">
+      <h4>Recently searched</h4>
+      <span class="clear-recent-search">Clear</span>
+    </div>
+    <div class="algolia-recently-search-container"></div>
+  </div>
+  <div class="algolia-trending-search">
+    <div class="algolia-trending-search-header">
+      <h4>Trending searches</h4>
+    </div>
+    <div class="algolia-trending-list">
+      {% for block in section.blocks %}
+        {% if block.type == 'algolia' %}
+          <div class="algolia-trending-item">
+            <div class="algolia-trending-image-container">
+              {% if block.settings.image != blank %}
+                <div class="algolia-trending-image">
+                  <img
+                    class="custom_lazy"
+                    data-src="{{ block.settings.image | img_url: 'master' }}"
+                    loading="lazy">
+                </div>
+              {% endif %}
+            </div>
+            <div class="algolia-trending-label">
+              <span>{{ block.settings.suggestion }}
+              </span>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="algoinput">
+    <div class="d-flex justify-content-center mb-3">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
+        style="width: 50px;"
+        loading="lazy">
+    </div>
+    <p class="text-center algoMessage"></p>
+  </div>
+</div>

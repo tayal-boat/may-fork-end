@@ -1,0 +1,63 @@
+<script>
+    function addAllItems(array){
+      $('.header__cart')[0].click();
+      Shopify.queue = [];
+        var quantity = {{ cart.item_count }} ;
+        var newArray = array.split(',');
+        for (var i = 0; i < newArray.length; i++) {
+          product = newArray[i]
+          Shopify.queue.push({
+            variantId: product,
+          });
+        }
+        Shopify.moveAlong = function() {
+          // If we still have requests in the queue, let's process the next one.
+          if (Shopify.queue.length) {
+            var request = Shopify.queue.shift();
+            var data = 'id='+ request.variantId + '&quantity=1'
+            $.ajax({
+              type: 'POST',
+              url: '/cart/add.js',
+              dataType: 'json',
+              data: data,
+              success: function(res){
+                Shopify.moveAlong();
+                quantity += 1;
+                document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+                    bubbles: true
+                }));
+            },
+              error: function(){
+                // if it's not last one Move Along else update the cart number with the current quantity
+                if (Shopify.queue.length){
+                  Shopify.moveAlong()
+                  document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+                    bubbles: true
+                  }));
+                  $('.header__cart-count').text(quantity);
+                } else {
+                  $('#cart-number').replaceWith('<a href="/cart" id="cart-number">View cart (" + quantity + ")</a>');
+                  $('.header__cart-count').text(quantity);
+                }
+              }
+            });
+        }
+        // If the queue is empty, we add 1 to cart
+        else {
+          quantity += 1;
+          addToCartOk(quantity);
+        }
+      };
+      Shopify.moveAlong();
+      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+        bubbles: true
+      }));
+      $('.header__cart-count').text(quantity);
+    };
+    function addToCartOk(quantity){  
+      $('#cart-number').replaceWith('<a href="/cart" id="cart-number">View cart (" + quantity + ")</a>');
+      $('.header__cart-count').text(quantity);
+    } 
+  </script>
+  <button type="submit" id="add-{{ collections['aavante-bar-1800v2-airdopes-501-anc'].id }}" class="three-prods visually-hidden" onclick="addAllItems(`{% for product in collections['aavante-bar-1800v2-airdopes-501-anc'].products %}{{ product.selected_or_first_available_variant.id }}{% unless forloop.last %},{% endunless %}{% endfor %}`); return false;">Add to cart</button>
+  <button type="submit" id="add2-{{ collections['aavante-bar-1800v2-blitz-1508-airdopes-501-anc'].id }}" class="two-prods visually-hidden" onclick="addAllItems(`{% for product in collections['aavante-bar-1800v2-blitz-1508-airdopes-501-anc'].products %}{{ product.selected_or_first_available_variant.id }}{% unless forloop.last %},{% endunless %}{% endfor %}`); return false;">Add to cart 2</button>

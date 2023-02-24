@@ -1,0 +1,176 @@
+{%- if section.settings.background != settings.background and section.settings.background != 'rgba(0,0,0,0)' -%}
+  {%- assign blends_with_background = false -%}
+{%- else -%}
+  {%- assign blends_with_background = true -%}
+{%- endif -%}
+
+<style>
+  .press-list__wrapper {margin-left: 0;}
+  {%- if settings.enable_mob_bg -%}
+    .shopify-section--press .press_section {background: transparent;}
+  {%- else -%}
+    .shopify-section--press .press_section {background: rgb(255 255 255);}
+  {%- endif -%}
+  .rte blockquote:after, .rte blockquote:before, .shopify-section--press .blockquote:after, .shopify-section--press .blockquote:before {opacity: 0;}
+  split-lines {color: white;}
+  .press-list_logo-list-wrapper button.press-list_logo-item[aria-current=true] {background: #E9E9E9;padding: 10px;}
+
+  #shopify-section-{{ section.id }}{
+    {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
+      {%- assign section_background = settings.background -%}
+    {%- else -%}
+      {%- assign section_background = section.settings.background -%}
+    {%- endif -%}
+
+    {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
+      {%- assign heading_color = settings.heading_color -%}
+      {%- assign text_color = settings.text_color -%}
+    {%- else -%}
+      {%- assign heading_color = section.settings.text_color -%}
+      {%- assign text_color = section.settings.text_color -%}
+    {%- endif -%}
+
+    --heading-color: 
+    {{ heading_color.red }},
+    {{ heading_color.green }}, {{ heading_color.blue }};
+    --text-color: 
+    {{ text_color.red }},
+    {{ text_color.green }}, {{ text_color.blue }};
+    /*       background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }}); */
+  }
+
+  @media screen and (max-width: 767px) {
+    [dir=ltr] .blockquote:after, [dir=ltr] .rte blockquote:after {bottom: -32px;}
+
+    .press_section .vertical-breather{padding-bottom: 18px;}
+  }
+
+  .custom_press_slider{margin-top: 20px;}
+  .custom_press_slider .owl-item p{font-weight: 500;font-size: 12px;line-height: 13px;min-height: 26px;}
+  .custom_press_slider .owl-item img{margin: 0px auto; padding: 10px;border-radius: 8px;border:0;}
+  .custom_press_slider .owl-dots {margin-top: 12px}
+  .custom_press_slider .owl-dots button{width: 8px;height: 8px;background: #44444478!important;margin: 0 5px;border-radius: 50%!important;}
+  .custom_press_slider .owl-dots button.active{background: #7f7f7f!important;width: 40px;border-radius: 12px!important;}
+
+</style>
+
+<section class="press_section {% unless blends_with_background %}section--flush{% endunless %}">
+  <div class="section__color-wrapper">
+    <div class="container px-lg-0">
+      <h3 class=" heading h2 text-white">
+        In the Press</h3>
+      <press-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="press-list only-desktop">
+        <div class="press-list__wrapper">
+
+          {%- for block in section.blocks -%}
+            <press-item {% unless forloop.first %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="press-list__item" {{ block.shopify_attributes }}>
+              <blockquote class="press-list__item-content blockquote blockquote--center">
+                <split-lines {% if section.settings.reveal_on_scroll or forloop.first == false %}reveal-visibility{% endif %}>{{ block.settings.content | escape }}</split-lines>
+              </blockquote>
+            </press-item>
+          {%- endfor -%}
+        </div>
+
+        <div class="press-list__logo-list-wrapper hide-scrollbar">
+          <page-dots align-selected class="press-list__logo-list">
+            {%- for block in section.blocks -%}
+              <button class="press-list__logo-item tap-area" {% if forloop.first %}aria-current="true"{% endif %}>
+                {%- if block.settings.logo != blank -%}
+                  {%- capture image_sizes -%}
+                    {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
+                  <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
+                  <img class="press-list__logo-image" loading="lazy" style="max-width: 160px" sizes="160px" {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+                {%- else -%}
+                  <span class="heading h6">Logo {{ forloop.index }}</span>
+                {%- endif -%}
+              </button>
+            {%- endfor -%}
+          </page-dots>
+        </div>
+      </press-list>
+
+      <div class="press-list mobile-only">
+        <div class="owl-carousel custom_press_slider">
+          {%- for block in section.blocks -%}
+            <div class="item">
+              <p>{{ block.settings.content | escape }}</p>
+              {%- if block.settings.logo != blank -%}
+                {%- capture image_sizes -%}
+                  {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
+                <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
+                <img class="press-list__logo-image" loading="lazy" style="max-width: 160px" sizes="160px" {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+              {%- else -%}
+                <span class="heading h6">Logo {{ forloop.index }}</span>
+              {%- endif -%}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Press",
+    "class": "shopify-section--press container",
+    "max_blocks": 6,
+    "blocks": [
+      {
+        "type": "item",
+        "name": "Press testimonial",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo",
+            "info": "300 x 75px .png recommended"
+          }, {
+            "type": "range",
+            "id": "logo_width",
+            "min": 25,
+            "max": 150,
+            "step": 5,
+            "unit": "px",
+            "label": "Logo width",
+            "default": 100
+          }, {
+            "type": "text",
+            "id": "content",
+            "label": "Content",
+            "default": "Write some content about what they are saying about your store."
+          }
+        ]
+      }
+    ],
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "reveal_on_scroll",
+        "label": "Reveal on scroll",
+        "info": "Show animation when section becomes visible.",
+        "default": true
+      }, {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "rgba(0,0,0,0)"
+      }, {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "rgba(0,0,0,0)"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Press",
+        "blocks": [
+          {
+            "type": "item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

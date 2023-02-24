@@ -1,0 +1,21 @@
+{% layout none %}
+{
+"product_id":"{{product.id}}",
+"handle":"{{product.handle}}",
+"title":"{{product.title}}",
+"{{product.id}}" : {
+{%- for variant in product.variants -%}
+ {% capture shipDate %}{%- if variant.metafields.PRE_ORDER_DATE.ORDER_DATE != blank -%}{{ variant.metafields.PRE_ORDER_DATE.ORDER_DATE  }}{%- else -%}05/01/2020{%- endif -%}{% endcapture %}
+"{{variant.id}}":{ 
+"available_quantity":{{variant.inventory_quantity}}, 
+"inventory_management":"{{variant.inventory_management}}",
+"barcode":"{{ variant.barcode }}",
+"available":{{ variant.available }},
+"preorderdata":"{{ variant.metafields.PRE_ORDER_DATE.ORDER_DATE }}",
+"shipDate":"{{shipDate}}"
+}
+{% if forloop.last == false %} , {% endif %}
+{%- endfor -%}
+},
+"tags":{{ product.tags | json }}
+}
