@@ -781,6 +781,17 @@ $(".razorpay-checkout").click(function () {
           var session_id = response.session_id;
   
   // email varify code
+
+  $('.customer-login-section').attr('otp_send', 'true');
+$('.mobile-login-input').html(`
+<div class="input">
+  <input type="textl" id="emailId" name="emailId" value="" class="input__field is-filled" required="" disabled="disabled">
+  <label for="mobile" class="input__label">Enter your email</label>
+</div>
+`);
+$('.otp-login-error').html();
+TimerFunction();
+  sessionStorage.setItem('login_session_id', response.session_id );
   
           }else{
         $('.customer-login-section.customer--section').hide();
@@ -820,6 +831,17 @@ $(".razorpay-checkout").click(function () {
         var session_id = response.session_id;
 
 // email varify code
+
+$('.customer-login-section').attr('otp_send', 'true');
+$('.mobile-login-input').html(`
+<div class="input">
+  <input type="textl" id="emailId" name="emailId" value="" class="input__field is-filled" required="" disabled="disabled">
+  <label for="mobile" class="input__label">Enter your email</label>
+</div>
+`);
+$('.otp-login-error').html();
+TimerFunction();
+  sessionStorage.setItem('login_session_id', response.session_id );
 
         }else{
         $('.customer-login-section.customer--section').hide();
@@ -870,7 +892,7 @@ function verifyotp(session_id, otp, url){
       $('.otp-login-error').html('Something went wrong please try again.');
     }else if(response.code == 401 && response.message == 'Incorrect Otp'){
       $('.otp-login-error').html(response.message);
-    }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
+    }else if(response.code == 401 && response.message == 'Customer has not registered email , redirecting to Sign up'){
       $('.otp-login-error').html(response.message);
       signup_window(session_id);
     }else if(response.code == 406){
