@@ -711,6 +711,7 @@ $(".razorpay-checkout").click(function () {
 
   function signup_window(session_id){
     $('.customer-login-section').attr('new_customer', 'true');
+    $('.customer-login-section').removeAttr('multi_email');
     $('.otp-login-message h3').html('Continue with Email');
     $('.otp-timer-container').hide();
     $('.otp-login-error').html('');
@@ -800,7 +801,7 @@ TimerFunction();
         countdown(5, response.URL);
           }
       }else if(response.code == 422 && response.message == 'validation_error'){
-        $('.otp-login-error').html('Something went wrong please try again.');
+        // $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401 || response.code == 404 ){
         $('.otp-login-error').html(response.message);
       }
@@ -827,6 +828,7 @@ TimerFunction();
     $.ajax(settings).done(function (response) {
       // console.log(response);
       if(response.code == 200){
+        $('.otp-login-error').html('');
         if(response.message == 'This email already exists , OTP sent to email'){
         var session_id = response.session_id;
 
@@ -839,10 +841,8 @@ $('.mobile-login-input').html(`
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
-$('.otp-login-error').html();
 TimerFunction();
   sessionStorage.setItem('login_session_id', response.session_id );
-
         }else{
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
@@ -926,7 +926,7 @@ function verifyotp(session_id, otp, url){
         signup_window(session_id);
       });
       let selectedEmail_url = sessionStorage.getItem('login_location');
-      $('.otp-login-submit-btn').click(function(){
+      $('.customer-login-section[multi_email] .otp-login-submit-btn').click(function(){
       selectEmail(selectedEmail, session_id, selectedEmail_url);
       });
     }else{
