@@ -745,17 +745,18 @@ function ResCarousel(e, el, s, slide_container) {
     var divStyle = $(slide_container).css('transform');
     var slider_item = $(slide_container).find(itemClass);
     var slider_dots = $(el).find('.multiCarousel_dots');
-    console.log(slider_item, 'slider_item');
     var values = divStyle.match(/-?[\d\.]+/g);
     var xds = Math.abs(values[4])
     var itemWidth = $(slide_container).children().innerWidth();
+    var last_item_padding = JSON.parse(document.querySelector(el).getAttribute('data-last_item_padding'));
     var itemsCondition = $(slide_container).width() - $(el).width();
-    var itemsCondition_lastSlide = $(slide_container).width() - $(el).innerWidth();
+    var itemsCondition_lastSlide = $(slide_container).width() - $(el).innerWidth() + last_item_padding;
     var active_slide = $(slide_container).find('.active');
     var active_slide_number = active_slide.length;
     var slider_dots_length = slider_dots_length;
     let counter = 0;
     center_slide_scale = JSON.parse(document.querySelector(el).getAttribute('data-centerSlideScale'));
+ 
 
     // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
     if(active_slide.length > 1){
