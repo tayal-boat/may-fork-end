@@ -87,12 +87,11 @@
         {%- case selector_type -%}
         {%- when 'variant_image' -%}
         <div class="variant-swatch-list">
-          {%- assign option_position0 = option.position | minus: 1 -%}
 
         {%- for value in option.values -%}
         {%- comment -%}We search for the first variant that has an image for this color{%- endcomment -%}
         {%- for variant in product.variants -%}
-        {%- if variant.options[option_position0] == value -%}
+        {%- if variant.options[0] == value -%}
           <div class="variant-swatch {% if variant.inventory_quantity < settings.sold_out_threshold %}is-disabled{% endif %}" {% if variant.metafields.custom.variant_url != blank %}data-var-url="{{variant.metafields.custom.variant_url}}"{% endif %} data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
           <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
             form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}"
@@ -118,7 +117,7 @@
             </div>
 
             {%- when 'color' -%}
-              <span style="font-size: 12px;color: #666565;margin-top:5px;"> Color: </span>
+              <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
               <div class="color-swatch-list">
                 {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
                 {%- assign option_position0 = option.position | minus: 1 -%}
@@ -127,13 +126,13 @@
                 {% for variant in product.variants %}
                   {% comment %} {{ value }}
                   {{ variant.options[option_position0] }} {% endcomment %}
-                  {%- if variant.options[option_position0] == value -%}
+                  {%- if variant.options[0] == value -%}
                 <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
                   <input class="color-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
                     form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" {% if
                     value==option.selected_value %}checked="checked" {% endif %} data-bind-value="{{ option_id }}-value">
                   <label class="color-swatch__item" for="{{ option_id }}-{{ forloop.index }}" title="{{ value | remove: ' ' | escape }}"
-                    style="background-color:{{ variant.metafields.my_fields.variantcolorcode }}">
+                    style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
                     <span class="visually-hidden">{{ value }}</span>
                   </label>
                   <span class="variant-name">{{ value | remove: ' ' | escape }}</span>
@@ -251,7 +250,7 @@
   
         </span>
         {% if product.compare_at_price > discounted_price %}
-        <p class="custom-saved-price" style="margin:0 10px 0 0;font-weight:500;font-size: 14px;color: #00C68C;">{{
+        <p class="custom-saved-price">{{
           product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
           round
           | append: '% Off' }} </p>
@@ -328,7 +327,7 @@
               {%- endif -%}
             </span>
             {% if product.compare_at_price > discounted_price %}
-            <p class="custom-saved-price" style="margin:0 10px 0 0;font-weight:500;font-size: 20px;color: #05AE52;">{{
+            <p class="custom-saved-price">{{
               product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
               round
               | append: '% Off' }} </p>
