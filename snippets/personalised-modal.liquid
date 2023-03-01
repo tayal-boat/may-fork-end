@@ -1,0 +1,49 @@
+<span class="button custom-prebook">Pre-Booking</span>
+<!-- Personalised Modal -->
+<div class="personilaztion-message-modal-overlay hide"></div>
+<div class="personilaztion-message-modal hide">
+    <div class="personilaztion-message-container">
+        <span class="personalized-modal-close">&times;</span>
+        <div class="message-form-container">
+            <label for="personalized-text">Enter your text</label>
+            <input type="text" id="personalized-text" placeholder="Enter your text" maxlength="6" pattern="[a-zA-Z]+" autocomplete="new-password" />
+            <button type="button" class="submit-personalization">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const customPrebookBtn = document.querySelector('.custom-prebook');
+    const personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
+    const personalizationModal = document.querySelector('.personilaztion-message-modal');
+    const personalizationModalClose = document.querySelector('.personalized-modal-close');
+    const personalizationSubmitBtn = document.querySelector('.submit-personalization');
+    const prebookBtn = document.querySelector('#AddToCart');
+    const personalizedText = document.querySelector('#personalized-text');
+    const personalizedMessageOriginal = document.querySelector('#personalised_message');
+    function openPersonalizationModal() {
+        personalizationModalOverlay.classList.remove('hide')
+        personalizationModal.classList.remove('hide')
+        document.body.classList.add('noScroll')
+    }
+    function closePersonalizationModal() {
+        personalizationModalOverlay.classList.add('hide')
+        personalizationModal.classList.add('hide')
+        document.body.classList.remove('noScroll')
+    }
+    function btnClick() {
+        $('#AddToCart')[0].click();
+    }
+    customPrebookBtn.addEventListener('click', openPersonalizationModal)
+    personalizationModalOverlay.addEventListener('click', closePersonalizationModal)
+    personalizationModalClose.addEventListener('click', closePersonalizationModal)
+    personalizationSubmitBtn.addEventListener('click', (e) => {
+        let pMessage = personalizedText.value
+        personalizedMessageOriginal.value = pMessage.toUpperCase()
+        btnClick()
+        closePersonalizationModal()
+        
+        {% comment %} closePersonalizationModal() {% endcomment %}
+    })
+
+</script>

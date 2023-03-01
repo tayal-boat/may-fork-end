@@ -6,8 +6,6 @@
   .product div[role=progressbar] {
     position: relative !important;
     margin-left: 1rem;
-    --size: unset;
-    right: unset;
   }
 
   .tabs-nav {
@@ -64,13 +62,6 @@
   }
 
   @media(min-width: 991px) {
-    .col-md-6.myIcon {
-      text-align: right;
-    }
-
-    .col-md-6.myText {
-      text-align: left;
-    }
 
     .productpage-container {
       max-width: 1600px;
@@ -1558,22 +1549,56 @@
   /*=============================== Media Queries NEW =======================================*/
   .section__color-wrapper.promise-icons {
     background: #e8edf0;
-    border-radius: 10px;
+    border-radius: 0px;
   }
 
   .myIcon img {
     max-height: 40px;
   }
 
-  .col-md-6.myText {
+  .col-md-6.myText, .col-md-8.myText, .col-md-9.myText {
     line-height: 1.2;
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 500;
   }
 
+  /* CSS for maintaining space between image slider and right side(product title & desc)... Basically for the products having small title */
+
+  @media screen and (min-width: 1600px) and ( max-width: 1920px ){
+    .product__info product-meta .product-meta__title{min-width: 60rem;}
+  }
+  
+  @media screen and (min-width: 1400px) and ( max-width: 1600px ){
+    .product__info product-meta .product-meta__title{min-width: 54rem;}
+  }
+  
+  @media screen and (min-width: 1200px) and ( max-width: 1400px ){
+    .product__info product-meta .product-meta__title{min-width: 45rem;}
+  }
+
+  /* CSS ends for spacing b/w image slider and pdp title */
+
+  @media(min-width: 991px) {
+    .col-md-6.myIcon, .col-md-4.myIcon, .col-md-3.myIcon {
+      text-align: right;
+    }
+    .myIcon img {
+      max-height: 45px;
+    }
+    h1.product-meta__title.heading.h3{
+      /* min-width: 880px; */
+    }
+    .col-md-6.myText, .col-md-8.myText , .col-md-9.myText {
+      text-align: left;    font-size: 14px;
+    }
+
+    .product__info product-meta .product-type{margin: 14px 0px !important;}
+  }
   @media screen and (min-width: 1000px) {
     .section__color-wrapper.promise-icons {
-      border-radius: 5px;
+      border-radius: 0px;
+      margin-bottom: 1rem;
+      padding: 5px 0px;
     }
 
     .productPart-two-new,
@@ -1675,6 +1700,12 @@
   }
 
   @media(min-width: 991px) {
+    .product-meta__title{
+      font-size: 20px;
+    }
+    .product-meta__title .pdp-title-extra-info small{
+      font-size: 16px;
+    }
     .tabs-nav__item.heading.heading--small {
       font-size: 16px !important
     }
@@ -2088,6 +2119,23 @@
   .jdgm-rev-widg__summary-text {
     visibility: visible !important
   }
+  @media (max-width: 767px) {
+    .pdp-inner .offer-callout-simple{display:none;}
+    .offer-callout-simple {
+      margin: 0 !important;
+    }
+    .w-50 {
+      width: 46vw !important;
+  }
+  }
+  @media (min-width: 1025px) {
+    .offer-callout-simple {
+      width: 100%;
+    }
+  }
+  .offer-callout-simple {
+    color: white;background: #0DB03B;padding: 4px 8px;border-radius: 5px;font-size: 10px;text-align: center;line-height: normal;
+  }
 </style>
 <!-- for prebooking -->
 {%- if product.tags contains 'prebooking' -%}
@@ -2123,10 +2171,16 @@
   }
 
   .product-meta__reference .jdgm-prev-badge__text:after {
-    content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/verfied-icon-2_12x.png?v=1655121726);
+    background: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group-10.png?v=1677571152);
     position: relative;
     top: 3px;
-    left: 4px
+    left: 4px;
+    background-size: 12px 12px;
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-repeat: no-repeat;
   }
 
   .color-swatch-list {
@@ -2202,14 +2256,12 @@
 
   .product-form__option-selector {
     display: flex;
-    align-items: center;
     gap: 8px;
     padding-block: 8px;
   }
 
   product-media.product__media {
     grid-area: media;
-    margin-bottom: 16px;
   }
 
   .product .product__info {
@@ -2247,10 +2299,13 @@
     .product.product--thumbnails-left {
       grid-column-gap: 1rem;
       grid-template-areas:
-        'media flash'
-        'media info'
-        'media swatch'
-        'media cta';
+      {% unless product.tags contains 'flash-sale' %}
+      {% else %}
+      'media flash'
+      {% endunless %}
+      'media info'
+      'media swatch'
+      'media cta';
     }
 
     .product__media {
@@ -2270,5 +2325,45 @@
   .price-container.product-highlight span::before {
     content: ".";
   }
+  .hide_cTA, .shopify-section--main-product .product-item__quick-form.quick-buy-notify-me {
+    display: none !important;
+}
+.price-container.product-highlight span::before{content:"."}
+.hide_cTA,.shopify-section--main-product .product-item__quick-form.quick-buy-notify-me{display:none!important}
 </style>
 {% comment %} !NEW PDP LAYOUT CSS ENDS {% endcomment %}
+
+<style>
+  .personilaztion-message-modal-overlay.hide,
+  .personilaztion-message-modal.hide{display:none;}
+  .personilaztion-message-modal-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: black;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    opacity: .7;
+}
+.personilaztion-message-modal{position:fixed;z-index:1000;background:white;top: 50%;transform: translateY(-50%);}
+span.personalized-modal-close {
+  position: relative;
+  font-size: 30px;
+  font-weight: bold;
+  display: block;
+  text-align: right;
+  padding-right: 10px;
+}
+.message-form-container{
+  min-height: 100px;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    width: 93vw;
+}
+</style>
