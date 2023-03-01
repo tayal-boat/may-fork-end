@@ -159,6 +159,7 @@
                       class="tabs-nav__item heading heading--small ml-0"
                       aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
                       aria-controls="block-{{ section.id }}-{{ block.id }}"
+                      data-collection-id="{{ block.settings.collection.id }}"
                       {{ block.shopify_attributes }}
                     >
                       {{-
@@ -188,8 +189,7 @@
               hidden
             {% endunless %}
             id="block-{{ section.id }}-{{ block.id }}"
-            class="product-list product-list--center"
-          >
+            class="product-list product-list--center" >
             <div
               {% unless section.settings.stack_products %}
                 class="scroller"
@@ -276,11 +276,40 @@
               </div>
             {%- endif -%}
           </product-list>
+
+          {% break %}
         {%- endfor -%}
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  $(document).ready(function(){
+    $('tabs-nav .tabs-nav__item-list button').on('click', function(e){
+      e.preventDefault();
+
+      let collection_id = $(this).data("collection-id");
+      console.log("Clicked Collection ID: ", collection_id);
+      
+      $.ajax({
+        url: 'https://efca3eea20de2d45ecce865b9795ee2f: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@boatlifestylein.myshopify.com//admin/products.json?collection_id='+collection_id+'&limit=5',
+        method: "get",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+        },
+        error: function (error) {
+            console.log(error);
+        },
+    });
+
+    })
+  })
+</script>
 
 {% schema %}
 {
