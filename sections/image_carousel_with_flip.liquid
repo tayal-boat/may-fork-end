@@ -1,23 +1,30 @@
 <style>
-  .deal-of-the_day.{{ section.id }}{
-    padding-top: 20px;
-    padding-bottom: {{ section.settings.sectionpadding}}px;
-    background: {{ section.settings.bg_color }};
-    margin: {{ section.settings.sectionmargin }};
-    padding-left: 0px;
-  }
+  /* css can be moved to external file */
+  
+  .deal-of-the_day.{{ section.id }}{padding-top: 20px;padding-bottom: {{ section.settings.sectionpadding}}px;background: {{ section.settings.bg_color }};margin: {{ section.settings.sectionmargin }};padding-left: 0px;}
+  .deal-of-the_day.{{ section.id }} .slider-with-nav .owl-nav button{font-size: 10rem !important;font-weight: 400 !important;display:block;}
+  .image_slider_flip .center_item_slider .owl-item{-webkit-transform: scale(.9);transform: scale(.9);}
+  .image_slider_flip .center_item_slider .owl-item.active.center{-webkit-transform: scale(1.2);transform: scale(1.2) !important;}
+  .image_slider_flip .center_item_slider .owl-item.active.center img{width: 83%;margin: 36px auto;}
   .slider-with-nav .owl-nav{display: block !important;}
   .slider-with-nav .owl-nav .owl-prev{position: absolute;font-size: 4rem !important;top: 50%;color: #f00 !important;transform: translateY(-50%);left: 30px;}
   .slider-with-nav .owl-nav .owl-next{position: absolute;font-size: 4rem !important;top: 50%;color: #f00 !important;transform: translateY(-50%);right: 30px;}
+  .image_slider_flip .flip_icons_wrapper{display: flex;width: fit-content;margin: 10px auto 40px;border-radius: 50px;padding: 0px 20px;}
+  .image_slider_flip .flip_icons_wrapper .single_icon .highlighted_icon{display: none;}
+  .image_slider_flip .flip_icons_wrapper .single_icon.active_icon{margin-right: 16px; margin-top: -14px;}
+  .image_slider_flip .flip_icons_wrapper .single_icon.active_icon img{width: 100%; height: 100%;background:#fff;}
+  .image_slider_flip .flip_icons_wrapper .single_icon.active_icon .normal_icon{display: none;}
+  .image_slider_flip .flip_icons_wrapper .single_icon.active_icon .highlighted_icon{display: block;}
+  .image_slider_flip .flip_icons_wrapper .single_icon img{width: 80%;border-radius: 50%;background: #494949;}
+
   @media(max-width:768px) {
-    .deal-of-the_day.{{ section.id }}{
-      padding-right: {{ section.settings.sectionpaddingright }}px;
-      padding-left: 0px;
-    }
+    .deal-of-the_day.{{ section.id }}{padding-right: {{ section.settings.sectionpaddingright }}px;padding-left: 0px;}
+    .image_slider_flip .flip_icons_wrapper .single_icon{width: -webkit-fill-available;display: none;}
+    .image_slider_flip .flip_icons_wrapper .single_icon.active_icon{margin-right: 10px;margin-top: -6px;display: block;}
   }
 </style>
-
-<div class="container deal-of-the_day {{ section.id }}  image_slider_flip">
+ 
+<div class="container deal-of-the_day {{ section.id }}  image_slider_flip {% if section.settings.additional_class %} {{ section.settings.additional_class }}{% endif %}">
   {% if section.settings.sectionHeading != blank %}
     <div class="row">
       <div class="col-md-12 section__header text-container d-flex justify-content-between">
@@ -25,48 +32,69 @@
       </div>
     </div>
   {% endif %}
-  <div class="row">
-    <div class="col-md-12 owl-carousel owl-theme deal-slider slider-with-nav custom_slider_init {{ section.id }}" {%- render 'carousel-js' -%}>
+
+  {% assign is_center_slide = "" %}
+  {% if section.settings.center_slide %}
+    {% assign is_center_slide = "center_item_slider" %}
+    <div class="row">
+      <div class="flip_icons_wrapper">
+        {% for block in section.blocks %}
+          <div class="single_icon" data-slide_icon_id="slide_no_{{ forloop.index }}">
+            <img src="{{ block.settings.slider_icon | img_url: 'small' }}" class="normal_icon">
+            <img src="{{ block.settings.slider_active_icon | img_url: 'small' }}" class="highlighted_icon">
+          </div>
+      {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row {{ is_center_slide }}">
+    <div class="col-md-12 owl-carousel owl-theme deal-slider slider-with-nav custom_slider_init {{ section.id }}" data-center_slide="{{ section.settings.center_slide }}" {%- render 'carousel-js' -%} >
       {% for block in section.blocks %}
         {% assign popup_class = "" %}
         {% if block.settings.popup_class != blank %}
           {% assign popup_class = block.settings.popup_class %}
         {% endif %}
-   {% if block.settings.desktop_image != blank %} 
-     {% assign desk_img =  block.settings.desktop_image %}
-   {% else %}
-     {% assign desk_img = block.settings.image %}
-   {% endif %}
-
-   {% if block.settings.flip_desktop_image != blank %} 
-     {% assign desk_flip_img =  block.settings.flip_desktop_image %}
-   {% else %}
-     {% assign desk_flip_img = block.settings.flip_image %}
-   {% endif %}
-        <div class="item flip-box-inner">
-          <picture class="flip-box-front">
-            <source
-              media="(min-width: 769px)"
-              {% render 'image-attributes', image: desk_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
-            >
-            <img
-              class="image-overlay__image_"
-              {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600' %}
-              alt="{{block.settings.image.alt}}" loading="lazy"
-            >
-          </picture>
-          <picture class="flip-box-back">
-            <source
-              media="(min-width: 769px)"
-              {% render 'image-attributes', image: desk_flip_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
-            >
-            <img
-              class="image-overlay__image_"
-              {% render 'image-attributes', image: block.settings.flip_image, sizes: '200,300,400,500,600' %}
-              alt="{{block.settings.flip_image.alt}}" loading="lazy"
-            >
-          </picture>
-        </div>
+        {% if block.settings.desktop_image != blank %} 
+          {% assign desk_img =  block.settings.desktop_image %}
+        {% else %}
+          {% assign desk_img = block.settings.image %}
+        {% endif %}
+        {% if block.settings.flip_desktop_image != blank %} 
+          {% assign desk_flip_img =  block.settings.flip_desktop_image %}
+        {% else %}
+          {% assign desk_flip_img = block.settings.flip_image %}
+        {% endif %}
+        {% if block.settings.imageUrl != blank %}
+          <a href="{{ block.settings.imageUrl }}">
+        {% endif %}
+            <div class="item flip-box-inner" data-slide_id="slide_no_{{ forloop.index }}">
+              <picture class="flip-box-front">
+                <source
+                  media="(min-width: 769px)"
+                  {% render 'image-attributes', image: desk_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                >
+                <img
+                  class="image-overlay__image_"
+                  {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600' %}
+                  alt="{{block.settings.image.alt}}" loading="lazy"
+                >
+              </picture>
+              <picture class="flip-box-back">
+                <source
+                  media="(min-width: 769px)"
+                  {% render 'image-attributes', image: desk_flip_img , sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                >
+                <img
+                  class="image-overlay__image_"
+                  {% render 'image-attributes', image: block.settings.flip_image, sizes: '200,300,400,500,600' %}
+                  alt="{{block.settings.flip_image.alt}}" loading="lazy"
+                >
+              </picture>
+            </div>
+          {% if block.settings.imageUrl != blank %}
+            </a>
+          {% endif %}
       {% endfor %}
     </div>
   </div>
@@ -82,6 +110,8 @@
 
 {% if section.settings.mobile_bg_image != blank %}
 <style>
+  
+
   @media(max-width:767px) {
     .deal-of-the_day.{{ section.id }}.image_slider_flip{background: url( {{ section.settings.mobile_bg_image }} ) !important; background-size: cover !important;background-repeat: no-repeat !important;max-width: fit-content;padding-right: 0px;}
   }
@@ -90,13 +120,57 @@
 
 <script>
   $(document).ready(function(){
+
+    /* Code for slide flip on slider.
+      1: All flip-box-back slides are hidden on page load
+      2: On click of any front slide-
+        i. All the back slides will be hidden and front slides will be displayed
+        ii. current front slide will be hidden and its back slide will be displayed
+      3: On click of back slide its front slide will be displayed and back slide will be hidden 
+    */
     $('.flip-box-inner .flip-box-back').hide();
+
+
+    /* Code for showing active icon(small icons before flip slider) for current slide */
+    let $owl = $('.deal-of-the_day.{{ section.id }} .deal-slider.owl-carousel');
     
-    $('.flip-box-inner').on('click', '.flip-box-front', function(){
-      $('.flip-box-inner .flip-box-back').css('display', 'none');
-      $(this).parent('.flip-box-inner').find('.flip-box-back').show();
-      $('.flip-box-inner .flip-box-front').css('display', 'block');
-      $(this).parents('.flip-box-inner').find('.flip-box-front').hide();
+    $owl.children().each( function( index ) {
+      $(this).attr( 'data-position', index );
+    });
+
+    let sliderSelector = document.querySelectorAll('.{{ section.id }}.custom_slider_init');
+    for (let i = 0; i < sliderSelector.length; i++) {
+      
+      $owl.owlCarousel({
+        center: true,
+        loop: JSON.parse(sliderSelector[i].getAttribute('data-loop')),
+        responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
+        autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
+        autoplayTimeout: JSON.parse(sliderSelector[i].getAttribute('data-autoplay-timeout')),
+        autoplayHoverPause:true,
+        stopOnHover: true,
+        items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
+        slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
+        nav: true,
+        dots: JSON.parse(sliderSelector[i].getAttribute('data-dots')),
+        margin: JSON.parse(sliderSelector[i].getAttribute('data-margin')),
+        stagePadding: 20,
+        responsive: {
+            300: {
+                items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_items')),
+                dots: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_dots'))
+            },
+            1024: {
+              items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_mid_items'))
+            }
+        }
+      });
+
+    }
+
+    $(document).on('click', '.owl-item>.flip-box-inner', function() {
+      var $speed = 300;  // in ms
+      $owl.trigger('to.owl.carousel', [$(this).data( 'position' ), $speed] );
     });
 
     $('.flip-box-inner').on('click', '.flip-box-back', function(){
@@ -105,9 +179,45 @@
       $(this).parent('.flip-box-inner').find('.flip-box-back').hide();
       $(this).parent('.flip-box-inner .flip-box-front').css('display', 'block');
     });
+
+
+   $owl.on('changed.owl.carousel', function(event) {
+      $('.image_slider_flip .flip_icons_wrapper .single_icon').removeClass('active_icon');
+      let active_slide_no = $('.image_slider_flip .center_item_slider .owl-carousel .owl-item.active.center .flip-box-inner').attr('data-slide_id');
+      active_slide_no = 'slide_no_' + active_slide_no.split('slide_no_')[1];
+      
+      $('.image_slider_flip .flip_icons_wrapper div[data-slide_icon_id="'+active_slide_no+'"]').addClass('active_icon');
+    })
+
+    
+
+    $('.flip-box-inner').on('click', '.flip-box-front', function(){
+      let flip_element = $(this);
+      $('.flip-box-inner .flip-box-back').css('display', 'none');
+      flip_element.parent('.flip-box-inner').find('.flip-box-back').show();
+      $('.flip-box-inner .flip-box-front').css('display', 'block');
+      flip_element.parents('.flip-box-inner').find('.flip-box-front').hide();
+      
+
+      flip_element.parent('.flip-box-inner').addClass('item-clicked');
+      setTimeout(function () {
+        $('.flip-box-inner.item-clicked .flip-box-front').show();
+        $('.flip-box-inner.item-clicked .flip-box-back').hide();
+        $('.flip-box-inner').removeClass('item-clicked');
+      }, 5000);
+    });
+
+    
+
+    $('.flip-box-inner').on('click', '.flip-box-back', function(){
+      $('.flip-box-inner  .flip-box-front').css('display', 'block');
+      $(this).parent('.flip-box-inner').find('.flip-box-front').show();
+      $(this).parent('.flip-box-inner').find('.flip-box-back').hide();
+      $(this).parent('.flip-box-inner .flip-box-front').css('display', 'block');
+    }); 
+
   })
 </script>
-
 
 {% schema %}
   {
@@ -171,6 +281,11 @@
         "id": "autoplay",
         "label": "autoplay",
         "default": true
+      },{
+        "type": "checkbox",
+        "id": "center_slide",
+        "label": "Center image bigger?",
+        "default": false
       }, {
         "type": "number",
         "id": "slideBy",
@@ -196,6 +311,11 @@
         "id": "bg_color",
         "label": "Background color",
         "default": "#FFFFFF"
+      },
+      {
+        "type": "text",
+        "id": "additional_class",
+        "label": "Custom Class"
       }
 
     ],
@@ -225,6 +345,16 @@
             "type": "image_picker",
             "id": "flip_desktop_image",
             "label": "Desk image after flip"
+          },
+          {
+            "type": "image_picker",
+            "id": "slider_icon",
+            "label": "Slider icon(default)"
+          }, 
+          {
+            "type": "image_picker",
+            "id": "slider_active_icon",
+            "label": "Slider icon(active)"
           }, 
           {
             "type": "url",
