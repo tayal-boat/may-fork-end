@@ -685,11 +685,19 @@
 
     {%- endif -%}
     {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-    <button id="BIS_trigger" type="button" class="custom-notify-btn"
+    {% comment %} <button id="BIS_trigger" type="button" class="custom-notify-btn"
       data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if
       product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
       Notify me
-    </button>
+    </button> {% endcomment %}
+  <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+    <a
+      href="#"
+      class="BIS_trigger item_BIS"
+      data-product-data="{{ product | json | escape }}">
+      Notify Me
+    </a>
+  </div>
     {% endunless %}
     {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix !=
     'quick-buy-drawer' -%}
