@@ -47,7 +47,7 @@
       --secondary-button-text-color: {{ secondary_button_text_color.red }}, {{ secondary_button_text_color.green }}, {{ secondary_button_text_color.blue }};
     }
     {% if product.tags contains 'Coming-Soon' %}
-      #gokwik-buy-now, #AddToCart, .amazon-c, .stock-label {display: none!important;}
+      #gokwik-buy-now, #AddToCart, .amazon-c, .stock-label, .restocking, .current-in-cart {display: none!important;}
     {% endif %}
     {% if product.tags contains 'NO-PRICE' %}  
      .product-meta__price-list-container, .price-container {display:none!important;}
@@ -81,17 +81,21 @@
           </li>
         </ol>
       </nav>
-
-    {% if product.metafields.custom.product_banner %}
-      <a href="/collections/999-store" class="banner_link">
-    <img {% render 'image-attributes' , image: product.metafields.custom.product_banner, sizes: '700' , ignore_src: true %}
+    {% if product.metafields.custom.productbanner_url != blank %}
+      <a href="{{ product.metafields.custom.productbanner_url | split: "," | last }}" class="banner_link">
+    <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
       style="border-radius:10px;">
     </a>
+    {% elsif section.settings.banners_url != blank %}
+    <a href="{{ section.settings.banners_url | split: "," | last }}" class="banner_link">
+      <img src="{{ section.settings.banners_url | split: "," | first }}"
+        style="border-radius:10px;">
+      </a>
     {% endif %}
 
 <!-- PRODUCT TOP PART -->
   <div
-    class="product py-lg-2 {% if product.metafields.custom.product_banner %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
+    class="product py-lg-2 {% if product.metafields.custom.productbanner_url != blank or section.settings.banners_url != blank  %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
   {% comment %}
   ! Changed the position of 'product-info' & 'product-media' in New PDP Design
   {% endcomment %}
@@ -654,6 +658,11 @@ End automatically added Judge.me widget{% endcomment %}
     }
   ],
   "settings": [
+    {
+      "type": "text",
+      "id": "banners_url",
+      "label": "bannersurl + redirectionurl"
+    },
 	{
       "type": "checkbox",
       "id": "show_timer_on_all",
