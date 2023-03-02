@@ -159,7 +159,7 @@
                       class="tabs-nav__item heading heading--small ml-0"
                       aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
                       aria-controls="block-{{ section.id }}-{{ block.id }}"
-                      data-collection-id="{{ block.settings.collection.id }}"
+                      data-collection-handle="{{ block.settings.collection.handle }}"
                       {{ block.shopify_attributes }}
                     >
                       {{-
@@ -286,21 +286,39 @@
 
 <script>
   $(document).ready(function(){
-    $('tabs-nav .tabs-nav__item-list button').on('click', function(e){
+    $('#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button').on('click', function(e){
       e.preventDefault();
 
-      let collection_id = $(this).data("collection-id");
-      console.log("Clicked Collection ID: ", collection_id);
-      
+      let collection_handle = $(this).data("collection-handle");
+      //let products_limit = {{ section.settings.products_count }};
+      let products_limit = 10;
+
+      let product_html = $(this).parents('.shopify-section--featured-collections').find('.featured-collections .scroller product-item:first-child').html();
+      product_html = product_html.replace(/(\r\n|\n|\r)/gm, "");
+      product_html = '<product-item class="product-item product-item-vertical">'+product_html+'</product-item>';
+
+      let self = this;
+
       $.ajax({
-        url: 'https://efca3eea20de2d45ecce865b9795ee2f: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@boatlifestylein.myshopify.com//admin/products.json?collection_id='+collection_id+'&limit=5',
+        url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'/products.json?limit='+products_limit,
         method: "get",
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        contentType: "application/json; charset=utf-8",              
         dataType: "json",
         success: function (result) {
-            console.log(result);
+          $(self).parent('.tabs-nav__item-list').find('button').attr('aria-expanded', 'false');
+          $(self).attr('aria-expanded', 'true');
+          $(self).parents('.shopify-section--featured-collections').find('product-list').removeAttr('hidden');
+          $(self).parents('.shopify-section--featured-collections').find('product-list').addClass(collection_handle);
+
+          for( product_data in result.products ){
+            let product_title = result.products[product_data].title;
+            if( product_data == 0 ){
+              $(self).parents('.shopify-section--featured-collections').find('.scroller .product-list__inner').html('');
+            }
+
+            $(self).parents('.shopify-section--featured-collections').find('.scroller .product-list__inner').append(product_html);
+          }
+
         },
         error: function (error) {
             console.log(error);
