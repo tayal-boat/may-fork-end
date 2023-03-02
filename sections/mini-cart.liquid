@@ -68,8 +68,11 @@
               <input type="hidden" name="checkout">
   
               {%- for line_item in cart.items -%}
-                <line-item class="line-item" data-item-id="{{ line_item.id }}">
+                
+                <line-item class="line-item" data-item-id="{{ line_item.id }}" data-itemkey="{{ line_item.key }}">
                   <div class="line-item__content-wrapper">
+                      <input type="hidden" name="properties[Personalised Message]" value="test">
+                    <span class="update-prop" data-itemkey="{{ line_item.key }}">Update Prop</span>
                     <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
                       <span class="line-item__loader" hidden>
                         <span class="line-item__loader-spinner spinner" hidden>{% render 'icon' with 'spinner', width: 16, height: 16, stroke_width: 6 %}</span>
@@ -508,17 +511,16 @@
                   {%- assign qty_error_msg = 'Please Modify your cart to proceed.' -%}
                   {%- assign product_limit_ok = true -%}
                   {%- assign product_flash = false -%}
-                        {% for line_item in cart.items %}
-                  {% if line_item.product.tags contains 'prebooking' %} 
-                    {%- assign magic_ok = false -%}
-                  {% endif %}
-                  {% if line_item.product.tags contains 'flash-sale' %}
-                    {%- assign product_flash = true -%}
-                  {% endif %}
-                  {% if line_item.product.tags contains 'GK-Only' %}
-                    {%- assign only_gk = true -%}
-                  {% endif %}
-            
+                  {% for line_item in cart.items %}
+                    {% if line_item.product.tags contains 'prebooking' %} 
+                      {%- assign magic_ok = false -%}
+                    {% endif %}
+                    {% if line_item.product.tags contains 'flash-sale' %}
+                      {%- assign product_flash = true -%}
+                    {% endif %}
+                    {% if line_item.product.tags contains 'GK-Only' %}
+                      {%- assign only_gk = true -%}
+                    {% endif %}
                       {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
                           {%- assign product_limit_ok = false -%}
                       {% endif %}
@@ -682,8 +684,36 @@
       "Amount": cart_total_price
     });
   }); */
-  </script>
-  
+
+    {% comment %} const lineItems = Array.from(document.querySelectorAll('line-item'));
+    const updatePropBtns = Array.from(document.querySelectorAll('.update-prop'));
+    updatePropBtns.forEach(btn => {
+      const itemKey = btn.dataset.itemkey;
+      btn.addEventListener('click', () => {
+        updateItemOne(itemKey, 'sheenagarg')
+        document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
+      })
+    })
+    
+    async function updateItemOne(key, propValue) {
+      const result = await fetch("/cart/change.js", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(
+          {
+            id: key,
+            properties: {
+                "Personalised Message": `${propValue}`
+            }
+          }
+        )
+      });
+      document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));                                 
+    }; {% endcomment %}
+</script>
   {% schema %}
       {
         "name": "Cart drawer",
