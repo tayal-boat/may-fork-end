@@ -708,6 +708,26 @@ $(".razorpay-checkout").click(function () {
     }
     return maskedEmail.join('');
   }
+  var customer_container = document.querySelector('.customer-login-section.customer--section');
+  function inputSubmit(input) {
+    if(input){
+    input.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if(customer_container.hasAttribute('otp_login_screen')){
+        document.querySelector('.otp-login-btn').click();
+        }
+        else if(customer_container.hasAttribute('otp_send')){
+          document.querySelector('.otp-login-confirm-btn').click();  
+        }
+        else{
+          console.log('prevint defaunt reload');
+          event.preventDefault();
+        }
+      }
+    });
+  }
+    }
 
   function signup_window(session_id){
     $('.customer-login-section').attr('new_customer', 'true');
@@ -776,21 +796,27 @@ $(".razorpay-checkout").click(function () {
       }),
     };
     $.ajax(settings).done(function (response) {
-      // console.log(response);
-      if(response.code == 200 && response.message == 'login URL sent'){
-        if(response.message == 'This email already exists , OTP sent to email'){
+      console.log(response);
+      if(response.code == 200){
+        $('.otp-login-error').html('');
+        if(response.message == 'Email exists with different number  , OTP sent to email'){
           var session_id = response.session_id;
   
   // email varify code
-
   $('.customer-login-section').attr('otp_send', 'true');
+  $('.customer-login-section').attr('otp_email_varify', 'true');
+  $('.customer-login-section').removeAttr('multi_email');
+  $('.email-list-container').html('');
+  $('.mobile-otp-inout input').val('');
+  // $('.otp-timer-container').show();
 $('.mobile-login-input').html(`
 <div class="input">
-  <input type="textl" id="emailId" name="emailId" value="" class="input__field is-filled" required="" disabled="disabled">
+  <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
 $('.otp-login-error').html();
+$('.otp-login-confirm-btn').addClass('email_varify');
 TimerFunction();
   sessionStorage.setItem('login_session_id', response.session_id );
   
@@ -826,21 +852,26 @@ TimerFunction();
       }),
     };
     $.ajax(settings).done(function (response) {
-      // console.log(response);
+      console.log(response);
       if(response.code == 200){
         $('.otp-login-error').html('');
-        if(response.message == 'This email already exists , OTP sent to email'){
+        if(response.message == 'Email exists with different number  , OTP sent to email'){
         var session_id = response.session_id;
 
 // email varify code
 
-$('.customer-login-section').attr('otp_send', 'true');
+  $('.customer-login-section').attr('otp_send', 'true');
+  $('.customer-login-section').attr('otp_email_varify', 'true');
+  $('.customer-login-section').removeAttr('new_customer');
+  $('.mobile-otp-inout input').val('');
+  // $('.otp-timer-container').show();
 $('.mobile-login-input').html(`
 <div class="input">
-  <input type="textl" id="emailId" name="emailId" value="" class="input__field is-filled" required="" disabled="disabled">
+  <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
+$('.otp-login-confirm-btn').addClass('email_varify');
 TimerFunction();
   sessionStorage.setItem('login_session_id', response.session_id );
         }else{
@@ -910,8 +941,11 @@ function verifyotp(session_id, otp, url){
         emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
       }
       emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
-      let selectedEmail = '';
       let emailSelector = $('.email-list-container span');
+      let selectedEmail = '';
+      console.dir(emailSelector[0]);
+      selectedEmail = emailSelector[0].dataset.value;
+      console.log(selectedEmail);
       emailSelector[0].setAttribute('selected','true');
       emailSelector.click(function(event){
       selectedEmail = event.target.dataset.value;
@@ -920,8 +954,10 @@ function verifyotp(session_id, otp, url){
           emailSelector[i].removeAttribute("selected");   
         }
     }
+    sessionStorage.setItem('selected_email', selectedEmail);
       $(this).attr('selected','true'); 
       });
+
       $('.redirect_to_signup').click(function(){
         signup_window(session_id);
       });
@@ -955,6 +991,7 @@ function otpLogin(phone){
     // console.log(response);
     if(response.code == 200 && response.message == 'OTP sent'){
     $('.customer-login-section').attr('otp_send', 'true');
+    $('.customer-login-section').removeAttr('otp_login_screen');
     $('#otp-mobile-number').attr('disabled', true)
     $('.otp-login-error').html('');
     TimerFunction();
@@ -1006,7 +1043,8 @@ $('.mobile-login-edit-icon').click(function(){
     });
   }
 
- $('.otp-login-confirm-btn').click(function(){
+ $('.otp-login-confirm-btn:not(.email_varify)').click(function(){
+  console.log('verifyotp');
   let session_id = sessionStorage.getItem('login_session_id');
   let otp = $('.mobile-otp-inout input').val();
   let url = sessionStorage.getItem('login_location');
@@ -1014,6 +1052,20 @@ if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !
   verifyotp(session_id, otp, url);
 }
 })
+
+$('.otp-login-confirm-btn.email_varify').click(function(){
+  console.log('verifyemail');
+  let session_id = sessionStorage.getItem('login_session_id');
+  let otp = $('.mobile-otp-inout input').val();
+  let url = sessionStorage.getItem('login_location');
+if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
+  verifyemail(session_id, otp, url);
+}
+})
+
+
+var input_login = document.querySelector('.mobile-login-input input');
+inputSubmit(input_login);  
 
 $('.mobile-otp-inout').click(function(){
   if($('.otp-login-error').html() !== ''){
