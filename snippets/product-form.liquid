@@ -613,7 +613,7 @@
         </product-inventory>
         {%- endif -%}
       </div>
-
+      
       {%- comment -%}
       ----------------------------------------------------------------------------------------------------------------
       BUY BUTTONS
@@ -621,6 +621,29 @@
       {%- endcomment -%}
       {%- when 'buy_buttons' -%}
       {%- if request.page_type != 'password' -%}
+        {% for variant in product.variants %}
+          {% if variant.id == product.selected_or_first_available_variant.id %}
+            {% if variant.metafields.custom.delivery != blank %}
+              {% assign delivery_date = variant.metafields.custom.delivery %}
+            {% else %}
+              {% assign delivery_date = '2 days' %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        <div class="pincode_checker_container">
+          <h5 class="pincode_heading">Delivery:</h5>
+        <div class="pincode_checker">
+          <div class="quick-delivery-icon">{% render 'icon' with 'location' %}</div>
+          <input class="pincode_checker_input" placeholder="Enter Delivery Pincode">
+          <button type="button" class="pincode_checker_btn">Check</button>
+        </div>
+        <div class="pincode_details">
+          <h6>Fastest delivery in {{delivery_date}}</h6>
+          <p>Enter pincode for exact delivery dates</p>
+        </div>
+        <div class="pincode_error"></div>
+        </div>
+
       <div class="product-form__buy-buttons" {{ block.shopify_attributes }}>
         {%- form 'product', product, is: 'product-form', id: product_form_id -%}
         <input type="hidden" disabled name="id" value="{{ product_varient.id }}">
@@ -800,3 +823,21 @@ here
   </div>
   </popover-content>
 {%- endif -%}
+{% capture variantDelivery %}
+  {% for variant in product.variants %}
+    "{{ variant.id }}":"{{ variant.metafields.custom.delivery }}"
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{%- endcapture -%}
+
+<script>
+  let variantDelivery = {{ variantDelivery }};
+  Shopify.variantDelivery = function(varientID){
+  let variantDeliveryTime = variantDelivery[varientID];
+  if((!sessionStorage.pincode_delivery_text || sessionStorage.pincode_delivery_text == '') && (!sessionStorage.pincode_error || sessionStorage.pincode_error == '')){
+  if(variantDeliveryTime !== ''){
+  $('.pincode_details h6').html('Fastest delivery in ' + variantDeliveryTime );
+  }else{$('.pincode_details h6').html('Fastest delivery in 2 days');}
+  }
+  }
+</script>
