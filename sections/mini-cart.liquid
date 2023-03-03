@@ -685,34 +685,31 @@
     });
   }); */
 
-    {% comment %} const lineItems = Array.from(document.querySelectorAll('line-item'));
+  const lineItems = Array.from(document.querySelectorAll('line-item'));
     const updatePropBtns = Array.from(document.querySelectorAll('.update-prop'));
     updatePropBtns.forEach(btn => {
       const itemKey = btn.dataset.itemkey;
       btn.addEventListener('click', () => {
         updateItemOne(itemKey, 'sheenagarg')
-        document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));
       })
     })
     
-    async function updateItemOne(key, propValue) {
-      const result = await fetch("/cart/change.js", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(
+    function updateItemOne(key, propValue) {
+      $.ajax({
+        url: "/cart/change.js",
+        type: "POST",
+        data: JSON.stringify(
           {
-            id: key,
-            properties: {
-                "Personalised Message": `${propValue}`
-            }
-          }
-        )
-      });
+            "id":`${key}`,
+            "properties":
+              { "Personalised Message": `${propValue}` }
+           }
+        ), 
+        contentType: "application/json",
+        dataType: 'json'
+    })
       document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));                                 
-    }; {% endcomment %}
+    }; 
 </script>
   {% schema %}
       {
