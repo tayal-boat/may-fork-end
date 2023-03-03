@@ -224,41 +224,70 @@ let unitsLeft = '';
 let usual_price = '';
 
 Shopify.variantChange = function(e){
-  if(e.available == false){
-    $('.custom-notify-btn').attr('data-variant-id', e.id);
-    $('.custom-notify-btn').show();
-    $('.product__info button#AddToCart.button--ternary').css('display','none')
+  // console.log(e);
+  // if(e.available == false){
+  //   $('.custom-notify-btn').attr('data-variant-id', e.id);
+  //   $('.custom-notify-btn').show();
+  //   $('.product__info button#AddToCart.button--ternary').css('display','none')
+  // }else{
+  //   $('.custom-notify-btn').hide();
+  //   $('.product__info button#AddToCart.button--primary').css('display','block')
+  // }
+
+let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
+for (let i = 0; i < varient_swatches_input.length; i++) {
+if(varient_swatches_input[i].checked){
+  console.dir(varient_swatches_input[i].offsetParent.dataset.varient_disabled);
+  if(JSON.parse(varient_swatches_input[i].offsetParent.dataset.varient_disabled)) {
+      $('.custom-notify-btn').show();
+      $('.product__info button#AddToCart').hide();
+      $("#gokwik-buy-now").hide();
+      $('#AddToCart').hide();
+      $('quick-buy-drawer #AddToCart').hide();
+      $('quick-buy-popover #AddToCart').hide();
+      $('.product-item__quick-form.quick-buy-notify-me').show();
+      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      
   }else{
     $('.custom-notify-btn').hide();
-    $('.product__info button#AddToCart.button--primary').css('display','block')
-  }
-  let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
-  if(home_pod_price){
-  let custom_price = '';
+    $('.product__info button#AddToCart').show();
+    $("#gokwik-buy-now").show();
+    $('#AddToCart').show();
+    $('quick-buy-drawer #AddToCart').show();
+    $('quick-buy-popover #AddToCart').show();
+    $('.product-item__quick-form.quick-buy-notify-me').hide();
+  }    
+}
+}
+
+let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
+if(home_pod_price){
+let custom_price = '';
 let offerVariantdata = sessionStorage.getItem('variantQtys');
 let OfferProperty= [];
 let varient_pod_units = [];
 offerVariantdata = JSON.parse(offerVariantdata);
- for (var key in offerVariantdata) {
-    if (offerVariantdata.hasOwnProperty(e.id)) {
-     let OfferPropertyArr = offerVariantdata[e.id];
-      OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
-      varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
-      break;
-     }
+for (var key in offerVariantdata) {
+  if (offerVariantdata.hasOwnProperty(e.id)) {
+   let OfferPropertyArr = offerVariantdata[e.id];
+    OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+    varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+    break;
    }
-   let varient_pod_unit = varient_pod_units[0];
-   varient_pod_unit = parseInt(varient_pod_unit);
-   OfferProperty = OfferProperty[0];
-   if(varient_pod_unit > 0 && OfferProperty == 'true'){  
-    custom_price = parseInt(home_pod_price.dataset.pod)
-   }else{
-    custom_price = e.price / 100;
-   }
- 
-    home_pod_price.innerHTML = '₹ '+ custom_price;
+ }
+ let varient_pod_unit = varient_pod_units[0];
+ varient_pod_unit = parseInt(varient_pod_unit);
+ OfferProperty = OfferProperty[0];
+ if(varient_pod_unit > 0 && OfferProperty == 'true'){  
+  custom_price = parseInt(home_pod_price.dataset.pod)
+ }else{
+  custom_price = e.price / 100;
+ }
+
+  home_pod_price.innerHTML = '₹ '+ custom_price;
 }
 }
+
 
 // Creating cleverTap push event
 function createCleverTapEvent( event_name, event_data ){
@@ -266,6 +295,9 @@ function createCleverTapEvent( event_name, event_data ){
     clevertap.event.push( event_name, event_data );
   }
 }
+
+
+
 
 // Owl slider 
 // Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
@@ -490,7 +522,7 @@ function labelsPriority() {
 }
 window.addEventListener('load', labelsPriority)
 
-window.addEventListener('load', labelsPriority)
+
 
 // Creating cleverTap push event
 function createCleverTapEvent( event_name, event_data ){
