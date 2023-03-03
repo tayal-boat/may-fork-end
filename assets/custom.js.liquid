@@ -1043,7 +1043,8 @@ $('.mobile-login-edit-icon').click(function(){
     });
   }
 
- $('.otp-login-confirm-btn:not(.email_varify)').click(function(){
+ $('.otp-login-confirm-btn').click(function(){
+   if(!$('.otp-login-confirm-btn').hasClass('email_varify')){
   console.log('verifyotp');
   let session_id = sessionStorage.getItem('login_session_id');
   let otp = $('.mobile-otp-inout input').val();
@@ -1051,16 +1052,15 @@ $('.mobile-login-edit-icon').click(function(){
 if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
   verifyotp(session_id, otp, url);
 }
-})
-
-$('.otp-login-confirm-btn.email_varify').click(function(){
-  console.log('verifyemail');
+     }else{
+    console.log('verifyemail');
   let session_id = sessionStorage.getItem('login_session_id');
   let otp = $('.mobile-otp-inout input').val();
   let url = sessionStorage.getItem('login_location');
 if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
   verifyemail(session_id, otp, url);
-}
+}   
+     }
 })
 
 
