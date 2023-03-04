@@ -1,0 +1,152 @@
+{% layout none %}
+
+{% assign page_type = template.name %}
+{% assign page_key = '' %}
+
+{% if page_type == 'collection' %}
+  {% assign page_key = collection.id %}
+{% elsif page_type == 'product' %}
+  {% assign page_key = product.id %}
+{% elsif page_type == 'page' %}
+  {% assign page_key = page.id %}
+{% elsif page_type == 'article' %}
+  {% assign page_key = article.id %} 
+{% elsif page_type == 'index' %}
+  {% assign page_key = 'index' %}
+{% endif %}
+<script>
+  window.Quinn = {
+    page_type: "{{ page_type }}",
+    page_key: "{{ page_key }}",
+    handle: "{{ page.handle }}",
+  }
+</script>
+<title>{{ page.title }}</title>
+<div id="quinn_vlp_loader">
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: none; display: block; shape-rendering: auto;" width="70px" height="70px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+    <circle cx="50" cy="50" fill="none" stroke="#fff" stroke-width="8" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
+      <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"></animateTransform>
+    </circle>
+  </svg>
+</div>
+<style>
+  #quinn_vlp_loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #quinn_vlp_loader.quinn_vlp_loader--visible {
+    display: flex;
+  }
+  .quinn-background-hider {
+    display: block !important;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 4, 15, 1.0);
+    z-index: 999;
+  }
+</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div id="quinn-placeholder"></div>
+<script>
+  const toggleFullpageLoader = () => {
+    const loader = document.getElementById("quinn_vlp_loader");
+    loader.classList.toggle("quinn_vlp_loader--visible");
+  };
+</script>
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  
+</script>
+<noscript>
+  <img
+    height="1"
+    width="1"
+    id="quinn-fb-pixel-img"
+    style="display:none"
+  >
+</noscript>
+<script>
+  
+  let url = "/pages/quinnapi/vlp::pagekey:"+Quinn.page_key+"::pagetype:"+Quinn.page_type+"::pagehandle:"+Quinn.handle;
+ 
+  toggleFullpageLoader();
+
+  async function setup() {
+    const res = await fetch(url);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const parsedDOM = parser.parseFromString(text, "text/html")
+    
+    const QuinnObj = parsedDOM.getElementById("quinn-data-api").innerText
+    const data = JSON.parse(QuinnObj);
+    window.Quinn = {
+      ...data,
+      ...window.Quinn,
+    };
+    if(!window.Quinn.vlp_playlist_key){
+      // redirect to home page
+      window.location.href = "/";
+      return;
+    }
+    // add script and link tag
+    const script = document.createElement("script");
+    script.src = data.js_url;
+    document.body.appendChild(script);
+
+    const overlayScript = document.createElement("script");
+    overlayScript.src = data.overlay_url;
+    document.body.appendChild(overlayScript);
+    
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href= data.css_url;
+    document.body.appendChild(link);
+
+    // custom liquid code
+
+    const customLiquidCode= parsedDOM.querySelector("#quinn-custom-liquid script");
+
+
+    const customLiquidCodeScript = document.createElement("script");
+    // inject javascript code and run it
+    customLiquidCodeScript.innerHTML = customLiquidCode.innerHTML;
+    document.body.appendChild(customLiquidCodeScript);
+    
+    script.onload = () => {
+      toggleFullpageLoader();
+      Quinn.functions.openOverlay(Quinn.vlp_playlist_key, 0, Quinn.redirect_url)
+    };
+    if(Quinn.facebook_pixel_tracking && Quinn.facebook_pixel_id){
+      setupFBPixel({pixelId: Quinn.facebook_pixel_id})
+    }
+  }
+  setup()
+  window.OPEN_CART = function (){
+    window.location.href = "/products/"+Quinn.state.product.handle+"?open_quinn_cart=true";
+  }
+
+  function setupFBPixel({pixelId}){
+    fbq('init', pixelId); // Replace with your pixel ID
+    fbq('track', 'PageView');
+    const img = document.getElementById("quinn-fb-pixel-img");
+    if(img){
+      img.src="https://www.facebook.com/tr?id="+pixelId+"&ev=PageView&noscript=1"
+    }
+  }
+
+</script>
+<div class="quinn-background-hider"></div>
