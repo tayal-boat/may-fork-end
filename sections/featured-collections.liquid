@@ -59,6 +59,11 @@
   .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
   [dir=ltr] .tabs-nav__position{left: 0;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
+
+
+    .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
+    .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
+
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
      .tabs-nav--edge2edge {margin-top: 12px!important;}
@@ -103,7 +108,7 @@
   #shopify-section-{{ section.id }} h3.heading.h2::before {
    content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
    position: absolute; top: -28px; left: -8px;
-  }
+}
   
 }
 {% endif %}
@@ -291,34 +296,27 @@
 
       let collection_handle = $(this).data("collection-handle");
       //let products_limit = {{ section.settings.products_count }};
-      let products_limit = 10;
 
-      let product_html = $(this).parents('.shopify-section--featured-collections').find('.featured-collections .scroller product-item:first-child').html();
-      product_html = product_html.replace(/(\r\n|\n|\r)/gm, "");
-      product_html = '<product-item class="product-item product-item-vertical">'+product_html+'</product-item>';
+      $(this).parents('shopify-section--featured-collections').find('.featured-collections .product-list__inner').html('');
+      $(this).parents('shopify-section--featured-collections').find('.featured-collections .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
 
       let self = this;
 
       $.ajax({
-        url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'/products.json?limit='+products_limit,
+        url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
         method: "get",
-        contentType: "application/json; charset=utf-8",              
-        dataType: "json",
+        type: "GET",
+        dataType: "html",
         success: function (result) {
-          $(self).parent('.tabs-nav__item-list').find('button').attr('aria-expanded', 'false');
+          
+          let t = $(result).find("product-list.product-list .product-list__inner").html();
+          $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").removeAttr('hidden');
+          $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list.product-list .product-list__inner').html(t);
+          $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
+          $(self).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
+          $('.custom_loading_icon').remove();
           $(self).attr('aria-expanded', 'true');
-          $(self).parents('.shopify-section--featured-collections').find('product-list').removeAttr('hidden');
-          $(self).parents('.shopify-section--featured-collections').find('product-list').addClass(collection_handle);
-
-          for( product_data in result.products ){
-            let product_title = result.products[product_data].title;
-            if( product_data == 0 ){
-              $(self).parents('.shopify-section--featured-collections').find('.scroller .product-list__inner').html('');
-            }
-
-            $(self).parents('.shopify-section--featured-collections').find('.scroller .product-list__inner').append(product_html);
-          }
-
+          
         },
         error: function (error) {
             console.log(error);
