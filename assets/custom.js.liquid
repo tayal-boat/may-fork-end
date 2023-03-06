@@ -164,7 +164,7 @@ $(document).on("click", ".custom-search-cta", function(e) {
   })
 });
 
-window.addEventListener("load", function() {
+window.addEventListener("DOMContentLoaded", function() {
   function e() {
       "false" == sessionStorage.getItem("lazyloaded_sections") && ($.ajax({
           url: "/pages/custom-homepage",
@@ -1033,6 +1033,10 @@ var xDirection = "";
 var yDirection = "";
 // function to get the drag_direction
 function getMouseDirection(e) {
+    //Adding threshold for IOS anchor not working
+    if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
+      e.target.closest('a')?.click();
+    }
     //deal with the horizontal case
     if (oldX < e.pageX) {
         xDirection = "right";
