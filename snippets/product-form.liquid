@@ -223,84 +223,89 @@
         {%- endif -%}
 
   <div class="product-meta__price-list-container custom-product-price-mobile d-lg-none" role="region" aria-live="polite">
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center justify-content-between price_offer_wrapper">
       <div
         class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}"
         data-product-price-list>
-        {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
-        {%- if product.tags contains settings.tag_selector -%}
-        {% assign discount_price = fixed_discount | times: 100 %}
-        {% assign discount_price = product_varient.price | minus: discount_price %}
-        {% assign discounted_price = product_varient.price | minus: discount_price |
-        divided_by: 100 | round | times: 100 %}
-        {%- else -%}
-        {% assign discounted_price = product_varient.price %}
-        {%- endif -%}
-        {%- if product_varient.compare_at_price >
-        product_varient.price -%}
-  
-        <span class="price price--highlight price--large">
-          <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-  
-          {%- if settings.currency_code_enabled -%}
-          {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+          {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
+          {%- if product.tags contains settings.tag_selector -%}
+          {% assign discount_price = fixed_discount | times: 100 %}
+          {% assign discount_price = product_varient.price | minus: discount_price %}
+          {% assign discounted_price = product_varient.price | minus: discount_price |
+          divided_by: 100 | round | times: 100 %}
           {%- else -%}
-          {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+          {% assign discounted_price = product_varient.price %}
           {%- endif -%}
-  
-        </span>
-        {% if product.compare_at_price > discounted_price %}
-        <p class="custom-saved-price">{{
-          product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-          round
-          | append: '% Off' }} </p>
-          {% endif %}
-          
-          <span class="price price--compare line-through">
-            <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-          
-            {%- if settings.currency_code_enabled -%}
-            {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
-            replace: 'Rs.', '₹' -}}
-            {%- else -%}
-            {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
-            -}}
-            {%- endif -%}
-          </span>
-          {%- else -%}
-          <span class="price price--large">
-            <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-            {%- if settings.currency_code_enabled -%}
-            {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- else -%}
-            {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-            {%- endif -%}
-          </span>
-          {%- endif -%}
-          
-          {%- if product_varient.unit_price_measurement -%}
-          <div class="price text--subdued">
-            <div class="unit-price-measurement">
-            <span class="unit-price-measurement__price">{{ product_varient.unit_price |
-              money
-              }}</span>
-            <span class="unit-price-measurement__separator">/</span>
+          {%- if product_varient.compare_at_price >
+          product_varient.price -%}
+    
+            <span class="price price--highlight price--large">
+              <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+      
+              {%- if settings.currency_code_enabled -%}
+              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {%- else -%}
+              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {%- endif -%}
+      
+            </span>
+            {% if product.compare_at_price > discounted_price %}
+            <p class="custom-saved-price">{{
+              product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
+              round
+              | append: '% Off' }} </p>
+              {% endif %}
             
-            {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
-            <span class="unit-price-measurement__reference-value">{{
-              product_varient.unit_price_measurement.reference_value }}</span>
-            {%- endif -%}
-            <span class="unit-price-measurement__reference-unit">{{
-              product_varient.unit_price_measurement.reference_unit }}</span>
+              <span class="price price--compare line-through">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+              
+                {%- if settings.currency_code_enabled -%}
+                {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
+                replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+                -}}
+                {%- endif -%}
+              </span>
+              {%- else -%}
+              <span class="price price--large">
+                <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
+              {%- endif -%}
+            
+              {%- if product_varient.unit_price_measurement -%}
+              <div class="price text--subdued">
+                <div class="unit-price-measurement">
+                <span class="unit-price-measurement__price">{{ product_varient.unit_price |
+                  money
+                  }}</span>
+                <span class="unit-price-measurement__separator">/</span>
+                
+                {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
+                <span class="unit-price-measurement__reference-value">{{
+                  product_varient.unit_price_measurement.reference_value }}</span>
+                {%- endif -%}
+                <span class="unit-price-measurement__reference-unit">{{
+                  product_varient.unit_price_measurement.reference_unit }}</span>
+                </div>
+                </div>
+              {%- endif -%}
             </div>
-            </div>
-            {%- endif -%}
-            </div>
-            {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
+            {%- if product.available -%}
+             {% render 'product-offers' %}{%- endif -%}
+              
             <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity > settings.sold_out_threshold %}
               display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
             </div>
+            
+            <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
+
             </div>
 
   {% endunless %}
@@ -375,6 +380,7 @@
                 {%- endif -%}
                 </div>
                 </div>
+                <p class="tax_info">Inclusive of all taxes</p>
               {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
               <div class="desktop current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
@@ -708,7 +714,7 @@
     {%- endform -%}
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
     <div class="d-flex flex-column" aria-role="additonal-info">
-       <div class="price-container p-lg-0">{% render 'product-payment-partner' %}</div>
+      <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>
       {% if product.metafields.custom.product_highlights %}
       <div class="price-container product-highlight mt-3 desktop">
         <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
