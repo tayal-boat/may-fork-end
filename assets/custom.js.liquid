@@ -708,16 +708,20 @@ $(".razorpay-checkout").click(function () {
     }
     return maskedEmail.join('');
   }
+
   var customer_container = document.querySelector('.customer-login-section.customer--section');
   function inputSubmit(input) {
     if(input){
     input.addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
         event.preventDefault();
+        // debugger
         if(customer_container.hasAttribute('otp_login_screen')){
+          console.log('otp_login_screen');
         document.querySelector('.otp-login-btn').click();
         }
         else if(customer_container.hasAttribute('otp_send')){
+          console.log('otp_send');
           document.querySelector('.otp-login-confirm-btn').click();  
         }
         else{
@@ -740,6 +744,7 @@ $(".razorpay-checkout").click(function () {
       let email = $('.otp-email #email').val();
       let phone = $('#otp-mobile-number').val();
       let register_url = sessionStorage.getItem('login_location');
+      sessionStorage.setItem('selected_email',email);
       otpSignUp(full_name, email, phone, session_id, register_url);
     })
   }
@@ -815,7 +820,7 @@ $('.mobile-login-input').html(`
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
-$('.otp-login-error').html();
+$('.otp-login-error').html('');
 $('.otp-login-confirm-btn').addClass('email_varify');
 TimerFunction();
   sessionStorage.setItem('login_session_id', response.session_id );
@@ -863,6 +868,8 @@ TimerFunction();
   $('.customer-login-section').attr('otp_send', 'true');
   $('.customer-login-section').attr('otp_email_varify', 'true');
   $('.customer-login-section').removeAttr('new_customer');
+  $('.customer-login-section').removeAttr('multi_email');
+  $('.email-list-container').html('');
   $('.mobile-otp-inout input').val('');
   // $('.otp-timer-container').show();
 $('.mobile-login-input').html(`
@@ -871,6 +878,7 @@ $('.mobile-login-input').html(`
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
+$('.otp-login-error').html('');
 $('.otp-login-confirm-btn').addClass('email_varify');
 TimerFunction();
   sessionStorage.setItem('login_session_id', response.session_id );
@@ -1066,6 +1074,8 @@ if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !
 
 var input_login = document.querySelector('.mobile-login-input input');
 inputSubmit(input_login);  
+var otp_login = document.querySelector('.mobile-otp-inout input');
+inputSubmit(otp_login);  
 
 $('.mobile-otp-inout').click(function(){
   if($('.otp-login-error').html() !== ''){
