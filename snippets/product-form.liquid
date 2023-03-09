@@ -665,7 +665,7 @@
 
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
-          {% unless product.tags contains settings.products_offering_freebie %}
+          {% unless product.tags contains settings.products_offering_freebie or product.price >= 400000 %}
           <div class="amazon-c d-flex align-items-baseline justify-content-between">
             {% comment %} <button type="button" onclick="onBuyNowClick(this)" class="w-50 w-lg-100" id="gokwik-buy-now" {% if settings.hideFlow
               %} style="display:none !important;" {% endif %} {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}disabled style="display:none!important;" {% endunless %}>
@@ -678,10 +678,10 @@
               data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
               Notify me
               </button>
-              {% comment %} <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+              <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
-              </div> {% endcomment %}
+              </div>
               </div>
               {% endunless %}
 
@@ -691,19 +691,19 @@
 
     {%- endif -%}
     {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-    {% comment %} <button id="BIS_trigger" type="button" class="custom-notify-btn"
+    {% comment %}<button id="BIS_trigger" type="button" class="custom-notify-btn"
       data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if
       product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
       Notify me
-    </button> {% endcomment %}
-  <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
-    <a
-      href="#"
-      class="BIS_trigger item_BIS"
-      data-product-data="{{ product | json | escape }}">
-      Notify Me
-    </a>
-  </div>
+    </button>{% endcomment %}
+    <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+      <a
+        href="#"
+        class="BIS_trigger item_BIS"
+        data-product-data="{{ product | json | escape }}">
+        Notify Me
+      </a>
+    </div>
     {% endunless %}
     {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix !=
     'quick-buy-drawer' -%}

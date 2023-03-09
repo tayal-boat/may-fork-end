@@ -5,31 +5,15 @@
 {%- endif -%}
 
 <style>
-  .press-list__wrapper {
-    margin-left: 0;
-  }
+  .press-list__wrapper {margin-left: 0;}
   {%- if settings.enable_mob_bg -%}
-    .shopify-section--press .press_section {
-      background: transparent;
-    }
+    .shopify-section--press .press_section {background: transparent;}
   {%- else -%}
-    .shopify-section--press .press_section {
-      background: rgb(255 255 255);
-    }
+    .shopify-section--press .press_section {background: rgb(255 255 255);}
   {%- endif -%}
-  .rte blockquote:after,
-  .rte blockquote:before,
-  .shopify-section--press .blockquote:after,
-  .shopify-section--press .blockquote:before {
-    opacity: 0;
-  }
-  split-lines {
-    color: white;
-  }
-  .press-list_logo-list-wrapper button.press-list_logo-item[aria-current=true] {
-    background: #E9E9E9;
-    padding: 10px;
-  }
+  .rte blockquote:after, .rte blockquote:before, .shopify-section--press .blockquote:after, .shopify-section--press .blockquote:before {opacity: 0;}
+  split-lines {color: white;}
+  .press-list_logo-list-wrapper button.press-list_logo-item[aria-current=true] {background: #E9E9E9;padding: 10px;}
 
   #shopify-section-{{ section.id }}{
     {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
@@ -46,58 +30,28 @@
       {%- assign text_color = section.settings.text_color -%}
     {%- endif -%}
 
-    --heading-color: {{ heading_color.red }}
-    , {{ heading_color.green }}
-    , {{ heading_color.blue }}
-    ;
-    --text-color: {{ text_color.red }}
-    , {{ text_color.green }}
-    , {{ text_color.blue }}
-    ;
+    --heading-color: 
+    {{ heading_color.red }},
+    {{ heading_color.green }}, {{ heading_color.blue }};
+    --text-color: 
+    {{ text_color.red }},
+    {{ text_color.green }}, {{ text_color.blue }};
     /*       background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }}); */
   }
 
   @media screen and (max-width: 767px) {
-    [dir=ltr] .blockquote:after,
-    [dir=ltr] .rte blockquote:after {
-      bottom: -32px;
-    }
+    [dir=ltr] .blockquote:after, [dir=ltr] .rte blockquote:after {bottom: -32px;}
 
-    .press_section .vertical-breather {
-      padding-bottom: 18px;
-    }
+    .press_section .vertical-breather{padding-bottom: 18px;}
   }
 
-  .custom_press_slider {
-    margin-top: 20px;
-  }
-  .custom_press_slider .owl-item p {
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 13px;
-    min-height: 26px;
-  }
-  .custom_press_slider .owl-item img {
-    margin: 0 auto;
-    padding: 10px;
-    border-radius: 8px;
-    border: 0;
-  }
-  .custom_press_slider .owl-dots {
-    margin-top: 12px
-  }
-  .custom_press_slider .owl-dots button {
-    width: 8px;
-    height: 8px;
-    background: #44444478 !important;
-    margin: 0 5px;
-    border-radius: 50% !important;
-  }
-  .custom_press_slider .owl-dots button.active {
-    background: #7f7f7f !important;
-    width: 40px;
-    border-radius: 12px !important;
-  }
+  .custom_press_slider{margin-top: 20px;}
+  .custom_press_slider .owl-item p{font-weight: 500;font-size: 12px;line-height: 13px;min-height: 26px;}
+  .custom_press_slider .owl-item img{margin: 0px auto; padding: 10px;border-radius: 8px;border:0;}
+  .custom_press_slider .owl-dots {margin-top: 12px}
+  .custom_press_slider .owl-dots button{width: 8px;height: 8px;background: #44444478!important;margin: 0 5px;border-radius: 50%!important;}
+  .custom_press_slider .owl-dots button.active{background: #7f7f7f!important;width: 40px;border-radius: 12px!important;}
+
 </style>
 
 <section class="press_section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -109,11 +63,7 @@
         <div class="press-list__wrapper">
 
           {%- for block in section.blocks -%}
-            <press-item
-              {% unless forloop.first %}hidden{% endunless %}
-              id="block-{{ section.id }}-{{ block.id }}"
-              class="press-list__item"
-              {{ block.shopify_attributes }}>
+            <press-item {% unless forloop.first %}hidden{% endunless %} id="block-{{ section.id }}-{{ block.id }}" class="press-list__item" {{ block.shopify_attributes }}>
               <blockquote class="press-list__item-content blockquote blockquote--center">
                 <split-lines {% if section.settings.reveal_on_scroll or forloop.first == false %}reveal-visibility{% endif %}>{{ block.settings.content | escape }}</split-lines>
               </blockquote>
@@ -129,12 +79,7 @@
                   {%- capture image_sizes -%}
                     {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
                   <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
-                  <img
-                    class="press-list__logo-image"
-                    loading="lazy"
-                    style="max-width: 160px"
-                    sizes="160px"
-                    {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+                  <img class="press-list__logo-image" loading="lazy" style="max-width: 160px" sizes="160px" {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
                 {%- else -%}
                   <span class="heading h6">Logo {{ forloop.index }}</span>
                 {%- endif -%}
@@ -143,44 +88,27 @@
           </page-dots>
         </div>
       </press-list>
-      <div class="container MultiCarousel_container">
-        <div class="row">
-          <div class="press-list mobile-only MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}>
-            <div class="custom_press_slider MultiCarousel-inner {{ section.id }} draggable" draggable="true">
-              {%- for block in section.blocks -%}
-                <div class="item">
-                  <p>{{ block.settings.content | escape }}</p>
-                  {%- if block.settings.logo != blank -%}
-                    {%- capture image_sizes -%}
-                      {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
-                    <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
-                    <img
-                      class="press-list__logo-image"
-                      loading="lazy"
-                      style="max-width: 160px"
-                      sizes="160px"
-                      {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
-                  {%- else -%}
-                    <span class="heading h6">Logo {{ forloop.index }}</span>
-                  {%- endif -%}
-                </div>
-              {% endfor %}
+
+      <div class="press-list mobile-only">
+        <div class="owl-carousel custom_press_slider">
+          {%- for block in section.blocks -%}
+            <div class="item">
+              <p>{{ block.settings.content | escape }}</p>
+              {%- if block.settings.logo != blank -%}
+                {%- capture image_sizes -%}
+                  {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
+                <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
+                <img class="press-list__logo-image" loading="lazy" style="max-width: 160px" sizes="160px" {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+              {%- else -%}
+                <span class="heading h6">Logo {{ forloop.index }}</span>
+              {%- endif -%}
             </div>
-            <button class="btn btn-primary leftLst {{ section.id }}"><</button>
-            <button class="btn btn-primary rightLst {{ section.id }}">></button>
-            <ul class="MultiCarousel_dots_container">
-              {% for block in section.blocks %}
-               <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">{{ forloop.index }}/{{ forloop.length }}</li> 
-              {% endfor %} 
-              </ul>
-          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
   </div>
 </section>
-
-{% render 'carousel-css' %}
 
 {% schema %}
   {
@@ -232,67 +160,6 @@
         "id": "text_color",
         "label": "Text",
         "default": "rgba(0,0,0,0)"
-      }, {
-        "type": "text",
-        "id": "autoplay_timeout",
-        "label": "autoplay_timeout in 5000 = 5sec"
-      }, {
-        "type": "number",
-        "id": "slides_no",
-        "label": "mobile slides",
-        "default": 1
-      }, {
-        "type": "number",
-        "id": "deskslides_no",
-        "label": "desk slides",
-        "default": 1
-      }, {
-        "type": "checkbox",
-        "id": "loop",
-        "label": "infinite loop",
-        "default": true
-      }, {
-        "type": "checkbox",
-        "id": "autoplay",
-        "label": "autoplay",
-        "default": true
-      }, {
-        "type": "number",
-        "id": "slideBy",
-        "label": "number of slides drag in one screen",
-        "default": 1
-      },  {
-        "type": "text",
-        "id": "item_space_desk",
-        "label": "Space between items in desktop",
-        "default": "1rem"
-      },
-      {
-        "type": "text",
-        "id": "item_space_mobile",
-        "label": "Space between items in mobile",
-        "default": "1rem"
-      },{
-        "type": "text",
-        "id": "next_item_visibility_desk",
-        "label": "Next item visibility in desktop",
-        "default": "0"
-      },
-      {
-        "type": "text",
-        "id": "next_item_visibility_mobile",
-        "label": "Next item visibility in mobile",
-        "default": "1rem"
-      }, {
-        "type": "checkbox",
-        "id": "show_dots_on_mobile",
-        "label": "Show Dots on Mobile",
-        "default": true
-      },{
-        "type": "number",
-        "id": "last_item_padding",
-        "label": "Last item padding",
-        "default": 0
       }
     ],
     "presets": [
