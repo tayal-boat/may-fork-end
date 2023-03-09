@@ -45,7 +45,8 @@
   .quinn-background-hider {
     display: block !important;
     position: fixed;
-    inset: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(4, 4, 15, 1.0);
     z-index: 999;
   }
@@ -70,7 +71,14 @@
   'https://connect.facebook.net/en_US/fbevents.js');
   
 </script>
-
+<noscript>
+  <img
+    height="1"
+    width="1"
+    id="quinn-fb-pixel-img"
+    style="display:none"
+  >
+</noscript>
 <script>
   
   let url = "/pages/quinnapi/vlp::pagekey:"+Quinn.page_key+"::pagetype:"+Quinn.page_type+"::pagehandle:"+Quinn.handle;
@@ -109,29 +117,21 @@
     document.body.appendChild(link);
 
     // custom liquid code
-    const customLiquidCode= parsedDOM.querySelector("#quinn-custom-liquid");
-    if(customLiquidCode){
-      const scripts = customLiquidCode.querySelectorAll("script");
-      scripts.forEach(script => {
-        const newScript = document.createElement("script");
-        newScript.innerHTML = script.innerHTML;
-        document.body.appendChild(newScript);
-      })
-      const styles = customLiquidCode.querySelectorAll("style");
-      styles.forEach(style => {
-        const newStyle = document.createElement("style");
-        newStyle.innerHTML = style.innerHTML;
-        document.body.appendChild(newStyle);
-      })
-    }
+
+    const customLiquidCode= parsedDOM.querySelector("#quinn-custom-liquid script");
+
+
+    const customLiquidCodeScript = document.createElement("script");
+    // inject javascript code and run it
+    customLiquidCodeScript.innerHTML = customLiquidCode.innerHTML;
+    document.body.appendChild(customLiquidCodeScript);
     
     script.onload = () => {
       toggleFullpageLoader();
       Quinn.functions.openOverlay(Quinn.vlp_playlist_key, 0, Quinn.redirect_url)
     };
-    if(Quinn.facebook_pixel_tracking && (Quinn.facebook_pixel_id ||getFbPixelIdFromShopify())){
-      const pixelId = Quinn.facebook_pixel_id ||getFbPixelIdFromShopify()
-      setupFBPixel({pixelId})
+    if(Quinn.facebook_pixel_tracking && Quinn.facebook_pixel_id){
+      setupFBPixel({pixelId: Quinn.facebook_pixel_id})
     }
   }
   setup()
@@ -140,19 +140,12 @@
   }
 
   function setupFBPixel({pixelId}){
-    fbq('init', pixelId);
+    fbq('init', pixelId); // Replace with your pixel ID
     fbq('track', 'PageView');
-  }
-
-  function getFbPixelIdFromShopify(){
-    if(!ShopifyAnalytics) return null;
-    if(!ShopifyAnalytics.lib) return null;
-    if(!ShopifyAnalytics.lib.config) return null;
-    if(!ShopifyAnalytics.lib.config["Facebook Pixel"]) return null;
-    const {pixelIds} = ShopifyAnalytics.lib.config["Facebook Pixel"];
-    if(!pixelIds) return null;
-    if(!pixelIds.length) return null;
-    return pixelIds[0];
+    const img = document.getElementById("quinn-fb-pixel-img");
+    if(img){
+      img.src="https://www.facebook.com/tr?id="+pixelId+"&ev=PageView&noscript=1"
+    }
   }
 
 </script>
