@@ -65,7 +65,7 @@
                 }
               </style>
               <div class="price-container product-highlight my-3 p-3 only-desktop">
-                <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid grey;
+                <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 font-weight: 700;">Product Highlights</h6>
                 {{ product.metafields.custom.product_highlights }}
               </div>
@@ -340,8 +340,8 @@
           data-product-add-to-cart-button
           data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
           class="pod_atoc_btn product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
-          {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-          {%- if product.selected_or_first_available_variant.available -%}
+        {% if product.selected_or_first_available_variant.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}>
+          {%- if product.selected_or_first_available_variant.inventory_quantity >= settings.sold_out_threshold -%}
             {{- 'product.form.add_to_cart' | t -}}
           {%- else -%}
             {{- 'product.form.sold_out' | t -}}
