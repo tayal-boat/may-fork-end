@@ -1,4 +1,5 @@
-/*
+{% comment %}
+/**
  * DEVELOPER DOCUMENTATION
  *
  * Include your custom JavaScript here.
@@ -135,6 +136,7 @@
  * ------------------------------------------------------------------------------------------------------------
  *
  */
+{% endcomment %}
 
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 
@@ -224,41 +226,46 @@ let unitsLeft = '';
 let usual_price = '';
 
 Shopify.variantChange = function(e){
+  $('.pdp-btn-price').remove()
+  $("#AddToCart .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
   // console.log(e);
-  // if(e.available == false){
-  //   $('.custom-notify-btn').attr('data-variant-id', e.id);
-  //   $('.custom-notify-btn').show();
-  //   $('.product__info button#AddToCart.button--ternary').css('display','none')
-  // }else{
-  //   $('.custom-notify-btn').hide();
-  //   $('.product__info button#AddToCart.button--primary').css('display','block')
-  // }
-
-let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
+  
+function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
 if(varient_swatches_input[i].checked){
-  console.dir(varient_swatches_input[i].offsetParent.dataset.varient_disabled);
-  if(JSON.parse(varient_swatches_input[i].offsetParent.dataset.varient_disabled)) {
+  if(JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
       $('.custom-notify-btn').show();
       $('.product__info button#AddToCart').hide();
-      $("#gokwik-buy-now").hide();
-      $('#AddToCart').hide();
+      $('#AddToCart').addClass('hide_cTA');
+      $("#gokwik-buy-now").addClass('hide_cTA');
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
       $('.product-item__quick-form.quick-buy-notify-me').show();
       $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
+    $('.d-lg-none.restocking, .desktop.restocking').show();
+    if($('#BIS_trigger.custom-notify-btn').length > 0){
+      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+    } 
       
   }else{
     $('.custom-notify-btn').hide();
     $('.product__info button#AddToCart').show();
-    $("#gokwik-buy-now").show();
-    $('#AddToCart').show();
+    $("#gokwik-buy-now").removeClass('hide_cTA');
+    $('#AddToCart').removeClass('hide_cTA');
     $('quick-buy-drawer #AddToCart').show();
     $('quick-buy-popover #AddToCart').show();
     $('.product-item__quick-form.quick-buy-notify-me').hide();
+    $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
+    $('.d-lg-none.restocking, .desktop.restocking').hide();
   }    
 }
 }
+}
+let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
+swatches_change(varient_swatches_input);
+let color_swatches_input = document.querySelectorAll('.color-swatch input') ;
+swatches_change(color_swatches_input)
 
 let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
 if(home_pod_price){
@@ -312,8 +319,6 @@ let sliderSelector = document.querySelectorAll('.custom_slider_init');
 for (let i = 0; i < sliderSelector.length; i++) {
   section_id = sliderSelector[i].getAttribute('data-sliderId');
   let slider_section_id = '.custom_slider_init.' + section_id;
-  // console.log(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')));
-  // console.log('.custom_slider_init.' + section_id);`
   $(slider_section_id).owlCarousel({
     loop: JSON.parse(sliderSelector[i].getAttribute('data-loop')),
     responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
@@ -521,8 +526,6 @@ function labelsPriority() {
   })
 }
 window.addEventListener('load', labelsPriority)
-
-
 
 // Creating cleverTap push event
 function createCleverTapEvent( event_name, event_data ){
