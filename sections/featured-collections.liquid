@@ -59,6 +59,14 @@
   .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
   [dir=ltr] .tabs-nav__position{left: 0;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
+
+
+  .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
+  .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
+  .featured-collections{min-height: 377px !important;}
+  .featured-collections.updated_featured_items .product-item .features-list{display: none;}
+  .custom_loading_icon{position: absolute;left: 50%;top: 50%;z-index: 99;}
+
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
      .tabs-nav--edge2edge {margin-top: 12px!important;}
@@ -103,10 +111,11 @@
   #shopify-section-{{ section.id }} h3.heading.h2::before {
    content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
    position: absolute; top: -28px; left: -8px;
-  }
+}
   
 }
 {% endif %}
+
     
 </style>
 
@@ -159,6 +168,7 @@
                       class="tabs-nav__item heading heading--small ml-0"
                       aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
                       aria-controls="block-{{ section.id }}-{{ block.id }}"
+                      data-collection-handle="{{ block.settings.collection.handle }}"
                       {{ block.shopify_attributes }}
                     >
                       {{-
@@ -188,8 +198,7 @@
               hidden
             {% endunless %}
             id="block-{{ section.id }}-{{ block.id }}"
-            class="product-list product-list--center"
-          >
+            class="product-list product-list--center" >
             <div
               {% unless section.settings.stack_products %}
                 class="scroller"
@@ -276,11 +285,74 @@
               </div>
             {%- endif -%}
           </product-list>
+
+          {% break %}
         {%- endfor -%}
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  $(document).ready(function(){
+    $('#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button').on('click', function(e){
+      e.preventDefault();
+
+      $(this).parents('.shopify-section--featured-collections').find('.featured-collections .product-list__inner').append('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
+          
+      let collection_handle = $(this).data("collection-handle");
+      //let products_limit = {{ section.settings.products_count }};
+
+      let self = this;
+
+      $.ajax({
+        url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+        method: "get",
+        type: "GET",
+        dataType: "html",
+        success: function (result) {
+          
+          let t = $(result).find("product-list.product-list .product-list__inner").html();
+          $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").removeAttr('hidden');
+          $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list.product-list .product-list__inner').html(t);
+          $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
+          $(self).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
+          
+          $(self).attr('aria-expanded', 'true');
+
+          var biggestNum = 0;
+          $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
+            let z_index_val = [];
+
+            $(this).find('.product-horizontal span').each(function(){
+              let all_classes = $(this).attr('class').split(' ');
+              let get_classname = filterItems('z-', all_classes);
+              z_index_val.push(get_classname[0].split('-')[1]);
+            })
+
+            let element_max_num = Math.max.apply(Math, z_index_val);
+            $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
+          });
+
+          $(self).parents('.shopify-section--featured-collections').find('.product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+
+          $('.custom_loading_icon').remove();
+
+        },
+        error: function (error) {
+            console.log(error);
+        },
+    });
+
+    
+    function filterItems (needle, itemStack) {
+      let query = needle.toLowerCase();
+      return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
+    }
+
+    })
+  })
+</script>
 
 {% schema %}
 {
