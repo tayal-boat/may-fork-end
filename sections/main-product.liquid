@@ -100,34 +100,32 @@
   {% comment %}
   ! Changed the position of 'product-info' & 'product-media' in New PDP Design
   {% endcomment %}
-  {%- render 'product-info', product: product, update_url: true -%}
-  {%- render 'product-form', product: product, update_url: update_url -%}
   {%- render 'product-media', product: product -%}
-        {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
-          {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
-            <div class="flash-sale-lable d-flex position-relative">
-    
-              <div class="flash_sale">
-                <p class="m-0 text-uppercase flash_text"><span class="thunder"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-                      <path
-                        d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
-                    </svg></span>&nbsp;</p>
-                {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
-              </div>
-              {%- render 'inventory-bar' product: product -%}
-            </div>
-            {%- endif -%}
-      </div>
+        {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
+        <div class="flash-sale-lable d-flex position-relative">
 
+          <div class="flash_sale">
+            <p class="m-0 text-uppercase flash_text"><span class="thunder"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                  height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                  <path
+                    d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
+                </svg></span>&nbsp;</p>
+            {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
+          </div>
+          {%- render 'inventory-bar' product: product -%}
+        </div>
+        {%- endif -%}
+        {%- render 'product-info', product: product, update_url: true -%}
+        {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
+      </div>
 {% comment %}Start automatically added Judge.me widget
   {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
 End automatically added Judge.me widget{% endcomment %}
 
       {% endunless %}
-
+</div>
               {% if product.metafields.custom.product_highlights %}
-                <div class="price-container product-highlight pt-2 d-lg-none">
+                <div class="price-container product-highlight mt-1 pt-3 d-lg-none">
                   <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product Highlights
                   </h6>
                   {{ product.metafields.custom.product_highlights }}

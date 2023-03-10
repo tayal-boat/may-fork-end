@@ -14,7 +14,7 @@
     {%- endfor -%} 
   {%- endif -%}
 {%- endif -%}
-
+ 
   {%- for block in section.blocks -%}
   {%- case block.type -%}
   {%- comment -%}
@@ -42,7 +42,7 @@
     {%- assign option_downcase = option.name | downcase -%}
     {%- capture option_id -%}option-{{ section.id }}-{{ template.suffix }}-{{ product.id }}-{{ forloop.index }}{%-
     endcapture -%}
-
+ 
     {%- assign selector_type = block.settings.selector_mode -%}
 
     {% if color_label_list contains option_downcase %}
@@ -635,8 +635,16 @@
         {%- endif -%}
         <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer" {% endif %}
           class="product-form__payment-container" {{ block.shopify_attributes }}>
+          {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+            <p class="line-item-property__field" hidden>
+              <label for="personalised_message">Message</label>
+              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}">
+            </p>
+            {%- render 'personalised-modal' -%}
+          {% endif %}
           {%- if product.tags contains 'prebooking' -%}
-          <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+            
+          <button hidden id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
             block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
             data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}"
             class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
@@ -665,8 +673,15 @@
 
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
-          {% unless product.tags contains settings.products_offering_freebie  %}
+          {% unless product.tags contains settings.products_offering_freebie %}
           <div class="amazon-c d-flex align-items-baseline justify-content-between">
+            {% comment %} <button type="button" onclick="onBuyNowClick(this)" class="w-50 w-lg-100" id="gokwik-buy-now" {% if settings.hideFlow
+              %} style="display:none !important;" {% endif %} {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}disabled style="display:none!important;" {% endunless %}>
+              {{ settings.buynow-titile }}
+              <div style="display:none">
+                <div class="cir-loader">Loading..</div>
+              </div>
+              </button> {% endcomment %}
               <button id="BIS_trigger" type="button" class="custom-notify-btn"
               data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
               Notify me
@@ -684,6 +699,11 @@
 
     {%- endif -%}
     {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+    {% comment %}<button id="BIS_trigger" type="button" class="custom-notify-btn"
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}" {% if
+      product.selected_or_first_available_variant.available %} style="display: none;" {% endif %}>
+      Notify me
+    </button>{% endcomment %}
     <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
       <a
         href="#"
@@ -714,7 +734,6 @@
     </div>
     </div>
     {% endif %}
-  </div>
   {%- endif -%}
 
 
