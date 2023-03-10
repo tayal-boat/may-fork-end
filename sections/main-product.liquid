@@ -47,7 +47,7 @@
       --secondary-button-text-color: {{ secondary_button_text_color.red }}, {{ secondary_button_text_color.green }}, {{ secondary_button_text_color.blue }};
     }
     {% if product.tags contains 'Coming-Soon' %}
-      #gokwik-buy-now, #AddToCart, .amazon-c, .stock-label {display: none!important;}
+      #gokwik-buy-now, #AddToCart, .stock-label, .restocking, .current-in-cart {display: none!important;}
     {% endif %}
     {% if product.tags contains 'NO-PRICE' %}  
      .product-meta__price-list-container, .price-container {display:none!important;}
@@ -82,16 +82,21 @@
         </ol>
       </nav>
 
-    {% if product.metafields.custom.product_banner %}
-      <a href="/collections/999-store" class="banner_link">
-    <img {% render 'image-attributes' , image: product.metafields.custom.product_banner, sizes: '700' , ignore_src: true %}
+    {% if product.metafields.custom.productbanner_url != blank %}
+      <a href="{{ product.metafields.custom.productbanner_url | split: "," | last }}" class="banner_link">
+    <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
       style="border-radius:10px;">
     </a>
+    {% elsif section.settings.banners_url != blank %}
+    <a href="{{ section.settings.banners_url | split: "," | last }}" class="banner_link">
+      <img src="{{ section.settings.banners_url | split: "," | first }}"
+        style="border-radius:10px;">
+      </a>
     {% endif %}
 
 <!-- PRODUCT TOP PART -->
   <div
-    class="product py-lg-2 {% if product.metafields.custom.product_banner %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
+    class="product py-lg-2 {% if product.metafields.custom.productbanner_url != blank or section.settings.banners_url != blank  %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
   {% comment %}
   ! Changed the position of 'product-info' & 'product-media' in New PDP Design
   {% endcomment %}
@@ -104,7 +109,7 @@
                   height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
                   <path
                     d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
-                </svg></span>&nbsp;{{ settings.flash_sale_title }}</p>
+                </svg></span>&nbsp;</p>
             {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
           </div>
           {%- render 'inventory-bar' product: product -%}
@@ -128,7 +133,7 @@ End automatically added Judge.me widget{% endcomment %}
               {%- endif -%}
   </section>
 
-  <div class="section__color-wrapper promise-icons mt-3 mt-lg-5 w-100">
+  <div class="section__color-wrapper promise-icons mt-3 mt-lg-5">
     <div class="mySect py-2 container">
       <div class="img-row text-center row justify-content-around pb-1 pb-lg-0" style="max-width: 100%;margin: auto;">
   
@@ -138,7 +143,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-1b_6c0c5f7d-a48c-40f5-946d-ea50fb1a9b82_small.png?v=1661243559">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">1 Year Warranty</p>
+              <p class="mb-0">1 Year <br>Warranty</p>
             </div>
           </div>
         </div>
@@ -149,7 +154,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-3b_b82496cc-51ed-47ad-b27a-a195b646bea1_small.png?v=1661244593">
             </div>
             <div class="col-md-8 myText">
-               <p class="mb-0">7 Days Replacement</p>
+               <p class="mb-0">7 Days <br>Replacement</p>
             </div>
           </div>
         </div>
@@ -160,7 +165,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-2b_dc921406-33cc-4867-846b-293610d69a41_small.png?v=1661244611">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">Free Shipping</p>
+              <p class="mb-0">Free <br>Shipping</p>
             </div>
           </div>
         </div>
@@ -171,7 +176,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-4b_1d19c7fb-8da7-407e-8612-946e106cc508_small.png?v=1661244611">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">Secure Checkout</p>
+              <p class="mb-0">Secure <br>Checkout</p>
             </div>
           </div>
         </div>
@@ -182,7 +187,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-black-v1_small.png?v=1661245767">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">GST Billing</p>
+              <p class="mb-0">GST <br>Billing</p>
             </div>
           </div>
         </div>
@@ -654,6 +659,11 @@ End automatically added Judge.me widget{% endcomment %}
     }
   ],
   "settings": [
+    {
+      "type": "text",
+      "id": "banners_url",
+      "label": "bannersurl + redirectionurl"
+    },
 	{
       "type": "checkbox",
       "id": "show_timer_on_all",
