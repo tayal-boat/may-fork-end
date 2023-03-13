@@ -54,14 +54,14 @@
       used third-parties
     {%- endcomment -%}
     <link rel="preconnect" href="https://cdn.shopify.com">
-    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    {% comment %}
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     {%- unless settings.heading_font.system? and settings.text_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-    {% endunless %}
+    {% endunless %} {% endcomment %}
     <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
     {%- if request.page_type == 'product' -%}
@@ -92,6 +92,10 @@
     {% render 'microdata-schema' %}
     {% render 'css-variables', direction: direction %}
     {% render 'js-variables', direction: direction %}
+    <script>
+      
+      
+    </script>
 
     <!-- content for header -->
     {%- capture h_content -%}{{ content_for_header }}{%- endcapture -%}
@@ -100,25 +104,54 @@
         {{-
           h_content
           | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
-          | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com'
+          | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com' 
+          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
+          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
         -}}
       {% when 'product' %}
         {{-
           h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
+          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com' 
+          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
+          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
         -}}
       {% when 'article', 'collection', 'blog' %}
         {{-
           h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
+          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com' 
+          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js' 
+          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
         -}}
       {% else %}
         {{- content_for_header -}}
     {% endcase %}
     <!-- content for header -->
     
-    {% # Global Site Tag (gtag.js) - Google AdWords: 816285276 and defer %}
-     {{ 'starter.js' | asset_url | script_tag }}
+     {% render 'starter-js' %}
+
+     {% capture card_offers %}
+      {
+        "offer_1" : "{{ settings.card_offers | split: ',' | first }}",
+        "offer_2" : "{{ settings.card_offers | split: ',' | last }}"
+      }
+     {% endcapture %}
+     <script>
+      Shopify.sold_out_threshold = {{ settings.sold_out_threshold | json }};
+      Shopify.card_offers = `{{ card_offers }}`;
+      Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
+      Shopify.tag_selector = {{ settings.tag_selector | json }};
+      Shopify.fixed_discount = function(tag){
+        let tagArr = tag;
+        let pod_price = 0;
+        for (let i = 0; i < tagArr.length; i++) {
+          if(tagArr[i].includes('PoD Price|')){
+            pod_price = tagArr[i].split('|').slice(1);
+            pod_price = parseInt(pod_price);
+           }
+        }
+        return pod_price;
+      }
+     </script>
         <!-- Google Tag Manager -->
     <script>
       (function (w, d, s, l, i) {
@@ -159,8 +192,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){window.dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-6LGXJKGVE2');
+      gtag('config', 'G-6LGXJKGVE2',{ 'groups': 'GA4','debug_mode':false });
     </script>
     <!-- Global site tag (gtag.js) - Google Analytics Ends -->
     
@@ -207,14 +239,17 @@
 
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
 
+    {% render 'starter-css' %}
     <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
     {%- if template == 'index' -%}
       <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
     {%- endif %}
     {%- render 'wizrocket_variables_generator' -%}
+    {%- render 'ms-clarity' -%}
 
     {% if template contains 'product' %}
       {% render 'product-css' %}
+      {% render 'aos-css' %}
       {%- render 'product-js' -%}
     {% elsif template contains 'page' %}
       <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}">
@@ -318,7 +353,7 @@
           <div class="loading_icon">
             <img loading="lazy"
               class="lazyload"
-              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader-christmas.gif?v=1671020421"
+              src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
               alt="Load More"
               style="width: 50px;"
             >
@@ -333,7 +368,9 @@
 
 
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
-    <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    {% unless page.handle == 'dwfyb' %}
+      <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    {% endunless %}
 
     {% if template contains 'product' or template contains 'index' %}
       {% render 'back-in-stock-helper' %}
@@ -345,7 +382,7 @@
     {% if template contains 'product' %}
       {%- render 'judgeme_core' -%}
     {% endif %}
-    {% unless template contains 'product' or template contains 'customers' %}
+    {% unless template contains 'customers' %}
       {%- render 'bottom-navbar-mobile' -%}
     {% endunless %}
     <!-- Magic Checkout Code Starts -->
@@ -378,7 +415,6 @@
 
     
     {%- render 'auto_atoc_items' -%}
-
-    {% include 'snowflakes' %}
-  </body>
+    <script src="//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23" async></script>
+</body>
 </html>

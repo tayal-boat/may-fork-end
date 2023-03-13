@@ -15,31 +15,46 @@
   @media screen and (max-width: 600px) {
   #custom-saleModal .modal-dialog,#custom-saleModals-1 .modal-dialog,#custom-saleModals-2 .modal-dialog{top:5%}
   }
-  .modal-body.p-0{background: url({{ section.settings.popup_image | img_url: 'master' }});background-size: cover;
-   min-height: 70vh;}
 
+
+  .modal-body.p-0{background: url({{ section.settings.popup_image | img_url: 'master' }});background-size: cover;min-height: 70vh;}
   .panel{padding: 6vh 0;}
-  .panel h6 {color: white;font-weight: 600;     text-align: center;   margin-top: 8px;}
+  .panel h6 {color: white;font-weight: 600; text-align: center;margin-top: 8px;}
    div#question::before { content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
    position: absolute;top: -22px;left: -22px;}
-    .question-container{margin:10px auto;padding:12px 0;width:80%;background-color:#fff;text-align:center;border-radius: 8px;
-    border: 1px solid;position:relative;}
-    .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
-    .option:hover{background-color:#fa879b9e;}
-    .previous, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
-    button.option{display:flex;flex-direction:column;align-items:center;width: 40%;margin-bottom: 12px;}
-    @media(min-width:1024px) {
-    button.option{width:16%}
-    .question-container {width: 40%;}
-    .modal-body.p-0 {background-position: unset;background-size: unset;}
+  .question-container{margin:10px auto;padding:12px 0;width:80%;background-color:#fff;text-align:center;border-radius: 8px;
+  border: 1px solid;position:relative;}
+  .option-container{display:flex;justify-content:space-around;margin:10px auto;padding:5px;width:90%;flex-wrap:wrap; margin-top: 5vh;}
+  .option:hover{background-color:#fa879b9e;}
+  .previous, .next, .submit{padding: 5px 16px;background-color: #fff;border-radius: 16px!important;border: 1px solid;}
+  button.option{display:flex;flex-direction:column;align-items:center;width: 40%;margin-bottom: 12px;}
+  @media(min-width:1024px) {
+  button.option{width:16%}
+  .question-container {width: 40%;}
+  .modal-body.p-0 {background-position: unset;background-size: unset;}
+  }
+  @media (min-width: 576px){
+    .modal-dialog {
+      max-width: 1200px;
+      margin: 1.75rem auto;
     }
+  }
     
-    @media (min-width: 576px){
-      .modal-dialog {
-       max-width: 1200px;
-       margin: 1.75rem auto;
-      }
-    }
+ {% if section.settings.enable_question_ans %}
+  .question-container {margin: 16% auto;background-color: transparent;border: 2px solid yellow;color: white;padding: 1rem;border-radius: 4px;position: unset;}
+  div#question::before{display:none;}
+  .option-container {display: block;}
+  .modal-body.p-0 {background-size: contain;min-height: unset;}
+  button.option { align-items: flex-start; width: 100%; padding: 5px 10px; margin-bottom: 16px; background: white; border-radius: 24px!important;}
+  .previous, .next, .submit { background-color: #000; color: white; border-radius: 0px!important;border: 0;}
+  .navigation.pt-3.pl-4 {position: absolute;right: 8%;bottom: 2%;}
+  .option:hover {background-color: #ffcf00;}
+  @media (min-width: 576px){
+  .modal-dialog {max-width: 600px;}
+  .option-container{width:60%}
+  .question-container {width: 80%;margin: 8% auto 4%;}
+  }
+ {% endif %} 
 </style>
 
 <div id="custom-saleModal" class="modal fade" role="dialog">
@@ -49,31 +64,35 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div class="modal-body-content">
           <div class="panel">
-          {% for block in section.blocks %}
+           {% for block in section.blocks %}
             {% assign id =  forloop.index %}
-          <div class="screen{{ id }} {% if id != 1 %}d-none{% endif %}" >
+              <div class="screen{{ id }} {% if id != 1 %}d-none{% endif %}" >
               <div class="question-container" id="question">{{ block.settings.quiz_text }}</div>
               <div class="option-container">
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option1_url }}{% else %}a{% endif %}" {% endif %} id="op1">{{- block.settings.quiz_option1 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option1_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option1_url }}{% else %}a{% endif %}" {% endif %} {% endif %} id="op1">{{- block.settings.quiz_option1 -}}</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option2_url }}{% else %}b{% endif %}" {% endif %} id="op2">{{- block.settings.quiz_option2 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option2_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option2_url }}{% else %}b{% endif %}" {% endif %} {% endif %} id="op2">{{- block.settings.quiz_option2 -}}</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option3_url }}{% else %}c{% endif %}" {% endif %} id="op3">{{- block.settings.quiz_option3 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option3_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option3_url }}{% else %}c{% endif %}" {% endif %} {% endif %} id="op3">{{- block.settings.quiz_option3 -}}</button>
 
-                <button class="option" {% if id == 2 or id == 4 %}
-              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option4_url }}{% else %}d{% endif %}" {% endif %} id="op4">{{- block.settings.quiz_option4 -}}</button>
+                <button class="option" {% if section.settings.enable_question_ans %}value="{{ block.settings.quiz_option4_url }}"{% else %}{% if id == 2 or id == 4 %}
+              value="{% if section.settings.enable_logic %}{{ block.settings.quiz_option4_url }}{% else %}d{% endif %}" {% endif %} {% endif %} id="op4">{{- block.settings.quiz_option4 -}}</button>
               </div>
               <div class="navigation pt-3 pl-4 ">
+              {% if section.settings.enable_question_ans %}
+                <button class="next d-none" style=""> Next ></button>
+              {% else %}
                  <button class="previous {% if id == 1 %}d-none{% endif %}" style="background: #b102027d;color:white;">< Previous Question</button>
-                {% if id == 4 %}
+              {% endif %} 
+                 {% if id == 4 %}
                  <button class="submit d-none text-center">Submit</button>
                 {% endif %}
               </div>
             </div>
-          {% endfor %}   
+           {% endfor %}   
           </div>
         </div>
       </div>
@@ -102,11 +121,31 @@
   // Next button and method
   let redirect,redirect2;
   let final = '';
+  let answers = [];
   for (let i = 0; i < next.length; i++) {
     let self = next[i].querySelectorAll('.option');
     for (let j = 0; j < self.length; j++) {
       let selft = self[j];
       selft.addEventListener("click", () => {
+        let value = selft.value;
+        answers.push(value);console.log(answers);
+        {% if section.settings.enable_question_ans %}
+        if (i < 3) {
+        document.querySelector(`.screen${i+1} .next`).classList.remove("d-none");
+        }else{submit.classList.remove("d-none");}
+        selft.style.backgroundColor = "#ffcf00";
+        self.forEach(element => {element.style.pointerEvents = "none"; });
+        document.querySelector(`.screen${i+1} .next`).addEventListener("click", () => {
+          if (i < 3) {
+          document.querySelector(`.screen${i+1}`).classList.add("d-none");
+          document.querySelector(`.screen${i+2}`).classList.remove("d-none"); 
+          self.forEach(element => {element.style.pointerEvents = "auto"; });
+          }else{
+            document.querySelector(`.screen${i} .next`).classList.add("d-none");
+            self.forEach(element => {element.style.pointerEvents = "auto"; });
+          }
+        });
+        {% else %}
         // for screen change 
         if (i < 3) {
          console.log(i); 
@@ -114,17 +153,17 @@
          document.querySelector(`.screen${i+2}`).classList.remove("d-none");  
         }
         // sceens for taking decision
-        let value = selft.value;
-        if (i == 1) {redirect = value; console.log(redirect); }
-        if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`; selft.style.backgroundColor = "#fa879b9e";
-          {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
-          console.log(final);  
-          submit.classList.remove("d-none");
-          self.forEach(element => {element.style.pointerEvents = "none"; });
-        }
+          if (i == 1) {redirect = value; console.log(redirect); }
+          if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`; selft.style.backgroundColor = "#fa879b9e";
+            {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
+            console.log(final);  
+            submit.classList.remove("d-none");
+            self.forEach(element => {element.style.pointerEvents = "none"; });
+          }
+        {% endif %}
      })
     }
-
+    {% unless section.settings.enable_question_ans %}
     // previous button and method
     let prev = previous[i];
     prev.addEventListener("click", () => {
@@ -135,13 +174,34 @@
       }
       if (i == 2){submit.classList.add("d-none");}
     })
-
+    {% endunless %}
   }
 
   // submit button and method
   const submit = document.getElementsByClassName('submit')[0];
+  {% if section.settings.enable_question_ans %}
+  submit.addEventListener("click", () => { 
+    let corans = answers.filter(word => word.includes('true')).length;
+    if (answers.includes('true')){
+      console.log("right") ;
+      document.querySelector(`.screen4`).innerHTML = `<div class="question-container" id="question"><p>Wohoo! You got ${corans} answer(s) right.
+          Here’s your exclusive coupon code: <b>BOATXAMAN</b></p>
+          <a href="/collections/all-products"><button is="toggle-button"  aria-expanded="false" class="text-white bg-danger mt-3 px-3 product-item__quick-buy-button" >
+            Shop Now
+         </button></a> </div>`
+        
+      }else{
+        console.log("wrong");
+        document.querySelector(`.screen4`).innerHTML = `<div class="question-container" id="question"><p>Oops! All your answer(s) were wrong.
+        Here’s your consolation coupon code: <b>SHARKAMAN</b></p>
+        <a href="/collections/all-products"><button is="toggle-button"  aria-expanded="false" class="text-white bg-danger mt-3 px-3 product-item__quick-buy-button" >
+          Shop Now
+          </button></a> </div>`
+      }
+      })
+  {% else %}
   submit.addEventListener("click", () => { document.location.href = final; })
-
+  {% endif %}
 </script>
 {% schema %}
 {
@@ -216,6 +276,11 @@
       "type": "image_picker",
       "id": "popup_image",
       "label": "Popup background"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_question_ans",
+      "label": "for question + answers types else collection redirect type"
     },
     {
       "type": "checkbox",

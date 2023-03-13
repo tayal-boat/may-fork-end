@@ -4,7 +4,7 @@
   #custom-saleModal .close{position:absolute;top:0;right:0;width:30px;height:30px;background:#EB1C24;color:#fff;line-height:30px;font-weight:400;opacity:1;text-align:center;font-size:30px!important}
   #custom-saleModal .close:focus{border:0;outline:none}
   #custom-saleModal input#sale_email::placeholder{color:grey!important}
-  #custom-saleModal .error-msg-sale,#custom-saleModal .thankyou-msg-sale,#custom-saleModal .aluser-msg-sale{text-align:center;margin:0;font-size:12px;opacity:.8}
+  #custom-saleModal .error-msg-sale,#custom-saleModal .thankyou-msg-sale,#custom-saleModal .aluser-msg-sale{text-align:left;margin:0;font-size:12px;opacity:.8;color:black;}
   #custom-saleModal .sale-btn:focus{outline:none}
   #custom-saleModal img{display:block}
   #custom-saleModal .modal-content{border:0}
@@ -35,7 +35,7 @@
             {% endif %}
             <div class="sale-pop-form">
               <div class="form-group" style="margin: 0;">
-                <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: space-between;border: 1px solid red;">
+                <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: space-between;">
                   <input style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;color:black" type="email" name="email" id="sale_email" placeholder="Email Address">
                   <button style="border-radius: 5px;background: red;margin: 2px;color: white;padding:0 1rem;height:45px;line-height:normal;" class="button sale-btn" type="submit">
                     {% if section.settings.button_id %}
@@ -53,21 +53,60 @@
     </div>
   </div>
 </div>
+{% if page.handle == 'meetandgreet' %}
+  <script>
+    $(document).ready(function() {
+    let camp = "{{ request.path | split: '/' | last }}"
+      {% if section.settings.landing_based  %}
+        if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("{{ section.id }}popUpPoped") === null) {
+          $("#shopify-section-{{ section.id }} #custom-saleModal").modal("show");
+          sessionStorage.setItem("{{ section.id }}popUpPoped", "poped");
+        }
+      {% else %}
+        $("{{ section.settings.popup_id }}").click(function() {
+          console.log("clicked");
+          $("#shopify-section-{{ section.id }} #custom-saleModal").modal("show");
+        });
+      {% endif %}
+  
+        $("#shopify-section-{{ section.id }} .sale-btn").click(function() {
+        let e = document.getElementById("sale_email").value;
+        "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+          ? localStorage.getItem("userEmailIdSale  {{ section.settings.clevertap_id }}") === e
+            ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+            : (localStorage.setItem("userEmailIdSale  {{ section.settings.clevertap_id }}", e), clevertap.onUserLogin.push({
+              Site: {
+                Email: e,
+                "MSG-email": !0
+              }
+            }), clevertap.event.push("Notify Me   {{ section.settings.clevertap_id }}", {
+              Email: e,
+              Source: camp
+            }), $("#shopify-section-{{ section.id }} #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for confirming for Virtual Meet and Greet! Stay Tuned for more information on your registered mail id.</p>'))
+          : $("#shopify-section-{{ section.id }} .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+        setTimeout(function() {
+          $("#shopify-section-{{ section.id }} .error-msg-sale, #shopify-section-{{ section.id }} .thankyou-msg-sale, #shopify-section-{{ section.id }} .aluser-msg-sale").remove();
+        }, 5e3);
+      });
+    });
+  </script>
+{% else %}
 <script>
   $(document).ready(function() {
   let camp = "{{ request.path | split: '/' | last }}"
     {% if section.settings.landing_based  %}
-      if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("popUpPoped") === null) {
-        $(".custom_Popup #custom-saleModal").modal("show");
-        sessionStorage.setItem("popUpPoped", "poped");
+      if (window.location.href.indexOf(camp) > -1 && sessionStorage.getItem("{{ section.id }}popUpPoped") === null) {
+        $("#shopify-section-{{ section.id }} #custom-saleModal").modal("show");
+        sessionStorage.setItem("{{ section.id }}popUpPoped", "poped");
       }
     {% else %}
-      $("{{ section.settings.popup_id }}").click(function(e) {
-        $(".custom_Popup #custom-saleModal").modal("show");
+      $("{{ section.settings.popup_id }}").click(function() {
+        console.log("clicked");
+        $("#shopify-section-{{ section.id }} #custom-saleModal").modal("show");
       });
     {% endif %}
 
-      $(".custom_Popup .sale-btn").click(function() {
+      $("#shopify-section-{{ section.id }} .sale-btn").click(function() {
       let e = document.getElementById("sale_email").value;
       "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
         ? localStorage.getItem("userEmailIdSale  {{ section.settings.clevertap_id }}") === e
@@ -80,14 +119,15 @@
           }), clevertap.event.push("Notify Me   {{ section.settings.clevertap_id }}", {
             Email: e,
             Source: camp
-          }), $(".custom_Popup #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
-        : $(".custom_Popup .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          }), $("#shopify-section-{{ section.id }} #custom-saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+        : $("#shopify-section-{{ section.id }} .form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
       setTimeout(function() {
-        $(".custom_Popup .error-msg-sale, .custom_Popup .thankyou-msg-sale, .custom_Popup .aluser-msg-sale").remove();
+        $("#shopify-section-{{ section.id }} .error-msg-sale, #shopify-section-{{ section.id }} .thankyou-msg-sale, #shopify-section-{{ section.id }} .aluser-msg-sale").remove();
       }, 5e3);
     });
   });
 </script>
+{% endif %}
 {% schema %}
   {
     "name": "section custom Popup",
