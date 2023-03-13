@@ -644,28 +644,36 @@
             {{- 'product.form.pre_order' | t -}}
           </button>
           {% else %}
-          <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
-            block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
-            data-product-add-to-cart-button
-            data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
-            class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
-            {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
-            data-price="{{ product.price }}">
-            {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
-            {{- 'product.form.add_to_cart' | t -}}
-            {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-            <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
-            {% endif %}
-            {%- else -%}
-            {{- 'product.form.sold_out' | t -}}
+            {% if product.handle == 'gift-card' %}
+              <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+                block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+                data-product-add-to-cart-button data-button-content="{{ 'product.form.add_to_cart' | t | escape }}"
+                class="product-form__add-button button {% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %} button--full">
+                {{- 'product.form.add_to_cart' | t -}}
+              </button>
+            {% else %}
+            <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+              block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+              data-product-add-to-cart-button
+              data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
+              class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+              {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
+              data-price="{{ product.price }}">
+              {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
+                {{- 'product.form.add_to_cart' | t -}}
+                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                  <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                {% endif %}
+              {%- else -%}
+              {{- 'product.form.sold_out' | t -}}
             {%- endif -%}
-          
+          {%- endif -%}
           </button>
           {%- endif -%}
 
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
-          {% unless product.tags contains settings.products_offering_freebie  %}
+          {% unless product.tags contains settings.products_offering_freebie or product.handle contains 'gift-card'  %}
           <div class="amazon-c d-flex align-items-baseline justify-content-between">
               <button id="BIS_trigger" type="button" class="custom-notify-btn"
               data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
@@ -714,6 +722,7 @@
     </div>
     </div>
     {% endif %}
+  </div>
   {%- endif -%}
 
 
