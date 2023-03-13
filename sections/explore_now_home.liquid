@@ -1,91 +1,182 @@
+
 <!-- Shop by section starts here -->
 <div class="explore_now_section container">
-  <div class="container">
+  <div class="container MultiCarousel_container">
     {%- if section.settings.sectionHeading != blank -%}
-      <div class="row">
-        <div class="col-md-12 section__header text-container d-flex justify-content-between">
-          <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+        <div class="row">
+          <div class="col-md-12 section__header text-container d-flex justify-content-between">
+            <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+          </div>
         </div>
-      </div>
     {%- endif -%}
     <div class="row">
-      <div class="col-md-12 owl-carousel owl-theme explore_now_slider">
-        {%- for block in section.blocks -%}
-          <div class="item">
-            <div class="explore_item">
-              <div class="box_content">
-                {%- if block.settings.tag_name != blank -%}
-                  <span class="tag_name">{{- block.settings.tag_name -}}</span>
-                {%- endif -%}
-                {%- if block.settings.title != blank -%}
-                  {{- block.settings.title -}}
-                {%- endif -%}
-              </div>
-              <a href="{{- block.settings.image_url -}}" class="explore_now_btn_link">
-                <img src="{{- block.settings.image | img_url: '' -}}" alt="{{ block.settings.image.alt }}">
-
-                <span class="explore_now_link">{{- block.settings.label -}}</span>
-              </a>
+    <div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}> 
+    <div class="MultiCarousel-inner {{ section.id }} draggable explore_now_slider" draggable="true">
+      {%- for block in section.blocks -%}
+      <div class="item">
+        <div class="explore_item">
+            <div class="box_content">
+              {%- if block.settings.tag_name != blank -%}
+                <span class="tag_name">{{- block.settings.tag_name -}}</span>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                {{- block.settings.title -}}
+              {%- endif -%} 
             </div>
-          </div>
-        {%- endfor -%}
+            <a href="{{- block.settings.image_url -}}" class="explore_now_btn_link">
+              <img src="{{- block.settings.image | img_url: '' -}}" alt="{{ block.settings.image.alt }}">
+            
+              <span class="explore_now_link">{{- block.settings.label -}}</span>
+            </a>
+        </div>
       </div>
+      {%- endfor -%}
     </div>
+    <button class="btn btn-primary leftLst {{ section.id }}"><</button>
+    <button class="btn btn-primary rightLst {{ section.id }}">></button>
+    <ul class="MultiCarousel_dots_container">
+      {% for block in section.blocks %}
+       <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">{{ forloop.index }}/{{ forloop.length }}</li> 
+      {% endfor %} 
+      </ul>
+    </div>
+  </div>
   </div>
 </div>
 <!-- Shop by section ends here -->
 
+{% render 'carousel-css' %}
+
 {% schema %}
- {
-   "name": "Explore Now",
-"max_blocks": 28,
-   "settings": [],
-"blocks": [
-	{
-		"type": "image",
-       	"name": "Slide",
-		"settings" : [
-			{
-                 "type": "image_picker",
-                 "id": "image",
-                 "label": "Primary image"
-             },
-             {
-                 "type": "url",
-                 "id": "image_url",
-                 "label": "Image URL"
-             },
-             {
-               "type": "text",
-               "id": "tag_name",
-               "label": "Tag Name"
-             },
-             {
-               "type": "html",
-               "id": "title",
-               "label": "Title"
-             },
-             {
-               "type": "text",
-               "id": "label",
-               "label": "Button Label",
-               "default": "EXPLORE NOW"
-             }
-		]
-	}
-],
-"presets": [
-     {
-       "name": "Explore now",
-       "category": "Image",
-       "settings": {
-       },
-       "blocks": [
-         {
-           "type": "image"
-         }
-       ]
-     }
-   ]
- }
+  {
+    "name": "Explore Now",
+	"max_blocks": 28,
+    "settings": [
+      {
+        "type": "number",
+        "id": "slides_no",
+        "label": "mobile slides",
+        "default": 1
+      },{
+        "type": "number",
+        "id": "midslides_no",
+        "label": "medium slides",
+        "default": 3
+      }, {
+        "type": "number",
+        "id": "deskslides_no",
+        "label": "desk slides",
+        "default": 3
+      }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "scale_center_slide",
+        "label": "scale cente slide",
+        "default": false
+      },{
+        "type": "checkbox",
+        "id": "show_active_dots",
+        "label": "show active dots with index",
+        "default": false
+      },{
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "text",
+        "id": "item_space_desk",
+        "label": "Space between items in desktop",
+        "default": "1rem"
+      },
+      {
+        "type": "text",
+        "id": "item_space_mobile",
+        "label": "Space between items in mobile",
+        "default": "1rem"
+      },{
+        "type": "text",
+        "id": "next_item_visibility_desk",
+        "label": "Next item visibility in desktop",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "next_item_visibility_mobile",
+        "label": "Next item visibility in mobile",
+        "default": "1rem"
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      },{
+        "type": "number",
+        "id": "last_item_padding",
+        "label": "Last item padding",
+        "default": 24
+      }
+    ],
+	"blocks": [
+		{
+			"type": "image",
+        	"name": "Slide",
+			"settings" : [
+				{
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Primary image"
+              },
+              {
+                  "type": "url",
+                  "id": "image_url",
+                  "label": "Image URL"
+              },
+              {
+                "type": "text",
+                "id": "tag_name",
+                "label": "Tag Name"
+              },
+              {
+                "type": "html",
+                "id": "title",
+                "label": "Title"
+              },
+              {
+                "type": "text",
+                "id": "label",
+                "label": "Button Label",
+                "default": "EXPLORE NOW"
+              }
+			]
+		}
+	],
+	"presets": [
+      {
+        "name": "Explore now",
+        "category": "Image",
+        "settings": {
+        },
+        "blocks": [
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
 {% endschema %}
