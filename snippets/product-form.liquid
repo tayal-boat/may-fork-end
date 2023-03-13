@@ -666,11 +666,11 @@
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
           {% unless product.tags contains settings.products_offering_freebie  %}
-          <div class="amazon-c d-flex align-items-baseline justify-content-between">
-              <button id="BIS_trigger" type="button" class="custom-notify-btn"
-              data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+          <div class="amazon-c d-flex align-items-baseline justify-content-between custom_notifyMe_btn">
+              <a href="#" id="notifyMe_trigger" class="custom-notify-btn"
+            data-product-data="{{ product | json | escape }}" data-variant-id="{{ product_varient.id }}" onclick="Shopify.notifyMe()" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
               Notify me
-              </button>
+              </a>
               <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
@@ -684,11 +684,11 @@
 
     {%- endif -%}
     {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-    <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+    <div class="product-item__quick-form quick-buy-notify-me custom_notifyMe_btn" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
       <a
         href="#"
-        class="notifyMe_trigger"
-        data-product-data="{{ product | json | escape }}">
+        id="notifyMe_trigger"
+        data-product-data="{{ product | json | escape }}" data-variant-id="{{ product_varient.id }}" onclick="Shopify.notifyMe()">
         Notify Me
       </a>
     </div>

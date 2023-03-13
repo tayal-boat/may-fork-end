@@ -241,11 +241,11 @@ if(varient_swatches_input[i].checked){
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
       $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      $('.product-item__quick-form.quick-buy-notify-me #notifyMe_trigger').attr('data-variant-id',e.id);
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
     $('.d-lg-none.restocking, .desktop.restocking').show();
-    if($('#BIS_trigger.custom-notify-btn').length > 0){
-      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+    if($('#notifyMe_trigger.custom-notify-btn').length > 0){
+      $('#notifyMe_trigger.custom-notify-btn #notifyMe_trigger').attr('data-variant-id',e.id);
     } 
       
   }else{
@@ -472,7 +472,7 @@ explore_now_slider_img.forEach((slide, i) => {
   $("button.press-list__logo-item.tap-area").hover(function() {
     $(this).trigger("click")
   });
-  labelsPriority()
+  labelsPriority();
 }
 
 function labelsPriority() {
@@ -782,3 +782,28 @@ $(document).on("click", ".custom-offer-add-to-cart", function(e) {
     })
     }
 });
+
+Shopify.notifyMe = function(){
+  event.preventDefault();
+  console.log("custom notify me");
+  console.log(event.target.dataset);
+  var dataSet =  event.target.dataset;
+  var productJson = dataSet["productData"];
+  productJson = JSON.parse(productJson);
+  var varientID = dataSet["variantId"];
+  varientID = parseInt(varientID);
+  console.log(productJson);
+  var varientSelector = '';
+  for (let i = 0; i < productJson.variants.length; i++) {
+    if(!productJson.variants[i].available){
+      console.log('hii notify me variant');
+      varientSelector = varientSelector + `<option value="${productJson.variants[i].id}">${productJson.variants[i].title}</option>`;
+    if(productJson.variants[i].id == varientID){
+      $('.product-name').text(productJson.variants[i].name);
+      }
+  }
+  }
+  $('#variants_select').html(varientSelector);
+  $('#variants_select option[value="'+ varientID +'"]').attr('selected','true');
+  $('.notifyMe_popup__main_container').addClass('show');
+}
