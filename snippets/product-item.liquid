@@ -4,6 +4,19 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
 
+{% assign product_varient = product.selected_or_first_available_variant %}
+
+{%- for variant in product.variants -%}
+  {% if variant.inventory_quantity >= settings.sold_out_threshold %}
+  {% assign product_varient = variant %}
+  {%  break  %}
+  {% else %}
+  {% assign product_varient = product.selected_or_first_available_variant %}
+{%- endif -%}
+{% assign product_varient_length = forloop.length %}
+{%- endfor -%} 
+
+
 {%- if product.url contains '?' -%}
   {%- assign product_url_contains_query = true -%}
 {%- else -%}
@@ -14,28 +27,59 @@
   {% render 'fixed-discount-by-tag', product: product %}
 {% endcapture %}
 
+{% comment %} info: Code for Swatch List begins {% endcomment %}
+{% assign has_color_code = false %}
+{% capture remaining_variants_string %}
+  {{ product.variants.size | minus: 2 }}
+{% endcapture %}
+{% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
+{% assign total_swatches_to_show = 2 %}
+{% capture swatch_list %}
+  {% for variant in product.variants limit: total_swatches_to_show %}
+    {% if variant.metafields.my_fields.variantcolorcode %}
+      {% assign has_color_code = true %}
+    {% endif %}
+    <span class='swatch-circle' style="background:{{ variant.metafields.my_fields.variantcolorcode }}"></span>
+  {% endfor %}
+  {% if remaining_variants_number >= 1 %}
+    &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
+  {% endif %}
+{% endcapture %}
+{% comment %} info: Code for Swatch List ends {% endcomment %}
+
 {%- assign cheapest_variant = product.variants | sort: 'price' | first -%}
 
 {%- if settings.enable_fixed_discount and product.tags contains settings.tag_selector -%}
   {% assign cheapest_variant_discount_price = fixed_discount | times: 100 %}
-  {% assign cheapest_variant_discount_price = product.selected_or_first_available_variant.price | minus: discount_price %}
+  {% assign cheapest_variant_discount_price = product_varient.price | minus: discount_price %}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price 
    | minus: cheapest_variant_discount_price
    | divided_by: 100
    | round
    | times: 100 %}
   {% assign discount_price = fixed_discount | times: 100 %}
-  {% assign discount_price = product.selected_or_first_available_variant.price | minus: discount_price %}
+  {% assign discount_price = product_varient.price | minus: discount_price %}
   {% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
 {%- else -%}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price %}
   {% assign discounted_price = product.price %}
 {%- endif -%}
 
+{% assign available_variants = 0 %}
+{% assign product_soldout = true %}
+{% for variant in product.variants %}
+    {% assign available_variants = available_variants | plus: 1 %}
+    {% if variant.inventory_quantity >= settings.sold_out_threshold %}
+    {% assign product_soldout = false %}
+{% endif %}
+{% endfor %}
 
-<product-item class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' %}product-item-vertical{% endunless %}" {% if reveal %}reveal{% endif %}>
-  <div class="{% if template contains 'collection' %}product-horizontal{% endif %}">
-    {%- if product.available -%}
+<product-item
+  class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
+  {% if reveal %}reveal{% endif %}>
+  <div class="product__wrapper">
+  <div class="{% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}">
+    {% if product_soldout == false %}
       {%- for tag in product.tags -%}
         {%- if tag contains 'Free-' -%}
           <span class="priority label z-10 label--highlight custom-label free-label bg-green">
@@ -113,7 +157,7 @@
             loading="lazy"
             data-media-id="{{ product.featured_media.id | escape }}"
             sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product.selected_or_first_available_variant.image, sizes: '200,300' -%}>
+            {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
         {% else %}
           <img
             class="product-item__primary-image"
@@ -139,9 +183,9 @@
         {%- endif -%}
 
         {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-          {%- assign next_media_pos = product.media[product.selected_or_first_available_variant.image.position] 
+          {%- assign next_media_pos = product.media[product_varient.image.position] 
             | plus: 1 -%}
-          {%- assign next_media = product.media[product.selected_or_first_available_variant.image.position] 
+          {%- assign next_media = product.media[product_varient.image.position] 
             | default: product.media[next_media_pos] -%}
           <img
             class="product-item__secondary-image"
@@ -150,7 +194,7 @@
             {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
         {%- endif -%}
       </a>
-      {% unless template contains 'collection' %}
+      {% unless template contains 'collection' or section.settings.horizontal_ui %}
         {% if product.available and product.tags contains 'flash-sale' -%}
           {%- render 'inventory-bar' with product -%}
         {%- endif -%}
@@ -173,18 +217,21 @@
           </a>
         {%- endunless -%}
       {%- endif -%}
+      <div class="d-flex position-relative">
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
         {{- product.title | split: '|' | first | split: 'boAt' | last -}}
       </a>
+      {% if template contains 'collection' %}
+        {% if product.available and product.tags contains 'flash-sale' -%}
+         {%- render 'inventory-bar' with product -%}
+        {%- endif %}
+      {%- endif %}
+      </div>
       {% comment %}
       Start automatically added Judge.me widget
       {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
       {% endcomment %}
-      {%- if settings.show_product_rating and reduced_content != true -%}
-        <a class="product-item-meta__reviews-badge text--small" href="{{ product.url }}">
-          {%- render 'product-rating', product: product -%}
-        </a>
-      {%- endif -%}
+      
       <div class="product-item-meta__price-list-container">
         {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
@@ -198,15 +245,6 @@
               {%- endcapture -%}
 
               {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
-                <p class="m-0 pr-2 off">
-                  {{-
-                      product.compare_at_price
-                    | minus: discounted_price
-                    | times: 100.0
-                    | divided_by: product.compare_at_price
-                    | round
-                    | append: '% off' -}}
-                </p>
                 <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -216,7 +254,15 @@
                     {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-
+                <p class="m-0 pr-2 off">
+                  {{-
+                      product.compare_at_price
+                    | minus: discounted_price
+                    | times: 100.0
+                    | divided_by: product.compare_at_price
+                    | round
+                    | append: '% off' -}}
+                </p>
                 <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -231,7 +277,6 @@
                   {%- endif -%}
                 </span>
 
-
               {%- else -%}
                 <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -239,15 +284,6 @@
                 </span>
               {%- endif -%}
             {%- elsif product.price < product.compare_at_price -%}
-              <p class="m-0 pr-2 off">
-                {{-
-                    product.compare_at_price
-                  | minus: discounted_price
-                  | times: 100.0
-                  | divided_by: product.compare_at_price
-                  | round
-                  | append: '% off' -}}
-              </p>
               <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
@@ -257,7 +293,15 @@
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-
+              <p class="m-0 pr-2 off">
+                {{-
+                    product.compare_at_price
+                  | minus: discounted_price
+                  | times: 100.0
+                  | divided_by: product.compare_at_price
+                  | round
+                  | append: '% off' -}}
+              </p>
               <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
@@ -300,49 +344,76 @@
               </span>
             {%- endif -%}
 
-            {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
+            {%- if product_varient.unit_price_measurement -%}
               <div class="price price--block text--xsmall text--subdued">
                 <div class="unit-price-measurement">
                   <span class="unit-price-measurement__price">
-                    {{- product.selected_or_first_available_variant.unit_price | money -}}
+                    {{- product_varient.unit_price | money -}}
                   </span>
                   <span class="unit-price-measurement__separator">/</span>
 
-                  {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+                  {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
                     <span class="unit-price-measurement__reference-value">
-                      {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+                      {{- product_varient.unit_price_measurement.reference_value -}}
                     </span>
                   {%- endif -%}
 
                   <span class="unit-price-measurement__reference-unit">
-                    {{- product.selected_or_first_available_variant.unit_price_measurement.reference_unit -}}
+                    {{- product_varient.unit_price_measurement.reference_unit -}}
                   </span>
                 </div>
               </div>
             {%- endif -%}
+            
           </div>
-          <p class="custom-save-price" style="font-size: 12px;margin: 0.5rem 0 0;">
+          {%- if settings.show_product_rating and reduced_content != true -%}
+            <span class="product-item-meta__reviews-badge text--small">
+              {%- render 'product-rating', product: product -%}
+              {% if available_variants >= 1 and has_color_code %}
+                <button
+                  is="toggle-button"
+                  aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
+                  aria-expanded="false"
+                  class="variants-list hidden-tablet-and-up custom_atoc_btn">
+                    {{ swatch_list }}
+                </button>
+                <button
+                  is="toggle-button"
+                  aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
+                  aria-expanded="false"
+                  class="variants-list hidden-phone">
+                  {{ swatch_list }}
+                </button>
+              {% endif %}
+            </span>
+          {%- endif -%}
+          <p class="custom-save-price" style="font-size: 11px;margin:0;font-weight: 500;color: black;">
             {% if product.price >= 50000 %}
-              Save ₹15 more on UPI payment
+            {{ settings.card_offers | split: ',' | first }}
             {% else %}
-              Free Shipping available
+            {{ settings.card_offers | split: ',' | last }} 
             {% endif %}
           </p>
         {% endunless %}
-        {%- if request.page_type != 'password' 
- and settings.product_add_to_cart 
- and product.available 
- and reduced_content != true 
- and show_cta != true 
- -%}
-          {% assign available_variants = 0 %}
-          {% for variant in product.variants %}
-            {% if variant.available %}
-              {% assign available_variants = available_variants | plus: 1 %}
-            {% endif %}
-          {% endfor %}
+        {%- if request.page_type != 'password'
+        and settings.product_add_to_cart
+        and reduced_content != true
+        and show_cta != true
+        -%}
+
+          {% if product_soldout == false %}
           <div class="d-flex align-items-center">
             {%- if available_variants == 1 -%}
+            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
+            <div class="product-item__quick-form">
+              <a
+                href="#"
+                class="BIS_trigger item_BIS"
+                data-product-data="{{ product | json | escape }}">
+                Notify Me
+              </a>
+            </div>
+            {% else %}
               {%- capture form_id -%}
                 product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
               {%- endcapture -%}
@@ -372,7 +443,8 @@
                     {{- 'product.form.add_to_cart' | t -}}
                   {% endif %}
                 </button>
-                <button type="submit" class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
+                <button type="submit"
+                  class="product-item__quick-buy-button {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %} hidden-no-touch">
                   <span class="visually-hidden">{{ 'collection.product.add_to_cart_short' | t }}</span>
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
@@ -381,6 +453,7 @@
                   {% endif %}
                 </button>
               {%- endform -%}
+            {% endif %}
             {%- else -%}
               {%- comment -%}
               IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
@@ -433,14 +506,9 @@
                 href="{{ product.url }}{% if product_url_contains_query %}&{% else %}?{% endif %}view=quick-buy-drawer"
                 class="drawer drawer--large drawer--quick-buy hidden-phone"></quick-buy-drawer>
             {%- endif -%}
-            {% if template contains 'collection' %}
-              {% if product.available and product.tags contains 'flash-sale' -%}
-                {%- render 'inventory-bar' with product -%}
-              {%- endif %}
-            {%- endif %}
+
           </div>
-        {%- endif -%}
-        {% unless product.available %}
+          {% else %}
           <div class="product-item__quick-form">
             <a
               href="#"
@@ -449,7 +517,10 @@
               Notify Me
             </a>
           </div>
-        {% endunless %}
+          {% endif %}
+        {%- endif -%}
+
+
       </div>
 
       {%- if settings.product_color_display != 'hide' and reduced_content != true -%}
@@ -491,6 +562,10 @@
                     </label>
                   </div>
                 {%- endfor -%}
+                {% assign remaining_variants = product_option.values.size | minus: 3 %}
+                {% if remaining_variants > 0 %}
+                  <span class='remaining-variants-count'>{{- 'collection.product.available_colors_count' | t: count: remaining_variants -}}</span>
+                {% endif %}
               </div>
             {%- endcase -%}
 
@@ -571,6 +646,25 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
+    {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+    {% comment %} {% unless template contains 'collection' %}
+    {% if product.metafields.custom.product_card_features %}
+      <div class="features-list only-vertical">
+        {% for feature in features %}
+          <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
 
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endunless %} {% endcomment %}
   </div>
+  </div>
+  {% if template contains 'collection' and product.metafields.custom.product_card_features %}
+    <div class="features-list only-horizontal">
+      {% for feature in features %}
+        <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+      {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+      {% endfor %}
+    </div>
+  {% endif %}
 </product-item>

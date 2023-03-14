@@ -400,7 +400,6 @@
         }
   
         .original__price {
-          display: none;
           font-size: 11px;
         }
   
@@ -729,27 +728,24 @@
                 var qty = {{ line_item.quantity }}
                 var price = {{ line_item.product.compare_at_price | money | split: ' ' | last | remove: ','}}
                 var finalprice = price * qty;
-                $('.product__price').append(`<span class='original__price' data-product-id='{{line_item.product.id }}'>&nbsp;<span class="original-price--text">₹${finalprice.toLocaleString()}.00</span></br>
+                var varient_id = {{ line_item.variant_id }};
+                var discount_price = $('[data-order-summary-section="line-items"] [data-variant-id="'+ varient_id +'"] .product__price .order-summary__emphasis').text();
+                discount_price = discount_price.split('.');
+                discount_price = discount_price[0];
+                discount_price = discount_price.replace(/[₹,]/g, '');
+                discount_price = parseInt(discount_price/qty);
+                var percentOff = 1 - discount_price/price;
+                percentOff = Math.round(percentOff * 100);
+                console.log(discount_price,'discount_price.replace');
+                console.log(price,'price');
+                $('[data-order-summary-section="line-items"] [data-variant-id="'+ varient_id +'"] .product__price').append(`<span class='original__price' data-product-id='{{line_item.product.id }}'>&nbsp;<span class="original-price--text">₹${finalprice.toLocaleString()}.00</span></br>
                 <span class='discount' data-product-id='{{line_item.product.id }}'>
-                {{ line_item.product.compare_at_price |minus: line_item.product.price | times: 100.0 | divided_by: line_item.product.compare_at_price| floor | money_without_currency | times: 100 | remove: ".0"}}% off
+                {% comment %} {{ line_item.product.compare_at_price |minus: line_item.product.price | times: 100.0 | divided_by: line_item.product.compare_at_price| floor | money_without_currency | times: 100 | remove: ".0"}}% off {% endcomment %}
+                ${percentOff}% off
                 </span>
                 </span>`)
                 {% endfor %}
   
-                $('.product__price .original__price').each(function () {
-                    var innerPdId = $(this).data('product-id');
-                    var pdId = $(this).closest('.product').data('product-id');
-                    if (innerPdId !== pdId) {
-                        $(this).addClass('unmatched');
-                        $('.unmatched').remove();
-                        return;
-                    } else {
-                        $(this).show();
-                        if ($(`.original__price[data-product-id=${innerPdId}]`).length > 1) {
-                            $(`.original__price[data-product-id=${innerPdId}]:last-child`).css('display', 'none');
-                        }
-                    }
-                })
                 $('.section--payment-method').before(`<img class="cred" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/boAt-x-walnut-1.jpg?v=1629269695">`);
                 {% comment %}
                 if (window.location.href.indexOf("orders") !== -1) {
@@ -1271,6 +1267,12 @@
           color: red;
           font-weight: 500;
         }
+        .error_message {
+          color: red;
+          font-weight: 500;
+          margin-top: 5px;
+          padding:0;
+        }
       </style>
       <!-- Single Checkout Page Styling-2 Begins -->
   
@@ -1394,76 +1396,76 @@
          
             </div><div class="gst-popup-details"></div> <p class="gst_error"></p></div>
               `);
-            function gstDetail(gst_buttom, gstIn, gstInVal) {
-              if (sessionStorage.gstin && sessionStorage.gstin !== '') {
-                gst_buttom.text('Change');
-                gstIn.css('pointer-events', 'none');
-                gst_buttom.attr('gstadded', 'true');
-                $('.gstin_number').val(gstInVal);
-                $('.gstin_container details').removeAttr('open');
-                $('.gstin_main_container .gst-popup-details').html(
-                  `<p> ${sessionStorage.gst_billing_name} </p><p> ${sessionStorage.gst_billing_address} ${sessionStorage.gst_billing_city} ${sessionStorage.gst_billing_state} ${sessionStorage.gst_billing_pincode} </p>`
-                );
-              }
-            }
+             function gstDetail(gst_buttom, gstIn, gstInVal) {
+               if (sessionStorage.gstin && sessionStorage.gstin !== '') {
+                 gst_buttom.text('Change');
+                 gstIn.css('pointer-events', 'none');
+                 gst_buttom.attr('gstadded', 'true');
+                 $('.gstin_number').val(gstInVal);
+                 $('.gstin_container details').removeAttr('open');
+                 $('.gstin_main_container .gst-popup-details').html(
+                   `<p> ${sessionStorage.gst_billing_name} </p><p> ${sessionStorage.gst_billing_address} ${sessionStorage.gst_billing_city} ${sessionStorage.gst_billing_state} ${sessionStorage.gst_billing_pincode} </p>`
+                 );
+               }
+             }
   
-            let gst_buttom = $('.gst-button');
-            let gstIn = $('.gstin_input');
-            let gstInVal = sessionStorage.getItem('gstin');
-            gstDetail(gst_buttom, gstIn, gstInVal);
-            gstIn.val(gstInVal);
-            $('.gstin_container .gst-button').click(function (e) {
-              e.preventDefault();
-              let gstInput = $(this).parent().siblings('input').val();
-              if ($(this).attr('gstadded') == 'true') {
-                $(this).parent().siblings('input').removeAttr('style');
-                $(this).text('Validate');
-                $(this).attr('gstadded', 'false');
-              } else {
-                if ($('.gstin_input').val().length < 15 || $('.gstin_input').val().length > 15) {
-                  $('.gst_error').html('GSTIN must be 15 characters');
-                } else {
-                  $.ajax({
-                    type: 'GET',
-                    url: 'https://api-gst.boat-lifestyle.com/api/checkgst',
-                    data: {
-                      gstin: gstInput,
-                    },
-                    success: function (data) {
-                      console.log(data, 'data');
-                      if (data.message == 'The provided GST number is valid and here are the details') {
-                        console.log('GST no valid');
-                        sessionStorage.setItem('gstin', gstInput);
-                        let res = data.response;
-                        let address = res.pradr.addr;
-                        $('.gstin_container details').attr('open', 'true');
-                        $('.gst_error').html('');
-                        $('.billing_name .name').html(res.tradeNam);
-                        $('.billing_address_container .address')
-                          .html(`<span>${address.bno}</span> <span>${address.flno}</span> <span>${address.bnm}</span> <span>${address.st}</span> <span>${address.dst}</span>
-                <span>${address.stcd}</span> - <span>${address.pncd}</span>`);
+             let gst_buttom = $('.gst-button');
+             let gstIn = $('.gstin_input');
+             let gstInVal = sessionStorage.getItem('gstin');
+             gstDetail(gst_buttom, gstIn, gstInVal);
+             gstIn.val(gstInVal);
+             $('.gstin_container .gst-button').click(function (e) {
+               e.preventDefault();
+               let gstInput = $(this).parent().siblings('input').val();
+               if ($(this).attr('gstadded') == 'true') {
+                 $(this).parent().siblings('input').removeAttr('style');
+                 $(this).text('Validate');
+                 $(this).attr('gstadded', 'false');
+               } else {
+                 if ($('.gstin_input').val().length < 15 || $('.gstin_input').val().length > 15) {
+                   $('.gst_error').html('GSTIN must be 15 characters');
+                 } else {
+                   $.ajax({
+                     type: 'GET',
+                     url: 'https://api-gst.boat-lifestyle.com/api/checkgst',
+                     data: {
+                       gstin: gstInput,
+                     },
+                     success: function (data) {
+                       console.log(data, 'data');
+                       if (data.message == 'The provided GST number is valid and here are the details') {
+                         console.log('GST no valid');
+                         sessionStorage.setItem('gstin', gstInput);
+                         let res = data.response;
+                         let address = res.pradr.addr;
+                         $('.gstin_container details').attr('open', 'true');
+                         $('.gst_error').html('');
+                         $('.billing_name .name').html(res.tradeNam);
+                         $('.billing_address_container .address')
+                           .html(`<span>${address.bno}</span> <span>${address.flno}</span> <span>${address.bnm}</span> <span>${address.st}</span> <span>${address.dst}</span>
+                 <span>${address.stcd}</span> - <span>${address.pncd}</span>`);
   
-                        sessionStorage.setItem('gst_billing_name', res.tradeNam);
-                        sessionStorage.setItem(
-                          'gst_billing_address',
-                          `${address.bno} ${address.flno} ${address.bnm} ${address.st}`
-                        );
-                        sessionStorage.setItem('gst_billing_city', `${address.dst}`);
-                        sessionStorage.setItem('gst_billing_state', `${address.stcd}`);
-                        sessionStorage.setItem('gst_billing_pincode', `${address.pncd}`);
-                      } else if (data.message == 'The provided GST number is invalid') {
-                        console.log('GST no Invalid');
-                        $('.gst_error').html(data.message);
-                      }
-                    },
-                    error: function () {
-                      console.log('error');
-                    },
-                    dataType: 'json',
-                  });
-                }
-              }
-            });
+                         sessionStorage.setItem('gst_billing_name', res.tradeNam);
+                         sessionStorage.setItem(
+                           'gst_billing_address',
+                           `${address.bno} ${address.flno} ${address.bnm} ${address.st}`
+                         );
+                         sessionStorage.setItem('gst_billing_city', `${address.dst}`);
+                         sessionStorage.setItem('gst_billing_state', `${address.stcd}`);
+                         sessionStorage.setItem('gst_billing_pincode', `${address.pncd}`);
+                       } else if (data.message == 'The provided GST number is invalid') {
+                         console.log('GST no Invalid');
+                         $('.gst_error').html(data.message);
+                       }
+                     },
+                     error: function () {
+                       console.log('error');
+                     },
+                     dataType: 'json',
+                   });
+                 }
+               }
+             });
             $('.gstin_container .gstin-confirm').click(function () {
               let gst_buttom = $(this).parent().siblings('.gst-button');
               let gstIn = $(this).parent().parent().siblings('input');
@@ -2672,6 +2674,19 @@
           }
           return "";
         }
+
+        let lineItem_dis_length = $('[data-order-summary-section] .reduction-code');
+        let dis_tag_length = $('.order-summary__section--discount .tags-list .tag');
+        let dis_section = $('.order-summary__section--discount .edit_checkout .fieldset');
+        let dis_input_section = $('#checkout_reduction_code');
+
+        if(dis_tag_length.length == 0 && lineItem_dis_length.length > 0 && dis_section){
+          dis_input_section.css('pointer-events','none');
+          if(dis_section.find('.error_message').length == 0){
+          dis_section.append(`<p class="error_message">Uh-oh! It seems like you've already applied a discount coupon.</p>`);
+          }
+        } 
+
   
       </script>
     </body>

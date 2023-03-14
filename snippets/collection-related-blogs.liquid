@@ -1,8 +1,17 @@
 {% assign coll = collection.handle %}
-{% assign tag_article = 'meta-' | append: coll  %}
+{% assign tag_article = 'meta-' | append: coll %}
+{% assign related_header = false %}
+{% for article in blogs.blog.articles %}
+  {% if article.tags contains tag_article %}
+    {% assign related_header = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
   <div class="RelatedPosts">
         <gallery-list class="gallery related-article-list boat-custom-gallery">
-          <h3 style="font-size: 18px;" class="heading h2 text-center">bo<span class="text-red">A</span>t BLOGS</h3>
+        {% if related_header == true %}
+         <h3 style="font-size: 18px;" class="heading h2 text-center">bo<span class="text-red">A</span>t BLOGS</h3>
+        {% endif %}
           <scrollable-content draggable class="gallery__list-wrapper {% if section.blocks.size >= 3 %}is-scrollable{% endif %} hide-scrollbar">
             <div class="container">
               <div class="gallery__list">
@@ -92,9 +101,7 @@
 .excerpt a:hover {text-decoration:none;}
 
 @media screen and (min-width:768px) {    
-    .RelatedPosts {
-  padding: 0 35px;
-    }   
+    .RelatedPosts { padding: 0 35px;}   
     .RelatedPosts h3.heading.h2{font-size:24px;}
 }
 </style>
