@@ -14,7 +14,7 @@
     {%- endfor -%} 
   {%- endif -%}
 {%- endif -%}
-
+ 
   {%- for block in section.blocks -%}
   {%- case block.type -%}
   {%- comment -%}
@@ -42,7 +42,7 @@
     {%- assign option_downcase = option.name | downcase -%}
     {%- capture option_id -%}option-{{ section.id }}-{{ template.suffix }}-{{ product.id }}-{{ forloop.index }}{%-
     endcapture -%}
-
+ 
     {%- assign selector_type = block.settings.selector_mode -%}
 
     {% if color_label_list contains option_downcase %}
@@ -300,7 +300,7 @@
              {% render 'product-offers' %}{%- endif -%}
               
             <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity > settings.sold_out_threshold %}
-              display: none; {% endif %}background: #D6D6D6;padding-inline: 35px;border-radius: 5px;color: #FF0000;font-weight:600;margin-left: 51%;"> Restocking Soon
+              display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
             </div>
             
@@ -638,9 +638,9 @@
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
             <p class="line-item-property__field" hidden>
               <label for="personalised_message">Message</label>
-              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[Personalised Message]" autocomplete="off">
+              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}">
             </p>
-            {%- render 'personalised-modal' -%}
+            
           {% endif %}
           {%- if product.tags contains 'prebooking' -%}
             
@@ -673,7 +673,7 @@
 
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
-          {% unless product.tags contains settings.products_offering_freebie or product.price >= 400000 %}
+          {% unless product.tags contains settings.products_offering_freebie %}
           <div class="amazon-c d-flex align-items-baseline justify-content-between">
             {% comment %} <button type="button" onclick="onBuyNowClick(this)" class="w-50 w-lg-100" id="gokwik-buy-now" {% if settings.hideFlow
               %} style="display:none !important;" {% endif %} {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}disabled style="display:none!important;" {% endunless %}>
@@ -723,6 +723,7 @@
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
     <div class="d-flex flex-column" aria-role="additonal-info">
       <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>
+      {%- render 'personalised-modal' -%}
       {% if product.metafields.custom.product_highlights %}
       <div class="price-container product-highlight mt-3 desktop">
         <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
