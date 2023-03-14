@@ -56,9 +56,10 @@
       const personalizedText = document.querySelector('#personalized-text');
       const personalizedMessageOriginal = document.querySelector('#personalised_message');
       const editMessage=document.querySelector(".edit-msg");
-  const msgContainer=document.querySelector(".message-form-container");
-  const customHeading=document.querySelector(".custom-prebook-heading");
-  const customSubHeading=document.querySelector(".custom-prebook-subheading");
+      const msgContainer=document.querySelector(".message-form-container");
+      const customHeading=document.querySelector(".custom-prebook-heading");
+      const customSubHeading=document.querySelector(".custom-prebook-subheading");
+      const editText=document.querySelector(".edit-red");
       let sessionValue=sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"));
       let url=window.location.href;
       //Finding line item from URL params
@@ -68,15 +69,12 @@
       const pmsg = urlParams.get('msg');
       //Input validation
     let currentInputValue = '';
-  let value="";
-  let str=""
-  if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
-    customHeading.innerHTML=``;
-    customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
-    $('.edit-red').click(function() {
-      personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
-    })
-  }
+    let value="";
+    let str=""
+    if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+      customHeading.innerHTML=``;
+      customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
+    }
   personalizedText.addEventListener('keypress', function inputKeypressHandler(e) {
 
       // keypress event on input box is listened here and this function is triggered
@@ -116,6 +114,10 @@
            if(url.includes("&personalized")){
             personalizedText.value=currentInputValue;
            }
+          if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+            personalizedText.focus()
+            personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
+          }
       }
       function closePersonalizationModal() {
           personalizationModalOverlay.classList.add('hide')
@@ -190,7 +192,7 @@
       personalizationModalClose.forEach((closeBtn) =>{
         closeBtn.addEventListener('click', closePersonalizationModal)
       })
-
+      
       personalizationSubmitBtn.addEventListener('click', (e) => {
           let pMessage = personalizedText.value;
           personalizedMessageOriginal.value = pMessage.toUpperCase();
