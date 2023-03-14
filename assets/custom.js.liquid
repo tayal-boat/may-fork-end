@@ -245,7 +245,7 @@ if(varient_swatches_input[i].checked){
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
     $('.d-lg-none.restocking, .desktop.restocking').show();
     if($('#notifyMe_trigger.custom-notify-btn').length > 0){
-      $('#notifyMe_trigger.custom-notify-btn #notifyMe_trigger').attr('data-variant-id',e.id);
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-variant-id',e.id);
     } 
       
   }else{
@@ -795,15 +795,21 @@ Shopify.notifyMe = function(){
   console.log(productJson);
   var varientSelector = '';
   for (let i = 0; i < productJson.variants.length; i++) {
-    if(!productJson.variants[i].available){
-      console.log('hii notify me variant');
-      varientSelector = varientSelector + `<option value="${productJson.variants[i].id}">${productJson.variants[i].title}</option>`;
+    console.log(productJson.variants[i]);
+    if(!productJson.variants[i].available || productJson.variants[i].available == "false"){
+      console.log('hii algolia notify me');
+      varientSelector = varientSelector + `<option value="${productJson.variants[i].id}" data-title="${productJson.variants[i].title}">${productJson.variants[i].title}</option>`;
     if(productJson.variants[i].id == varientID){
-      $('.product-name').text(productJson.variants[i].name);
+      $('.product-varient-title').text(productJson.variants[i].title);
       }
   }
   }
+  $('.product-name').text(productJson.title);
   $('#variants_select').html(varientSelector);
   $('#variants_select option[value="'+ varientID +'"]').attr('selected','true');
   $('.notifyMe_popup__main_container').addClass('show');
 }
+
+$('#variants_select').change(function(){
+  $('.product-varient-title').html($(this).children('[value="'+ this.value +'"]').attr('data-title'));
+});
