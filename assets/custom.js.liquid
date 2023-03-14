@@ -242,8 +242,11 @@ if(varient_swatches_input[i].checked){
       $('quick-buy-popover #AddToCart').hide();
       $('.product-item__quick-form.quick-buy-notify-me').show();
       $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
-      $('.d-lg-none.current-in-cart, .desktop.current-in-cart').hide();
+      $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
     $('.d-lg-none.restocking, .desktop.restocking').show();
+    if($('#BIS_trigger.custom-notify-btn').length > 0){
+      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+    } 
       
   }else{
     $('.custom-notify-btn').hide();
@@ -253,7 +256,7 @@ if(varient_swatches_input[i].checked){
     $('quick-buy-drawer #AddToCart').show();
     $('quick-buy-popover #AddToCart').show();
     $('.product-item__quick-form.quick-buy-notify-me').hide();
-    $('.d-lg-none.current-in-cart, .desktop.current-in-cart').show();
+    $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
   }    
 }
@@ -713,6 +716,15 @@ $(".razorpay-checkout").click(function () {
   var event = 'razor/magic Button Clicked';
   var event_info = { "cart products": productsincart, "Amount": cart_total_price };
 
+  createCleverTapEvent( event, event_info );
+});
+
+/* clevertap code for product-banners on pdp*/
+
+$('a.banner_link').on('click', function() {
+  let product_b_title = $(this).data('title');
+  var event = `product page banner clicked`;
+  var event_info = { "userSource": userSource, "product_title": product_b_title };
   createCleverTapEvent( event, event_info );
 });
 
