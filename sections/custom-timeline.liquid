@@ -28,8 +28,9 @@
 
     --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
     --section-items-count: {{ section.blocks.size }};
+    background:url({{ section.settings.back_url }});
   }
-
+      {% if section.settings.back_url %}.section{margin:0;}{% endif %}
   #shopify-section-{{ section.id }} .timeline__item {
     {%- if section.settings.item_background == 'rgba(0,0,0,0)' -%}
       {%- assign item_background = settings.secondary_background -%}
@@ -50,17 +51,11 @@
     --section-box-background: {{ item_background.red }}, {{ item_background.green }}, {{ item_background.blue }};
   }
     .button-wrapper .button{background:transparent; border:1px solid white;color:white;}
-    @media (max-width:768px){
-    .timeline__content {
-    padding: 20px;background: #000000d9;
+    .timeline__content {padding: 20px; background-color: #f7f7f7;}
+    @media screen and (min-width: 1000px){
+    .timeline__item { background-color: #f7f7f7;}
+    .timeline__content {padding: 20px 60px; }
     }
-      
-    }
-    @media (min-width:1000px){
-     .timeline__content {
-      background: transparent;
-     }  
-  }
 </style>
 
 <section class="section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -151,7 +146,7 @@
 {
   "name": "custom Timeline",
   "class": "shopify-section--boat-timeline",
-  "max_blocks": 5,
+  "max_blocks": 18,
   "blocks": [
     {
       "type": "item",
@@ -236,6 +231,11 @@
         }
       ],
       "default": "middle"
+    },
+    {
+      "type": "text",
+      "id": "back_url",
+      "label": "background image"
     },
     {
       "type": "header",

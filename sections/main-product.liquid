@@ -47,18 +47,20 @@
       --secondary-button-text-color: {{ secondary_button_text_color.red }}, {{ secondary_button_text_color.green }}, {{ secondary_button_text_color.blue }};
     }
     {% if product.tags contains 'Coming-Soon' %}
-      #gokwik-buy-now, #AddToCart, .amazon-c, .stock-label {display: none;}
+      #gokwik-buy-now, #AddToCart, .stock-label, .restocking, .current-in-cart {display: none!important;}
     {% endif %}
-  {% if product.tags contains 'NO-PRICE' %}  
-  .product-meta__price-list-container, .price-container {display:none!important;}
-  {% endif %}  
+    {% if product.tags contains 'NO-PRICE' %}  
+     .product-meta__price-list-container, .price-container {display:none!important;}
+    {% endif %}  
   </style>
 
-  <section style="background: #f5f5f5;">
+  <section>
+    {% comment %}
+    ! commented sticky form on New PDP Layout 
     {%- if section.settings.show_sticky_add_to_cart and product.available -%}
       {%- render 'product-sticky-form', product: product -%}
-    {%- endif -%}
-
+    {%- endif -%} 
+    {% endcomment %}
     <div class="container pdp">
       <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb text--xsmall text--subdued">
         <ol class="breadcrumb__list" role="list">
@@ -71,28 +73,130 @@
               <a class="breadcrumb__link" href="{{ collection.url }}">{{- collection.title -}}</a>
             </li>
           {%- endif -%}
-
+          <li class="breadcrumb__item">
+            <span class="breadcrumb__link" aria-current="page">All Collection</span>
+          </li>
           <li class="breadcrumb__item">
             <span class="breadcrumb__link" aria-current="page">{{- product.title  | split: '|' | first | split: 'boAt' | last -}}</span>
           </li>
         </ol>
       </nav>
 
-      <!-- PRODUCT TOP PART -->
-      <div class="product py-lg-4 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}">
-        {%- render 'product-media', product: product -%}
-        {%- render 'product-info', product: product, update_url: true -%}
-          {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
+    {% if product.metafields.custom.productbanner_url != blank %}
+      <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ product.metafields.custom.productbanner_url | split: "," | last }}" class="banner_link">
+    <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
+      style="border-radius:10px;">
+    </a>
+    {% elsif section.settings.banners_url != blank %}
+    <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ section.settings.banners_url | split: "," | last }}" class="banner_link">
+      <img src="{{ section.settings.banners_url | split: "," | first }}"
+        style="border-radius:10px;">
+      </a>
+    {% endif %}
 
+<!-- PRODUCT TOP PART -->
+  <div
+    class="product py-lg-2 {% if product.metafields.custom.productbanner_url != blank or section.settings.banners_url != blank  %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}"
+  >
+  {% comment %}
+  ! Changed the position of 'product-info' & 'product-media' in New PDP Design
+  {% endcomment %}
+  {%- render 'product-info', product: product, update_url: true -%}
+  {%- render 'product-form', product: product, update_url: update_url -%}
+  {%- render 'product-media', product: product -%}
+        {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
+          {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
+            <div class="flash-sale-lable d-flex position-relative">
+    
+              <div class="flash_sale">
+                <p class="m-0 text-uppercase flash_text"><span class="thunder"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                      height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                      <path
+                        d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
+                    </svg></span>&nbsp;</p>
+                {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
+              </div>
+              {%- render 'inventory-bar' product: product -%}
+            </div>
+            {%- endif -%}
       </div>
 
-  {% endunless %}
 {% comment %}Start automatically added Judge.me widget
-  {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}{% endcomment %}
-{% comment %}End automatically added Judge.me widget{% endcomment %}
+  {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+End automatically added Judge.me widget{% endcomment %}
 
-    </div>
+      {% endunless %}
+
+              {% if product.metafields.custom.product_highlights %}
+                <div class="price-container product-highlight pt-2 d-lg-none">
+                  <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product Highlights
+                  </h6>
+                  {{ product.metafields.custom.product_highlights }}
+                </div>
+              {%- endif -%}
   </section>
+
+  <div class="section__color-wrapper promise-icons mt-3 mt-lg-5">
+    <div class="mySect py-2 container">
+      <div class="img-row text-center row justify-content-around pb-1 pb-lg-0" style="max-width: 100%;margin: auto;">
+  
+        <div class="col-2 pipe p-0">
+          <div class="row myIconRow">
+            <div class="col-md-4 myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-1b_6c0c5f7d-a48c-40f5-946d-ea50fb1a9b82_small.png?v=1661243559">
+            </div>
+            <div class="col-md-8 myText">
+              <p class="mb-0">1 Year <br>Warranty</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-2 pipe p-0">
+          <div class="row myIconRow">
+            <div class="col-md-4 myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-3b_b82496cc-51ed-47ad-b27a-a195b646bea1_small.png?v=1661244593">
+            </div>
+            <div class="col-md-8 myText">
+               <p class="mb-0">7 Days <br>Replacement</p>
+            </div>
+          </div>
+        </div>
+                        
+        <div class="col-2 pipe p-0">
+          <div class="row myIconRow">
+            <div class="col-md-4 myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-2b_dc921406-33cc-4867-846b-293610d69a41_small.png?v=1661244611">
+            </div>
+            <div class="col-md-8 myText">
+              <p class="mb-0">Free <br>Shipping</p>
+            </div>
+          </div>
+        </div>
+                        
+        <div class="col-2 pipe p-0">
+          <div class="row myIconRow">
+            <div class="col-md-4 myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-4b_1d19c7fb-8da7-407e-8612-946e106cc508_small.png?v=1661244611">
+            </div>
+            <div class="col-md-8 myText">
+              <p class="mb-0">Secure <br>Checkout</p>
+            </div>
+          </div>
+        </div>
+                        
+        <div class="col-2 pipe p-0">
+          <div class="row myIconRow">
+            <div class="col-md-4 myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-black-v1_small.png?v=1661245767">
+            </div>
+            <div class="col-md-8 myText">
+              <p class="mb-0">GST <br>Billing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {%- else -%}
   {%- comment -%}
   The quick shop HTML being very different, we render it here. On mobile and tablet/desktop, the product renders also
@@ -124,15 +228,19 @@
 
           <a href="{{ product.url }}" class="product-item-meta__title">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</a>
 
-          {%- if product.tags contains 'flash-sale' -%}
-          {% assign discount_price = product.selected_or_first_available_variant.price | times: settings.flash_discount | divided_by: 100  %}
-          {% assign discounted_price = product.selected_or_first_available_variant.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
-          {%- else -%}
-          {% assign discounted_price = product.selected_or_first_available_variant.price %}
-          {%- endif -%} 
+            {% capture fixed_discount %}
+              {% render 'fixed-discount-by-tag', product: product %}
+            {% endcapture %}
+            {%- if product.tags contains settings.tag_selector -%}
+            {% assign discount_price =  fixed_discount | times: 100 %}
+            {% assign discount_price =  product.selected_or_first_available_variant.price | minus: discount_price %}
+            {% assign discounted_price = product.selected_or_first_available_variant.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
+            {%- else -%}
+            {% assign discounted_price = product.selected_or_first_available_variant.price %}
+            {%- endif -%}  
 
           <div class="product-item-meta__price-list-container" role="region" aria-live="polite">
-            <div class="price-list{% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list>
+            <div class="price-list{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom_product_pod_price {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list data-pod="{{ fixed_discount | strip }}">
               {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
                 <span class="price price--highlight quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -143,7 +251,12 @@
                     {{- discounted_price | money | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-
+                {% if product.compare_at_price > discounted_price %}
+                <p class="custom-saved-price">{{
+                  product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
+                  round
+                  | append: '% Off' }} </p>
+                {% endif %}
                 <span class="price price--compare line-through">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -191,7 +304,7 @@
               <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
             {%- endif -%}
           </div>
-
+          
         </product-meta>
         
       </div>
@@ -231,7 +344,7 @@
         </button>
       </header>
 
-      <div class="popover__content popover__content--no-padding">
+      <div class="popover__content ">
         {%- render 'product-form', product: product -%}
       </div>
     </quick-buy-popover>
@@ -245,6 +358,7 @@
          productCategories: {{product.collections|map:'title'|json}}
        }]);
 </script>
+
 {% schema %}
 {
   "name": "Product page",
@@ -548,6 +662,11 @@
     }
   ],
   "settings": [
+    {
+      "type": "text",
+      "id": "banners_url",
+      "label": "bannersurl + redirectionurl"
+    },
 	{
       "type": "checkbox",
       "id": "show_timer_on_all",

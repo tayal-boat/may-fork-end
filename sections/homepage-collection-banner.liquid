@@ -1,5 +1,5 @@
 <section class="homepage-collection-banner container" id="homepage-collection-banner">
-
+  {%- capture hp_collection_banner -%}
     <div id="banner-{{ section.id }}" class="carousel slide carousel-fade collection-banners collection-banners-{{section.id}}" data-ride="carousel">
       <ol class="carousel-indicators">
         {%- for block in section.blocks -%}
@@ -20,7 +20,7 @@
         {%- endfor -%}
       </div>
     </div>
-
+  {%- endcapture -%}
 </section>
 
 {% schema %}
@@ -63,4 +63,23 @@
 {% endschema %}
 
 
+<script type="text/javascript">
+  $(document).ready(function(){
+      var html_content = `{{ hp_collection_banner }}`;
+        $('.homepage-collection-banner').html(html_content);
+        /* let collection_slides = document.querySelectorAll('.collection-banners .carousel-inner .carousel-item');
+        collection_slides.forEach((slide, i) => {
+            slide.addEventListener('click', function() {
+                {% comment %} let imageTitle = slide.querySelector('.image_alt').innerText; {% endcomment %}
+                const slideNum = `${i+1}`
+                clevertap.event.push("Deals Banner clicked", {
+                "Banner Number": 'Banner ' + slideNum,
+                "Banner Title": imageTitle,
+                "userSource": userSource
+                })
+            })
+        }); */
+  
+      });
+</script> 
 

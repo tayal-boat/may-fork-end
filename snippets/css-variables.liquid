@@ -22,7 +22,7 @@
 We only preload the main variations of the custom fonts rather than all the variations, as per recommendation by Shopify.
 It seems that preloading all the variations upfront can cause performance issue and delay the loading of more important
 other resources, such as CSS or JS
-{%- endcomment -%}
+
 
 {%- unless settings.heading_font.system? -%}
   <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
@@ -32,8 +32,10 @@ other resources, such as CSS or JS
 {%- unless settings.text_font.system? -%}
   <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
 {%- endunless -%}
+{%- endcomment -%}
 
 <style>
+  @import url("https://cdn.jsdelivr.net/npm/@xz/fonts@1/serve/metropolis.min.css");
   /* Typography (heading) */
   {{ settings.heading_font | font_face: font_display: 'swap' }}
 
@@ -98,11 +100,12 @@ other resources, such as CSS or JS
     --root-primary-button-text-color: {{ settings.primary_button_text_color.red }}, {{ settings.primary_button_text_color.green }}, {{ settings.primary_button_text_color.blue }};
 
     --base-font-size: {{ settings.text_font_size }}px;
-    --heading-font-family: {{ settings.heading_font.family }}, {{ settings.heading_font.fallback_families }};
+    
+    --heading-font-family: "Metropolis", {{ settings.heading_font.fallback_families }};
     --heading-font-weight: {{ settings.heading_font.weight }};
     --heading-font-style: {{ settings.heading_font.style }};
     --heading-text-transform: {{ settings.heading_text_transform }};
-    --text-font-family: {{ settings.text_font.family }}, {{ settings.text_font.fallback_families }};
+    --heading-font-family: "Metropolis", {{ settings.heading_font.fallback_families }};
     --text-font-weight: {{ settings.text_font.weight }};
     --text-font-style: {{ settings.text_font.style }};
     --text-font-bold-weight: {{ text_font_bold.weight | default: '700' }};

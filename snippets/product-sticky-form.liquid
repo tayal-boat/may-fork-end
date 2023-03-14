@@ -130,8 +130,8 @@
 {{- 'product.form.pre_order' | t -}}
             </button>
             {%- else -%}
-          <button id="StickyAddToCart" is="loader-button" form="{{ product_form_id }}" type="submit" data-product-add-to-cart-button {% unless buy_buttons_block.settings.show_payment_button %}data-use-primary{% endunless %} data-button-content="{{ button_content | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if buy_buttons_block.settings.show_payment_button %}button--secondary{% else %}button--primary{% endif %}{% endunless %}" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-              {%- if product.selected_or_first_available_variant.available -%}
+          <button id="StickyAddToCart" is="loader-button" {% if product.selected_or_first_available_variant.inventory_quantity < settings.sold_out_threshold %} disabled {% endif %} form="{{ product_form_id }}" type="submit" data-product-add-to-cart-button {% unless buy_buttons_block.settings.show_payment_button %}data-use-primary{% endunless %} data-button-content="{{ button_content | escape }}" class="product-form__add-button button {% unless product.selected_or_first_available_variant.available %}button--ternary{% else %}{% if buy_buttons_block.settings.show_payment_button %}button--secondary{% else %}button--primary{% endif %}{% endunless %}" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              {%- if product.selected_or_first_available_variant.inventory_quantity >= settings.sold_out_threshold -%}
                 {{- button_content -}}
               {%- else -%}
                 {{- 'product.form.sold_out' | t -}}

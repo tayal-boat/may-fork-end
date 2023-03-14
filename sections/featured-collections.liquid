@@ -5,7 +5,7 @@
 {%- endif -%}
 
 <style>
-    #shopify-section-{{ section.id }} {
+    #shopify-section-{{ section.id }} { 
       {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
         {%- assign section_background = settings.background -%}
       {%- else -%}
@@ -40,82 +40,74 @@
       --prev-next-button-background: {{ settings.background.red }}, {{ settings.background.green }}, {{ settings.background.blue }};
       --prev-next-button-color: {{ settings.text_color.red }}, {{ settings.text_color.green }}, {{ settings.text_color.blue }};
 
-      --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
-      --section-products-per-row: 2;
-         margin: {{ section.settings.padding }};
+      background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }});
+    --section-products-per-row:   {% if section.settings.horizontal_ui %}1 {% else %} 2{% endif %};
+      margin: {{ section.settings.padding }};
     }
-
     .tabs-nav__item-list button {
-      text-transform: unset !important;
-      font-weight:700 !important;
-      color: black;
-      border: 0px;
-      padding-bottom:0px;
-      padding-inline: 10px; 
-      padding-block:2px;
-      border-top-left-radius: 16px !important;
-      border-bottom-left-radius: 16px !important;
-      border-top-right-radius: 16px !important;
-      border-bottom-right-radius: 16px !important;
+      text-transform: unset !important;font-weight:700 !important;color: black;border: 0px;
+      padding-bottom:0px; padding-inline: 10px; padding-block:2px;border-top-left-radius: 16px !important;
+      border-bottom-left-radius: 16px !important;border-top-right-radius: 16px !important; border-bottom-right-radius: 16px !important;
     }
-    .tabs-nav__item-list {
-      box-shadow: none;
-    }
-    .tabs-nav--center .tabs-nav__scroller-inner {
-      margin-left: 0;
-    }
+    .tabs-nav__item-list {box-shadow: none;}
+    .tabs-nav--center .tabs-nav__scroller-inner {margin-left: 0;}
     button.tabs-nav__item.heading.heading--small{color:black;margin-right: 4vw;padding: 0.2rem 1rem;}
     button.tabs-nav__item.heading.heading--small[aria-expanded="false"]{
-      background-color: #e3e3e3;
-      color:black;
-      opacity:1;
-      font-weight: 500 !important;
+      background-color: #e3e3e3;color:black;opacity:1;font-weight: 500 !important;
     }
-
-  button.tabs-nav__item.heading.heading--small[aria-expanded="true"]{
-    
-    background-color: #000;
-    color: #fff;
-    }
-
-  .tabs-nav__scroller-inner .tabs-nav__position {
-    --translate: 0;
-    --scale: 0;
-  }
-  [dir=ltr] .tabs-nav__position{
-    left: 0;
-  }
-  
+  button.tabs-nav__item.heading.heading--small[aria-expanded="true"]{ background-color: #000;color: #fff;}
+  .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
+  [dir=ltr] .tabs-nav__position{left: 0;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
-      @media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
      .tabs-nav--edge2edge {margin-top: 12px!important;}
-      }
-    @media screen and (min-width: 741px) {
-      #shopify-section-{{ section.id }} {
-        --section-products-per-row: {{ section.settings.products_per_row | at_most: 3 }};
-      }
+    }
+  @media screen and (min-width: 741px) {
+      #shopify-section-{{ section.id }} { --section-products-per-row: {{ section.settings.products_per_row | at_most: 3 }};}
     }
 
-    @media screen and (min-width: 1000px) {
+  @media screen and (min-width: 1000px) {
       .flash-desk{width:80%;}
-  /*     .pad-xl{padding-inline:2rem;} */
-    .product-list__inner--scroller {
-      margin-left:0;
+      .product-list__inner--scroller { margin-left:0; }
+      #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }}; }
     }
+  @media screen and (min-width: 1200px) {
       #shopify-section-{{ section.id }} {
-        --section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }};
+        --section-products-per-row: {{ section.settings.products_per_row }}; margin: {{ section.settings.padding_desktop }};
       }
-    }
-
-
-    @media screen and (min-width: 1200px) {
-      #shopify-section-{{ section.id }} {
-        --section-products-per-row: {{ section.settings.products_per_row }};
-     margin: {{ section.settings.padding_desktop }};
-      }
-        .product-item-meta__color-count {margin-bottom: 5px;}
-    }
+     .product-item-meta__color-count {margin-bottom: 5px;} 
+   }
+  {% if section.settings.horizontal_ui %}
+    .price-list {border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;}
+     .item-horizontal .product-item {flex-direction: row;}
+     .item-horizontal .product-item{flex-direction: column!important;}
+     .item-horizontal .product__wrapper{display:flex;min-height:170px;}
+     .product-list__inner.item-horizontal .product-item__info{border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 8px;border-bottom-right-radius: 8px;margin: 0 ;padding: 10px 12px 8px 16px;}
+     .product-list__inner.item-horizontal .product-item__info .product-item-meta__reviews-badge{padding: 0 8px;border-radius: 15px;border: solid 0.5px #adadad;background-color: #f1efef;margin: 8px 2px;    line-height: 1.8rem;display: flex;justify-content: space-between;}
+     .item-horizontal .product-item{border-radius: 8px; border: 1px solid #E7E7E7;background: #e7e7e7;}
+     .product-horizontal {width: 60%;}
+     .features-list.only-horizontal{margin: 0;border-top: 1px solid #e7e7e7;padding:0.8rem 0.5rem;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;background-color:white;}  
+     .features-list.only-horizontal span.feature{font-weight: 500;}
+  {% endif %}
+{% if section.settings.header_ui %}
+ #shopify-section-{{ section.id }} .tabs-nav__item-list {justify-content: center;}
+ #shopify-section-{{ section.id }} .tabs-nav--center .tabs-nav__scroller-inner {margin-left: auto;}
+ #shopify-section-{{ section.id }} p.view-all {display: none;}
+ #shopify-section-{{ section.id }} h3.heading {font-weight: 500;padding: 0 20px 20px;position: relative;}
+@media(max-width: 768px){
+  #shopify-section-{{ section.id }} .tabs-nav__item-list {flex-wrap: wrap;justify-content: center!important;width: 88vw;gap: 20px;}
+  #shopify-section-{{ section.id }}  header.section__header {padding: 5vw 0;background: #e3e3e3;border-radius: 8px;}
+  #shopify-section-{{ section.id }}  button.tabs-nav__item.heading.heading--small {border: 1px solid;padding: 2px 20px;}
+  #shopify-section-{{ section.id }} button.tabs-nav__item.heading.heading--small {margin-right: 0;}
+  #shopify-section-{{ section.id }} h3.heading.h2::before {
+   content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
+   position: absolute; top: -28px; left: -8px;
+  }
+  
+}
+{% endif %}
+    
 </style>
 
 <section class="section section--flush">
@@ -138,16 +130,13 @@
         {%- endif -%}
         {% if section.settings['title-url'] and settings.enable_flash_sale %}
           <a style="display:flex;flex-direction: column;justify-content: left;" href="{{section.settings.title-url}}" class="align-items-lg-center flash-desk flex-lg-row-reverse">
-            <!-- <p class="text-black text-right mr-lg-5">
-                <b><u>View All</u></b>
-              </p> -->
             <div class="flash_sale">
               <p class="m-0 text-uppercase flash_text">
                 <span class="thunder"
                   ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
                     <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"></path>
                     </svg></span
-                >&nbsp;{{ settings.flash_sale_title }}
+                >&nbsp;
 
               </p>
               {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
@@ -206,7 +195,8 @@
                 class="scroller"
               {% endunless %}
             >
-              <div class="product-list__inner {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
+              <div
+                class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
                 {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
                 {%- assign gap_width = 24.0
                   | divided_by: section.settings.products_per_row
@@ -341,6 +331,12 @@
       "default": "input"
     },
     {
+      "type": "checkbox",
+      "id": "header_ui",
+      "label": "festive header_ui",
+      "default": false
+    },
+    {
       "type": "url",
       "id": "title-url",
       "label": "required-input-for-flash-sale"
@@ -366,13 +362,19 @@
       "default": 8
     },
     {
+      "type": "checkbox",
+      "id": "horizontal_ui",
+      "label": "horizontal-ui",
+      "default": false
+      },
+      {
       "type": "range",
       "id": "products_per_row",
       "label": "Products per row (desktop)",
       "min": 2,
       "max": 6,
       "step": 1,
-      "default": 5
+      "default": 4
     },
     {
       "type": "checkbox",
