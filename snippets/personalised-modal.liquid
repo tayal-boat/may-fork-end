@@ -58,6 +58,7 @@
       const editMessage=document.querySelector(".edit-msg");
   const msgContainer=document.querySelector(".message-form-container");
   const customHeading=document.querySelector(".custom-prebook-heading");
+  const customSubHeading=document.querySelector(".custom-prebook-subheading");
       let sessionValue=sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"));
       let url=window.location.href;
       //Finding line item from URL params
@@ -69,6 +70,13 @@
     let currentInputValue = '';
   let value="";
   let str=""
+  if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+    customHeading.innerHTML=``;
+    customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
+    $('.edit-red').click(function() {
+      personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
+    })
+  }
   personalizedText.addEventListener('keypress', function inputKeypressHandler(e) {
 
       // keypress event on input box is listened here and this function is triggered
@@ -139,7 +147,8 @@
           if(pmsg){
           personalizedText.value=pmsg.toUpperCase();
             currentInputValue=personalizedText.value;
-            customHeading.innerHTML=`Personalized message : ${currentInputValue}`;
+            customHeading.innerHTML=``;
+            customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${currentInputValue}`;
           }else{
             currentInputValue="";
           }
@@ -189,7 +198,8 @@
         console.log(personalizedMessageOriginal.value)
           closePersonalizationModal()
           storePersonalizedMessage()
-        customHeading.innerHTML=`Personalized message : ${personalizedMessageOriginal.value}`;
+          customHeading.innerHTML=``;
+          customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${personalizedMessageOriginal.value}`;
           if(!url.includes("&personalized")){
             btnClick()
           }else{

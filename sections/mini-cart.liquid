@@ -218,14 +218,16 @@
                         {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                         {%- assign allow_more = false -%}
                       {%- endif -%}
-                {% for p in line_item.properties %}
-                  {% if p.last != blank and p.first == 'Personalised Message' %}
-                        <line-note class="customise-accordian" line={{ forloop.index }}>
-                    <span>Customization</span>
-                     <span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
-                    </line-note>
-                  {% endif %}
-                    {% endfor %}
+                      {% if line_item.product.tags contains 'customized' %}
+                        {% for p in line_item.properties %}
+                          {% if p.last != blank and p.first == 'Personalised Message' %}
+                            <line-note class="customise-accordian" line={{ forloop.index }}>
+                              <span>1 customization</span>
+                              <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
+                            </line-note>
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
                       <line-item-quantity class="line-item__quantity">
                         <div class="quantity-selector">
                           <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
@@ -294,15 +296,12 @@
                   </div>
                 {% assign data-loop = forloop.index %}
           
-                  {% if line_item.product.variants.size > 1 %}
-                      <p class="margin visually-hidden">More than one variants.</p>
-                  {% endif %}
                   {% for p in line_item.properties %}
                             {% if p.last != blank and p.first == 'Personalised Message' %}
                               <div class="personalised-msg-container visibility-hidden" line={{ data-loop }}>
                               <div class="personalised-msg-wrapper">
                               <div class="personalised-msg-content">
-                              <p style="font-size:12px; font-weight: 700">{{ p.last }}</p>
+                              <p style="font-size:10px; font-weight: 500;letter-spacing: -0.1px;line-height: normal;">{{ p.last }}</p>
                               <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
                               <span class="edit-msg">Edit</span>
                               </a>
@@ -323,7 +322,7 @@
           Add more items
           </div>
           </div>
-          <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+          <button type="button" class="drawer__close-button tap-area visually-hidden" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
             click
           </button>
           {% render 'freebie-cart_gift' %} 
