@@ -382,10 +382,17 @@
                 </div>
                 <p class="tax_info">Inclusive of all taxes</p>
               {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
-              <div class="desktop current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
-                style="display: none;" {% endunless %}>
-                {{ random_cart }}
-              </div>
+              {% if product.tags contains 'customized' %}
+                <div class="desktop current-in-cart free-personalised" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+                  style="display: none;" {% endunless %}>
+                  <p class="currently-in-cart" style="font-weight: 600; font-size: 12px; line-height: 17px; color: #ed1c24;text-align:center;"> Personalisation offer for only first 120 customers</p>
+                </div>
+              {% else %}
+                <div class="desktop current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+                  style="display: none;" {% endunless %}>
+                  {{ random_cart }}
+                </div>
+              {% endif %}
                 <div class="desktop restocking" style="{% if product_varient.inventory_quantity > settings.sold_out_threshold %}
                display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
@@ -635,6 +642,12 @@
         {%- endif -%}
         <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer" {% endif %}
           class="product-form__payment-container" {{ block.shopify_attributes }}>
+          {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+            <p class="line-item-property__field" hidden>
+              <label for="personalised_message">Message</label>
+              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}">
+            </p>
+          {% endif %}
           {%- if product.tags contains 'prebooking' -%}
           <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
             block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
@@ -673,7 +686,7 @@
 
           {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
-          {% unless product.tags contains settings.products_offering_freebie or product.handle contains 'gift-card'  %}
+          {% unless product.tags contains settings.products_offering_freebie %}
           <div class="amazon-c d-flex align-items-baseline justify-content-between">
               <button id="BIS_trigger" type="button" class="custom-notify-btn"
               data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
@@ -711,6 +724,7 @@
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
     <div class="d-flex flex-column" aria-role="additonal-info">
       <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>
+        {%- render 'personalised-modal' -%}
       {% if product.metafields.custom.product_highlights %}
       <div class="price-container product-highlight mt-3 desktop">
         <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
