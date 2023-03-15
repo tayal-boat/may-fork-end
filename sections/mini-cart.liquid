@@ -217,14 +217,18 @@
                         {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                         {%- assign allow_more = false -%}
                       {%- endif -%}
+                      {% if line_item.product.tags contains 'customized' %}
                         {% for p in line_item.properties %}
                           {% if p.last != blank and p.first == 'Personalised Message' %}
                             <line-note class="customise-accordian" line={{ forloop.index }}>
                               <span>1 customization</span>
                               <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
                             </line-note>
+                          {% elsif p.last == blank and p.first == 'Personalised Message' %}
+                            <a href="{{line_item.url | append: '&personalized'}}" class="add-customization">Customize</a>
                           {% endif %}
                         {% endfor %}
+                      {% endif %}
                       <line-item-quantity class="line-item__quantity">
                         <div class="quantity-selector">
                           <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
