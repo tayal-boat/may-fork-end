@@ -2,22 +2,21 @@
       <span class="drawer__overlay"></span>
   
         <header class="drawer__header">
-          <p class="drawer__title heading h6">
-            Your Cart
-  
-           <span class="ms-3">{%- if cart.item_count == 0 -%}
-              
-            {%- else -%}
-            ( {{- 'cart.general.item_count' | t: count: cart.item_count -}} )
-             {%- endif -%}</span>
-            <input class="cart--count" value="{{cart.item_count}}" type="hidden">
-          </p>
+          <div class="" style="font-size: 10px;line-height: 13px;padding-right: 16px;">{{section.settings.cart_announcement}}</div>
   
           <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
             {%- render 'icon' with 'close' -%}
           </button>
         </header>
-      <div class="ribbon">{{section.settings.cart_announcement}}</div>
+      <p class="drawer__title heading h6" style="padding: 12px 12px 0;color: #2B2B2B;font-weight: 600;font-size: 14px;">
+       Your Cart
+  
+       {% comment %} <span class="ms-3">{%- if cart.item_count == 0 -%}
+        {%- else -%}
+        ( {{- cart.item_count -}} )
+         {%- endif -%}</span>
+        <input class="cart--count" value="{{cart.item_count}}" type="hidden"> {% endcomment %}
+      </p>
         {%- if cart.item_count == 0 -%}
           <div class="drawer__content drawer__content--center">
             <p>{{ 'cart.general.empty' | t }}</p>
@@ -68,8 +67,11 @@
               <input type="hidden" name="checkout">
   
               {%- for line_item in cart.items -%}
-                <line-item class="line-item" data-item-id="{{ line_item.id }}">
+                
+                <line-item class="line-item" data-item-id="{{ line_item.id }}" data-itemkey="{{ line_item.key }}">
                   <div class="line-item__content-wrapper">
+                      {% comment %} <input type="hidden" name="properties[Personalised Message]" value="test">
+                    <span class="update-prop" data-itemkey="{{ line_item.key }}">Update Prop</span> {% endcomment %}
                     <a href="{{ line_item.url }}" class="line-item__image-wrapper" tabindex="-1" aria-hidden="true">
                       <span class="line-item__loader" hidden>
                         <span class="line-item__loader-spinner spinner" hidden>{% render 'icon' with 'spinner', width: 16, height: 16, stroke_width: 6 %}</span>
@@ -183,9 +185,21 @@
                           {%- endif -%}
   
                         </div>
+                          
   
                       </div>
-  
+                      <div class="edit-cart visually-hidden">
+                      <select name="updates[]" data-product-id="{{line_item.product.id}}" >
+                        {% for variant in line_item.product.variants %}
+                        <option id="{{variant.id}}" value="{{variant.id}}" {% if variant.inventory_quantity == 0 %}disabled{% endif %}>{{variant.option1}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                      {%- if line_item_properties != blank -%}
+                        <div class="product-item-meta__property-list">
+                          {{- line_item_properties -}}
+                        </div>
+                      {%- endif -%}
                       {%- if line_item.line_level_discount_allocations != blank -%}
                         <ul class="line-item__discount-list list--unstyled" role="list">
                           {%- for discount_allocation in line_item.line_level_discount_allocations -%}
@@ -194,7 +208,7 @@
                             </li>
                           {%- endfor -%}
                         </ul>
-                      {%- endif -%}
+                      {%- endif -%} 
   
                       {%- assign max_allowed_quantity = '' -%}
                       {%- assign allow_more = true -%}
@@ -203,9 +217,16 @@
                         {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                         {%- assign allow_more = false -%}
                       {%- endif -%}
-  
+                        {% for p in line_item.properties %}
+                          {% if p.last != blank and p.first == 'Personalised Message' %}
+                            <line-note class="customise-accordian" line={{ forloop.index }}>
+                              <span>1 customization</span>
+                              <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
+                            </line-note>
+                          {% endif %}
+                        {% endfor %}
                       <line-item-quantity class="line-item__quantity">
-                        <div class="quantity-selector quantity-selector--small">
+                        <div class="quantity-selector">
                           <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
                             {%- render 'icon' with 'minus' -%}
                           </a>
@@ -247,13 +268,9 @@
                               </span>
                             {%- endif -%}
                           {%- endif -%}
-                        {%- if line_item_properties != blank -%}
-                          <div class="product-item-meta__property-list">
-                            {{- line_item_properties -}}
-                          </div>
-                        {%- endif -%}
+
                         </div>
-                        <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                 
+                        {% comment %} <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a>                  {% endcomment %}
                       </line-item-quantity>
                       {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
                           <small class="qty-error-msg text-red mt-2">Not more than 1 unit are allowed for this item.</small>
@@ -274,19 +291,37 @@
                       {% endif %}
                     </div>
                   </div>
-  
-                  {% if line_item.product.variants.size > 1 %}
-                      <p class="margin visually-hidden">More than one variants.</p>
-                  {% endif %}
-  
-                  <select name="updates[]" data-product-id="{{line_item.product.id}}" class="edit-cart visually-hidden">
-                    {% for variant in line_item.product.variants %}
-                    <option id="{{variant.id}}" value="{{variant.id}}" {% if variant.inventory_quantity == 0 %}disabled{% endif %}>{{variant.option1}}</option>
-                    {% endfor %}
-                  </select>
+                {% assign data-loop = forloop.index %}
+          
+                  {% for p in line_item.properties %}
+                            {% if p.last != blank and p.first == 'Personalised Message' %}
+                              <div class="personalised-msg-container visibility-hidden" line={{ data-loop }}>
+                              <div class="personalised-msg-wrapper">
+                              <div class="personalised-msg-content">
+                              <p style="font-size:10px; font-weight: 500;padding-top:2px;">{{ p.last }}</p>
+                              <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
+                              <span class="edit-msg">Edit</span>
+                              </a>
+                              </div>
+                              <div class="personalised-msg-free">Free</div>
+                              </div>
+                              </div>
+                            {% endif %}
+                          {% endfor %}
                 </line-item>
               {%- endfor -%}
             </form>
+          <div  class="add-items" data-action="close">
+          <div class="add-item-icon">
+          <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z" fill-rule="nonzero"/></svg>
+          </div>
+          <div class="add-item-content">
+          Add more items
+          </div>
+          </div>
+          <button type="button" class="drawer__close-button tap-area visually-hidden" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+            click
+          </button>
           {% render 'freebie-cart_gift' %} 
   
             {%- if section.settings.show_recommendations -%}
@@ -336,14 +371,7 @@
                               {%- if matching_product.size == 0 -%}
                                 <span class="mini-cart__recommendations-heading heading heading--small hidden-pocket">
                                    {{ section.settings.recommendations_title | escape }}
-                                 <span class="gst-container">
-                                    <svg xmlns="http://www.w3.org/2000/svg" version="1" width="16" height="16" viewBox="0 0 20 20">
-                                     <path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z" />
-                                    </svg>
-                                   <span class="gst-icon-detail gst_style">
-                                     <p>Products may be delivered from different warehouses subject to availability</p>
-                                   </span>
-                                 </span>
+
                                </span>
 
                                <span class="mini-cart__recommendations-heading heading heading--xsmall text--subdued hidden-lap-and-up">
@@ -379,23 +407,23 @@
            {%- endif -%} 
          
 </div>
-
+<div class="mini-cart__gst">
+  <div class="gst-container">
+   <label class="check_container">
+     <svg xmlns="http://www.w3.org/2000/svg" version="1" width="20" height="20" viewBox="0 0 20 20"><path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z"/></svg>
+      Get GST Invoice / 
+     <input type="checkbox">
+      <span class="checkmark"></span>
+     Pay Via Gift Cards 
+    </label>
+    <div class="gst-icon-detail">
+      <p>Billing name &amp; billing address on invoice will be the name &amp; principal place of business address registered with GST portal. Shipping name &amp; shipping address can be changed to your choice.</p>
+     </div>
+   </div>
+</div>
           <footer class="mini-cart__drawer-footer drawer__footer drawer__footer--tight drawer__footer--bordered">
    
-          <div class="mini-cart__gst">
-            <div class="gst-container">
-             <label class="check_container">
-               <svg xmlns="http://www.w3.org/2000/svg" version="1" width="20" height="20" viewBox="0 0 20 20"><path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z"/></svg>
-                Get GST Invoice / 
-               <input type="checkbox">
-                <span class="checkmark"></span>
-               Pay Via Gift Cards 
-              </label>
-              <div class="gst-icon-detail">
-               <p>Billing name & billing address on invoice will be the name & principal place of business address registered with GST portal. Shipping name & shipping address can be changed to your choice.</p>
-              </div>
-             </div>
-          </div>
+
 
 
         <div class="mini-cart_footer_container">
@@ -452,14 +480,6 @@
               <p class="coupon-d">Coupon Discount</p>
               <p class="coupon-p">Rs 0</p>
             </div>
-            <div class="total-shipping">
-              <h4 class="shipping-title">Shipping: </h4>
-              <h4 class="shipping-price" style="margin: 0;font-size: 16px;">FREE</h4>
-            </div>
-            <div class="total-am">
-              <h4 class="tam">Total Amount: </h4>
-              <h4 class="tam_p" style="margin: 0;font-size: 16px;">{{- cart.total_price | money_with_currency -}}</h4>
-            </div>
             {%- if cart.cart_level_discount_applications != blank -%}
               <ul class="mini-cart__discount-list list--unstyled" role="list">
                 {%- for discount_application in cart.cart_level_discount_applications -%}
@@ -489,11 +509,7 @@
               </div>
             {%- endif -%}
             {%- endcomment -%}
-            <div class="d-flex justify-content-between">
-              <span class="cart-total pb-2"> <b>Total:</b></span>
-              <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
-              <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' -}}</b></span>
-            </div>
+ 
   
         {%- if section.settings.show_checkout_button -%}
               {% if cart.total_price <= 4900000 %}
@@ -503,17 +519,16 @@
                   {%- assign qty_error_msg = 'Please Modify your cart to proceed.' -%}
                   {%- assign product_limit_ok = true -%}
                   {%- assign product_flash = false -%}
-                        {% for line_item in cart.items %}
-                  {% if line_item.product.tags contains 'prebooking' %} 
-                    {%- assign magic_ok = false -%}
-                  {% endif %}
-                  {% if line_item.product.tags contains 'flash-sale' %}
-                    {%- assign product_flash = true -%}
-                  {% endif %}
-                  {% if line_item.product.tags contains 'GK-Only' %}
-                    {%- assign only_gk = true -%}
-                  {% endif %}
-            
+                  {% for line_item in cart.items %}
+                    {% if line_item.product.tags contains 'prebooking' %} 
+                      {%- assign magic_ok = false -%}
+                    {% endif %}
+                    {% if line_item.product.tags contains 'flash-sale' %}
+                      {%- assign product_flash = true -%}
+                    {% endif %}
+                    {% if line_item.product.tags contains 'GK-Only' %}
+                      {%- assign only_gk = true -%}
+                    {% endif %}
                       {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
                           {%- assign product_limit_ok = false -%}
                       {% endif %}
@@ -536,12 +551,33 @@
                           {%- assign is_validation_ok = false -%}
                       {% endif %}
                   {% endfor %}
-                  <p class="text-center">
-                    <button type="button" style="color:#ff0000;font-weight: 600 !important;" class=" tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
-                        Continue Shopping  {% render 'icon' with 'product-tab-right' %}
-                    </button>
-                  </p>
-                  <div class="mini-cart_footer">
+                  <div class="mini-cart_footer d-flex justify-content-between">
+                <div style="padding-right: 4%;border-right: 1px solid #dbdbdb;">
+                    <div class="d-flex align-items-baseline" style="gap:6%">
+                    <div class="d-flex flex-column" >
+                      <span class="cart-total"> <b>Total</b></span>
+                    </div>
+                    <div>
+                    <span class="gst-container">
+                      <svg xmlns="http://www.w3.org/2000/svg" version="1" width="12" height="12" viewBox="0 0 20 20">
+                       <path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z" />
+                      </svg>
+                     <span class="gst-icon-detail total">
+                       <p> Shipping: <b>FREE</b></p>
+                       <p> Total: <b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></p>
+                     </span>
+                   </span>
+                    </div>
+                    <div class="test">
+                <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
+                      <span class="cart-total-text total-price"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></span>
+                </div>
+                
+                  </div>
+                <div>
+                <small>Inclusive of all taxes</small>
+                </div>
+                       </div>
                   {% if is_validation_ok == true and product_limit_ok == true and only_gk == true %}
                       <div class=" checkout-buttons-div">
                         {% render 'only-gokwik' %}
@@ -677,8 +713,36 @@
       "Amount": cart_total_price
     });
   }); */
-  </script>
-  
+
+  const lineItems = Array.from(document.querySelectorAll('line-item'));
+    const updatePropBtns = Array.from(document.querySelectorAll('.update-prop'));
+    updatePropBtns.forEach(btn => {
+      const itemKey = btn.dataset.itemkey;
+      btn.addEventListener('click', () => {
+        updateItemOne(itemKey, 'sheenagarg')
+      })
+    })
+    
+    function updateItemOne(key, propValue) {
+      $.ajax({
+        url: "/cart/change.js",
+        type: "POST",
+        data: JSON.stringify(
+          {
+            "id":`${key}`,
+            "properties":
+              { "Personalised Message": `${propValue}` }
+           }
+        ), 
+        contentType: "application/json",
+        dataType: 'json'
+    })
+      document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));                                 
+    }; 
+   
+
+          
+</script>
   {% schema %}
       {
         "name": "Cart drawer",
