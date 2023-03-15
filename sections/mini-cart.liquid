@@ -217,14 +217,6 @@
                         {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                         {%- assign allow_more = false -%}
                       {%- endif -%}
-                        {% for p in line_item.properties %}
-                          {% if p.last != blank and p.first == 'Personalised Message' %}
-                            <line-note class="customise-accordian" line={{ forloop.index }}>
-                              <span>1 customization</span>
-                              <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
-                            </line-note>
-                          {% endif %}
-                        {% endfor %}
                       <line-item-quantity class="line-item__quantity">
                         <div class="quantity-selector">
                           <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
@@ -292,22 +284,6 @@
                     </div>
                   </div>
                 {% assign data-loop = forloop.index %}
-          
-                  {% for p in line_item.properties %}
-                            {% if p.last != blank and p.first == 'Personalised Message' %}
-                              <div class="personalised-msg-container visibility-hidden" line={{ data-loop }}>
-                              <div class="personalised-msg-wrapper">
-                              <div class="personalised-msg-content">
-                              <p style="font-size:10px; font-weight: 500;padding-top:2px;">{{ p.last }}</p>
-                              <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
-                              <span class="edit-msg">Edit</span>
-                              </a>
-                              </div>
-                              <div class="personalised-msg-free">Free</div>
-                              </div>
-                              </div>
-                            {% endif %}
-                          {% endfor %}
                 </line-item>
               {%- endfor -%}
             </form>
