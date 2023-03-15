@@ -19,7 +19,12 @@
         <div class="personalization-sub-heading">Fast,Free Engraving Of Letters With A Click</div>
       </div>
       <div class="personalization-image-wrapper">
-        <img src="{{ product.selected_or_first_available_variant.featured_image | image_url }}">
+        {% if product.selected_or_first_available_variant.metafields.custom.personalised_image != blank %}
+          <img src="{{ product.selected_or_first_available_variant.metafields.custom.personalised_image }}">
+        {% else %}
+          <img src="{{ product.selected_or_first_available_variant.featured_image | image_url }}">
+        {% endif %}
+        <div class="personalization-image-txt visually-hidden"></div>
       </div>
       <input
         type="text"
@@ -60,14 +65,15 @@
       const line_item = urlParams.get('line-item');
       const pmsg = urlParams.get('msg');
       //Input validation
-    let currentInputValue = '';
-    let value="";
-    let str=""
-    if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
-      customHeading.innerHTML=``;
-      customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
-    }
-  personalizedText.addEventListener('keypress', function inputKeypressHandler(e) {
+      let currentInputValue = '';
+      let value="";
+      let str=""
+      const imageText=document.querySelector(".personalization-image-txt");
+      if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+        customHeading.innerHTML=``;
+        customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
+      }
+    personalizedText.addEventListener('keypress', function inputKeypressHandler(e) {
 
       // keypress event on input box is listened here and this function is triggered
       // which key is pressed, keyPressed = e.which || e.keyCode;
@@ -93,11 +99,17 @@
           e.preventDefault();
       }
   });
-        personalizedText.addEventListener("keydown",(e)=>{
-      if(e.keyCode==8){
-      str=personalizedText.value.slice(0,personalizedText.value.length-1);
-      currentInputValue=str;
-      }
+      personalizedText.addEventListener("keydown",(e)=>{
+        if(e.keyCode==8){
+        str=personalizedText.value.slice(0,personalizedText.value.length-1);
+        currentInputValue=str;
+        }
+      })
+      personalizedText.addEventListener("keyup",()=>{
+        setTimeout(()=>{
+          imageText.innerHTML= currentInputValue ? `<span>${currentInputValue.toUpperCase()}</span>`: '';
+          console.log(currentInputValue)
+        },2000)
       })
       function openPersonalizationModal() {
           personalizationModalOverlay.classList.remove('hide')
@@ -136,10 +148,11 @@
         if(!url.includes("&personalized")){
           personalizationModal.classList.add("hide-popup","hide");
           personalizationModalOverlay.classList.add("hide");
-    personalizedText.value="";
+          personalizedText.value="";
         }else{
           if(pmsg){
-          personalizedText.value=pmsg.toUpperCase();
+            personalizedText.value=pmsg.toUpperCase();
+            imageText.innerHTML= pmsg ? `<span>${pmsg.toUpperCase()}</span>` : '';
             currentInputValue=personalizedText.value;
             customHeading.innerHTML=``;
             customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${currentInputValue}`;
