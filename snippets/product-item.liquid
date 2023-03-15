@@ -78,7 +78,12 @@
   class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
   {% if reveal %}reveal{% endif %}>
   <div class="product__wrapper">
-  <div class="{% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}">
+  <div class="labels-wrapper {% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
+    {% if product.metafields.product_labels.label %}
+    <span class="metafeild-label label--highlight custom-label label bg-black">
+       {{- product.metafields.product_labels.label -}}
+    </span>
+  {% endif %}
     {% if product_soldout == false %}
       {%- for tag in product.tags -%}
         {%- if tag contains 'Free-' -%}
@@ -93,8 +98,8 @@
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="12"
+              height="12"
               fill="currentColor"
               class="bi bi-lightning-fill"
               viewBox="0 0 16 16">
@@ -194,11 +199,11 @@
             {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
         {%- endif -%}
       </a>
-      {% unless template contains 'collection' or section.settings.horizontal_ui %}
+      {% comment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}
         {% if product.available and product.tags contains 'flash-sale' -%}
           {%- render 'inventory-bar' with product -%}
         {%- endif -%}
-      {%- endunless -%}
+      {%- endunless -%} {% endcomment %}
     </div>
   </div>
   <div class="product-item__info {% if show_cta %}product-item__info--with-button{% endif %} {% if reduced_font_size %}text--small{% endif %}">
@@ -221,11 +226,11 @@
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
         {{- product.title | split: '|' | first | split: 'boAt' | last -}}
       </a>
-      {% if template contains 'collection' %}
+      {% comment %} {% if template contains 'collection' %}
         {% if product.available and product.tags contains 'flash-sale' -%}
          {%- render 'inventory-bar' with product -%}
         {%- endif %}
-      {%- endif %}
+      {%- endif %} {% endcomment %}
       </div>
       {% comment %}
       Start automatically added Judge.me widget
