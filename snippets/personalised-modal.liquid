@@ -19,7 +19,8 @@
         <div class="personalization-sub-heading">Fast,Free Engraving Of Letters With A Click</div>
       </div>
       <div class="personalization-image-wrapper">
-        <img src="{{ product.selected_or_first_available_variant.featured_image | image_url }}">
+        <img src="{{ product.selected_or_first_available_variant.metafields.custom.personalised_image }}">
+        <div class="personalization-image-txt"></div>
       </div>
       <input
         type="text"
@@ -39,6 +40,22 @@
   </div>
 </div>
 <script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
       const customPrebookBtn = document.querySelector('.custom-prebook');
       const personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
       const personalizationModal = document.querySelector('.personilaztion-message-modal');
@@ -48,10 +65,8 @@
       const personalizedText = document.querySelector('#personalized-text');
       const personalizedMessageOriginal = document.querySelector('#personalised_message');
       const editMessage=document.querySelector(".edit-msg");
-      const msgContainer=document.querySelector(".message-form-container");
-      const customHeading=document.querySelector(".custom-prebook-heading");
-      const customSubHeading=document.querySelector(".custom-prebook-subheading");
-      const editText=document.querySelector(".edit-red");
+  const msgContainer=document.querySelector(".message-form-container");
+  const customHeading=document.querySelector(".custom-prebook-heading");
       let sessionValue=sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"));
       let url=window.location.href;
       //Finding line item from URL params
@@ -61,12 +76,9 @@
       const pmsg = urlParams.get('msg');
       //Input validation
     let currentInputValue = '';
-    let value="";
-    let str=""
-    if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
-      customHeading.innerHTML=``;
-      customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
-    }
+  let value="";
+  let str="";
+  const imageText=document.querySelector(".personalization-image-txt");
   personalizedText.addEventListener('keypress', function inputKeypressHandler(e) {
 
       // keypress event on input box is listened here and this function is triggered
@@ -99,6 +111,15 @@
       currentInputValue=str;
       }
       })
+
+  //test
+  personalizedText.addEventListener("keyup",()=>{
+    setTimeout(()=>{
+      imageText.innerHTML= currentInputValue ? `<span>${currentInputValue.toUpperCase()}</span>`: '';
+      console.log(currentInputValue)
+    },2000)
+  })
+  //Personlized popup opens
       function openPersonalizationModal() {
           personalizationModalOverlay.classList.remove('hide')
           personalizationModal.classList.remove('hide-popup',"hide")
@@ -106,11 +127,8 @@
            if(url.includes("&personalized")){
             personalizedText.value=currentInputValue;
            }
-          if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
-            personalizedText.focus()
-            personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
-          }
       }
+  //Personlized popup close
       function closePersonalizationModal() {
           personalizationModalOverlay.classList.add('hide')
           personalizationModal.classList.add('hide-popup',"hide")
@@ -120,6 +138,7 @@
           $('#AddToCart')[0].click();
         personalizedText.value="";
       }
+  //Cart refresh once update persolized text
       function cartRefresh() {
           document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
 
@@ -131,6 +150,7 @@
 
           }, 1500)
       }
+  //Updates text in the input box
       (()=>{
 
         if(!url.includes("&personalized")){
@@ -140,9 +160,9 @@
         }else{
           if(pmsg){
           personalizedText.value=pmsg.toUpperCase();
+          imageText.innerHTML= pmsg ? `<span>${pmsg.toUpperCase()}</span>` : '';
             currentInputValue=personalizedText.value;
-            customHeading.innerHTML=``;
-            customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${currentInputValue}`;
+            customHeading.innerHTML=`Personalized message : ${currentInputValue}`;
           }else{
             currentInputValue="";
           }
@@ -150,10 +170,12 @@
           personalizationModalOverlay.classList.remove("hide");
         }
       })()
+  //Store personalized text in session storage
       function storePersonalizedMessage(){
       sessionValue=sessionStorage.setItem(personalizedMessageOriginal.getAttribute("variant-id"), personalizedText.value);
       personalizedText.value=sessionValue;
       }
+  //Updates personalized text
       function updatePersonlizedMsg(){
          let formData = {
       'line': line_item,
@@ -179,12 +201,12 @@
       });
 
       }
+  //Popup open and close event trigger
       customPrebookBtn.addEventListener('click', openPersonalizationModal)
       personalizationModalOverlay.addEventListener('click', closePersonalizationModal)
       personalizationModalClose.forEach((closeBtn) =>{
         closeBtn.addEventListener('click', closePersonalizationModal)
       })
-      
       personalizationSubmitBtn.addEventListener('click', (e) => {
           let pMessage = personalizedText.value;
           personalizedMessageOriginal.value = pMessage.toUpperCase();
@@ -192,8 +214,7 @@
         console.log(personalizedMessageOriginal.value)
           closePersonalizationModal()
           storePersonalizedMessage()
-          customHeading.innerHTML=``;
-          customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${personalizedMessageOriginal.value}`;
+        customHeading.innerHTML=`Personalized message : ${personalizedMessageOriginal.value}`;
           if(!url.includes("&personalized")){
             btnClick()
           }else{
@@ -201,6 +222,14 @@
           }
           {% comment %} closePersonalizationModal() {% endcomment %}
       })
+
+
+
+
+
+
+
+
 
 
 
