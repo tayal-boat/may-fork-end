@@ -382,10 +382,17 @@
                 </div>
                 <p class="tax_info">Inclusive of all taxes</p>
               {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
-              <div class="desktop current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
-                style="display: none;" {% endunless %}>
-                {{ random_cart }}
-              </div>
+              {% if product.tags contains 'customized' %}
+                <div class="desktop current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+                  style="display: none;" {% endunless %}>
+                  {{ random_cart }}
+                </div>
+              {% else %}
+                <div class="desktop current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+                  style="display: none;" {% endunless %}>
+                  {{ random_cart }}
+                </div>
+              {% endif %}
                 <div class="desktop restocking" style="{% if product_varient.inventory_quantity > settings.sold_out_threshold %}
                display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
