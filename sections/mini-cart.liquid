@@ -9,13 +9,14 @@
           </button>
         </header>
       <p class="drawer__title heading h6" style="padding: 12px 12px 0;color: #2B2B2B;font-weight: 600;font-size: 14px;">
-        Total Item 	&nbsp;
+        Your cart
 
-       <span class="ms-3">{%- if cart.item_count == 0 -%}
-          
+      {% comment %}     
+      <span class="ms-3">{%- if cart.item_count == 0 -%}
         {%- else -%}
-        ( {{- cart.item_count -}} )
-         {%- endif -%}</span>
+      ( {{- cart.item_count -}} )
+      {%- endif -%}</span>
+      {% endcomment %}
         <input class="cart--count" value="{{cart.item_count}}" type="hidden">
       </p>
         {%- if cart.item_count == 0 -%}
@@ -544,23 +545,23 @@
                       {% endif %}
                   {% endfor %}
 
-                  <div class="mini-cart_footer d-flex">
-                    <div class="d-flex cart-total-box" style="width: 40%;">
-                    <div class="d-flex flex-column mr-3" >
-                      <span class="cart-total"> <b>Subtotal</b></span>
-                      <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
-                      <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></span>
-                    </div>
-                    <div>
-                    <span class="gst-container">
-                      <svg xmlns="http://www.w3.org/2000/svg" version="1" width="16" height="16" viewBox="0 0 20 20">
+                  <div class="mini-cart_footer d-flex" style="gap: 4%;">
+                    <div class="d-flex flex-column cart-total-box" style="width: 40%;border-right: 2px solid #dbdbdb;">
+                    <div class="d-flex" style="align-items: baseline;gap: 4px;" >
+                      <span class="cart-total"> <b>Total</b></span>
+                     <span class="gst-container">
+                      <svg xmlns="http://www.w3.org/2000/svg" version="1" width="12" height="12" viewBox="0 0 20 20">
                        <path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z" />
                       </svg>
                      <span class="total-icon-detail">
                        <p> Shipping: <b>FREE</b></p>
                      </span>
                    </span>
+                      <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
+                      <span class="cart-total-text"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></span>
                     </div>
+                    <p style="font-size: 10px;
+                     color: #9e9e9e;">Inclusive of all taxes</p>
                   </div>
                   {% if is_validation_ok == true and product_limit_ok == true and only_gk == true %}
                       <div class=" checkout-buttons-div">
