@@ -31,7 +31,6 @@
         id="personalized-text"
         placeholder="YOUR ENGRAVING"
         maxlength="7"
-        pattern="[a-zA-Z]+"
         autocomplete="new-password"
         onkeyup="convertToUppercase()"
       >
@@ -46,7 +45,20 @@
     </div>
   </div>
 </div>
+{% capture variant_personalization %}
+  {
+  {% for variant in product.variants %}
+  "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}{{ variant.metafields.custom.personalised_image | strip_newlines }}{% else %}{{ variant.featured_image | image_url }}{% endif %}"
+    {% unless forloop.last %}
+      ,
+    {% endunless %}
+  {% endfor %}
+  } 
+{% endcapture %}
 <script>
+      let variant_personalization = {{ variant_personalization }};
+      variant_personalization = JSON.stringify(variant_personalization);
+      sessionStorage.setItem('variant_personalization', variant_personalization);
       const customPrebookBtn = document.querySelector('.custom-prebook');
       const customPreorderBtn = document.querySelector('.cutomized-btn');
       const personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
@@ -113,8 +125,9 @@
       let char=String.fromCharCode(key);
       if(currentInputValue.length<7){
        if((key>=97&&key<=122||key>=55&&key<=90||key>=48&&key<=57)&&key!=64){
-        {% comment %} currentInputValue+=char;
-        personalizedText.value=currentInputValue; {% endcomment %}
+        currentInputValue+=char;
+        personalizedText.value=currentInputValue;
+        convertToUppercase()
         window.addEventListener("keydown",(e)=>{
           if(e.keyCode==8){
           str=personalizedText.value.slice(0,personalizedText.value.length-1);
@@ -127,9 +140,10 @@
       const ZERO = 48;
       const NINE = 57;
       const isNotValidDigit = key < ZERO || key > NINE;
-      if (key( isNotValidDigit ) ) {
-          e.preventDefault();
-      }
+      console.log(isNotValidDigit)
+      if (key != SPACE || ( isNotValidDigit ) ) {
+        e.preventDefault();
+    }
   });
       personalizedText.addEventListener("keydown",(e)=>{
         if(e.keyCode==8){
@@ -252,7 +266,7 @@
       personalizationSubmitBtn.addEventListener('click', (e) => {
           let pMessage = personalizedText.value;
           personalizedMessageOriginal.value = pMessage.toUpperCase();
-         personalizedText.value=currentInputValue;
+         personalizedText.value=currentInputValue.toUpperCase();
         console.log(personalizedMessageOriginal.value)
           closePersonalizationModal()
           storePersonalizedMessage()
