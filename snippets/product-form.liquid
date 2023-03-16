@@ -520,9 +520,8 @@
         {%- endcomment -%}
         {%- when 'quantity_selector' -%}
         {%- if request.page_type != 'password' and product.available -%}
+          {% unless product.tags contains 'customized' %}
         <div class="product-form__quantity my-2" {{ block.shopify_attributes }}>
-
-
           <quantity-selector class="quantity-selector">
             <button type="button" class="quantity-selector__button">
               <span class="visually-hidden">{{ 'cart.general.decrease_quantity' | t }}</span>
@@ -540,7 +539,8 @@
             </quantity-selector>
             <span class="product-form__quantity-label">{{ 'product.form.quantity' | t }}</span>
             </div>
-        {%- endif -%}
+          {% endunless %}
+          {%- endif -%}
 
         {%- comment -%}
         ----------------------------------------------------------------------------------------------------------------
@@ -668,7 +668,7 @@
               </button>
             {% else %}
               {%- if product.tags contains 'customized' and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                <a class="cutomized-btn" is="loader-button">
+                <a class="cutomized-btn mt-lg-2" is="loader-button">
                   <span class="loader-button__text">
                   {{- 'product.form.pre_order' | t -}}
                   <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
