@@ -46,22 +46,7 @@
     </div>
   </div>
 </div>
-
-{% capture variant_personalization %}
-  {
-  {% for variant in product.variants %}
-  "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}{{ variant.metafields.custom.personalised_image | strip_newlines }}{% else %}{{ variant.featured_image | image_url }}{% endif %}"
-    {% unless forloop.last %}
-      ,
-    {% endunless %}
-  {% endfor %}
-  } 
-{% endcapture %}
-
 <script>
-  let variant_personalization = {{ variant_personalization }};
-  variant_personalization = JSON.stringify(variant_personalization);
-  sessionStorage.setItem('variant_personalization', variant_personalization);
       const customPrebookBtn = document.querySelector('.custom-prebook');
       const customPreorderBtn = document.querySelector('.cutomized-btn');
       const personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
