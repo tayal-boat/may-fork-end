@@ -38,6 +38,7 @@
   .jdgm-write-rev-link{margin-top:1rem}
   }
   @media(min-width:769px){
+  .banner_link{display:none}
   button#btnshopify-product-reviews,button.collapsible-toggle.heading.heading--small.hidden-lap-and-up{padding:.5px}
   .shopify-section--product-recommendations{border-top:.5px solid #242424}
   }
@@ -336,7 +337,6 @@
   .product__info product-meta .product-meta__title{min-width:45rem}
   }
   @media(min-width:991px){
-  .banner_link{display:none}
   .col-md-3.myIcon,.col-md-4.myIcon,.col-md-6.myIcon{text-align:right}
   .myIcon img{max-height:45px}
   .col-md-6.myText,.col-md-8.myText,.col-md-9.myText{text-align:left;font-size:16px}
@@ -487,10 +487,9 @@
   .product.product--thumbnails-left {
     grid-column-gap: 1rem;
     grid-template-areas:
-    {% unless product.tags contains 'flash-sale' %}
-    {% else %}
+    {% if product.tags contains 'flash-sale' %}
     'media flash'
-    {% endunless %}
+    {% endif %}
     'media info'
     'media swatch'
     'media cta';
@@ -499,24 +498,18 @@
   .product--thumbnails-left .product__media-list-wrapper {margin-left: 0; margin-right: 2rem;}
   div[aria-role="additonal-info"] {width: 52%;}
 }
-</style>
+.product:has([handle="gift-card"]) .restocking{display:none;}
 {% comment %} !NEW PDP LAYOUT CSS ENDS {% endcomment %}
-<!-- for prebooking -->
 {%- if product.tags contains 'prebooking' -%}
-  <style>
-    .variant-swatch.is-disabled .variant-swatch__item:before {background: none}
-    .variant-swatch.is-disabled .variant-swatch__image {opacity: 1 }
-    .seo-new,
-    button#gokwik-buy-now[disabled],
-    button#AddToCart[data-sold="true"][disabled],
-    product-sticky-form.product-sticky-form[data-sold="true"],
-    .amazon-c.d-flex.align-items-baseline.justify-content-between {display: none !important}
-  </style>
-  {% endif %}
-
-  <style>
+  .variant-swatch.is-disabled .variant-swatch__item:before {background: none}
+  .variant-swatch.is-disabled .variant-swatch__image {opacity: 1 }
+  .seo-new,
+  button#gokwik-buy-now[disabled],
+  button#AddToCart[data-sold="true"][disabled],
+  product-sticky-form.product-sticky-form[data-sold="true"],
+  .amazon-c.d-flex.align-items-baseline.justify-content-between {display: none !important}
+{% endif %}
     @media (max-width: 767px) {
-      
       .price-list.custom-product-price .price_details_pdp {display: inline-flex; flex-wrap: wrap; gap: 6px;}
       .price-list.custom-product-price .price_details_pdp .price--large{line-height: 16px;}
       .price-list.custom-product-price .tax_info{font-size: 10px;line-height: 10px;color: #9e9e9e;}
@@ -530,11 +523,13 @@
       .price-list.custom-product-price .custom-saved-price{margin: 0px;font-size: 12px;line-height: 14px;}
       .price-list.custom-product-price .price--compare{font-size: 12px;margin-left: 8px;}
       .custom-product-price-mobile .price_offer_wrapper{flex-wrap: wrap;}
-
     }
-
     @media (min-width: 991px){
       .custom-product-price .product-meta__price-list-container {margin-bottom: 0px;}
       .custom-product-price .tax_info {margin-bottom: 8px;color: #9e9e9e;}
     }
-  </style>
+
+
+
+
+</style>
