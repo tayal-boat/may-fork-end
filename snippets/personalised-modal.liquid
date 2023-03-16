@@ -1,7 +1,7 @@
 <div class="button custom-prebook">
-  <div class="custom-prebook-heading">Personalize Them. It's Fast And Free</div>
+  <div class="custom-prebook-heading">Make it Personal.</div>
   <div class="custom-prebook-subheading">
-    Engrave A Mix Of Names,Intials, And Numbers To Make Airdopes Unmistakably Yours.
+    Get A Customized Engraving And Make It Unmistakibly Yours.
   </div>
 </div>
 <!-- Personalised Modal -->
@@ -16,7 +16,7 @@
           </svg>
         </span>
         <span class="personalization-heading">PERSONALIZE YOUR AIRDOPES</span>
-        <div class="personalization-sub-heading">Fast,Free Engraving Of Letters With A Click</div>
+        <div class="personalization-sub-heading">It's On Us :)</div>
       </div>
       <div class="personalization-image-wrapper">
         {% if product.selected_or_first_available_variant.metafields.custom.personalised_image != blank %}
@@ -37,8 +37,8 @@
       >
       <p class="max-limit-reached visually-hidden">Max Limit reached</p>
       <div class="personalization-info">
-        <p>Type names, initials or numbers, or mix'em up.</p>
-        <p>Just don't exceed 7 characters or use special symbols like emojis, $,@,!,#,etc.</p>
+        <p>Limit it to alphabets and numbers.</p>
+        <p>Stay away from special Symbols. Max 12 characters.</p>
       </div>
       <button type="button" class="submit-personalization visually-hidden">CONFIRM</button>
       {% comment %} <button type="button" class="cancel-personalization personalized-modal-close">SKIP</button> {% endcomment %}
@@ -74,6 +74,7 @@
       let value="";
       let str=""
       const imageText=document.querySelector(".personalization-image-txt");
+      
       function convertToUppercase() {
         personalizedText.value = personalizedText.value.toUpperCase();
         if(personalizedText.value.length === 7) {
@@ -140,6 +141,11 @@
           if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
             personalizedText.focus()
             personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
+          }
+          if(personalizedText.value.length >= 1) {
+            personalizationSubmitBtn.classList.remove('visually-hidden')
+          } else {
+            personalizationSubmitBtn.classList.add('visually-hidden')
           }
       }
       function closePersonalizationModal() {
