@@ -30,13 +30,14 @@
         type="text"
         id="personalized-text"
         placeholder="YOUR ENGRAVING"
-        maxlength="12"
+        maxlength="7"
         pattern="[a-zA-Z]+"
         autocomplete="new-password"
+        onkeyup="convertToUppercase()"
       >
       <div class="personalization-info">
         <p>Type names, initials or numbers, or mix'em up.</p>
-        <p>Just don't exceed 12 character or use special symbols like emojis, $,@,!,#,etc.</p>
+        <p>Just don't exceed 7 characters or use special symbols like emojis, $,@,!,#,etc.</p>
       </div>
       <button type="button" class="submit-personalization">SAVE</button>
       <button type="button" class="cancel-personalization personalized-modal-close">CANCEL</button>
@@ -69,6 +70,10 @@
       let value="";
       let str=""
       const imageText=document.querySelector(".personalization-image-txt");
+      function convertToUppercase() {
+        personalizedText.value = personalizedText.value.toUpperCase();
+      }
+      
       if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
         customHeading.innerHTML=``;
         customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
@@ -79,7 +84,7 @@
       // which key is pressed, keyPressed = e.which || e.keyCode;
       const key = e.which || e.keyCode;
       let char=String.fromCharCode(key);
-      if(currentInputValue.length<12){
+      if(currentInputValue.length<7){
        if((key>=97&&key<=122||key>=55&&key<=90||key>=48&&key<=57)&&key!=64){
       currentInputValue+=char;
       personalizedText.value=currentInputValue;
