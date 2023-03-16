@@ -262,17 +262,9 @@
                             </a>
                           {% else %}
                             {%- if allow_more -%}
-                              {% for p in line_item.properties %}
-                                {% if p.last != blank and p.first == 'Personalised Message' %}
-                                  <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button unusable" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
-                                    {%- render 'icon' with 'plus' -%}
-                                  </a>
-                                {% else %}
-                                  <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666  %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
-                                    {%- render 'icon' with 'plus' -%}
-                                  </a>
-                                {%- endif -%}
-                              {% endfor %}
+                              <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666 and line_item.product.tags contains 'customized' %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                                {%- render 'icon' with 'plus' -%}
+                              </a>
                             {%- else -%}
                               <span class="quantity-selector__button" aria-label="{{ 'cart.general.no_more_stock' | t | escape }}" data-tooltip="{{ 'cart.general.no_more_stock' | t | escape }}">
                                 {%- render 'icon' with 'plus' -%}

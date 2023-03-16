@@ -38,7 +38,7 @@
       <p class="max-limit-reached visually-hidden">Max Limit reached</p>
       <div class="personalization-info">
         <p>Limit it to alphabets and numbers.</p>
-        <p>Stay away from special Symbols. Max 12 characters.</p>
+        <p>Stay away from special Symbols. Max 7 characters.</p>
       </div>
       <button type="button" class="submit-personalization visually-hidden">CONFIRM</button>
       {% comment %} <button type="button" class="cancel-personalization personalized-modal-close">SKIP</button> {% endcomment %}
@@ -110,21 +110,21 @@
       let char=String.fromCharCode(key);
       if(currentInputValue.length<7){
        if((key>=97&&key<=122||key>=55&&key<=90||key>=48&&key<=57)&&key!=64){
-      currentInputValue+=char;
-      personalizedText.value=currentInputValue;
-      window.addEventListener("keydown",(e)=>{
-      if(e.keyCode==8){
-      str=personalizedText.value.slice(0,personalizedText.value.length-1);
-      currentInputValue=str;
-      }
-      })
-      }
+        {% comment %} currentInputValue+=char;
+        personalizedText.value=currentInputValue; {% endcomment %}
+        window.addEventListener("keydown",(e)=>{
+          if(e.keyCode==8){
+          str=personalizedText.value.slice(0,personalizedText.value.length-1);
+          currentInputValue=str;
+          } 
+        })
+       }
       }
       const SPACE = 32;
       const ZERO = 48;
       const NINE = 57;
       const isNotValidDigit = key < ZERO || key > NINE;
-      if (key != SPACE || ( isNotValidDigit ) ) {
+      if (key( isNotValidDigit ) ) {
           e.preventDefault();
       }
   });
@@ -147,10 +147,10 @@
            if(url.includes("&personalized")){
             personalizedText.value=currentInputValue;
            }
-          if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+          {% comment %} if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
             personalizedText.focus()
             personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
-          }
+          } {% endcomment %}
           if(personalizedText.value.length >= 1) {
             personalizationSubmitBtn.classList.remove('visually-hidden')
           } else {
