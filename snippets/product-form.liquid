@@ -667,7 +667,7 @@
                 {{- 'product.form.add_to_cart' | t -}}
               </button>
             {% else %}
-              {%- if product.tags contains 'customized' and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+              {%- if product.tags contains 'customized' -%}
                 <a class="cutomized-btn mt-lg-2" is="loader-button">
                   <span class="loader-button__text">
                   {{- 'product.form.pre_order' | t -}}
@@ -800,7 +800,11 @@ one
   <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
 </div>
 {%- endif -%}
-
+{% if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer' %}
+{% if product.tags contains 'customized' %}
+{%- render 'personalised-modal' -%}
+{% endif %}
+{% endif %}
 {%- comment -%}
 IMPLEMENTATION NOTE: if during the iteration of the options we have found an option matching a size chart, we add it
 here
@@ -848,3 +852,23 @@ here
   </div>
   </popover-content>
 {%- endif -%}
+{% if product.tags contains 'customized' %}
+{% capture variant_personalization %}
+  {
+  {% for variant in product.variants %}
+  "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}{{ variant.metafields.custom.personalised_image | strip_newlines }}{% else %}{{ variant.featured_image | image_url }}{% endif %}"
+    {% unless forloop.last %}
+      ,
+    {% endunless %}
+  {% endfor %}
+  } 
+{% endcapture %}
+{% endif %}
+<script>
+  let variant_personalization = {{ variant_personalization }};
+  variant_personalization = JSON.stringify(variant_personalization);
+  sessionStorage.setItem('variant_personalization', variant_personalization);
+
+  console.log( 'hiii drawer');
+
+</script>
