@@ -190,9 +190,9 @@
         personalizedText.value="";
         closePersonalizationModal()
         loaderText.innerText = 'ADDING...'
-        setTimeout(() => {
+        {% comment %} setTimeout(() => {
           loaderText.innerText = 'PRE-ORDER'
-        }, 2000)
+        }, 2000) {% endcomment %}
       }
       {% comment %} personalizationSkipBtn.addEventListener('click', btnClick) {% endcomment %}
       
@@ -211,9 +211,11 @@
 
         if(!url.includes("&personalized")){
           personalizationModal.classList.add("hide-popup","hide");
+          $('.personilaztion-message-modal .skip-personalization').removeClass('d-none');
           personalizationModalOverlay.classList.add("hide");
           personalizedText.value="";
         }else{
+          $('.personilaztion-message-modal .skip-personalization').addClass('d-none');
           if(pmsg){
             personalizedText.value=pmsg.toUpperCase();
             imageText.innerHTML= pmsg ? `<span>${pmsg.toUpperCase()}</span>` : '';
@@ -231,10 +233,11 @@
       sessionValue=sessionStorage.setItem(personalizedMessageOriginal.getAttribute("variant-id"), personalizedText.value);
       personalizedText.value=sessionValue;
       }
+
       function updatePersonlizedMsg(){
          let formData = {
       'line': line_item,
-      'properties': { 'Personalised Message': sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id")) }
+      'properties': { 'PersonalisedMessage': sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id")) }
       }
       ;
 
@@ -256,6 +259,7 @@
       });
 
       }
+
       customPrebookBtn.addEventListener('click', openPersonalizationModal)
       customPreorderBtn.addEventListener('click', openPersonalizationModal)
       personalizationModalOverlay.addEventListener('click', closePersonalizationModal)

@@ -437,8 +437,8 @@
                     type="hidden"
                     name="properties[Free]"
                     value="true">
-                {% elsif product.tags contains 'customized' %}
-                  <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
+                {% comment %} {% elsif product.tags contains 'customized' %}
+                  <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
                 {%- endif -%}
                 <button
                   is="loader-button"
@@ -466,6 +466,15 @@
               IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
               {%- endcomment -%}
               <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
+                {% if product.tags contains 'customized' %}
+                  <a href="{{ product.url}}" is="loader-button" class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}"
+                    style="background: red;line-height: normal;
+                    border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
+                    text-transform: uppercase;margin: 0!important;border-radius: 5px!important;
+                    font-size: 15px!important;font-weight: 700!important;">
+                    View Product
+                  </a>
+                 {% else %}
                 <button
                   is="toggle-button"
                   loader
@@ -503,6 +512,7 @@
                     {{- 'product.form.add_to_cart' | t -}}
                   {% endif %}
                 </button>
+              {% endif %}
               </div>
               <quick-buy-popover
                 id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
@@ -613,8 +623,8 @@
                 type="hidden"
                 name="properties[Free]"
                 value="true">
-            {% elsif product.tags contains 'customized' %}
-                <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
+            {% comment %} {% elsif product.tags contains 'customized' %}
+                <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
             {%- endif -%}
             <button type="submit" {% if show_cta %}is="loader-button"{% endif %}class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">
               Add To Cart

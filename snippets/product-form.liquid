@@ -640,14 +640,14 @@
         {%- if product.tags contains settings.products_offering_freebie -%}
         <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
         {% comment %} {% elsif product.tags contains 'customized' %}
-          <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
+          <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
         {%- endif -%}
         <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer" {% endif %}
           class="product-form__payment-container" {{ block.shopify_attributes }}>
           {%- if product.tags contains 'customized' -%}
             <p class="line-item-property__field" hidden>
               <label for="personalised_message">Message</label>
-              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[Personalised Message]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}">
+              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}">
             </p>
           {% endif %}
           {%- if product.tags contains 'prebooking' -%}
@@ -668,10 +668,19 @@
               </button>
             {% else %}
               {%- if product.tags contains 'customized' and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+              {% capture itemTags %}
+                {% for item in cart.items %}
+                  {{ item.product.tags }},
+                {% endfor %}
+              {% endcapture %}
                 <a class="cutomized-btn mt-lg-2" is="loader-button">
                   <span class="loader-button__text">
-                  {{- 'product.form.pre_order' | t -}}
+                    {% if itemTags contains 'customized' %}
+                      Only one unit per order allowed
+                      {% else %}
+                    {{- 'product.form.pre_order' | t -}} 
                   <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                {% endif %}
                 </span>
                 <span class="loader-button__loader" hidden="">        <div class="spinner">          <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
                 </a>
