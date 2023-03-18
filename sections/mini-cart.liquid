@@ -629,29 +629,25 @@
   {% assign gift-product_variant = gift-product.variants[0].id %}
 
 
-  <script>
+<script>
    {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
-    $(window).on("load", function(){
+$(window).on("load", function(){
     // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
-    var cstumisedproduct_id = [];
-    var removecustomised = [];
+    let custumisedvariant_ids = [];
     let giftId = "{{ gift-product_variant }}";
-    var cartItem;
-    var onloadfreeqnty, onloadcustomisedqnt  = 0;
+    let onloadfreeqnty, onloadcustomisedqnt  = 0;
     jQuery.getJSON('/cart.js', function(cart) {
-     cartItem = cart.items;
+     let cartItem = cart.items;
      let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
      let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
      $(onloadfreeItems).each(function(ind, el){
-      onloadfreeqnty += el.quantity;
+       onloadfreeqnty += el.quantity;
      })
      $(onloadcustomised).each(function(ind, el){
-      onloadcustomisedqnt += el.quantity;
-      if (!cstumisedproduct_id.includes(el.id)){
-        cstumisedproduct_id.push(el.id);
-      }
+       onloadcustomisedqnt += el.quantity;
+       if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
      })
-     console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , cartItem )
+     console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt )
      if (onloadcustomisedqnt > 0){
         $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
         $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
@@ -659,26 +655,24 @@
     })
 
      document.addEventListener('cart:updated', function(event) {
-      var onloaddatecustomisedqnt  = 0;
-       var cartdate = event.detail.cart.items; // Get the updated content of the cart
-       let onloadcustomised = cartdate.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
+       let updatedcustomisedqnt  = 0;
+       let cartItem = event.detail.cart.items; // Get the updated content of the cart
+       let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
        $(onloadcustomised).each(function(ind, el){
-        onloaddatecustomisedqnt += el.quantity;
-        if (!cstumisedproduct_id.includes(el.id)){
-          cstumisedproduct_id.push(el.id);
-        }else{
-          cstumisedproduct_id.pop(el.id);
-        }
+          updatedcustomisedqnt += el.quantity;
+          if (!custumisedvariant_ids.includes(el.id)){
+            custumisedvariant_ids.push(el.id);
+          }else{
+            custumisedvariant_ids.pop(el.id);
+          }
        })
-
-       console.log( "newonloadcustomisedqnt" , onloaddatecustomisedqnt, cstumisedproduct_id, cartdate )
-       if (onloaddatecustomisedqnt > 0){
-        $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-        $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
-       }
-       else if (onloaddatecustomisedqnt > cstumisedproduct_id.length){
+       console.log( "newonloadcustomisedqnt" , updatedcustomisedqnt, custumisedvariant_ids)
+       if (updatedcustomisedqnt >= 1){
           $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
           $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
+        }else if (updatedcustomisedqnt > custumisedvariant_ids.length) {
+           $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
+           $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
        }else{
           $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
           $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
@@ -695,21 +689,24 @@
       let redirection_link = "https://www.boat-lifestyle.com" + $(this).attr('href');
       window.location.href=redirection_link;
      }) {% endcomment %}
-      document.addEventListener('variant:changed', function(event) {
-       console.log(cstumisedproduct_id);
-         let variant = event.detail.variant; // Gives you access to the whole variant details
-         if (cstumisedproduct_id.includes(variant.id)){
-          $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-          $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
-         }else{
-          $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
-          $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
-         }
-       });
 
-  const targNode = document.getElementById('mini-cart');
-  const config_ = { attributes: false, childList: true, subtree: false };
-  const callback_ = (mutationList, observer) => {
+    document.addEventListener('variant:changed', function(event) {
+      if ( custumisedvariant_ids.length > 0){
+        console.log(custumisedvariant_ids);
+        let variant = event.detail.variant; // Gives you access to the whole variant details
+        if (custumisedvariant_ids.includes(variant.id)){
+        $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
+        $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
+        }else{
+        $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
+        $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
+        }
+      }
+    });
+
+   const targNode = document.getElementById('mini-cart');
+   const config_ = { attributes: false, childList: true, subtree: false };
+   const callback_ = (mutationList, observer) => {
    for (const mutation of mutationList) {
     let updatedqnty = 0;
     jQuery.getJSON('/cart.js', function(cart) {
@@ -748,12 +745,12 @@
       }
      })
     {% endcomment %}
-   }
-  };
-  const observer_ = new MutationObserver(callback_);
-  observer_.observe(targNode, config_);
+    }
+   };
+   const observer_ = new MutationObserver(callback_);
+   observer_.observe(targNode, config_);
   
-  {% comment %}
+   {% comment %}
     const customer_id = "{{customer.id}}"
     $('#mini-cart-form .line-item').each(function() {
      let dataItemId = $(this).data('item-id');
@@ -771,7 +768,7 @@
         "Amount": cart_total_price
       });
     }); */
-  });
+});
   /* $(".razorpay-checkout").click(function () {
     let productsincart = line_item.product;
     clevertap.event.push("razor/magic Button Clicked",{
@@ -780,34 +777,32 @@
     });
   }); */
 
-  const lineItems = Array.from(document.querySelectorAll('line-item'));
-    const updatePropBtns = Array.from(document.querySelectorAll('.update-prop'));
-    updatePropBtns.forEach(btn => {
-      const itemKey = btn.dataset.itemkey;
-      btn.addEventListener('click', () => {
-        updateItemOne(itemKey, 'sheenagarg')
-      })
-    })
-    
-    function updateItemOne(key, propValue) {
-      $.ajax({
-        url: "/cart/change.js",
-        type: "POST",
-        data: JSON.stringify(
-          {
-            "id":`${key}`,
-            "properties":
-              { "PersonalisedMessage": `${propValue}` }
-           }
-        ), 
-        contentType: "application/json",
-        dataType: 'json'
-    })
-      document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));                                 
-    }; 
-   
+const lineItems = Array.from(document.querySelectorAll('line-item'));
+const updatePropBtns = Array.from(document.querySelectorAll('.update-prop'));
+updatePropBtns.forEach(btn => {
+  const itemKey = btn.dataset.itemkey;
+  btn.addEventListener('click', () => {
+    updateItemOne(itemKey, 'sheenagarg')
+  })
+})
 
-          
+function updateItemOne(key, propValue) {
+  $.ajax({
+    url: "/cart/update.js",
+    type: "POST",
+    data: JSON.stringify(
+      {
+        "id":`${key}`,
+        "properties":
+          { "PersonalisedMessage": `${propValue}` }
+        }
+    ), 
+    contentType: "application/json",
+    dataType: 'json'
+  })
+  document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 }));                                 
+}; 
+
 </script>
   {% schema %}
       {
