@@ -630,12 +630,12 @@
 
 
 <script>
-   {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
+{% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
     // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
     let custumisedvariant_ids = [];
     let giftId = "{{ gift-product_variant }}";
-    let onloadfreeqnty, onloadcustomisedqnt  = 0;
+    let onloadfreeqnty, onloadcustomisedqnt, updatedcustomisedqnt  = 0;
     jQuery.getJSON('/cart.js', function(cart) {
      let cartItem = cart.items;
      let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
@@ -648,37 +648,41 @@ $(window).on("load", function(){
        if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
      })
      console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt )
-     if (onloadcustomisedqnt > 0){
-        $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
-        $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-      }
+     if (onloadcustomisedqnt > 0){customized_added() }
     })
-
-     document.addEventListener('cart:updated', function(event) {
-       let updatedcustomisedqnt  = 0;
-       let cartItem = event.detail.cart.items; // Get the updated content of the cart
-       let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
-       $(onloadcustomised).each(function(ind, el){
-          updatedcustomisedqnt += el.quantity;
-          if (!custumisedvariant_ids.includes(el.id)){
-            custumisedvariant_ids.push(el.id);
-          }else{
-            custumisedvariant_ids.pop(el.id);
-          }
-       })
-       if (onloadcustomised == 0){ custumisedvariant_ids.pop();}
-       console.log( "newcustomisedqnt" , updatedcustomisedqnt, custumisedvariant_ids)
-       if (updatedcustomisedqnt >= 1){
-          $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-          $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
-        }else if (updatedcustomisedqnt > custumisedvariant_ids.length) {
-           $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-           $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
-       }else{
-          $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
-          $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
-       }
-     });
+      document.addEventListener('cart:updated', function(event) {
+        console.log("old",updatedcustomisedqnt);
+        let newupdatedcustomisedqnt  = 0;
+        let cartItem = event.detail.cart.items; // Get the updated content of the cart
+        let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
+        $(onloadcustomised).each(function(ind, el){
+            newupdatedcustomisedqnt += el.quantity;
+        })
+        if(updatedcustomisedqnt < newupdatedcustomisedqnt){
+          $(onloadcustomised).each(function(ind, el){
+              if (!custumisedvariant_ids.includes(el.id)){
+                  custumisedvariant_ids.push(el.id);
+              }
+          })
+        }else{
+          custumisedvariant_ids =[];
+          $(onloadcustomised).each(function(ind, el){
+            if (!custumisedvariant_ids.includes(el.id)){
+              custumisedvariant_ids.push(el.id);
+            }
+          })
+        }
+        updatedcustomisedqnt = newupdatedcustomisedqnt;
+        console.log("new",updatedcustomisedqnt);
+        // sessionStorage.setItem('custumisedvariant_ids', custumisedvariant_ids);
+        console.log( "newcustomisedqnt" , updatedcustomisedqnt, custumisedvariant_ids)
+        if (updatedcustomisedqnt >= 1){ customized_added()
+        }else if (updatedcustomisedqnt > custumisedvariant_ids.length) { customized_added()
+        }else{
+            $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
+            $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
+        }
+      });
 
      {% comment %} $('#mini-cart').on('click', '.add-customization', function(event){
       event.preventDefault();debugger;
@@ -695,16 +699,17 @@ $(window).on("load", function(){
       if ( custumisedvariant_ids.length > 0){
         console.log(custumisedvariant_ids);
         let variant = event.detail.variant; // Gives you access to the whole variant details
-        if (custumisedvariant_ids.includes(variant.id)){
-        $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-        $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
+        if (custumisedvariant_ids.includes(variant.id)){ customized_added()
         }else{
-        $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
-        $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
+            $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
+            $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
         }
       }
     });
-
+    function customized_added(){
+      $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
+      $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
+    }
    const targNode = document.getElementById('mini-cart');
    const config_ = { attributes: false, childList: true, subtree: false };
    const callback_ = (mutationList, observer) => {
