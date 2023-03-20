@@ -634,7 +634,7 @@ $(window).on("load", function(){
     // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
     let custumisedvariant_ids = [];
     let giftId = "{{ gift-product_variant }}";
-    let onloadfreeqnty, onloadcustomisedqnt, updatedcustomisedqnt  = 0;
+    let onloadfreeqnty, onloadcustomisedqnt = 0;
     jQuery.getJSON('/cart.js', function(cart) {
       let cartItem = cart.items;
       let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
@@ -646,9 +646,11 @@ $(window).on("load", function(){
         onloadcustomisedqnt += el.quantity;
         if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
       })
-      console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt )
+      console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
       if (onloadcustomisedqnt > 0){customized_added() }
     })
+
+       let updatedcustomisedqnt = 0;
       document.addEventListener('cart:updated', function(event) {
         console.log("old",updatedcustomisedqnt);
         let newupdatedcustomisedqnt  = 0;
@@ -679,7 +681,7 @@ $(window).on("load", function(){
       });
 
     document.addEventListener('variant:changed', function(event) {
-      if ( custumisedvariant_ids.length > 0){
+      if (custumisedvariant_ids.length > 0){
         console.log(custumisedvariant_ids);
         let variant = event.detail.variant; // Gives you access to the whole variant details
         if (custumisedvariant_ids.includes(variant.id)){ customized_added()
