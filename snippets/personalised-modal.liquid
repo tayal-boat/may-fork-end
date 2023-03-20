@@ -27,7 +27,7 @@
         <div class="personalization-image-txt visually-hidden"></div>
       </div>
       <input
-        type="text"
+        type="search"
         id="personalized-text"
         placeholder="YOUR ENGRAVING"
         maxlength="7"
@@ -124,7 +124,7 @@
       const key = e.which || e.keyCode;
       let char=String.fromCharCode(key);
       if(currentInputValue.length<7){
-       if((key>=97&&key<=122||key>=55&&key<=90||key>=48&&key<=57)&&key!=64){
+       if((key>=97&&key<=122||key>=55&&key<=90||key>=48&&key<=57||key==32)&&key!=64){
         currentInputValue+=char;
         personalizedText.value=currentInputValue.toUpperCase();
         convertToUppercase()
@@ -141,9 +141,9 @@
       const NINE = 57;
       const isNotValidDigit = key < ZERO || key > NINE;
       console.log(isNotValidDigit)
-      if (key != SPACE || ( isNotValidDigit ) ) {
+    if (key != SPACE || ( isNotValidDigit ) ) {
         e.preventDefault();
-    }
+    } 
   });
       personalizedText.addEventListener("keydown",(e)=>{
         if(e.keyCode==8){
@@ -270,7 +270,7 @@
       personalizationSubmitBtn.addEventListener('click', (e) => {
           let pMessage = personalizedText.value;
           personalizedMessageOriginal.value = pMessage.toUpperCase();
-         personalizedText.value=currentInputValue.toUpperCase();
+         personalizedText.value=currentInputValue.toUpperCase().replace('  ', ' ' );
         console.log(personalizedMessageOriginal.value)
           closePersonalizationModal()
           storePersonalizedMessage()
