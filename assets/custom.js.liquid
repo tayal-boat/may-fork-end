@@ -164,20 +164,27 @@ $(document).on("click", ".custom-search-cta", function(e) {
   })
 });
 
+
 window.addEventListener("DOMContentLoaded", function() {
-  function e() {
-      "false" == sessionStorage.getItem("lazyloaded_sections") && ($.ajax({
+  let lazyloaded_sections = false;
+  console.log('hiiii content loaded');
+  function lazyloaded_section() {
+      if(!lazyloaded_sections){
+        $.ajax({
           url: "/pages/custom-homepage",
           type: "GET",
           dataType: "html",
           success: function(e) {
+            console.log("render  lazyloaded_sections ");
               let t = $(e).find("#index-lazyload_sections").html();
               $(".custom-lazyloaded-content").html(t);
               Shopify.homepageLazyload();
           }
-      }), sessionStorage.setItem("lazyloaded_sections", "true"))
+      });
+       lazyloaded_sections = true
+      }
   }
-  sessionStorage.setItem("lazyloaded_sections", "false"), document.addEventListener("touchmove", e, !0), document.addEventListener("scroll", e, !0)
+   document.addEventListener("touchmove", lazyloaded_section, !0), document.addEventListener("scroll", lazyloaded_section, !0)
 });
 
 function isIOSMobile() {
@@ -1027,9 +1034,9 @@ var yDirection = "";
 function getMouseDirection(e) {
   autoplay_delay = true;
     //Adding threshold for IOS anchor not working
-    if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
-      e.target.closest('a')?.click();
-    }
+    // if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
+    //   e.target.closest('a')?.click();
+    // }
     //deal with the horizontal case
     if (oldX < e.pageX) {
         xDirection = "right";
