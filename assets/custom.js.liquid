@@ -164,27 +164,20 @@ $(document).on("click", ".custom-search-cta", function(e) {
   })
 });
 
-
 window.addEventListener("DOMContentLoaded", function() {
-  let lazyloaded_sections = false;
-  console.log('hiiii content loaded');
-  function lazyloaded_section() {
-      if(!lazyloaded_sections){
-        $.ajax({
+  function e() {
+      "false" == sessionStorage.getItem("lazyloaded_sections") && ($.ajax({
           url: "/pages/custom-homepage",
           type: "GET",
           dataType: "html",
           success: function(e) {
-            console.log("render  lazyloaded_sections ");
               let t = $(e).find("#index-lazyload_sections").html();
               $(".custom-lazyloaded-content").html(t);
               Shopify.homepageLazyload();
           }
-      });
-       lazyloaded_sections = true
-      }
+      }), sessionStorage.setItem("lazyloaded_sections", "true"))
   }
-   document.addEventListener("touchmove", lazyloaded_section, !0), document.addEventListener("scroll", lazyloaded_section, !0)
+  sessionStorage.setItem("lazyloaded_sections", "false"), document.addEventListener("touchmove", e, !0), document.addEventListener("scroll", e, !0)
 });
 
 function isIOSMobile() {
@@ -311,7 +304,13 @@ function createCleverTapEvent( event_name, event_data ){
 
 
 Shopify.homepageLazyload = function(){
-  Shopify.custom_slider(e);
+  // Shopify.custom_slider(e);
+
+  var explore_itemsDiv = '.explore_now_section .MultiCarousel-inner';
+  console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
+ var explore_itemsMainDiv = ('.explore_now_section .MultiCarousel');
+ var explore_selector = 'MultiCarousel_explore';
+Shopify.custom_slider(explore_itemsDiv, explore_itemsMainDiv, explore_selector);
 
 // Explore our slide section
 var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item');
@@ -658,24 +657,24 @@ oldX = 0,
 oldY = 0,
 autoplay_timeout = '';
 
-Shopify.custom_slider = function(e){
-var section_id = '',
-itemsDiv,
-sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)'),
+Shopify.custom_slider = function(itemsDiv, itemsMainDiv, selector){
+// var section_id = '',
+// itemsDiv,
+// sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)'),
 slidePre = '',
 slidePost = '',
 slideItem = '',
 numberOfSlides = '',
-clonedPre,
-clonedPost,
+// clonedPre,
+// clonedPost,
 slide_length = '',
 slider_dots = '';
-for (let i = 0; i < sliderSelector.length; i++) {
-  section_id = sliderSelector[i].getAttribute('data-sliderId');
-   itemsDiv = '.MultiCarousel-inner.' + section_id;
+// for (let i = 0; i < sliderSelector.length; i++) {
+//   section_id = sliderSelector[i].getAttribute('data-sliderId');
+//    itemsDiv = '.MultiCarousel-inner.' + section_id;
   //  console.dir(document.querySelector(itemsDiv));
-  var itemsMainDiv = ('.MultiCarousel.' + section_id);
-  var selector = 'MultiCarousel_' + section_id;
+  // var itemsMainDiv = ('.MultiCarousel.' + section_id);
+  // var selector = 'MultiCarousel_' + section_id;
   var itemWidth = "";
   autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
   autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
@@ -781,26 +780,24 @@ function ResCarouselSize(itemsMainDiv, selector) {
 
 // Get the drag direction
 
-let target = document.querySelector('.MultiCarousel-inner.' + section_id);
-
-target.addEventListener('dragstart', (e) => {
+document.querySelector(itemsDiv).addEventListener('dragstart', (e) => {
   oldX = e.pageX;
   oldY = e.pageY;
 });
 
-target.addEventListener('touchstart', (e) => {
+document.querySelector(itemsDiv).addEventListener('touchstart', (e) => {
   oldX = e.changedTouches[0].pageX;
   oldY = e.changedTouches[0].pageY;
 });
 
-target.addEventListener("dragend", getMouseDirection, false);
+document.querySelector(itemsDiv).addEventListener("dragend", getMouseDirection, false);
 
-target.addEventListener('touchend', (event) => {
-  let touch_event = event.changedTouches[0]; 
+document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
+  var touch_event = event.changedTouches[0]; 
   getMouseDirection(touch_event)
 });
 
-}
+// }
   }
   
 //this function used to move the items
@@ -985,6 +982,9 @@ function ResCarousel(e, el, s, slide_container) {
     }
 
     $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
+    if(autoplay_delay == true){
+    setTimeout(function() {autoplay_delay = false},9000);
+  }
 }
 
 //It is used to get some elements from btn
@@ -993,7 +993,6 @@ function click(ell, ee) {
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
     autoplay_delay = true;
-    setTimeout(function() {autoplay_delay = false},5000);
     ResCarousel(ell, Parent, slide, slide_container);
 }
 
@@ -1002,7 +1001,6 @@ function changeCurrent(curr, dot) {
 var Parent = "#" + $(dot).parent().parent().attr("id");
 var slide_container = $(Parent).children('.MultiCarousel-inner');
 autoplay_delay = true;
-setTimeout(function() {autoplay_delay = false},5000);
 ResCarousel(e=null, Parent, curr, slide_container);
 }
 
@@ -1024,7 +1022,6 @@ function sliderDrag(event, slide_direction) {
 // console.log(Parent);
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
-    setTimeout(function() {autoplay_delay = false},5000);
       ResCarousel(slide_direction, Parent, slide, slide_container);
 }
 
@@ -1039,8 +1036,10 @@ function getMouseDirection(e) {
     // }
     //deal with the horizontal case
     if (oldX < e.pageX) {
+      console.log(oldX-e.pageX , 'right oldX-e.pageX');
         xDirection = "right";
-    } else {
+    } else if(oldX > e.pageX) {
+      console.log(oldX-e.pageX , 'left oldX-e.pageX');
         xDirection = "left";
     }
  
@@ -1050,17 +1049,25 @@ function getMouseDirection(e) {
     } else {
         yDirection = "up";
     }
- 
+
+    if(xDirection == "right"){
+      sliderDrag(e, 0)
+     }else if( xDirection == "left"){
+      sliderDrag(e, 1)
+     }
+      
     oldX = e.pageX;
     oldY = e.pageY;
 
- if(xDirection == "right"){
-  sliderDrag(e, 0)
- }else{
-  sliderDrag(e, 1)
- }
     // console.log(xDirection + " " + yDirection);
 }
-
-
-Shopify.custom_slider(e);
+var section_id = '';
+var sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)');
+for(let i = 0; i < sliderSelector.length; i++){
+  section_id = sliderSelector[i].getAttribute('data-sliderId');
+  var itemsDiv = '.MultiCarousel-inner.' + section_id;
+   console.dir(document.querySelector(itemsDiv));
+  var itemsMainDiv = ('.MultiCarousel.' + section_id);
+  var selector = 'MultiCarousel_' + section_id;
+  Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
+}
