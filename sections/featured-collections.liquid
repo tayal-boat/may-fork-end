@@ -305,8 +305,11 @@
       // Checking the tab has content loaded already or not
 
       if( $('#'+tab_id+' .product-list__inner').html().trim() == "" ){
+        $(this).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
+            
+        $(this).attr('aria-expanded', 'true');
         
-        $(this).parents('.shopify-section--featured-collections').find('.featured-collections .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
+        $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
           
         let collection_handle = $(this).data("collection-handle");
         //let products_limit = {{ section.settings.products_count }};
@@ -319,15 +322,14 @@
           type: "GET",
           dataType: "html",
           success: function (result) {
+            debugger;
             
             let t = $(result).find("product-list.product-list .product-list__inner").html();
-            $(self).parents('.shopify-section--featured-collections').find("#"+tab_id+"product-list.product-list").removeAttr('hidden');
-            $(self).parents('.shopify-section--featured-collections').find('.featured-collections #'+tab_id+'product-list.product-list .product-list__inner').html(t);
+            $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
+            $(self).parents('.shopify-section--featured-collections').find("product-list#"+tab_id+".product-list").removeAttr('hidden');
+            $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html(t);
             $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
-            $(self).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
             
-            $(self).attr('aria-expanded', 'true');
-
             var biggestNum = 0;
             $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
               let z_index_val = [];
@@ -342,7 +344,7 @@
               $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
             });
 
-            $(self).parents('.shopify-section--featured-collections').find('.product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+            $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
 
             $('.custom_loading_icon').remove();
 
