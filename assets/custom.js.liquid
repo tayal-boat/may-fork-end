@@ -306,10 +306,16 @@ function createCleverTapEvent( event_name, event_data ){
 Shopify.homepageLazyload = function(){
   // Shopify.custom_slider(e);
 
-  var explore_itemsDiv = '.explore_now_section .MultiCarousel-inner';
-  console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
- var explore_itemsMainDiv = ('.explore_now_section .MultiCarousel');
- var explore_selector = 'MultiCarousel_explore';
+  var press_itemsDiv = '.press_section .MultiCarousel-inner';
+  // console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
+ var press_itemsMainDiv = ('.press_section .MultiCarousel');
+ var press_selector = 'MultiCarousel_press';
+Shopify.custom_slider(press_itemsDiv, press_itemsMainDiv, press_selector);
+
+var explore_itemsDiv = '.explore_now_section .MultiCarousel-inner';
+// console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
+var explore_itemsMainDiv = ('.explore_now_section .MultiCarousel');
+var explore_selector = 'MultiCarousel_explore';
 Shopify.custom_slider(explore_itemsDiv, explore_itemsMainDiv, explore_selector);
 
 // Explore our slide section
@@ -658,23 +664,12 @@ oldY = 0,
 autoplay_timeout = '';
 
 Shopify.custom_slider = function(itemsDiv, itemsMainDiv, selector){
-// var section_id = '',
-// itemsDiv,
-// sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)'),
 slidePre = '',
 slidePost = '',
 slideItem = '',
 numberOfSlides = '',
-// clonedPre,
-// clonedPost,
 slide_length = '',
 slider_dots = '';
-// for (let i = 0; i < sliderSelector.length; i++) {
-//   section_id = sliderSelector[i].getAttribute('data-sliderId');
-//    itemsDiv = '.MultiCarousel-inner.' + section_id;
-  //  console.dir(document.querySelector(itemsDiv));
-  // var itemsMainDiv = ('.MultiCarousel.' + section_id);
-  // var selector = 'MultiCarousel_' + section_id;
   var itemWidth = "";
   autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
   autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
@@ -689,6 +684,7 @@ slider_dots = '';
   let leftBth = '#' + selector + ' .leftLst';
   let RightBth = '#' + selector + ' .rightLst';
 
+  $(itemsDiv).attr('autoplay_delay','false');
 for(var l = 0 ; l < slideItem.length; l++) {
   slideItem[l].setAttribute('data-index', [l]);
 }
@@ -709,9 +705,9 @@ $('.multiCarousel_dots').click(function () {
 
  ResCarouselSize(itemsMainDiv, selector);
 
-$(window).resize(function () {
-  ResCarouselSize(itemsMainDiv, selector);
-});
+// $(window).resize(function () {
+//   ResCarouselSize(itemsMainDiv, selector);
+// });
 if(autoplay){
 slideAutoplay(itemsMainDiv , autoplay_timeout);
 }
@@ -750,7 +746,7 @@ function ResCarouselSize(itemsMainDiv, selector) {
       }
       $(this).addClass('MultiCarousel_loaded');
       $(this).parent().addClass('MultiCarousel_load');
-      if(incno > 1){
+      if(incno > 1 && center_slide_scale){
       for(var j = 1 ; j <= incno-1; j++) {
         slider_dots[slider_dots.length-j].remove();
       }
@@ -783,18 +779,23 @@ function ResCarouselSize(itemsMainDiv, selector) {
 document.querySelector(itemsDiv).addEventListener('dragstart', (e) => {
   oldX = e.pageX;
   oldY = e.pageY;
+  $(itemsDiv).attr('autoplay_delay','true');
 });
 
 document.querySelector(itemsDiv).addEventListener('touchstart', (e) => {
   oldX = e.changedTouches[0].pageX;
   oldY = e.changedTouches[0].pageY;
+  $(itemsDiv).attr('autoplay_delay','true');
 });
 
 document.querySelector(itemsDiv).addEventListener("dragend", getMouseDirection, false);
 
 document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
   var touch_event = event.changedTouches[0]; 
-  getMouseDirection(touch_event)
+  getMouseDirection(touch_event);
+  if($(itemsDiv).attr('autoplay_delay') == 'true'){
+    setTimeout(function() {$(itemsDiv).attr('autoplay_delay','false');},9000);
+  }
 });
 
 // }
@@ -830,8 +831,6 @@ function ResCarousel(e, el, s, slide_container) {
 
     // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
     if(active_slide.length > 1){
-      // active_slide = $(slide_container)[0];
-      // active_slide.classList.add('active');
     slider_dots_length = slider_dots_length - active_slide_number - 1;
     }
     function active_slider_dots(e){
@@ -844,11 +843,6 @@ function ResCarousel(e, el, s, slide_container) {
 
     let centerIndex = active_slide_position;
     let centerFlag = true;
-    // slider_item.removeClass("active");
-    // slider_item.removeClass("center");
-    // if(!center_slide_scale && active_slide_number < 2){
-    // slider_dots.removeClass("active");
-    // }
       for(var k = 0 ; k < slider_item.length; k++) {
 
         if(slider_item[k].classList.contains('active')){
@@ -857,7 +851,7 @@ function ResCarousel(e, el, s, slide_container) {
         if(slider_item[k].classList.contains('center')){
           slider_item[k].classList.remove('center');
         }
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k] && slider_dots[k].classList.contains('active')){
+        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k].classList.contains('active')){
           slider_dots[k].classList.remove('active');
           }
           
@@ -869,7 +863,7 @@ function ResCarousel(e, el, s, slide_container) {
             counter = slider_item.length - j - 1; 
           }
         slider_item[counter].classList.add('active');
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[counter]){
+        if(!center_slide_scale && active_slide_number < 2){
         slider_dots[counter].classList.add('active');
         }
         if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
@@ -889,11 +883,6 @@ function ResCarousel(e, el, s, slide_container) {
 
     let centerIndex = active_slide_position;
     let centerFlag = true;
-    // slider_item.removeClass("active");
-    // slider_item.removeClass("center");
-    // if(!center_slide_scale && active_slide_number < 2){
-    // slider_dots.removeClass("active");
-    // }
       for(var k = 0 ; k < slider_item.length; k++) {
         
         if(slider_item[k].classList.contains('active')){
@@ -902,7 +891,8 @@ function ResCarousel(e, el, s, slide_container) {
         if(slider_item[k].classList.contains('center')){
           slider_item[k].classList.remove('center');
         }
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k] && slider_dots[k].classList.contains('active')){
+
+        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k].classList.contains('active')){
           slider_dots[k].classList.remove('active');
           }
                     
@@ -915,7 +905,7 @@ function ResCarousel(e, el, s, slide_container) {
           }
 
         slider_item[counter].classList.add('active');
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[counter]){
+        if(!center_slide_scale && active_slide_number < 2 ){
         slider_dots[counter].classList.add('active');
         }
         if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
@@ -982,9 +972,6 @@ function ResCarousel(e, el, s, slide_container) {
     }
 
     $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
-    if(autoplay_delay == true){
-    setTimeout(function() {autoplay_delay = false},9000);
-  }
 }
 
 //It is used to get some elements from btn
@@ -992,7 +979,6 @@ function click(ell, ee) {
     var Parent = "#" + $(ee).parent().attr("id");
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
-    autoplay_delay = true;
     ResCarousel(ell, Parent, slide, slide_container);
 }
 
@@ -1000,7 +986,6 @@ function click(ell, ee) {
 function changeCurrent(curr, dot) {
 var Parent = "#" + $(dot).parent().parent().attr("id");
 var slide_container = $(Parent).children('.MultiCarousel-inner');
-autoplay_delay = true;
 ResCarousel(e=null, Parent, curr, slide_container);
 }
 
@@ -1009,7 +994,7 @@ function slideAutoplay(selector , duration) {
 var newIndex = $(selector).attr("data-slide");
 var slides_container = $(selector).children('.MultiCarousel-inner');
 setInterval(function() {
-if(!autoplay_delay){
+if(slides_container.attr('autoplay_delay') == 'false'){ 
 ResCarousel(1, selector, newIndex, slides_container);
 }
 }, duration);
@@ -1019,7 +1004,6 @@ ResCarousel(1, selector, newIndex, slides_container);
 
 function sliderDrag(event, slide_direction) {
   var Parent = "#" + $(event.target).parents('.MultiCarousel').attr('id');
-// console.log(Parent);
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
       ResCarousel(slide_direction, Parent, slide, slide_container);
@@ -1029,17 +1013,16 @@ var xDirection = "";
 var yDirection = "";
 // function to get the drag_direction
 function getMouseDirection(e) {
-  autoplay_delay = true;
     //Adding threshold for IOS anchor not working
-    // if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
-    //   e.target.closest('a')?.click();
-    // }
+    // console.log(oldX-e.pageX, 'oldX-e.pageX');
+    // console.log(oldX-e.pageX > -20 && oldX-e.pageX < 20);
+    if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
+      // e.target.closest('a')?.click();
+    }else{
     //deal with the horizontal case
     if (oldX < e.pageX) {
-      console.log(oldX-e.pageX , 'right oldX-e.pageX');
         xDirection = "right";
     } else if(oldX > e.pageX) {
-      console.log(oldX-e.pageX , 'left oldX-e.pageX');
         xDirection = "left";
     }
  
@@ -1058,7 +1041,7 @@ function getMouseDirection(e) {
       
     oldX = e.pageX;
     oldY = e.pageY;
-
+  }
     // console.log(xDirection + " " + yDirection);
 }
 var section_id = '';
@@ -1066,7 +1049,7 @@ var sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarouse
 for(let i = 0; i < sliderSelector.length; i++){
   section_id = sliderSelector[i].getAttribute('data-sliderId');
   var itemsDiv = '.MultiCarousel-inner.' + section_id;
-   console.dir(document.querySelector(itemsDiv));
+  //  console.dir(document.querySelector(itemsDiv));
   var itemsMainDiv = ('.MultiCarousel.' + section_id);
   var selector = 'MultiCarousel_' + section_id;
   Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
