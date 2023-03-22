@@ -296,8 +296,52 @@
 </section>
 
 <script>
+  window.addEventListener("load", function(){
+    // For Loading homepage ajax tabs content when page loads
+
+    /* $('#shopify-section-{{ section.id }} .tabs-nav__item-list button').each(function( index ){
+      if(index > 0){
+        
+        let tab_collection_handle = $(this).attr('data-collection-handle');
+        let tab_content_id = $(this).attr('aria-controls');
+
+        let tab_html = load_ajax_tab_content(tab_collection_handle, tab_content_id);
+        
+        $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_content_id+'.product-list .product-list__inner').html(tab_html);
+
+      }
+    }); */
+
+  });
+
+  function load_ajax_tab_content(collection_handle, collection_tab_id){
+
+    let html_response = "";
+       
+    $.ajax({
+      url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+      method: "get",
+      type: "GET",
+      async: false,
+      dataType: "html",
+      success: function (result) {
+        
+        html_response = $(result).find("product-list.product-list .product-list__inner").html();
+      },
+      error: function (error) {
+          console.log(error);
+      }
+    });
+
+    return html_response;
+  }
+
+
+  
   $(document).ready(function(){
-    $('#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button').on('click', function(e){
+    // getting products cards on clicking of featured collection tabs
+    
+    $('body').on('click', '#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button', function(e){
       e.preventDefault();
       
       let tab_id = $(this).attr('aria-controls');
@@ -322,7 +366,6 @@
           type: "GET",
           dataType: "html",
           success: function (result) {
-            debugger;
             
             let t = $(result).find("product-list.product-list .product-list__inner").html();
             $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
@@ -356,10 +399,10 @@
       }
 
     
-    function filterItems (needle, itemStack) {
-      let query = needle.toLowerCase();
-      return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
-    }
+      function filterItems (needle, itemStack) {
+        let query = needle.toLowerCase();
+        return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
+      }
 
     })
   })
