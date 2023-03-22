@@ -1266,10 +1266,11 @@ $('.multiCarousel_dots').click(function () {
 });
 
  ResCarouselSize(itemsMainDiv, selector);
-
-// $(window).resize(function () {
-//   ResCarouselSize(itemsMainDiv, selector);
-// });
+ if(!isIOSMobile()){
+$(window).resize(function () {
+  ResCarouselSize(itemsMainDiv, selector);
+});
+ }
 if(autoplay){
 slideAutoplay(itemsMainDiv , autoplay_timeout);
 }
@@ -1306,6 +1307,8 @@ function ResCarouselSize(itemsMainDiv, selector) {
           incno = mobile_slide;
           itemWidth = sampwidth / incno;
       }
+
+      if(!$(this).hasClass('MultiCarousel_loaded')){
       $(this).addClass('MultiCarousel_loaded');
       $(this).parent().addClass('MultiCarousel_load');
       if(incno > 1 && center_slide_scale){
@@ -1322,7 +1325,7 @@ function ResCarouselSize(itemsMainDiv, selector) {
         slider_dots[k].classList.add('active');
       }
       }
-
+    }
       $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
       $(this).find(itemClass).each(function () {
           $(this).outerWidth(itemWidth);
@@ -1610,13 +1613,13 @@ function getMouseDirection(e) {
   }
     // console.log(xDirection + " " + yDirection);
 }
-var section_id = '';
-var sliderSelector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)');
-for(let i = 0; i < sliderSelector.length; i++){
-  section_id = sliderSelector[i].getAttribute('data-sliderId');
-  var itemsDiv = '.MultiCarousel-inner.' + section_id;
+var Slider_section_id = '';
+var slider_Selector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)');
+for(let i = 0; i < slider_Selector.length; i++){
+  Slider_section_id = slider_Selector[i].getAttribute('data-sliderId');
+  var itemsDiv = '.MultiCarousel-inner.' + Slider_section_id;
   //  console.dir(document.querySelector(itemsDiv));
-  var itemsMainDiv = ('.MultiCarousel.' + section_id);
-  var selector = 'MultiCarousel_' + section_id;
+  var itemsMainDiv = ('.MultiCarousel.' + Slider_section_id);
+  var selector = 'MultiCarousel_' + Slider_section_id;
   Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
 }
