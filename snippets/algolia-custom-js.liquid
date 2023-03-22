@@ -1,4 +1,15 @@
+
+{{ 'algolia_config.js' | asset_url | script_tag }}
+<script src="{{ 'algolia_externals.js' | asset_url }}" defer></script>
+{{ 'algolia_init.js' | asset_url | script_tag }}
+<script src="{{ 'algolia_analytics.js' | asset_url }}" defer></script>
+<script src="{{ 'algolia_translations.js' | asset_url }}" defer></script>
+<script src="{{ 'algolia_helpers.js' | asset_url }}" defer></script>
+<script src="{{ 'algolia_autocomplete.js' | asset_url }}" defer></script>
+
 <script>
+  {% comment %}
+  console.log('hii algolia');
   var algolia_config = "{{ 'algolia_config.js' | asset_url }}";
   var algolia_externals = "{{ 'algolia_externals.js' | asset_url }}";
   var algolia_init = "{{ 'algolia_init.js' | asset_url }}";
@@ -58,7 +69,7 @@
       }, true);
 
     }, true);
-  }, true);
+  }, true); {% endcomment %}
 
   function debounce(e, t, r) {
     var a;
@@ -118,11 +129,11 @@
       for (let r = 0; r < e.length; r++) 
         t += "<div>" + e[r] + "</div>";
       $(".algolia-recently-search-header").show(),
-      $(".algolia-recently-search, .algolia-trending-search").css("display", "block")
+      $(".algolia-recently-search, .algolia-trending-search, .algolia-most-searched-bought").css("display", "block")
     } else 
       $(".algolia-recently-search-header").hide();
     $(".algolia-recently-search-container").html(t),
-    $(".algolia-trending-item , .algolia-recently-search-container div").click(function() {
+    $(".algolia-trending-item, .algolia-recently-search-container div").click(function() {
       if (console.log("hiiiiii"), null !== this.offsetParent) {
         let e = this
             .offsetParent
@@ -199,7 +210,7 @@
      else if (e > 0) {
       a.css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"}),
       $(".algoinput").css("display", "block"),
-      $(".algolia-recently-search, .algolia-trending-search").css("display", "none");
+      $(".algolia-recently-search, .algolia-trending-search, .algolia-most-searched-bought").css("display", "none");
       let s = "";
       1 == e
         ? s = "Type in another " + t + " characters to unveil the magic…"
