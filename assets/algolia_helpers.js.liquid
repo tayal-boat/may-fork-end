@@ -160,6 +160,10 @@
       if (this.tags.includes('{{ settings.products_offering_freebie }}')) {
         free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
       }
+      if (this.tags.includes('customized')) {
+        // free = '<input class="flash_sale_enable" type="hidden" name="properties[PersonalisedMessage]" value="">';
+        free =  '/products/' + this.handle ;
+      }
       if(this.inventory_quantity < Shopify.sold_out_threshold) {
         if (this.tags.includes('Coming-Soon')) {
           res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
@@ -179,7 +183,16 @@
       else if (this.inventory_available) {
         if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
           res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-offer-add-to-cart algolia_pod_offer add-to-cart-button ' + ${flashSale} + '" />`;
-        }else{
+        } else if(this.tags.includes('customized')){
+          res = `<a href="${free}" class="product-item__cta button button--primary"
+          style="background: red;line-height: normal;
+          border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
+          text-transform: uppercase;margin-top: 0.65rem;border-radius: 5px!important;
+          font-size: 15px!important;font-weight: 700!important;">
+          View Product
+        </a>`;
+        }
+        else{
           res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
         }
       } 

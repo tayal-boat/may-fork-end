@@ -227,16 +227,16 @@ let usual_price = '';
 
 Shopify.variantChange = function(e){
   $('.pdp-btn-price').remove()
-  $("#AddToCart .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
+  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
   // console.log(e);
-  
+
 function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
 if(varient_swatches_input[i].checked){
   if(JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
       $('.custom-notify-btn').show();
       $('.product__info button#AddToCart').hide();
-      $('#AddToCart').addClass('hide_cTA');
+      $('#AddToCart, .cutomized-btn, .button.custom-prebook').addClass('hide_cTA');
       $("#gokwik-buy-now").addClass('hide_cTA');
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
@@ -252,12 +252,20 @@ if(varient_swatches_input[i].checked){
     $('.custom-notify-btn').hide();
     $('.product__info button#AddToCart').show();
     $("#gokwik-buy-now").removeClass('hide_cTA');
-    $('#AddToCart').removeClass('hide_cTA');
+    $('#AddToCart, .cutomized-btn, .button.custom-prebook').removeClass('hide_cTA');
     $('quick-buy-drawer #AddToCart').show();
     $('quick-buy-popover #AddToCart').show();
     $('.product-item__quick-form.quick-buy-notify-me').hide();
     $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
+    var variant_personalization = sessionStorage.getItem('variant_personalization');
+    variant_personalization = JSON.parse(variant_personalization);
+    for (var key in variant_personalization) {
+      if (variant_personalization.hasOwnProperty(e.id)) {
+        $('.personalization-image-wrapper img').attr('src', variant_personalization[e.id]);
+        break;
+      }
+    }
   }    
 }
 }
@@ -742,6 +750,7 @@ $('a.banner_link').on('click', function() {
    // Not allow 0 as first digit on input
    $(document).on("input", "#otp-mobile-number", (e) => {
       $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+      $('.otp-login-error').html('');
    })
    $(document).on("keypress", "#otp-mobile-number", (e) => {
       return _isNumberCheck(e);
@@ -1064,7 +1073,7 @@ function verifyotp(session_id, otp, url){
       $('.otp-login-error').html('Something went wrong please try again.');
     }else if(response.code == 401 && response.message == 'Incorrect Otp'){
       $('.otp-login-error').html(response.message);
-    }else if(response.code == 401 && response.message == 'Customer has not registered email , redirecting to Sign up'){
+    }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
       $('.otp-login-error').html(response.message);
       signup_window(session_id);
     }else if(response.code == 406){
@@ -1150,7 +1159,14 @@ $('.otp-login-btn, .login-resend-btn').click(function(){
   if(!$('#resend__otp').hasClass('email-resend-btn')){
   console.log('login-resend-btn');
   let phone = $('#otp-mobile-number').val();
-  otpLogin(phone);
+  if(phone.length < 1){
+    $('.otp-login-error').html('The phone field is required.');
+  }else if(phone.length < 10){
+    $('.otp-login-error').html('Invalid phone number.');
+  }else {
+    $('.otp-login-btn').attr('disabled', true);
+    otpLogin(phone);
+  }
   }
 })
 
@@ -1166,7 +1182,9 @@ $( "#otp" ).on( "input", function() {
 
 $('.mobile-login-edit-icon').click(function(){
   $('.otp-login-error').html('');
+  $('.otp-login-btn').attr('disabled', false);
   $('.customer--section').removeAttr('otp_send');
+  $('.mobile-otp-inout input').val('');
   $('#otp-mobile-number').attr('disabled', false)
   });
   if(!sessionStorage.login_location && sessionStorage.login_location !== ''){
