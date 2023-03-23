@@ -59,6 +59,17 @@
   .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
   [dir=ltr] .tabs-nav__position{left: 0;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
+
+
+  .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
+  .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
+  .featured-collections{min-height: 377px !important;}
+  .featured-collections.updated_featured_items .product-item .features-list{display: none;}
+  .custom_loading_icon{position: absolute;left: 50%;top: 50%;z-index: 99;}
+
+  .updated_featured_items .product-item__image-wrapper{margin-top: 0px !important;padding-top: 24px;padding-bottom: 20px;}
+  .updated_featured_items .label--highlight.custom-label{bottom: -6px;border-radius: 8px 8px 0 0!important;justify-content: flex-start!important;width: 96%!important;left: 50%;transform: translate(-50%);height: 25px;line-height: 20px;padding: 0 12px 4px!important;z-index: 0;align-items: center;}
+
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
      .tabs-nav--edge2edge {margin-top: 12px!important;}
@@ -103,10 +114,11 @@
   #shopify-section-{{ section.id }} h3.heading.h2::before {
    content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
    position: absolute; top: -28px; left: -8px;
-  }
+}
   
 }
 {% endif %}
+
     
 </style>
 
@@ -159,6 +171,7 @@
                       class="tabs-nav__item heading heading--small ml-0"
                       aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
                       aria-controls="block-{{ section.id }}-{{ block.id }}"
+                      data-collection-handle="{{ block.settings.collection.handle }}"
                       {{ block.shopify_attributes }}
                     >
                       {{-
@@ -188,8 +201,7 @@
               hidden
             {% endunless %}
             id="block-{{ section.id }}-{{ block.id }}"
-            class="product-list product-list--center"
-          >
+            class="product-list product-list--center" >
             <div
               {% unless section.settings.stack_products %}
                 class="scroller"
@@ -197,46 +209,49 @@
             >
               <div
                 class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
-                {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
-                {%- assign gap_width = 24.0
-                  | divided_by: section.settings.products_per_row
-                  | times: number_of_products_minus_one
-                -%}
-                {%- capture sizes_attribute -%}
-                  (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
-                  {{ gap_width | ceil }}px)
-                {%- endcapture -%}
-
-                {%- for product in collection.products limit: section.settings.products_count -%}
-                  {%- if product.featured_media -%}
-                    {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
-                      | at_least: product.featured_media.aspect_ratio
-                    -%}
-                  {%- endif -%}
-
-                  {%- render 'product-item',
-                    product: product,
-                    collection: collection,
-                    show_cta: section.settings.show_cta,
-                    block: block,
-                    sizes_attribute: sizes_attribute,
-                    reveal: settings.stagger_products_apparition
+                {% if forloop.index == 1 %}
+                  {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
+                  {%- assign gap_width = 24.0
+                    | divided_by: section.settings.products_per_row
+                    | times: number_of_products_minus_one
                   -%}
-                {%- else -%}
-                  {%- assign smallest_image_aspect_ratio = 1 -%}
+                  {%- capture sizes_attribute -%}
+                    (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
+                    {{ gap_width | ceil }}px)
+                  {%- endcapture -%}
 
-                  {%- for i in (1..section.settings.products_count) -%}
-                    {%- capture product_image -%}product-{% cycle '1', '2', '3', '4', '5' %}{% endcapture %}
-                    {%- render 'product-item-placeholder',
-                      product_image: product_image,
+                  {%- for product in collection.products limit: section.settings.products_count -%}
+                    {%- if product.featured_media -%}
+                      {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
+                        | at_least: product.featured_media.aspect_ratio
+                      -%}
+                    {%- endif -%}
+
+                    {%- render 'product-item',
+                      product: product,
+                      collection: collection,
                       show_cta: section.settings.show_cta,
+                      block: block,
+                      sizes_attribute: sizes_attribute,
                       reveal: settings.stagger_products_apparition
                     -%}
+                  {%- else -%}
+                    {%- assign smallest_image_aspect_ratio = 1 -%}
+
+                    {%- for i in (1..section.settings.products_count) -%}
+                      {%- capture product_image -%}product-{% cycle '1', '2', '3', '4', '5' %}{% endcapture %}
+                      {%- render 'product-item-placeholder',
+                        product_image: product_image,
+                        show_cta: section.settings.show_cta,
+                        reveal: settings.stagger_products_apparition
+                      -%}
+                    {%- endfor -%}
                   {%- endfor -%}
-                {%- endfor -%}
-                <p style="position: absolute;top: -2rem; right: 0;" class="view-all">
-                  <a style="color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
-                </p>
+                  <p style="position: absolute;top: -2rem; right: 0;" class="view-all">
+                    <a style="color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
+                  </p>
+                {% endif %}
+
               </div>
             </div>
 
@@ -276,11 +291,125 @@
               </div>
             {%- endif -%}
           </product-list>
+
         {%- endfor -%}
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  window.addEventListener("load", function(){
+    // For Loading homepage ajax tabs content when page loads
+
+    /* $('#shopify-section-{{ section.id }} .tabs-nav__item-list button').each(function( index ){
+      if(index > 0){
+        
+        let tab_collection_handle = $(this).attr('data-collection-handle');
+        let tab_content_id = $(this).attr('aria-controls');
+
+        let tab_html = load_ajax_tab_content(tab_collection_handle, tab_content_id);
+        
+        $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_content_id+'.product-list .product-list__inner').html(tab_html);
+
+      }
+    }); */
+
+  });
+
+  function load_ajax_tab_content(collection_handle, collection_tab_id){
+
+    let html_response = "";
+       
+    $.ajax({
+      url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+      method: "get",
+      type: "GET",
+      async: false,
+      dataType: "html",
+      success: function (result) {
+        
+        html_response = $(result).find("product-list.product-list .product-list__inner").html();
+      },
+      error: function (error) {
+          console.log(error);
+      }
+    });
+
+    return html_response;
+  }
+
+
+  
+  $(document).ready(function(){
+    // getting products cards on clicking of featured collection tabs
+    
+    $('body').on('click', '#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button', function(e){
+      e.preventDefault();
+      
+      let tab_id = $(this).attr('aria-controls');
+
+      // Checking the tab has content loaded already or not
+
+      if( $('#'+tab_id+' .product-list__inner').html().trim() == "" ){
+        $(this).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
+            
+        $(this).attr('aria-expanded', 'true');
+        
+        $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
+          
+        let collection_handle = $(this).data("collection-handle");
+        //let products_limit = {{ section.settings.products_count }};
+
+        let self = this;
+
+        $.ajax({
+          url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+          method: "get",
+          type: "GET",
+          dataType: "html",
+          success: function (result) {
+            
+            let t = $(result).find("product-list.product-list .product-list__inner").html();
+            $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
+            $(self).parents('.shopify-section--featured-collections').find("product-list#"+tab_id+".product-list").removeAttr('hidden');
+            $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html(t);
+            $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
+            
+            var biggestNum = 0;
+            $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
+              let z_index_val = [];
+
+              $(this).find('.product-horizontal span').each(function(){
+                let all_classes = $(this).attr('class').split(' ');
+                let get_classname = filterItems('z-', all_classes);
+                z_index_val.push(get_classname[0].split('-')[1]);
+              })
+
+              let element_max_num = Math.max.apply(Math, z_index_val);
+              $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
+            });
+
+            $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+
+            $('.custom_loading_icon').remove();
+
+          },
+          error: function (error) {
+              console.log(error);
+          },
+        });
+      }
+
+    
+      function filterItems (needle, itemStack) {
+        let query = needle.toLowerCase();
+        return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
+      }
+
+    })
+  })
+</script>
 
 {% schema %}
 {
