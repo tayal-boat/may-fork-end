@@ -823,6 +823,11 @@ $('.notifyMe_form-horizontal').submit(function () {
   var notifyMe_data = '';
   var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
  
+  if(mobile_number.length < 1){
+    $('#message_holder').html('Phone number is required.');
+  }else if(mobile_number.length < 10){
+    $('#message_holder').html('Invalid phone number.');
+  }else {
   function isJson(str) {
     try {
         JSON.parse(str);
@@ -831,22 +836,39 @@ $('.notifyMe_form-horizontal').submit(function () {
     }
     return true;
 }
-
   if (isJson(sessionStorage.notifyMe_data)) {
     notifyMe_data = JSON.parse(sessionStorage.notifyMe_data);
  console.log(notifyMe_data);
     notifyMe_arr = notifyMe_data;
   }
-  console.log(notifyMe_arr);
-  console.log(notifyMe_varient);
   notifyMe_arr.push(notifyMe_varient);
   notifyMe_arr = JSON.stringify(notifyMe_arr);
   sessionStorage.setItem('notifyMe_data', notifyMe_arr);
-  this.closest('.custom_popup').classList.remove('show'); 
+  document.querySelector('.completed_message').style.display = 'block';
+  var custom_popup_body = this.closest('.custom_popup');
+  setTimeout(function() {
+  custom_popup_body.classList.remove('show'); 
   document.querySelector('body').classList.remove('overflow-hidden');
   $('#mobile_number').val('');
-console.log(notifyMe_arr);
-console.log(title);
-console.log(mobile_number);
-console.log(varient_id);
+  document.querySelector('.completed_message').removeAttribute('style');
+  },3000);
+}
 });
+
+
+  //Function to allow only numbers
+  function _isNumberCheck(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    console.log(evt.target.value);
+    if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
+    return false;
+    return true;
+ }
+ // Not allow 0 as first digit on input
+ $(document).on("input", "#mobile_number", (e) => {
+    $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+    $('#message_holder').html('');
+ })
+ $(document).on("keypress", "#mobile_number", (e) => {
+    return _isNumberCheck(e);
+ })
