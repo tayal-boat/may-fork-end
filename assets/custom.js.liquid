@@ -1063,23 +1063,49 @@ function verifyotp(session_id, otp, url){
   
   $.ajax(settings).done(function (response) {
     // console.log(response);
+    let mobile_number = $('.mobile-login-input input').val()
     sessionStorage.setItem('timerOn', false);
     console.log(timerOn,'timerOn');
     if(response.code == 200 && response.message == 'login URL sent'){
       $('.customer-login-section.customer--section').hide();
       $('.oto-login-success-container').show();
       localStorage.setItem('boatHead_input', response.Token);
+      clevertap.event.push('Successful Login', {
+        "Mobile Number": mobile_number,
+        "Session ID": session_id
+      })
+      clevertap.onUserLogin.push({
+        "Site": {
+          "OTP Login Number": mobile_number,
+        }
+       }); 
       countdown(5, response.URL);
       
     }else if(response.code == 422 && response.message == 'validation_error'){
       $('.otp-login-error').html('Something went wrong please try again.');
+      clevertap.event.push('Failed Login', {
+        "Mobile Number": mobile_number,
+        "Error Message": 'Something went wrong please try again.'
+      })
     }else if(response.code == 401 && response.message == 'Incorrect Otp'){
       $('.otp-login-error').html(response.message);
+      clevertap.event.push('Failed Login', {
+        "Mobile Number": mobile_number,
+        "Error Message": response.message
+      })
     }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
       $('.otp-login-error').html(response.message);
+      clevertap.event.push('Failed Login', {
+        "Mobile Number": mobile_number,
+        "Error Message": response.message
+      })
       signup_window(session_id);
     }else if(response.code == 406){
       $('.otp-login-error').html('Otp expired.');
+      clevertap.event.push('Failed Login', {
+        "Mobile Number": mobile_number,
+        "Error Message": response.message
+      })
     }else if(response.code == 300 && response.message == 'emailId list'){
       $('.otp-login-message h3').html('Please select your Primary email id');
       $('.customer-login-section').attr('multi_email', 'true');
@@ -1123,6 +1149,9 @@ function verifyotp(session_id, otp, url){
     }
     }else{
       $('.otp-login-error').html('Something went wrong please try again.');
+      clevertap.event.push('Failed Login', {
+        "Error Message": 'Something went wrong please try again.'
+      })
     }
   });
 }
@@ -1150,7 +1179,7 @@ function otpLogin(phone){
     TimerFunction();
       sessionStorage.setItem('login_session_id', response.session_id )
   }else if(response.code == 422 && response.message == 'validation_error'){
-  $('.otp-login-error').html('The phone field is required.');
+    $('.otp-login-error').html('The phone field is required.');
   }else if(response.code == 403 && response.message == 'Invalid phone number'){
     $('.otp-login-error').html(response.message);
   }
@@ -1214,11 +1243,12 @@ $('.mobile-login-edit-icon').click(function(){
   let session_id = sessionStorage.getItem('login_session_id');
   let otp = $('.mobile-otp-inout input').val();
   let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
+if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){  
   verifyotp(session_id, otp, url);
 }
      }else{
   let session_id = sessionStorage.getItem('login_session_id');
+  let mobile_number = $('.mobile-login-input input').val()
   let otp = $('.mobile-otp-inout input').val();
   let url = sessionStorage.getItem('login_location');
 if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
