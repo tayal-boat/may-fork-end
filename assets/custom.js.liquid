@@ -817,6 +817,7 @@ $('#variants_select').change(function(){
 $('.notifyMe_form-horizontal').submit(function () {
   event.preventDefault();
   var varient_id = $(this).find('#variants_select').val();
+  var varient_title = $(this).siblings('.notifyMe_popup_title').text().trim().split('-')[1];
   var mobile_number = $(this).find('#mobile_number').val();
   var title = $(this).siblings('.notifyMe_popup_title').text().trim();
   var notifyMe_arr = [];
@@ -838,7 +839,13 @@ $('.notifyMe_form-horizontal').submit(function () {
 }
   if (isJson(sessionStorage.notifyMe_data)) {
     notifyMe_data = JSON.parse(sessionStorage.notifyMe_data);
- console.log(notifyMe_data);
+    console.log(notifyMe_varient);
+    clevertap.event.push('Notify Me When Available', {
+      "Product Name": title,
+      "Variant Title": varient_title,
+      "Variant ID": varient_id,
+      "Mobile Number": mobile_number
+    })
     notifyMe_arr = notifyMe_data;
   }
   notifyMe_arr.push(notifyMe_varient);
