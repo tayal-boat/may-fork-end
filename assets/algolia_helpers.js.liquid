@@ -160,21 +160,15 @@
       if (this.tags.includes('{{ settings.products_offering_freebie }}')) {
         free = '<input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">';
       }
-      if (this.tags.includes('customized')) {
-        // free = '<input class="flash_sale_enable" type="hidden" name="properties[PersonalisedMessage]" value="">';
-        free =  '/products/' + this.handle ;
-      }
       if(this.inventory_quantity < Shopify.sold_out_threshold) {
         if (this.tags.includes('Coming-Soon')) {
           res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
-        } else if (this.tags.includes('Gift Cards')) {
-          res = '<input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button" />';
-        } 
-        else {
+        } else {
           // res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
+          console.log(this);
           res = `<div class="product-item__quick-form">
-          <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
-          "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
+          <a href='#' id="notifyMe_trigger" class='search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","available":"${this.inventory_available}",
+          "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}"}]}' data-variant-id="${this.objectID}" onclick="Shopify.notifyMe()">
           Notify Me
           </a>
           </div>`
@@ -183,16 +177,7 @@
       else if (this.inventory_available) {
         if(Shopify.enable_fixed_discount && this.tags.includes(Shopify.tag_selector)){
           res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-offer-add-to-cart algolia_pod_offer add-to-cart-button ' + ${flashSale} + '" />`;
-        } else if(this.tags.includes('customized')){
-          res = `<a href="${free}" class="product-item__cta button button--primary"
-          style="background: red;line-height: normal;
-          border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
-          text-transform: uppercase;margin-top: 0.65rem;border-radius: 5px!important;
-          font-size: 15px!important;font-weight: 700!important;">
-          View Product
-        </a>`;
-        }
-        else{
+        }else{
           res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
         }
       } 
@@ -247,8 +232,6 @@
       if(this.inventory_quantity < Shopify.sold_out_threshold){
         if (tags.includes('Coming-Soon')) {
           res_class = 'aa-product-image'
-        } else if(tags.includes('Gift Cards')) {
-          res_class = 'aa-product-image'
         } else {
           res_class = 'aa-product-image sold-out'
         }
@@ -282,8 +265,6 @@
       if(this.inventory_quantity < Shopify.sold_out_threshold){
         if (tags.includes('Coming-Soon')) {
           var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
-        } else if (tags.includes('Gift Cards')) {
-          var response = ``;
         } else if (tags.includes('Restocking-Soon')){
           var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
         }
@@ -292,13 +273,6 @@
         }
       }
       else if (this.inventory_available) {
-        var product_labelss = this.meta.product_labels;
-        if (product_labelss) {
-          var labelss = product_labelss.label[0];
-          res = `${labelss}`;
-          res_class = 'metafeild-label label--highlight custom-label label bg-black';
-          response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
-        }
         for (let i = 0; i < tags.length; i++) {
       if (tags[i].includes('Free-')) {
             res = `🎁 ${tags[i].replace('-',' ')}`;

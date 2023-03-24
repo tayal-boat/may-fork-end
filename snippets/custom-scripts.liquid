@@ -1,46 +1,3 @@
-{%- if customer -%}
-  <script>
-    sessionStorage.setItem('login', 'false');
-
-    $('.logout').click(function() {
-      sessionStorage.removeItem('login');
-      localStorage.removeItem('boatHead_input');
-    });
-  </script>
-{%- else -%}
-  <script>
-
-    if (localStorage.getItem('boatHead_input') && localStorage.getItem('boatHead_input') !== '' && localStorage.getItem('boatHead_input') !== 'undefined') {
-      sessionStorage.setItem('login', 'true');
-      if (sessionStorage.getItem('login') == 'true') {
-        var settings = {
-          "url": "https://otp.boat-lifestyle.com/loginstatus",
-          "method": "POST",
-          "timeout": 0,
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          "data": JSON.stringify(
-            {"Token": localStorage.getItem('boatHead_input'), "url": location.href}
-          )
-        };
-
-        $.ajax(settings).done(function(response) {
-          console.log(response);
-          sessionStorage.setItem('login', 'false');
-          setTimeout(function() {
-            if (sessionStorage.getItem('login') == 'false') {
-              localStorage.setItem('boatHead_input', response.Token);
-              window.location = response.URL;
-            }
-          }, 500);
-        });
-      }
-    }
-  </script>
-{%- endif -%}
-
-
 <!-- Algolia head -->
 {% for tag in customer.tags %}
   {% if tag == 'gst_added' %}
@@ -54,23 +11,23 @@
 <script type="deferjs">
   var _rmData = _rmData || [];
   _rmData.push(['setStoreKey', 'Rm193om6']);{% if customer %}_rmData.push(['setCustomer', {{ customer.email | json }}]);{% endif %}(function(d, t) {
-  var g = d.createElement(t),
-        s = d.getElementsByTagName(t)[0];
-      g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
-      s.parentNode.insertBefore(g, s);
-    }(document, 'script'));{% if customer.metafields.custom.gst_address %}Shopify.gst_added =
-    {% if gst_added %}
+    var g = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));{% if customer.metafields.custom.gst_address %}Shopify.gst_added = {% if gst_added %}
       {{ gst_added }}
     {% else %}
       false
     {% endif %};
     let address = {{ customer.metafields.custom.gst_address }};
+
     sessionStorage.setItem('gstin', address.gst);
-        sessionStorage.setItem('gst_billing_name', address.name);
-        sessionStorage.setItem('gst_billing_address', address.address1);
-        sessionStorage.setItem('gst_billing_city', address.city);
-        sessionStorage.setItem('gst_billing_state', address.state);
-        sessionStorage.setItem('gst_billing_pincode', address.pincode);{% endif %}console.log('hii lazy script');
+    sessionStorage.setItem('gst_billing_name', address.name);
+    sessionStorage.setItem('gst_billing_address', address.address1);
+    sessionStorage.setItem('gst_billing_city', address.city);
+    sessionStorage.setItem('gst_billing_state', address.state);
+    sessionStorage.setItem('gst_billing_pincode', address.pincode);{% endif %}console.log('hii lazy script');
 
 </script>
 
@@ -85,73 +42,11 @@
 
 
 <script>
-
-  $('.algolia-header-search-input').css('pointer-events', 'all');
+  
+$('.algolia-header-search-input').css('pointer-events', 'all');
   Defer.all('script[type="lazyScript"]', 0, true);
   Defer.all('script[type="lazyScript2"]', 500, true);
 </script>
 
-<script>
-  {% unless template contains 'index' %}
-console.log('owl slider script');
-// Owl slider 
-// Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
 
-$("#homepage-carousel .custom_slider_init").on('initialized.owl.carousel', async () => {
-  $("#homepage-carousel .owl-item img").each(function(){$(this).css("width" , "100%")})
-})
-
-let section_id = '';
-let sliderSelector = document.querySelectorAll('.custom_slider_init');
-for (let i = 0; i < sliderSelector.length; i++) {
-  section_id = sliderSelector[i].getAttribute('data-sliderId');
-  let slider_section_id = '.custom_slider_init.' + section_id;
-  // console.log(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')));
-  // console.log('.custom_slider_init.' + section_id);`
-  $(slider_section_id).owlCarousel({
-    loop: JSON.parse(sliderSelector[i].getAttribute('data-loop')),
-    responsiveClass: JSON.parse(sliderSelector[i].getAttribute('data-responsiveClass')),
-    autoplay: JSON.parse(sliderSelector[i].getAttribute('data-autoplay')),
-    autoplayTimeout: JSON.parse(sliderSelector[i].getAttribute('data-autoplay-timeout')),
-    autoplayHoverPause:true,
-    stopOnHover: true,
-    items: JSON.parse(sliderSelector[i].getAttribute('data-items')),
-    slideBy: JSON.parse(sliderSelector[i].getAttribute('data-slideBy')),
-    nav: true,
-    dots: JSON.parse(sliderSelector[i].getAttribute('data-dots')),
-    margin: JSON.parse(sliderSelector[i].getAttribute('data-margin')),
-    responsive: {
-        300: {
-            items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_items')),
-            dots: JSON.parse(sliderSelector[i].getAttribute('data-responsive_Small_dots'))
-        },
-        1024: {
-           items: JSON.parse(sliderSelector[i].getAttribute('data-responsive_mid_items')),
-        }
-    },onInitialized: startProgressBar,onTranslate: resetProgressBar,onTranslated: startProgressBar
-  }).on("dragged.owl.carousel", function(event) {
-    $(slider_section_id).trigger('stop.owl.autoplay');
-    $(slider_section_id).trigger('play.owl.autoplay');
-    if(JSON.parse(sliderSelector[i].getAttribute('data-slideBy')) > 1){
-      slide_item_on_drag(slider_section_id, event.relatedTarget['_drag']['direction'] )
-    } 
-  }); 
-  function slide_item_on_drag(section_id, drag_direction) {
-    if( drag_direction == 'right' ){// $(section_id + ' .owl-dots .owl-dot.active').prev().click();
-    }
-    else if( drag_direction == 'left' ){$(section_id + ' .owl-dots .owl-dot.active').next().click();} } 
-  function startProgressBar() { $(".slide-progress").css({width: "100%",transition: "width 5000ms"});}
-  function resetProgressBar() {$(".slide-progress").css({width: 0,transition: "width 0s"});}
-  function openVideoPopup(url){
-    if(url != ''){
-      jQuery('.banner_video_modal .video_container iframe').attr('src', url);
-      jQuery(".banner_video_modal").modal('show');
-    }else{
-      return false;
-    }
-  }
-}
-
-  {% endunless %}
-</script>
 <!-- /Algolia head -->
