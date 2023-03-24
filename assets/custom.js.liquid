@@ -890,21 +890,45 @@ $('.mobile-login-input').html(`
 `);
 $('.otp-login-error').html('');
 $('.otp-login-confirm-btn').addClass('email_varify');
+clevertap.event.push('OTP Signup', {
+  "Full Name": full_name,
+  "Email": email,
+  "Phone": phone,
+  "Message": response.message
+})
 TimerFunction();
   sessionStorage.setItem('login_session_id', response.session_id );
         }else{
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
         localStorage.setItem('boatHead_input', response.Token);
+        clevertap.event.push('OTP Signup', {
+          "Full Name": full_name,
+          "Email": email,
+          "Phone": phone,
+          "Message": response.message
+        })
         countdown(5, response.URL);
       }
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
+        clevertap.event.push('OTP Signup', {
+          "Full Name": full_name,
+          "Email": email,
+          "Phone": phone,
+          "Message": response.message
+        })
       }else if(response.code == 401){
         $('.otp-login-error').html('Customer already exist with this email ID and with ' + response.message + ' phone number login with this number.');
         let login_btn = $('.otp-login-submit-btn');
         login_btn.html('Back to Login');
         login_btn.attr('return_to_login', true);
+        clevertap.event.push('OTP Signup', {
+          "Full Name": full_name,
+          "Email": email,
+          "Phone": phone,
+          "Message": response.message
+        })
         $('.otp-login-submit-btn[return_to_login]').click(function(e){
           e.preventDefault();
           location.reload();
