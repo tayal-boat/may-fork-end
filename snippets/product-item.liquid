@@ -78,7 +78,12 @@
   class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
   {% if reveal %}reveal{% endif %}>
   <div class="product__wrapper">
-  <div class="{% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}">
+  <div class="labels-wrapper {% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
+    {% if product.metafields.product_labels.label %}
+    <span class="metafeild-label label--highlight custom-label label bg-black">
+       {{- product.metafields.product_labels.label -}}
+    </span>
+  {% endif %}
     {% if product_soldout == false %}
       {%- for tag in product.tags -%}
         {%- if tag contains 'Free-' -%}
@@ -93,8 +98,8 @@
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="12"
+              height="12"
               fill="currentColor"
               class="bi bi-lightning-fill"
               viewBox="0 0 16 16">
@@ -194,11 +199,11 @@
             {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
         {%- endif -%}
       </a>
-      {% unless template contains 'collection' or section.settings.horizontal_ui %}
+      {% comment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}
         {% if product.available and product.tags contains 'flash-sale' -%}
           {%- render 'inventory-bar' with product -%}
         {%- endif -%}
-      {%- endunless -%}
+      {%- endunless -%} {% endcomment %}
     </div>
   </div>
   <div class="product-item__info {% if show_cta %}product-item__info--with-button{% endif %} {% if reduced_font_size %}text--small{% endif %}">
@@ -221,11 +226,11 @@
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
         {{- product.title | split: '|' | first | split: 'boAt' | last -}}
       </a>
-      {% if template contains 'collection' %}
+      {% comment %} {% if template contains 'collection' %}
         {% if product.available and product.tags contains 'flash-sale' -%}
          {%- render 'inventory-bar' with product -%}
         {%- endif %}
-      {%- endif %}
+      {%- endif %} {% endcomment %}
       </div>
       {% comment %}
       Start automatically added Judge.me widget
@@ -370,13 +375,15 @@
             <span class="product-item-meta__reviews-badge text--small">
               {%- render 'product-rating', product: product -%}
               {% if available_variants >= 1 and has_color_code %}
+                {% unless product.tags contains 'customized' %}
                 <button
                   is="toggle-button"
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
                   aria-expanded="false"
-                  class="variants-list hidden-tablet-and-up custom_atoc_btn">
+                  class="variants-list hidden-tablet-and-up custom_atoc_btn ">
                     {{ swatch_list }}
                 </button>
+
                 <button
                   is="toggle-button"
                   aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
@@ -384,6 +391,7 @@
                   class="variants-list hidden-phone">
                   {{ swatch_list }}
                 </button>
+              {% endunless %}
               {% endif %}
             </span>
           {%- endif -%}
@@ -431,6 +439,8 @@
                     type="hidden"
                     name="properties[Free]"
                     value="true">
+                {% comment %} {% elsif product.tags contains 'customized' %}
+                  <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
                 {%- endif -%}
                 <button
                   is="loader-button"
@@ -458,6 +468,15 @@
               IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
               {%- endcomment -%}
               <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
+                {% if product.tags contains 'customized' %}
+                  <a href="{{ product.url}}" is="loader-button" class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}"
+                    style="background: red;line-height: normal;
+                    border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
+                    text-transform: uppercase;margin: 0!important;border-radius: 5px!important;
+                    font-size: 15px!important;font-weight: 700!important;">
+                    View Product
+                  </a>
+                 {% else %}
                 <button
                   is="toggle-button"
                   loader
@@ -495,6 +514,7 @@
                     {{- 'product.form.add_to_cart' | t -}}
                   {% endif %}
                 </button>
+              {% endif %}
               </div>
               <quick-buy-popover
                 id="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
@@ -604,6 +624,8 @@
                 type="hidden"
                 name="properties[Free]"
                 value="true">
+            {% comment %} {% elsif product.tags contains 'customized' %}
+                <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
             {%- endif -%}
             <button type="submit" {% if show_cta %}is="loader-button"{% endif %}class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}">
               Add To Cart
