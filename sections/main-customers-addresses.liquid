@@ -81,7 +81,7 @@
                   {%- paginate customer.addresses by 8 -%}
                     <div class="account__addresses-list">
                       {%- for address in customer.addresses -%}
-                        <div class="account__address">
+                        <div class="account__address" data-addressId='{{address.id}}'>
                           {%- if address.id == customer.default_address.id -%}
                             <span class="account__address-title heading heading--small">{{ 'customer.addresses.default_address' | t }}</span>
                           {%- else -%}
@@ -443,7 +443,19 @@
     {%- endfor -%}
   {%- endpaginate -%}
 </section>
-
+<script>
+  const accountAddresses = Array.from(document.querySelectorAll('div.account__address'));
+  console.log(accountAddresses);
+  const titles = [];
+  accountAddresses.forEach(address => {
+    const addressId = address.dataset.addressid
+    console.log(addressId);
+    const title = address.querySelector('.account__address-title').textContent;
+    titles.push(`${title}-${addressId}`);
+  });
+  console.log(titles);
+  
+</script>
 {% schema %}
 {
   "name": "Customer addresses",
