@@ -28,24 +28,40 @@
     </div>
     <div class="algolia-trending-list">
       {% for block in section.blocks %}
-        {% if block.type == 'algolia' %}
+        {%- case block.type -%}
+          {%- when 'algolia_product' -%}
+          {% assign product = all_products[block.settings.suggestion] %}
           <div class="algolia-trending-item">
             <div class="algolia-trending-image-container">
-              {% if block.settings.image != blank %}
-                <div class="algolia-trending-image">
-                  <img
-                    class="custom_lazy"
-                    data-src="{{ block.settings.image | img_url: 'master' }}"
-                    loading="lazy">
-                </div>
-              {% endif %}
+              <div class="algolia-trending-image">
+                <img
+                  class="custom_lazy"
+                  data-src="{{ product.featured_image | img_url: '150x' }}"
+                  loading="lazy">
+              </div>
             </div>
             <div class="algolia-trending-label">
-              <span>{{ block.settings.suggestion }}
+              <span>{{ product.title | split: '|' | first | split: 'boAt' | last }}
               </span>
             </div>
           </div>
-        {% endif %}
+          {%- when 'algolia_collection' -%}
+          {% assign collection = block.settings.suggestion %}
+          <div class="algolia-trending-item">
+            <div class="algolia-trending-image-container">
+              <div class="algolia-trending-image">
+                <img
+                  class="custom_lazy"
+                  data-src="{{ collection.featured_image | img_url: '150x' }}"
+                  loading="lazy">
+              </div>
+            </div>
+            <div class="algolia-trending-label">
+              <span>{{ collection.title }}
+              </span>
+            </div>
+          </div>
+        {%- endcase -%}
       {% endfor %}
     </div>
   </div>
