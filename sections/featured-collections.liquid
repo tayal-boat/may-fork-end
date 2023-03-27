@@ -383,13 +383,15 @@
               $(this).find('.product-horizontal span').each(function(){
                 let all_classes = $(this).attr('class').split(' ');
                 let get_classname = filterItems('z-', all_classes);
-                z_index_val.push(get_classname[0].split('-')[1]);
+                if( get_classname.length > 0 ){
+                  z_index_val.push(get_classname[0].split('-')[1]);
+                }
               })
 
               let element_max_num = Math.max.apply(Math, z_index_val);
               $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
             });
-
+            debugger;
             $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
 
             $('.custom_loading_icon').remove();
