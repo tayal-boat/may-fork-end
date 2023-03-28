@@ -104,7 +104,10 @@
                   {%- paginate customer.addresses by 8 -%}
                     <div class="account__addresses-list">
                       {%- for address in customer.addresses -%}
-                        <div class="account__address">
+                        <div class="account__address{%- if address.id == customer.default_address.id -%} active {% endif %}">
+                          <div>
+                            <input type="checkbox" id="check-{{ address.id }}" {%- if address.id == customer.default_address.id -%} checked {% endif %}>
+                          </div>
                           <div>
                           {%- if address.id == customer.default_address.id -%}
                             <span class="account__address-title heading heading--small">{{ 'customer.addresses.default_address' | t }}</span>
@@ -169,7 +172,7 @@
             </div>
           </div>
         {%- else -%}
-          <p class="form__info">{{ 'customer.addresses.fill_address' | t }}</p>
+
         {%- endif -%}
         
         {%- if request.locale.iso_code == 'ja' -%}
@@ -314,16 +317,14 @@
         <span class="drawer__overlay"></span>
 
         <header class="drawer__header">
-          <h3 class="drawer__title heading h6" style="font-size: 20px;line-height: 1.3;letter-spacing: normal;">{{ 'customer.addresses.edit' | t }}</h3>
-
           <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
             <img style="transform: rotate(180deg);" width="24" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/a75f0873ab4096af18a048b560845614.png?v=1679903157">
           </button>
+          <h3 class="drawer__title heading h6" style="font-size: 20px;line-height: 1.3;letter-spacing: normal;">{{ 'customer.addresses.edit' | t }}</h3>
         </header>
 
         <div class="drawer__content drawer__content--padded-start">
           {% form 'customer_address', address, class: 'form' %}
-            <p class="form__info">{{ 'customer.addresses.fill_address' | t }}</p>
 
             {%- if request.locale.iso_code == 'ja' -%}
               <div class="input-row">
@@ -463,7 +464,16 @@
     {%- endfor -%}
   {%- endpaginate -%}
 </section>
-
+<script>
+  {%- for address in customer.addresses -%}
+    $("#check-{{ address.id }}").change(function() {
+      if($(this).prop('checked')) {
+         $("#address_form_{{ address.id }} .checkbox").click();
+          $("#address_form_{{ address.id }}").submit();
+      }
+    });
+   {%- endfor -%}
+  </script>
 {% schema %}
 {
   "name": "Customer addresses",
