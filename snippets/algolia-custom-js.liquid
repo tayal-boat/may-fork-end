@@ -234,12 +234,12 @@
 
   let announcement_bar_height = document.getElementById('shopify-section-announcement-bar').offsetHeight;
   document.documentElement.style.setProperty('--announcement-bar-height', `${announcement_bar_height}px`);
-  var customPlaceholder = function(e) {
+  {% comment %} var customPlaceholder = function(e) {
     this.options = e,
     this.element = e.element,
     this.placeholderIdx = 0,
     this.charIdx = 0,
-    console.log(this.charIdx);
+ 
     this.setPlaceholder = function() {
       var t = placeholder = e.placeholders[this.placeholderIdx];
       if(document.querySelector(this.element)){
@@ -256,12 +256,14 @@
       this.intervalId = setInterval(this.onTickReverse.bind(this, function() {
         this.charIdx = 0,
         this.placeholderIdx ++,
+        console.log(this);
         this.placeholderIdx === e.placeholders.length && (this.placeholderIdx = 0)
       }), this.options.speed)
     },
     this.onTick = function() {
       var t = e.placeholders[this.placeholderIdx];
       this.charIdx === t.length && setTimeout(this.goReverse.bind(this), this.options.stay),
+      
       this.setPlaceholder(),
       this.charIdx ++
     },
@@ -271,34 +273,52 @@
     this.kill = function() {
       clearInterval(this.intervalId)
     }
-  };
+  }; {% endcomment %}
+
+  var customPlaceholder_animation = function(placeholders, element, delay, preText ) {
+      placeholderIdx = 0;
+      const placeholderAnimateUp = [
+        {transform: "translateY(100%)", visibility: "visible" }, {transform: "translateY(0)", visibility: "visible" },
+      ];
+      const placeholderAnimateDown = [
+        {transform: "translateY(0)", visibility: "visible" }, {transform: "translateY(-100%)", visibility: "hidden" },
+      ];
+      const placeholderTiming = {
+        duration: 300,
+      };
+      var placeholderSelector = document.querySelector(element);
+    setInterval(function(){
+      var t = placeholder = placeholders[this.placeholderIdx];
+      if(placeholderSelector){
+        placeholderSelector.innerHTML = preText + " " + t;
+        placeholderSelector.animate(placeholderAnimateUp, placeholderTiming);
+        placeholderSelector.style.visibility = "visible";
+        placeholderSelector.style.transform = "translateY(0)";
+      }
+      setTimeout(function(){placeholderSelector.animate(placeholderAnimateDown, placeholderTiming),placeholderSelector.removeAttribute("style")},2200)
+      placeholderIdx ++;
+      if(placeholderIdx === placeholders.length){
+        placeholderIdx = 0
+      }
+      }, delay);
+  }
   var placeholder = JSON.parse(Shopify.search_placeholders);
   placeholder = placeholder.split(', ')
   document.addEventListener("DOMContentLoaded", function() {
-    new customPlaceholder({
-      placeholders: placeholder,
-      preText: "Search ",
-      stay: 500,
-      speed: 100,
-      element: ".predictive-search__input_mobile"
-    }).init(),
-    new customPlaceholder({
-      placeholders: placeholder,
-      preText: "Search ",
-      stay: 500,
-      speed: 100,
-      element: ".predictive-search__input_1mobile"
-    }).init(),
-    new customPlaceholder({
-      placeholders: placeholder,
-      preText: "Search ",
-      stay: 500,
-      speed: 100,
-      element: ".predictive-search__input_desk"
-    }).init()
+     customPlaceholder_animation(placeholder, ".predictive-search__input_mobile_lable span", 3000, "Search");
+     customPlaceholder_animation(placeholder, ".predictive-search__input_desk_lable span", 3000, "Search");
   });
-  $('.search-icon').click(function() {
 
+  $('.predictive-search__input_mobile, .predictive-search__input_desk').on( "input", function() {
+    var serch_input_length = $(this).val().length;
+    if(serch_input_length > 0){
+    $(this).siblings('span').addClass('hide');
+    }else{
+    $(this).siblings('span').removeClass('hide');
+    }
+    });
+
+  $('.search-icon').click(function() {
     setTimeout(() => {
       $('.predictive-search__input_mobile').focus();
     }, 100)
