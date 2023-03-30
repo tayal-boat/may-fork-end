@@ -404,6 +404,7 @@ role="banner"
              <popover-content id="header-localization-form-locale" class="popover">
                <span class="popover__overlay"></span>
 
+
                <header class="popover__header">
                  <span class="popover__title heading h6">{{- 'header.general.language' | t -}}</span>
 
@@ -507,7 +508,7 @@ role="banner"
        {%- endif -%}
 
        <div class="myDropdown tooltip2 hidden-phone">
-         <span class="toggle-link">
+         <span class="toggle-link custom-account-icon">
            {%- render 'icon' with 'header-customer' -%}
          </span>
          <div class="dropdown-menu visually-hidden">
@@ -531,7 +532,7 @@ role="banner"
            {%- if shop.customer_accounts_enabled -%}
              <div class="account-links-inline contains-dropdown">
                {%- if customer -%}
-                 <div class="your-acct"><a href="{{ routes.account_url }}">Account</a></div>
+                 <div class="your-acct"><a href="/account/addresses">Account</a></div>
                  <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
                {%- else -%}
                  <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
@@ -661,6 +662,7 @@ role="banner"
 <div class="algolia-header-custom-search hidden-desk">
  <div class="algolia-header-search-input" aria-label="{{ 'search.general.title' | t | escape }}">
    <div class="algolia-custom-search-input">
+    <div class="w-100 bg-white new-container">
      <input
        class="search__input predictive-search__input predictive-search__input_mobile"
        type="search"
@@ -670,9 +672,10 @@ role="banner"
        placeholder=""
      >
      <div class="search-clear-icon">
-       <p style="color:red;font-size: 12px;font-weight:700;z-index:99;background:white">Cancel</p>
+       <p style="color: #ed1c24;font-size: 12px;font-weight:700;z-index:99;background:white">Cancel</p>
      </div>
    </div>
+  </div>
    <form class="algolia-search__form_mobile" autocomplete="off">
      <input
        type="search"
@@ -1200,7 +1203,7 @@ Shopify.search_placeholders = `{{ search_placeholders }}`;
    "name": "algolia search",
    "settings": [
      {
-       "type": "text",
+       "type": "html",
        "id": "suggestion",
        "label": "suggestion"
      },
@@ -1210,7 +1213,23 @@ Shopify.search_placeholders = `{{ search_placeholders }}`;
        "label": "Image"
      }
    ]
- }
+ },
+ {
+  "type": "suggestions",
+  "name": "most searched",
+  "settings": [
+    {
+      "type": "text",
+      "id": "searched",
+      "label": "most searched"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "URL"
+    }
+  ]
+}
 ]
 }
 {% endschema %}
