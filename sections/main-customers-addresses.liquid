@@ -111,10 +111,10 @@
                           </div>
                           <div>
                           {%- if address.id == customer.default_address.id -%}
-                            <span class="account__address-title heading heading--small">{{ address.id.province_code }}({{ 'customer.addresses.default_address' | t }})</span>
+                            <span class="account__address-title heading heading--small">{{ address.id.company }}({{ 'customer.addresses.default_address' | t }})</span>
                           {%- else -%}
                             {%- assign address_index = forloop.index | plus: paginate.current_offset -%}
-                            <span class="account__address-title heading heading--small">{{ address.id.province_code }}{{ 'customer.addresses.address_count' | t: count: address_index }}</span>
+                            <span class="account__address-title heading heading--small">{{ address.id.company }}{{ 'customer.addresses.address_count' | t: count: address_index }}</span>
                           {%- endif -%}
 
                           <div class="account__address-details" style="font-size: 12px;color: rgba(27, 27, 27, 0.4);">
@@ -238,7 +238,7 @@
             <label for="address-new[phone]" class="input__label">{{ 'customer.addresses.phone' | t }}</label>
           </div>
         {%- else -%}
-          <div class="input-row d-none">
+          <div class="input d-none">
             <div class="input">
               <input id="address-new[first_name]" type="text" class="input__field input__field--text {% if form.first_name != blank %}is-filled{% endif %}" name="address[first_name]" value="{{ form.first_name }}">
               <label for="address-new[first_name]" class="input__label">{{ 'customer.addresses.first_name' | t }}</label>
@@ -275,7 +275,7 @@
             <label for="address-new[zip]" class="input__label">Pin Code</label>
           </div>
 
-          <div class="input-row d-flex align-items-center justify-content-around">
+          <div class="input d-flex align-items-center justify-content-around">
             <div class="input" style="width: 46%;margin-right:20px;">
               <input id="address-new[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
               <label for="address-new[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
@@ -288,8 +288,8 @@
           </div>
 
           <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
-            <label><b>Address Type </b>(optional)</label>
-            <div class="input-row d-flex align-items-center justify-content-around">
+            <label for="address-new[company]"><b>Address Type </b>(optional)</label>
+            {% comment %} <div class="input d-flex align-items-center justify-content-around">
               <button type="button" class="button address-type-btn" >
                 Home
               </button>
@@ -299,8 +299,8 @@
               <button type="button" class="button address-type-btn">
                 custom
               </button>
-            </div>
-            <input id="address-new-province_code" type="text" class="input__field input__field--text" name="address[province_code]" value="{{ form.province_code }}">
+            </div> {% endcomment %}
+            <input id="address-new[company]" type="text" class="input__field input__field--text" name="address-new[company]" >
         </div>
 
           <div class="input d-none">
@@ -325,7 +325,7 @@
           <button type="button" class="drawer__close-button tap-area button button--primary button--full" data-action="close" title="Close">
           cancel
           </button>
-          <button type="submit"  class="form__submit button button--primary button--full">Add Address</button>
+          <button type="submit"  class="form__submit button button--primary button--full m-0">Add Address</button>
         </div>
       {%- endform -%}
     </div>
@@ -407,7 +407,7 @@
                 <label for="address-{{ address.id }}[phone]" class="input__label">{{ 'customer.addresses.phone' | t }}</label>
               </div>
             {%- else -%}
-              <div class="input-row d-none">
+              <div class="input d-none">
                 <div class="input">
                   <input id="address-{{ address.id }}[first_name]" type="text" class="input__field input__field--text {% if form.first_name != blank %}is-filled{% endif %}" name="address[first_name]" value="{{ form.first_name }}">
                   <label for="address-{{ address.id }}[first_name]" class="input__label">{{ 'customer.addresses.first_name' | t }}</label>
@@ -440,7 +440,7 @@
               </div>
  
 
-              <div class="input-row">
+              <div class="input ">
 
                 <div class="input">
                   <input id="address-{{ address.id }}[zip]" type="text" class="input__field input__field--text {% if form.zip != blank %}is-filled{% endif %}" name="address[zip]" value="{{ form.zip }}">
@@ -458,7 +458,7 @@
                 <label for="address-{{ address.id }}[country]" class="input__label">{{ 'customer.addresses.country' | t }}</label>
               </div>
 
-              <div class="input-row d-flex align-items-center justify-content-around">
+              <div class="input d-flex align-items-center justify-content-around">
                 <div class="input" style="width: 46%;">
                   <input id="address-{{ address.id }}[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
                   <label for="address-{{ address.id }}[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
@@ -471,8 +471,8 @@
               </div>
 
               <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
-                <label><b>Address Type </b>(optional)</label>
-                <div class="input-row d-flex align-items-center justify-content-around">
+                <label for="address-{{ address.id }}[company]"><b>Address Type </b>(optional)</label>
+                {% comment %} <div class="input d-flex align-items-center justify-content-around">
                   <button type="button" class="button address-type-btn" >
                     Home
                   </button>
@@ -482,8 +482,8 @@
                   <button type="button" class="button address-type-btn">
                     custom
                   </button>
-                </div>
-                <input id="address-new-province_code" type="text" class="input__field input__field--text" name="address[province_code]" value="{{ form.province_code }}">
+                </div> {% endcomment %}
+                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text" name="address[company]" value="{{ form.company }}">
             </div>
             {%- endif -%}
 
@@ -497,7 +497,7 @@
               <button type="button" class="drawer__close-button tap-area button button--primary button--full" data-action="close" title="Close">
               cancel
               </button>
-              <button type="submit" is="loader-button" class="form__submit button button--primary button--full">{{ 'customer.addresses.save' | t }}</button>
+              <button type="submit" is="loader-button" class="form__submit button button--primary button--full m-0">{{ 'customer.addresses.save' | t }}</button>
             </div>
 
           {% endform %}
@@ -507,14 +507,14 @@
   {%- endpaginate -%}
 </section>
 <script>
- $(".address-type-btn").each(function() {
+ {% comment %} $(".address-type-btn").each(function() {
     $(this).click(function() {
       let val = $(this).html();
        val = val.trim();
        console.log(val)
-      $("#address-new-province_code").value = `${val}`;
+      $(".address-btn-province_code").value = `${val}`;
     });
-  }); 
+  });  {% endcomment %}
   
   {%- for address in customer.addresses -%}
     $("#check-{{ address.id }}").change(function() {
