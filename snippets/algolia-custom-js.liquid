@@ -268,7 +268,40 @@
     this.kill = function() {
       clearInterval(this.intervalId)
     }
+<<<<<<< HEAD
   };
+=======
+  }; {% endcomment %}
+
+  var customPlaceholder_animation = function(placeholders, element, delay, preText ) {
+      placeholderIdx = 0;
+      const placeholderAnimateUp = [
+        {transform: "translateY(100%)", visibility: "visible" }, {transform: "translateY(0)", visibility: "visible" },
+      ];
+      const placeholderAnimateDown = [
+        {transform: "translateY(0)", visibility: "visible" }, {transform: "translateY(-100%)", visibility: "hidden" },
+      ];
+      const placeholderTiming = {
+        duration: 300,
+      };
+      $('.predictive-search__input__lable input').attr('placeholder','');
+      var placeholderSelector = document.querySelector(element);
+    setInterval(function(){
+      var t = placeholder = placeholders[this.placeholderIdx];
+      if(placeholderSelector){
+        placeholderSelector.innerHTML = preText + ' "' + t + '"';
+        placeholderSelector.animate(placeholderAnimateUp, placeholderTiming);
+        placeholderSelector.style.visibility = "visible";
+        placeholderSelector.style.transform = "translateY(0)";
+      }
+      setTimeout(function(){placeholderSelector.animate(placeholderAnimateDown, placeholderTiming),placeholderSelector.removeAttribute("style")},2200)
+      placeholderIdx ++;
+      if(placeholderIdx === placeholders.length){
+        placeholderIdx = 0
+      }
+      }, delay);
+  }
+>>>>>>> 89d453a23aeec0da9c076fe1ef824c88913eadaa
   var placeholder = JSON.parse(Shopify.search_placeholders);
   placeholder = placeholder.split(', ')
   document.addEventListener("DOMContentLoaded", function() {
