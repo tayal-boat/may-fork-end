@@ -293,9 +293,14 @@
 
           <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
             <p ><b>Address Type </b>(optional)</p>
+            <div class="types_">
+              <span class="ad_type selected">Home</span>
+              <span class="ad_type">Work</span>
+              <span class="ad_type">Custom</span>
+            </div>
             <div class="input">
-            <input id="address-new[company]" type="text" class="input__field input__field--text" name="address[company]" >
-            <label for="address-new[company]" class="input__label">Home, Work, Custom</label>
+            <input id="address-new[company]" type="text" class="input__field input__field--text address_type_field" name="address[company]" value="Home">
+            {% comment %} <label for="address-new[company]" class="input__label">Home, Work, Custom</label> {% endcomment %}
             </div>
         </div>
 
@@ -468,8 +473,13 @@
 
               <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
                 <p ><b>Address Type </b>(optional)</p>
+                <div class="types_">
+                  <span class="ad_type selected">Home</span>
+                  <span class="ad_type">Work</span>
+                  <span class="ad_type">Custom</span>
+                </div>
                 <div class="input">
-                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{ form.company }}" >
+                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{ form.company }}" >
                 <label for="address-{{ address.id }}[company]" class="input__label">Home, Work, Custom</label>
                 </div>
             </div>
@@ -512,6 +522,18 @@
       }
     });
    {%- endfor -%}
+
+   $('.ad_type').each(function() {
+      $(this).click(function() {
+        const text = $(this).text();
+        $(this).addClass('selected')
+        $(this).siblings('.ad_type').removeClass('selected')
+        $('.address_type_field').val(text)
+      })
+   })
+
+   
+
   </script>
 {% schema %}
 {
