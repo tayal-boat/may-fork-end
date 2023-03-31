@@ -296,9 +296,13 @@
 
           <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
             <p ><b>Address Type </b>(optional)</p>
+            <div class="types_">
+              <div class="ad_type"> Home </div>
+              <div class="ad_type"> Work </div>
+              <div class="ad_type"> Custom </div>
+            </div>
             <div class="input">
-            <input id="address-new[company]" type="text" class="input__field input__field--text" name="address[company]" >
-            <label for="address-new[company]" class="input__label">Home, Work, Custom</label>
+            <input id="address-new[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" >
             </div>
         </div>
 
@@ -474,9 +478,14 @@
 
               <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
                 <p ><b>Address Type </b>(optional)</p>
+                {%- assign name_company = form.company | strip -%}
+                <div class="types_">
+                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}"> Home </div>
+                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"> Work </div>
+                  <div class="ad_type "> Custom </div>
+                </div>
                 <div class="input">
-                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{ form.company }}" >
-                <label for="address-{{ address.id }}[company]" class="input__label">Home, Work, Custom</label>
+                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{- form.company | strip -}}" >
                 </div>
             </div>
             {%- endif -%}
@@ -501,14 +510,14 @@
   {%- endpaginate -%}
 </section>
 <script>
- {% comment %} $(".address-type-btn").each(function() {
+ $('.ad_type').each(function() {
     $(this).click(function() {
-      let val = $(this).html();
-       val = val.trim();
-       console.log(val)
-      $(".address-btn-province_code").value = `${val}`;
-    });
-  });  {% endcomment %}
+      const text = $(this).text();
+      $(this).addClass('selected')
+      $(this).siblings('.ad_type').removeClass('selected')
+      $(this).parents(".input.address-type.pt-3").find('.address_type_field').val(text)
+    })
+ });
   
   {%- for address in customer.addresses -%}
     $("#check-{{ address.id }}").change(function() {
