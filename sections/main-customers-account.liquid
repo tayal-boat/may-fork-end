@@ -1,12 +1,20 @@
 <style>
-  .customer_info_box, .order_info_box{margin: 2rem 0;border: 0.5px solid rgba(0, 0, 0, 0.2);border-radius: 16px;display: flex;gap: 20px;padding: 10px;position: relative;}
-  .customer_info_box a.edit_customer_link{text-decoration-line: underline;text-transform: capitalize;color: #ED1C24;font-weight: 700;font-size: 9px;width: 100%;text-align: right;position: absolute;right: 10px;}
-  .customer_info_box .customer_info{display: grid;}
-  .customer_info_box .customer_info span{font-size: 12px;color: rgba(27, 27, 27, 0.4);font-weight: 400;max-width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
-  .customer_info_box .customer_info h2{font-size: 16px;font-weight: 600;margin-bottom: 0px;}
-  .customer_info_box .customer_img_box {margin: auto 0px;}
-  .customer_info_box .customer_img_box .customer_img{font-weight: 600;font-size: 20px;background: rgba(27, 27, 27, 0.15);border-radius: 50%;display: block;height: 54px;width: 54px;padding: 12px;}
+  .customer_info_box{border: 0.5px solid rgba(0, 0, 0, 0.2);margin: 2rem 0;border-radius: 16px;}
+  .customer_info_box .customer_personal_info{display: flex;gap: 20px;padding: 10px;position: relative;}
+  .customer_info_box .customer_personal_info a.edit_customer_link{text-decoration-line: underline;text-transform: capitalize;color: #ED1C24;font-weight: 700;font-size: 9px;width: 100%;text-align: right;position: absolute;right: 10px;}
+  .customer_info_box .customer_personal_info .customer_info{display: grid;}
+  .customer_info_box .customer_personal_info .customer_info span{font-size: 12px;color: rgba(27, 27, 27, 0.4);font-weight: 400;max-width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+  .customer_info_box .customer_personal_info .customer_info h2{font-size: 16px;font-weight: 600;margin-bottom: 0px;}
+  .customer_info_box .customer_personal_info .customer_img_box {margin: auto 0px;}
+  .customer_info_box .customer_personal_info .customer_img_box .customer_img{font-weight: 600;font-size: 20px;background: rgba(27, 27, 27, 0.15);border-radius: 50%;display: block;height: 54px;width: 54px;padding: 12px;}
+
+  .customer_info_box .customer_address_info{border-top: 0.5px dashed #A4A4A4;padding: 10px;display: flex;gap: 10px;}
+  .customer_info_box .customer_address_info .address_type span{background: #E9E9E9;padding: 4px;border-radius: 4px;color: #8D8D8D;font-size: 10px;font-weight: 500;}
+  .customer_info_box .customer_address_info .customer_address{line-height: 16px;}
+  .customer_info_box .customer_address_info .customer_address span{color: rgba(27, 27, 27, 0.4);font-size: 12px;}
+
   .account_page_banner .banner_img{border-radius: 16px; margin-bottom: 2rem;}
+  .order_info_box{margin: 2rem 0;border: 0.5px solid rgba(0, 0, 0, 0.2);border-radius: 16px;display: flex;gap: 20px;padding: 10px;position: relative;}
   .order_info_box{padding: 24px;margin: 0 0 2rem 0;}
   .order_info_box .manage_address_link{display: grid;border-right: 0.5px solid rgba(0, 0, 0, 0.2);padding-right: 30px;justify-items: center;gap: 15px;width: -webkit-fill-available;}
   .order_info_box .manage_address_link img{height: 23px;}
@@ -206,24 +214,37 @@
 
   <div class="container ">
     <div class="customer_info_box">
-      <div class="customer_img_box">
-        <span class="customer_img">{{ customer.name | split: " " | first | slice: 0 }}{{ customer.name | split: " " | last | slice: 0 }}
-        </span>
+      <div class="customer_personal_info">
+        <div class="customer_img_box">
+          <span class="customer_img">{{ customer.name | split: " " | first | slice: 0 }}{{ customer.name | split: " " | last | slice: 0 }}
+          </span>
+        </div>
+        <div class="customer_info">
+          <h2>{{ customer.name }}</h2>
+          <span>{{ customer.email }}</span>
+          <span>{{ customer.phone }}</span>
+        </div>
+        <a href="" class="edit_customer_link">Edit</a>
       </div>
-      <div class="customer_info">
-        <h2>{{ customer.name }}</h2>
-        <span>{{ customer.email }}</span>
-        <span>{{ customer.phone }}</span>
+
+      <div class="customer_address_info">
+        <div class="address_type">
+          <span>Home</span>
+        </div>
+        <div class="customer_address">
+          <span>{{ customer.default_address.address1 }}, {{ customer.default_address.address2 }}, {{ customer.default_address.city }}, {{ customer.default_address.zip }}, {{ customer.default_address.province }}</span>
+        </div>
       </div>
-      <a href="" class="edit_customer_link">Edit</a>
     </div>
   </div>
 
-  <div class="container">
-    <div class="account_page_banner mobile-only">
-      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/999-pdp-banner.jpg?v=1678437609" class="banner_img"/>
+  {% if section.settings.account_banner != blank %}
+    <div class="container">
+      <div class="account_page_banner mobile-only">
+        <img src="{{ section.settings.account_banner | img_url: '1000x197'  }}" class="banner_img"/>
+      </div>
     </div>
-  </div>
+  {% endif %}
 
   <div class="container">
     <div class="order_info_box">
@@ -299,6 +320,17 @@
 {
   "name": "Customer account",
   "class": "shopify-section--main-customers-account custom_account_section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Account page banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "account_banner",
+      "label": "Image"
+    }
+  ],
   "blocks": [
     {
       "type": "@app"
