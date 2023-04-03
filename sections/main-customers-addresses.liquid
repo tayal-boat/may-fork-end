@@ -101,6 +101,8 @@
                   {{- block.settings.liquid -}}
 
                 {%- when 'addresses' -%}
+                  {% assign company_array = "" %}
+                  {% capture company_array %} {%- for address in customer.addresses -%}{% if address.company != blank %}{{- company_array | append: address.company | strip -}}{% unless forloop.last %},{% endunless %}  {% endif %}    {%- endfor -%}{% endcapture %}
                   {%- paginate customer.addresses by 8 -%}
                     <div class="account__addresses-list">
                       {%- for address in customer.addresses -%}
@@ -136,7 +138,6 @@
                           </div>
                         </div>
                       {%- endfor -%}
-
                     </div>
 
                     {%- render 'pagination', paginate: paginate -%}
@@ -298,8 +299,8 @@
           <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
             <p ><b>Address Type </b>(optional)</p>
             <div class="types_">
-              <div class="ad_type"> Home </div>
-              <div class="ad_type"> Work </div>
+              <div class="ad_type" {% if company_array contains "Home" %}disabled {% endif%}> Home </div>
+              <div class="ad_type" {% if company_array contains "Work" %}disabled {% endif%}> Work </div>
               <div class="ad_type"> Custom </div>
             </div>
             <div class="input">
@@ -481,8 +482,8 @@
                 <p ><b>Address Type </b>(optional)</p>
                 {%- assign name_company = form.company | strip -%}
                 <div class="types_">
-                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}"> Home </div>
-                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"> Work </div>
+                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}" {% if company_array contains "Home" %}disabled {% endif%}> Home </div>
+                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"  {% if company_array contains "Work" %}disabled {% endif%}> Work </div>
                   <div class="ad_type "> Custom </div>
                 </div>
                 <div class="input">
@@ -513,10 +514,17 @@
 <script>
  $('.ad_type').each(function() {
     $(this).click(function() {
-      const text = $(this).text();
+      let text = $(this).text();
+      text = text.trim();
       $(this).addClass('selected')
       $(this).siblings('.ad_type').removeClass('selected')
-      $(this).parents(".input.address-type.pt-3").find('.address_type_field').val(text)
+      if (text === 'Custom'){
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').val("");
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').focus();
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').attr("placeholder",  "type");
+      }else{
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').val(text)
+      }
     })
  });
   
