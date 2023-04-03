@@ -1,7 +1,7 @@
 <style>
   .customer_info_box{border: 0.5px solid rgba(0, 0, 0, 0.2);margin: 2rem 0;border-radius: 16px;}
   .customer_info_box .customer_personal_info{display: flex;gap: 20px;padding: 10px;position: relative;}
-  .customer_info_box .customer_personal_info a.edit_customer_link{text-decoration-line: underline;text-transform: capitalize;color: #ED1C24;font-weight: 700;font-size: 9px;width: 100%;text-align: right;position: absolute;right: 10px;}
+  .customer_info_box .customer_personal_info button.edit_customer_link{text-decoration-line: underline;text-transform: capitalize;color: #ED1C24;font-weight: 700;font-size: 9px !important;width: 100%;text-align: right;position: absolute;right: 10px;}
   .customer_info_box .customer_personal_info .customer_info{display: grid;}
   .customer_info_box .customer_personal_info .customer_info span{font-size: 12px;color: rgba(27, 27, 27, 0.4);font-weight: 400;max-width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
   .customer_info_box .customer_personal_info .customer_info h2{font-size: 16px;font-weight: 600;margin-bottom: 0px;}
@@ -224,7 +224,8 @@
           <span>{{ customer.email }}</span>
           <span>{{ customer.phone }}</span>
         </div>
-        <a href="" class="edit_customer_link">Edit</a>
+        {% comment %} <button class="edit_customer_link" is="toggle-button" aria-controls="drawer-edit-profile" aria-expanded="false">Edit</button> {% endcomment %}
+        <button class="edit_customer_link">Edit</button>
       </div>
 
       <div class="customer_address_info">
@@ -315,6 +316,56 @@
   </div>
 
 </section>
+
+
+<drawer-content id="drawer-edit-profile" class="drawer drawer--large" initial-focus-selector="[type='text']:first-child" >
+  <span class="drawer__overlay"></span>4
+
+  <div class="drawer__content drawer__content--padded-start">
+    <form class="form" method="post" action="">
+      {%- if form.errors -%}
+        <script type="text/javascript">
+          document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('drawer-edit-profile').open = true;
+          });
+        </script>
+
+        <div class="form__banner banner banner--error">
+          <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
+          <div class="banner__content">
+            {{- form.errors | default_errors -}}
+          </div>
+        </div>
+      {%- else -%}
+        <p class="form__info">{{ 'customer.addresses.fill_address' | t }}</p>
+      {%- endif -%}
+      
+      {% assign f_name = customer.name | split: " " | first %}
+      {% assign l_name = customer.name | split: " " | last %}
+      <div class="input">
+        <input id="customer[first_name]" type="text" class="input__field input__field--text {% if f_name != blank %}is-filled{% endif %}" name="customer[first_name]" value="{{ f_name }}">
+        <label for="customer[first_name]" class="input__label">First Name</label>
+      </div>
+      
+      <div class="input">
+        <input id="customer[last_name]" type="text" class="input__field input__field--text {% if l_name != blank %}is-filled{% endif %}" name="customer[last_name]" value="{{ l_name }}">
+        <label for="customer[last_name]" class="input__label">Last Name</label>
+      </div>
+      
+      <div class="input">
+        <input id="customer[email]" type="text" class="input__field input__field--text {% if customer.email != blank %}is-filled{% endif %}" name="customer[email]" value="{{ customer.email }}">
+        <label for="customer[email]" class="input__label">Email</label>
+      </div>
+      
+      <div class="input">
+        <input readonly id="customer[phone]" type="text" class="input__field input__field--text {% if customer.phone != blank %}is-filled{% endif %}" name="customer[phone]" value="{{ customer.phone }}">
+        <label for="customer[phone]" class="input__label">Phone No.</label>
+      </div>
+
+      <button type="submit" is="loader-button" class="form__submit button button--primary button--full">Update profile</button>
+    </form>
+  </div>
+</drawer-content>
 
 {% schema %}
 {
