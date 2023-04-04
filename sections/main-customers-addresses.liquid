@@ -133,7 +133,8 @@
 
                             <form method="post" action="{{ address.url }}">
                               <input type="hidden" name="_method" value="delete">
-                              <button class="link text--subdued" is="confirm-button" data-message="{{ 'customer.addresses.delete_confirm' | t | escape }}">{{ 'customer.addresses.delete' | t }}</button>
+                              <button class="link text--subdued" is="confirm-button" data-message="{{ 'customer.addresses.delete_confirm' | t | escape }}"><img width="12px;" 
+                                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></button>
                             </form>
                           </div>
                         </div>
@@ -281,14 +282,14 @@
           </div>
 
           <div class="input d-flex align-items-center justify-content-around">
-            <div class="" style="width: 46%;margin-right:20px;">
+            <div class="mr-3 w-46" >
               <input id="address-new[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
               <label for="address-new[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
             </div>
 
-            <div id="address-new-province-container" class="input province-container" style="width: 46%;margin: 0;" hidden>
+            <div id="address-new-province-container" class="input province-container m-0 w-46"  hidden>
               <div class="select-wrapper is-filled">
-                <select class="select" name="address[province]" id="address-new[province]"></select>
+                <select class="select address-new-province" name="address[province]" id="address-new[province]"></select>
                 {%- render 'icon', icon: 'chevron' -%}
               </div>
               <label for="address-new[province]" class="input__label">State</label>
@@ -464,14 +465,15 @@
               </div>
 
               <div class="input d-flex align-items-center justify-content-around">
-                <div class="" style="width: 46%;">
+                <div class="w-46" >
                   <input id="address-{{ address.id }}[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
                   <label for="address-{{ address.id }}[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
                 </div>
 
-                <div id="address-{{ address.id }}-province-container" class="input province-container" style="width: 46%;margin: 0;" hidden>
+                <div id="address-{{ address.id }}-province-container" class="input province-container m-0 w-46"  hidden>
                   <div class="select-wrapper is-filled">
                     <select class="select" name="address[province]" id="address-{{ address.id }}[province]" data-default="{{ form.province }}"></select>
+                    {%- render 'icon', icon: 'chevron' -%}
                   </div>
                   <label for="address-{{ address.id }}[province]" class="input__label">State</label>
                 </div>
@@ -482,8 +484,8 @@
                 <p ><b>Address Type </b>(optional)</p>
                 {%- assign name_company = form.company | strip -%}
                 <div class="types_">
-                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}" {% if company_array contains "Home" %}disabled {% endif%}> Home </div>
-                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"  {% if company_array contains "Work" %}disabled {% endif%}> Work </div>
+                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}" {% if company_array contains "Home" %}disabled {% endif %}> Home </div>
+                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"  {% if company_array contains "Work" %}disabled {% endif %}> Work </div>
                   <div class="ad_type "> Custom </div>
                 </div>
                 <div class="input">
@@ -512,6 +514,10 @@
   {%- endpaginate -%}
 </section>
 <script>
+ $(".account__address.account__address--empty").one("click", function(e){
+  $("select.address-new-province").prepend(`<option value>Select</option>`);
+  $("select.address-new-province option:eq(0)").attr("selected", "selected")
+ })
  $('.ad_type').each(function() {
     $(this).click(function() {
       let text = $(this).text();
@@ -528,15 +534,18 @@
     })
  });
   
-  {%- for address in customer.addresses -%}
-    $("#check-{{ address.id }}").change(function() {
-      if($(this).prop('checked')) {
-         $("#address_form_{{ address.id }} .checkbox").click();
-          $("#address_form_{{ address.id }}").submit();
-      }
-    });
-   {%- endfor -%}
-  </script>
+{%- for address in customer.addresses -%}
+  $("#check-{{ address.id }}").change(function() {
+    $("input[id^='check-']").each(function(){
+      $(this).attr("checked", false);
+    })
+    if($(this).prop('checked')) {
+        $("#address_form_{{ address.id }} .checkbox").click();
+        $("#address_form_{{ address.id }}").submit();
+    }
+  });
+  {%- endfor -%}
+</script>
 {% schema %}
 {
   "name": "Customer addresses",
