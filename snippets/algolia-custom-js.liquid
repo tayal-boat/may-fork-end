@@ -73,17 +73,21 @@
 
   function debounce(e, t, r) {
     var a;
+    var letterNumber = /^[0-9a-zA-Z]+$/;
+    var input_value = '';
     return function s() {
-      var l = this,
-        o = arguments,
-        c = function() {
-          a = null,
-          r || e.apply(l, o)
-        },
-        h = r && ! a;
-      clearTimeout(a),
-      a = setTimeout(c, t),
-      h && e.apply(l, o)
+        input_value = this.value;
+         this.value = input_value.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+          var l = this,
+          o = arguments,
+          c = function() {
+            a = null,
+            r || e.apply(l, o)
+          },
+          h = r && ! a;
+        clearTimeout(a),
+        a = setTimeout(c, t),
+        h && e.apply(l, o)
     }
   }
   if (window.innerWidth < 1200) {
@@ -91,6 +95,7 @@
       t = document.querySelector(".algolia-search__form_mobile input");
     var r = debounce(function() {
       t.value = e.value,
+     //  console.log(t.value, 't.value');
       t.dispatchEvent(new Event("input", {
         bubbles: !0
       }))
@@ -101,6 +106,7 @@
       s = document.querySelector(".algolia-search__form input");
     var l = debounce(function() {
       s.value = a.value,
+     // console.log(s.value, 's.value');
       s.dispatchEvent(new Event("input", {
         bubbles: !0
       }))
@@ -134,7 +140,7 @@
       $(".algolia-recently-search-header").hide();
     $(".algolia-recently-search-container").html(t),
     $(".algolia-trending-item, .algolia-recently-search-container div").click(function() {
-      if (console.log("hiiiiii"), null !== this.offsetParent) {
+      if (null !== this.offsetParent) {
         let e = this
             .offsetParent
             .previousElementSibling
@@ -150,7 +156,7 @@
         }))
       }
     });
-    console.log('hii search');
+    // console.log('hii search');
     $(".fixed_nav").addClass("search-nav");
     let a = $(".shopify-section--header .container").height();
     $("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") && (a += $("#shopify-section-announcement-bar").height()),
@@ -189,7 +195,7 @@
     }, 100)
   });
   if (window.innerWidth > 1199) {
-    console.log('hii 2');
+   // console.log('hii 2');
     $(document).click(function(e) {
       $(e.target).closest(".algolia-header-custom-search").length || $(".search-popup-container").removeAttr("style"),
       document.querySelectorAll(".algolia-autocomplete").length && "none" == document.querySelectorAll(".algolia-autocomplete")[0].style.display && "none" == document.querySelectorAll(".algolia-autocomplete")[1].style.display && ($(e.target).closest(".algolia-header-custom-search").length || ($("body").removeClass("noScroll"), $(".search-clear-icon").removeAttr("style")))
@@ -256,7 +262,7 @@
       this.intervalId = setInterval(this.onTickReverse.bind(this, function() {
         this.charIdx = 0,
         this.placeholderIdx ++,
-        console.log(this);
+       // console.log(this);
         this.placeholderIdx === e.placeholders.length && (this.placeholderIdx = 0)
       }), this.options.speed)
     },
