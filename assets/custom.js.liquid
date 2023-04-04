@@ -620,11 +620,11 @@ $('a.banner_link').on('click', function() {
       return true;
    }
    // Not allow 0 as first digit on input
-   $(document).on("input", "#otp-mobile-number", (e) => {
+   $(document).on("input", "#otp-mobile-number, #otp", (e) => {
       $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
       $('.otp-login-error').html('');
    })
-   $(document).on("keypress", "#otp-mobile-number", (e) => {
+   $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
       return _isNumberCheck(e);
    })
    let timerOn = false;
@@ -701,14 +701,14 @@ $('a.banner_link').on('click', function() {
         event.preventDefault();
         // debugger
         if(customer_container.hasAttribute('otp_login_screen')){
-          console.log('otp_login_screen');
+        //  console.log('otp_login_screen');
         document.querySelector('.otp-login-btn').click();
         }
         else if(customer_container.hasAttribute('otp_send')){
           document.querySelector('.otp-login-confirm-btn').click();  
         }
         else{
-          console.log('prevint defaunt reload');
+        //  console.log('prevint defaunt reload');
           event.preventDefault();
         }
       }
@@ -958,9 +958,9 @@ function verifyotp(session_id, otp, url){
   $.ajax(settings).done(function (response) {
     // console.log(response);
     let mobile_number = $('.mobile-login-input input').val()
-    sessionStorage.setItem('timerOn', false);
-    console.log(timerOn,'timerOn');
     if(response.code == 200 && response.message == 'login URL sent'){
+      sessionStorage.setItem('timerOn', false);
+    //  console.log(timerOn,'timerOn');
       $('.customer-login-section.customer--section').hide();
       $('.oto-login-success-container').show();
       localStorage.setItem('boatHead_input', response.Token);
@@ -988,6 +988,8 @@ function verifyotp(session_id, otp, url){
         "Error Message": response.message
       })
     }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
+      sessionStorage.setItem('timerOn', false);
+    //  console.log(timerOn,'timerOn');
       $('.otp-login-error').html(response.message);
       clevertap.event.push('Failed Login', {
         "Mobile Number": mobile_number,
@@ -1001,6 +1003,8 @@ function verifyotp(session_id, otp, url){
         "Error Message": response.message
       })
     }else if(response.code == 300 && response.message == 'emailId list'){
+      sessionStorage.setItem('timerOn', false);
+    //  console.log(timerOn,'timerOn');
       $('.otp-login-message h3').html('Please select your Primary email id');
       $('.customer-login-section').attr('multi_email', 'true');
       $('.otp-timer-container').hide();
@@ -1018,7 +1022,7 @@ function verifyotp(session_id, otp, url){
       console.dir(emailSelector[0]);
       selectedEmail = emailSelector[0].dataset.value;
       sessionStorage.setItem('selected_email', selectedEmail);
-      console.log(selectedEmail);
+    //  console.log(selectedEmail);
       emailSelector[0].setAttribute('selected','true');
       emailSelector.click(function(event){
       selectedEmail = event.target.dataset.value;
@@ -1082,7 +1086,7 @@ function otpLogin(phone){
 
 $('.otp-login-btn, .login-resend-btn').click(function(){
   if(!$('#resend__otp').hasClass('email-resend-btn')){
-  console.log('login-resend-btn');
+//  console.log('login-resend-btn');
   let phone = $('#otp-mobile-number').val();
   if(phone.length < 1){
     $('.otp-login-error').html('The phone field is required.');
@@ -1134,7 +1138,7 @@ $('.mobile-login-edit-icon').click(function(){
 
  $('.otp-login-confirm-btn').click(function(){
    if(!$('.otp-login-confirm-btn').hasClass('email_varify')){
-  console.log('verifyotp');
+//  console.log('verifyotp');
   let session_id = sessionStorage.getItem('login_session_id');
   let otp = $('.mobile-otp-inout input').val();
   let url = sessionStorage.getItem('login_location');
@@ -1156,7 +1160,7 @@ if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !
 
 $('#resend__otp').click(function(){
   if($(this).hasClass('email-resend-btn')){
-  console.log('email-resend-btn');
+//  console.log('email-resend-btn');
   let session_id = sessionStorage.getItem('login_session_id');
   let email = $('#emailId').val();
 if(session_id && session_id !== '' && session_id !== 'undefined' && email){   
@@ -1292,6 +1296,8 @@ numberOfSlides = '',
 slide_length = '',
 slider_dots = '';
   var itemWidth = "";
+  if(document.querySelector(itemsMainDiv) !== null){
+  //  console.log("hii custom slider ");
   autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
   autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
   infinite_loop = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-loop'));
@@ -1422,7 +1428,7 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
   // }
 });
 
-// }
+ }
   }
   
 //this function used to move the items
@@ -1680,7 +1686,5 @@ for(let i = 0; i < slider_Selector.length; i++){
   //  console.dir(document.querySelector(itemsDiv));
   var itemsMainDiv = ('.MultiCarousel.' + Slider_section_id);
   var selector = 'MultiCarousel_' + Slider_section_id;
-  if(itemsMainDiv.length > 0) {
     Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
-  }
 }
