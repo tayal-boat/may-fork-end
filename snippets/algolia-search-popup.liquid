@@ -1,14 +1,30 @@
 <div class="search-popup-container" style=" display: none;">
   <div class="algolia-recently-search">
     <div class="algolia-recently-search-header">
-      <h4>Recently searched</h4>
+      <h4>Recently searches</h4>
       <span class="clear-recent-search">Clear</span>
     </div>
     <div class="algolia-recently-search-container"></div>
   </div>
+  <div class="algolia-most-searched-bought visually-hidden">
+    <h4>Most Searched & Bought</h4>
+    <div class="algolia-most-searched-list">
+      {% for block in section.blocks %}
+        {% if block.type == 'suggestions' %}
+          <div class="algolia-searched-item">
+            <div class="algolia-trending-label">
+              <a href="{{ block.settings.url }}">
+                <span>{{ block.settings.searched }}</span>
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
   <div class="algolia-trending-search">
     <div class="algolia-trending-search-header">
-      <h4>Trending searches</h4>
+      <h4>Most Searched And Bought</h4>
     </div>
     <div class="algolia-trending-list">
       {% for block in section.blocks %}
@@ -19,8 +35,7 @@
                 <div class="algolia-trending-image">
                   <img
                     class="custom_lazy"
-                    data-src="{{ block.settings.image | img_url: 'master' }}"
-                    loading="lazy">
+                    data-src="{{ block.settings.image | img_url: 'master' }}">
                 </div>
               {% endif %}
             </div>
