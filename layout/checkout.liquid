@@ -627,9 +627,10 @@ ul.header__linklist.list--unstyled {
     display: flex;
     align-items: center;
 }
-.header__icon-wrapper[aria-label="Search"], .search-icon, .algolia-header-custom-search.hidden-desk, .header__cart, .d-none {
+.header__icon-wrapper[aria-label="Search"], .search-icon, .algolia-header-custom-search.hidden-desk, .header__cart, .d-none, .fixed_nav.fixed_nav_mobile {
     display: none;
 }
+
 .checkout_header {
     box-shadow: 0 1px 5px #ababab;
 }
@@ -703,8 +704,11 @@ a.header__linklist-link.link--animated {
 }
 #checkout_header mobile-navigation#mobile-menu-drawer{
   display: none !important;
+  max-width: 100vh;
+  position: relative;
+  box-shadow: 0 1px 5px #ababab;
 }
-desktop-navigation {
+desktop-navigation, .custom-account-icon {
   display: none !important;
 }
 .header .container {
@@ -782,25 +786,32 @@ li.mobile-nav__item.open collapsible-content {
     overflow-y: auto;
     flex-grow: 1;
     height: calc(100vh - 65px);
+    background: #fff;
+    max-width: 93vw;
 }
 #mobile-menu-drawer.drawer .drawer__content .mobile-nav {
     padding-bottom: 2rem !important;
 }
-{% comment %} #checkout_header mobile-navigation#mobile-menu-drawer.open .drawer__overlay {
-    visibility: visible;
-    opacity: 0.5;
-}
 .drawer__overlay {
-    position: fixed;
+    position: absolute;
+    left: 0;
+    right: 0;
     top: 0;
-    visibility: hidden;
-    content: "";
-    height: 100vh;
-    width: 100vw;
+    bottom: 0;
     background: #000;
-    opacity: 0;
-    transition: visibility .6s ease-in-out,opacity .6s ease-in-out;
-} {% endcomment %}
+    z-index: -1;
+    opacity: 0.6;
+}
+.row.row-nav.justify-content-around {
+    display: flex;
+    justify-content: space-around;
+}
+.page--thank-you .fixed_nav.fixed_nav_mobile {
+    display: block !important;
+}
+.mobile_hamburger_icon {
+    height: unset !important;
+}
 }
       </style>
       <!-- Single Checkout Page Styling Engs -->
@@ -2894,8 +2905,8 @@ li.mobile-nav__item.open collapsible-content {
           if(dis_section.find('.error_message').length == 0){
           dis_section.append(`<p class="error_message">Uh-oh! It seems like you've already applied a discount coupon.</p>`);
           }
-        } 
-
+        }  
+      if(Shopify.Checkout.isOrderStatusPage || Shopify.Checkout.step == "thank_you"){
         $('body').prepend(`<div class="checkout_header" id="checkout_header"></div>`);
         setTimeout(function(){
         $.ajax({
@@ -2926,26 +2937,23 @@ li.mobile-nav__item.open collapsible-content {
                 });
               }; 
 
-              $('.mobile_hamburger_btn').click(function () {
+              $('.mobile_hamburger_btn, #data-hamburger').click(function () {
                 $('#checkout_header mobile-navigation#mobile-menu-drawer').toggleClass('open');
                 $('body').toggleClass('overflow-hidden');
-            });
+                $('#checkout_header mobile-navigation#mobile-menu-drawer').hasClass('open') ? $('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110') : $('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+                  });
 
             $('.mobile-nav__item button.mobile-nav__link').click(function () {
-    $(this).parent().toggleClass('open');
-  //  $(this).attr('aria-expanded')=='true' ? 'false':'true';
-});
+            $(this).parent().toggleClass('open');
+            });
               },500);
           }
       })
         },500);
-
-
-
-        
-  
+        }
       </script>
-
+        {%- render 'bottom-navbar-mobile' -%}
+    
 
     </body>
   </html>
