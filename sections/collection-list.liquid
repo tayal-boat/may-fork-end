@@ -162,9 +162,9 @@
                   {%- if section.settings.layout == 'grid' and collection_image.aspect_ratio > 2.5 -%}
                     {%- assign height_constraint = 800 | at_most: collection_image.height -%}
                 	<picture>
-                      <source media="(min-width: 768px)" srcset="{{block.settings.image | img_url: 'master'}}">
-                      <source media="(max-width: 767px)" srcset="{{block.settings.mobile_image | img_url: 'master'}}">
-                      <img loading="lazy" src="{{block.settings.image | img_url: 'master'}}" alt="{{collection.title}}" />
+                      <source media="(min-width: 768px)" srcset="{{- settings.speedsize_url_pfx_https -}}{{block.settings.image | img_url: 'master'}}">
+                      <source media="(max-width: 767px)" srcset="{{- settings.speedsize_url_pfx_https -}}{{block.settings.mobile_image | img_url: 'master'}}">
+                      <img loading="lazy" src="{{- settings.speedsize_url_pfx_https -}}{{block.settings.image | img_url: 'master'}}" alt="{{collection.title}}" />
                     </picture>
 <!--                     <img alt="{{block.settings.alt_imgtext}}" class="list-collections__item-image" {% if section.settings.reveal_on_scroll %}reveal{% endif %} loading="lazy" sizes="{{ image_sizes }}" {% render 'image-attributes', image: collection_image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400', height_constraint: height_constraint, crop: 'center' %}> -->
                   {%- else -%}
@@ -183,7 +183,7 @@
 
               {%- if collection_content != blank -%}
                 <div class="list-collections__item-info text-container">
-                  {{- collection_content -}}
+                  {{- collection_content | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  -}}
                 </div>
               {%- endif -%}
             </a>
@@ -194,7 +194,7 @@
       {%- if section.settings.layout == 'grid' or section.settings.layout == 'collage' -%}
         <collection-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--{{ section.settings.layout }}">
           <div class="container">
-            {{- section_content -}}
+            {{- section_content | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  -}}
           </div>
         </collection-list>
       {%- elsif section.settings.layout == 'carousel' -%}

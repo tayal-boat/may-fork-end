@@ -20,9 +20,9 @@
       </div>
       <div class="personalization-image-wrapper">
         {% if product.selected_or_first_available_variant.metafields.custom.personalised_image != blank %}
-          <img src="{{ product.selected_or_first_available_variant.metafields.custom.personalised_image }}">
+          <img src="{{ product.selected_or_first_available_variant.metafields.custom.personalised_image | replace: '//cdn.shopify.com/', settings.speedsize_url_pfx_shopify_cdn | replace: 'https:https:', 'https:'  }}">
         {% else %}
-          <img src="{{ product.selected_or_first_available_variant.featured_image | image_url }}">
+          <img src="{{- settings.speedsize_url_pfx_https -}}{{ product.selected_or_first_available_variant.featured_image | image_url }}">
         {% endif %}
         <div class="personalization-image-txt visually-hidden"></div>
       </div>
@@ -48,7 +48,7 @@
 {% capture variant_personalization %}
   {
   {% for variant in product.variants %}
-  "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}{{ variant.metafields.custom.personalised_image | strip_newlines }}{% else %}{{ variant.featured_image | image_url }}{% endif %}"
+  "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}{{ variant.metafields.custom.personalised_image | strip_newlines }}{% else %}{{- settings.speedsize_url_pfx_https -}}{{ variant.featured_image | image_url }}{% endif %}"
     {% unless forloop.last %}
       ,
     {% endunless %}
