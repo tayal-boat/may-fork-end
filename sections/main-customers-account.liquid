@@ -1,182 +1,386 @@
-<section>
-  <div class="link-bar hidden-phone">
-    <div class="container">
-      <div class="link-bar__wrapper">
-        <ul class="link-bar__linklist list--unstyled" role="list">
-          <li class="link-bar__link-item">
-            <a href="{{ routes.account_url }}" class="link-bar__link link--animated text--underlined">{{ 'customer.orders.title' | t }}</a>
-          </li>
-          <li class="link-bar__link-item">
-            <a href="/apps/ret" target="_blank" class="link-bar__link link--animated">Manage Your Orders</a>
-          </li>
-          <li class="link-bar__link-item">
-            <a href="{{ routes.account_addresses_url }}" class="link-bar__link link--animated">{{ 'customer.addresses.title' | t }}</a>
-          </li>
+<style>
+  .customer_info_box{border: 0.5px solid rgba(0, 0, 0, 0.2);margin: 2rem 0;border-radius: 16px;}
+  .customer_info_box .customer_personal_info{display: flex;gap: 20px;padding: 10px;position: relative;}
+  .customer_info_box .customer_personal_info button.edit_customer_link{text-decoration-line: underline;text-transform: capitalize;color: #ED1C24;font-weight: 700;font-size: 9px !important;width: 100%;text-align: right;position: absolute;right: 10px;}
+  .customer_info_box .customer_personal_info .customer_info{display: grid;}
+  .customer_info_box .customer_personal_info .customer_info span{font-size: 12px;color: rgba(27, 27, 27, 0.4);font-weight: 400;max-width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+  .customer_info_box .customer_personal_info .customer_info h2{font-size: 16px;font-weight: 600;margin-bottom: 0px;}
+  .customer_info_box .customer_personal_info .customer_img_box {margin: auto 0px;}
+  .customer_info_box .customer_personal_info .customer_img_box .customer_img{font-weight: 600;font-size: 20px;background: rgba(27, 27, 27, 0.15);border-radius: 50%;display: block;height: 54px;width: 54px;padding: 12px;}
 
-          <li class="link-bar__link-item">
-            <a href="{{ routes.account_logout_url }}" class="link-bar__link link--animated text--subdued" data-no-instant>{{ 'customer.logout.title' | t }}</a>
+  .customer_info_box .customer_address_info{border-top: 0.5px dashed #A4A4A4;padding: 10px;display: flex;gap: 10px;}
+  .customer_info_box .customer_address_info .address_type span{background: #E9E9E9;padding: 4px;border-radius: 4px;color: #8D8D8D;font-size: 10px;font-weight: 500;}
+  .customer_info_box .customer_address_info .customer_address{line-height: 16px;}
+  .customer_info_box .customer_address_info .customer_address span{color: rgba(27, 27, 27, 0.4);font-size: 12px;}
+
+  .account_page_banner .banner_img{border-radius: 16px; margin-bottom: 2rem;}
+  .order_info_box{margin: 2rem 0;border: 0.5px solid rgba(0, 0, 0, 0.2);border-radius: 16px;display: flex;gap: 20px;padding: 10px;position: relative;}
+  .order_info_box{padding: 24px;margin: 0 0 2rem 0;}
+  .order_info_box .manage_address_link{display: grid;border-right: 0.5px solid rgba(0, 0, 0, 0.2);padding-right: 30px;justify-items: center;gap: 15px;width: -webkit-fill-available;}
+  .order_info_box .manage_address_link img{height: 23px;}
+  .order_info_box .manage_orders_link{display: grid;justify-items: center;gap: 15px;width: -webkit-fill-available;}
+  .more_info_box{border: 0.5px solid rgba(0, 0, 0, 0.2);border-radius: 16px;display: flex;padding: 10px;margin: 0 0 2rem;}
+  .more_info_box .menu_items{width: 100%;}
+  .more_info_box .menu_items h3{color: #1B1B1B; font-size: 20px;font-weight: 700;margin: 24px 0px 20px 24px !important;}
+  .more_info_box .menu_items .menu_item_list{list-style: none;padding-left: 0px;}
+  .more_info_box .menu_items .menu_item_list img.link_icon{width: 28px;}
+  .more_info_box .menu_items .menu_item_list li{margin: 0px 10px 23px 13px;display: flex;align-items: center;position: relative;}
+  .more_info_box .menu_items .menu_item_list li a{margin-left: 13px;color: #1B1B1B;}
+  .more_info_box .menu_items .menu_item_list li a img{position: absolute;right: 0px;height: 12px;}
+  .logout_box{border: 0.5px solid rgba(0, 0, 0, 0.2);border-radius: 12px;display: flex;padding: 16px 24px;margin: 0 0 2rem;}
+  .logout_box img{width: 23px;margin-right: 10px;}
+  .logout_box .logout_link{font-size: 16px;font-weight: 600;color: #ED1C24;}
+
+  @media (min-width: 768px){
+    .custom_account_section section{max-width: 40%; margin: 0px auto;}
+  }
+</style>
+
+<section>
+
+  {% comment %}
+    <div class="link-bar hidden-phone">
+      <div class="container">
+        <div class="link-bar__wrapper">
+          <ul class="link-bar__linklist list--unstyled" role="list">
+            <li class="link-bar__link-item visually-hidden">
+              <a href="{{ routes.account_url }}" class="link-bar__link link--animated text--underlined">{{ 'customer.orders.title' | t }}</a>
+            </li>
+            <li class="link-bar__link-item">
+              <a href="{{ routes.account_addresses_url }}" class="link-bar__link link--animated text--underlined">{{ 'customer.addresses.title' | t }}</a>
+            </li>
+            <li class="link-bar__link-item">
+              <a href="/apps/ret" target="_blank" class="link-bar__link link--animated">Manage Your Orders</a>
+            </li>
+            <li class="link-bar__link-item">
+              <a href="{{ routes.account_logout_url }}" class="link-bar__link link--animated text--subdued" data-no-instant>{{ 'customer.logout.title' | t }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+<div class="mobile-toolbar hidden-tablet-and-up">
+      <button class="mobile-toolbar__item" is="toggle-button" aria-expanded="false" aria-controls="account-links-popover">My Account {%- render 'icon' with 'chevron' -%}</button>
+    </div>
+
+    <popover-content id="account-links-popover" class="popover">
+      <span class="popover__overlay"></span>
+
+      <header class="popover__header">
+        <span class="popover__title heading h6">{{- 'customer.general.title' | t -}}</span>
+
+        <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+          {%- render 'icon' with 'close' -%}
+        </button>
+      </header>
+
+      <div class="popover__content">
+        <div class="popover__choice-list">
+          <a href="{{ routes.account_url }}" class="popover__choice-item visually-hidden">
+            <span class="popover__choice-label" aria-current="true">{{ 'customer.orders.title' | t }}</span>
+          </a>
+          <a href="/apps/ret" target="_blank" class="popover__choice-item">
+            <span class="popover__choice-label">Manage Your Orders</span>
+          </a>
+          <a href="{{ routes.account_addresses_url }}" class="popover__choice-item">
+            <span class="popover__choice-label">{{ 'customer.addresses.title' | t }}</span>
+          </a>
+
+          <a href="{{ routes.account_logout_url }}" class="popover__choice-item text--subdued logout" data-no-instant>
+            <span class="popover__choice-label">{{ 'customer.logout.title' | t }}</span>
+          </a>
+      </div>
+    </popover-content>
+
+    <div class="account account--order-list">
+      <div class="container container--small">
+        {%- if customer.orders.size == 0 -%}
+          <div class="page-header page-header--small {% if section.blocks.size == 1 %}page-header--alone{% endif %}">
+            <div class="page-header__text-wrapper text-container">
+              <h1 class="heading h4">{{ 'customer.orders.title' | t }} <span class="bubble-count bubble-count--top">{{ customer.orders.size }}</span></h1>
+              <p class="text--subdued">{{ 'customer.orders.no_orders' | t }}</p>
+
+              <div class="button-wrapper">
+                <a href="{{ routes.all_products_collection_url }}" class="button button--primary">{{ 'customer.orders.start_shopping' | t }}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-content page-content--fluid">
+            <div class="account__block-list">
+              {%- for block in section.blocks -%}
+                <div class="account__block-item" {{ block.shopify_attributes }}>
+                  {%- case block.type -%}
+                    {%- when '@app' -%}
+                      {%- render block -%}
+
+                    {%- when 'liquid' -%}
+                      {{- block.settings.liquid -}}
+                  {%- endcase -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- else -%}
+          <div class="page-header page-header--small">
+            <div class="page-header__text-wrapper text-container">
+              <h1 class="heading h4">{{ 'customer.orders.title' | t }} <span class="bubble-count bubble-count--top">{{ customer.orders.size }}</span></h1>
+            </div>
+          </div>
+
+          <div class="page-content page-content--fluid">
+            <div class="account__block-list">
+              {%- for block in section.blocks -%}
+                <div class="account__block-item" {{ block.shopify_attributes }}>
+                  {%- case block.type -%}
+                    {%- when '@app' -%}
+                      {%- render block -%}
+
+                    {%- when 'liquid' -%}
+                      {{- block.settings.liquid -}}
+
+                    {%- when 'orders' -%}
+                      {%- paginate customer.orders by 50 -%}
+                        <table class="account__orders-table table table--bordered hidden-phone">
+                          <thead>
+                            <tr>
+                              <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.number' | t }}</span></th>
+                              <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.date' | t }}</span></th>
+                              <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.payment_status' | t }}</span></th>
+                              <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.fulfillment_status' | t }}</span></th>
+                              <th class="text--right"><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.total' | t }}</span></th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {%- for order in customer.orders -%}
+                              <tr class="account__order-table-item" onclick="window.location.href = '{{ order.customer_url }}'">
+                                <td><span class="link--animated">{{ order.name }}</span></td>
+                                <td>{{ order.created_at | date: format: 'date' }}</td>
+                                <td>{{ order.financial_status_label }}</td>
+                                <td>{{ order.fulfillment_status_label }}</td>
+                                <td class="text--right">{{ order.total_net_amount | money }}</td>
+                              </tr>
+                            {%- endfor -%}
+                          </tbody>
+                        </table>
+
+                        {%- comment -%}On mobile we render them a bit differently{%- endcomment -%}
+                        <div class="account__orders-list hidden-tablet-and-up">
+                          {%- for order in customer.orders -%}
+                            <div class="account__order-list-item">
+                              <h2 class="account__order-item-name heading h6">{{ 'customer.orders.order_name' | t: name: order.name }}</h2>
+
+                              <div class="account__order-item-info">
+                                <div class="account__order-item-block">
+                                  <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.date' | t }}</h3>
+                                  <span>{{ order.created_at | date: format: 'date' }}</span>
+                                </div>
+
+                                <div class="account__order-item-block">
+                                  <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.fulfillment_status' | t }}</h3>
+                                  <span>{{ order.fulfillment_status_label }}</span>
+                                </div>
+
+                                <div class="account__order-item-block">
+                                  <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.payment_status' | t }}</h3>
+                                  <span>{{ order.financial_status_label }}</span>
+                                </div>
+
+                                <div class="account__order-item-block">
+                                  <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.total' | t }}</h3>
+                                  <span>{{ order.total_net_amount | money }}</span>
+                                </div>
+                              </div>
+
+                              <a class="button button--small button--text button--outline button--full" href="{{ order.customer_url }}">{{ 'customer.orders.view_details' | t }}</a>
+                            </div>
+                          {%- endfor -%}
+                        </div>
+
+                        {%- render 'pagination', paginate: paginate -%}
+                      {%- endpaginate -%}
+                  {%- endcase -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {% endcomment %} 
+
+  <div class="container ">
+    <div class="customer_info_box">
+      <div class="customer_personal_info">
+        <div class="customer_img_box">
+          <span class="customer_img">{{ customer.name | split: " " | first | slice: 0 }}{{ customer.name | split: " " | last | slice: 0 }}
+          </span>
+        </div>
+        <div class="customer_info">
+          <h2>{{ customer.name }}</h2>
+          <span>{{ customer.email }}</span>
+          <span>{{ customer.phone }}</span>
+        </div>
+        {% comment %} <button class="edit_customer_link" is="toggle-button" aria-controls="drawer-edit-profile" aria-expanded="false">Edit</button> {% endcomment %}
+        <button class="edit_customer_link">Edit</button>
+      </div>
+
+      <div class="customer_address_info">
+        <div class="address_type">
+          <span>Home</span>
+        </div>
+        <div class="customer_address">
+          <span>{{ customer.default_address.address1 }}, {{ customer.default_address.address2 }}, {{ customer.default_address.city }}, {{ customer.default_address.zip }}, {{ customer.default_address.province }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if section.settings.account_banner != blank %}
+    <div class="container">
+      <div class="account_page_banner mobile-only">
+        <img src="{{ section.settings.account_banner | img_url: '1000x197'  }}" class="banner_img"/>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="container">
+    <div class="order_info_box">
+      <div class="manage_address_link">
+        <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/location_icon_23eba284-350a-4ed9-b997-40d903dcacaa.png?v=1680072559" />
+        <a href="/account/addresses">Manage Address</a>
+      </div>
+      <div class="manage_orders_link">
+        <svg width="21" height="23" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 3h2" stroke="#000" stroke-linecap="round"></path>
+          <rect x=".5" y=".5" width="15" height="4" rx="1.5" stroke="#000" stroke-linecap="round" stroke-linejoin="round"></rect>
+          <rect x="1.5" y="6.5" width="13" height="8" rx="1.5" stroke="#000" stroke-linecap="round" stroke-linejoin="round"></rect>
+        </svg>
+        <a href="/apps/ret">My Orders</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="more_info_box">
+      <div class="menu_items">
+        <h3>More</h3>
+        <ul class="menu_item_list">
+          <li>
+            <img class="link_icon" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/notification_4d8ba0ad-a86e-4d2b-899e-175ff839e114.png?v=1680071353" />
+            <a>
+              <span>Notification Center</span>
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_icon_8f24d18d-5c67-44bc-9798-92df3158cd1d.png?v=1680072424" />
+            </a>
+          </li>
+          <li>
+            <img class="link_icon" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/support_icon_12242397-0baf-4d28-9dea-f40e245af60c.png?v=1680071764" />
+            <a>
+              <span>Help and Support</span>
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_icon_8f24d18d-5c67-44bc-9798-92df3158cd1d.png?v=1680072424" />
+            </a>
+          </li>
+          <li>
+            <img class="link_icon" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/faq_icon_4cde97b9-0d70-4dd8-a20c-0426b0b152c3.png?v=1680071874" />
+            <a href="/pages/frequently-asked-questions">
+              <span>FAQs</span>
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_icon_8f24d18d-5c67-44bc-9798-92df3158cd1d.png?v=1680072424" />
+            </a>
+          </li>
+          <li>
+            <img class="link_icon" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/tnc_icon_2971cacb-53bd-4bde-a858-ece569c82820.png?v=1680071874" />
+            <a href="/pages/terms-of-use">
+              <span>Terms & conditions</span>
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_icon_8f24d18d-5c67-44bc-9798-92df3158cd1d.png?v=1680072424" />
+            </a>
+          </li>
+          <li>
+            <img class="link_icon" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/envelope_icon_48fbf8ea-dd4f-4604-a265-1e99b885df8f.png?v=1680071874" />
+            <a>
+              <span>Get in touch</span>
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_icon_8f24d18d-5c67-44bc-9798-92df3158cd1d.png?v=1680072424" />
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </div>
-
-  <div class="mobile-toolbar hidden-tablet-and-up">
-    <button class="mobile-toolbar__item" is="toggle-button" aria-expanded="false" aria-controls="account-links-popover">{{- 'customer.orders.title' | t -}} {%- render 'icon' with 'chevron' -%}</button>
+  
+  <div class="container">
+    <div class="logout_box">
+      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/logout.png?v=1679917655" />
+      <a href="/account/logout" class="logout_link">Logout</a>
   </div>
 
-  <popover-content id="account-links-popover" class="popover"> 
-    <span class="popover__overlay"></span>
+</section>
 
-    <header class="popover__header">
-      <span class="popover__title heading h6">{{- 'customer.general.title' | t -}}</span>
 
-      <button type="button" class="popover__close-button tap-area tap-area--large" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
-        {%- render 'icon' with 'close' -%}
-      </button>
-    </header>
+<drawer-content id="drawer-edit-profile" class="drawer drawer--large" initial-focus-selector="[type='text']:first-child" >
+  <span class="drawer__overlay"></span>4
 
-    <div class="popover__content">
-      <div class="popover__choice-list">
-        <a href="{{ routes.account_url }}" class="popover__choice-item">
-          <span class="popover__choice-label" aria-current="true">{{ 'customer.orders.title' | t }}</span>
-        </a>
-		<a href="/apps/ret" target="_blank" class="popover__choice-item">
-          <span class="popover__choice-label">Manage Your Orders</span>
-        </a>
-        <a href="{{ routes.account_addresses_url }}" class="popover__choice-item">
-          <span class="popover__choice-label">{{ 'customer.addresses.title' | t }}</span>
-        </a>
+  <div class="drawer__content drawer__content--padded-start">
+    <form class="form" method="post" action="">
+      {%- if form.errors -%}
+        <script type="text/javascript">
+          document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('drawer-edit-profile').open = true;
+          });
+        </script>
 
-        <a href="{{ routes.account_logout_url }}" class="popover__choice-item text--subdued" data-no-instant>
-          <span class="popover__choice-label">{{ 'customer.logout.title' | t }}</span>
-        </a>
-      </div>
-    </div>
-  </popover-content>
-
-  <div class="account account--order-list">
-    <div class="container container--small">
-      {%- if customer.orders.size == 0 -%}
-        <div class="page-header page-header--small {% if section.blocks.size == 1 %}page-header--alone{% endif %}">
-          <div class="page-header__text-wrapper text-container">
-            <h1 class="heading h4">{{ 'customer.orders.title' | t }} <span class="bubble-count bubble-count--top">{{ customer.orders.size }}</span></h1>
-            <p class="text--subdued">{{ 'customer.orders.no_orders' | t }}</p>
-
-            <div class="button-wrapper">
-              <a href="{{ routes.all_products_collection_url }}" class="button button--primary">{{ 'customer.orders.start_shopping' | t }}</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="page-content page-content--fluid">
-          <div class="account__block-list">
-            {%- for block in section.blocks -%}
-              <div class="account__block-item" {{ block.shopify_attributes }}>
-                {%- case block.type -%}
-                  {%- when '@app' -%}
-                    {%- render block -%}
-
-                  {%- when 'liquid' -%}
-                    {{- block.settings.liquid -}}
-                {%- endcase -%}
-              </div>
-            {%- endfor -%}
+        <div class="form__banner banner banner--error">
+          <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
+          <div class="banner__content">
+            {{- form.errors | default_errors -}}
           </div>
         </div>
       {%- else -%}
-        <div class="page-header page-header--small">
-          <div class="page-header__text-wrapper text-container">
-            <h1 class="heading h4">{{ 'customer.orders.title' | t }} <span class="bubble-count bubble-count--top">{{ customer.orders.size }}</span></h1>
-          </div>
-        </div>
-
-        <div class="page-content page-content--fluid">
-          <div class="account__block-list">
-            {%- for block in section.blocks -%}
-              <div class="account__block-item" {{ block.shopify_attributes }}>
-                {%- case block.type -%}
-                  {%- when '@app' -%}
-                    {%- render block -%}
-
-                  {%- when 'liquid' -%}
-                    {{- block.settings.liquid -}}
-
-                  {%- when 'orders' -%}
-                    {%- paginate customer.orders by 50 -%}
-                      <table class="account__orders-table table table--bordered hidden-phone">
-                        <thead>
-                          <tr>
-                            <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.number' | t }}</span></th>
-                            <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.date' | t }}</span></th>
-                            <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.payment_status' | t }}</span></th>
-                            <th><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.fulfillment_status' | t }}</span></th>
-                            <th class="text--right"><span class="heading heading--xsmall text--subdued">{{ 'customer.orders.total' | t }}</span></th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          {%- for order in customer.orders -%}
-                            <tr class="account__order-table-item" onclick="window.location.href = '{{ order.customer_url }}'">
-                              <td><span class="link--animated">{{ order.name }}</span></td>
-                              <td>{{ order.created_at | date: format: 'date' }}</td>
-                              <td>{{ order.financial_status_label }}</td>
-                              <td>{{ order.fulfillment_status_label }}</td>
-                              <td class="text--right">{{ order.total_net_amount | money }}</td>
-                            </tr>
-                          {%- endfor -%}
-                        </tbody>
-                      </table>
-
-                      {%- comment -%}On mobile we render them a bit differently{%- endcomment -%}
-                      <div class="account__orders-list hidden-tablet-and-up">
-                        {%- for order in customer.orders -%}
-                          <div class="account__order-list-item">
-                            <h2 class="account__order-item-name heading h6">{{ 'customer.orders.order_name' | t: name: order.name }}</h2>
-
-                            <div class="account__order-item-info">
-                              <div class="account__order-item-block">
-                                <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.date' | t }}</h3>
-                                <span>{{ order.created_at | date: format: 'date' }}</span>
-                              </div>
-
-                              <div class="account__order-item-block">
-                                <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.fulfillment_status' | t }}</h3>
-                                <span>{{ order.fulfillment_status_label }}</span>
-                              </div>
-
-                              <div class="account__order-item-block">
-                                <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.payment_status' | t }}</h3>
-                                <span>{{ order.financial_status_label }}</span>
-                              </div>
-
-                              <div class="account__order-item-block">
-                                <h3 class="heading--xsmall text--subdued">{{ 'customer.orders.total' | t }}</h3>
-                                <span>{{ order.total_net_amount | money }}</span>
-                              </div>
-                            </div>
-
-                            <a class="button button--small button--text button--outline button--full" href="{{ order.customer_url }}">{{ 'customer.orders.view_details' | t }}</a>
-                          </div>
-                        {%- endfor -%}
-                      </div>
-
-                      {%- render 'pagination', paginate: paginate -%}
-                    {%- endpaginate -%}
-                {%- endcase -%}
-              </div>
-            {%- endfor -%}
-          </div>
-        </div>
+        <p class="form__info">{{ 'customer.addresses.fill_address' | t }}</p>
       {%- endif -%}
-    </div>
+      
+      {% assign f_name = customer.name | split: " " | first %}
+      {% assign l_name = customer.name | split: " " | last %}
+      <div class="input">
+        <input id="customer[first_name]" type="text" class="input__field input__field--text {% if f_name != blank %}is-filled{% endif %}" name="customer[first_name]" value="{{ f_name }}">
+        <label for="customer[first_name]" class="input__label">First Name</label>
+      </div>
+      
+      <div class="input">
+        <input id="customer[last_name]" type="text" class="input__field input__field--text {% if l_name != blank %}is-filled{% endif %}" name="customer[last_name]" value="{{ l_name }}">
+        <label for="customer[last_name]" class="input__label">Last Name</label>
+      </div>
+      
+      <div class="input">
+        <input id="customer[email]" type="text" class="input__field input__field--text {% if customer.email != blank %}is-filled{% endif %}" name="customer[email]" value="{{ customer.email }}">
+        <label for="customer[email]" class="input__label">Email</label>
+      </div>
+      
+      <div class="input">
+        <input readonly id="customer[phone]" type="text" class="input__field input__field--text {% if customer.phone != blank %}is-filled{% endif %}" name="customer[phone]" value="{{ customer.phone }}">
+        <label for="customer[phone]" class="input__label">Phone No.</label>
+      </div>
+
+      <button type="submit" is="loader-button" class="form__submit button button--primary button--full">Update profile</button>
+    </form>
   </div>
-</section>
+</drawer-content>
 
 {% schema %}
 {
   "name": "Customer account",
-  "class": "shopify-section--main-customers-account",
+  "class": "shopify-section--main-customers-account custom_account_section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Account page banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "account_banner",
+      "label": "Image"
+    }
+  ],
   "blocks": [
     {
       "type": "@app"
