@@ -62,7 +62,7 @@
   {% assign discounted_price = product.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
 {%- else -%}
   {% assign cheapest_variant_discounted_price = cheapest_variant.price %}
-  {% assign discounted_price = product.price %}
+  {% assign discounted_price = product.selected_or_first_available_variant.price %}
 {%- endif -%}
 
 {% assign available_variants = 0 %}
@@ -128,7 +128,7 @@
             {{- tag | remove: 'Feature|' -}}
           </span>
         {%- elsif tag contains 'meta-label-' -%}
-          <span class="priority label z-2 label--highlight custom-label bg-black {{ tag }}">
+          <span class="priority label z-2 label--highlight custom-label bg-green {{ tag }}">
             {{- tag | remove: 'meta-label-' -}}
           </span>
         {%- endif -%}
