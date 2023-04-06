@@ -643,11 +643,11 @@
             {% endif %}
           {% endif %}
         {% endfor %}
-        <div class="pincode_checker_container">
+        <div class="pincode_checker_container d-lg-none">
           <h5 class="pincode_heading">Delivery:</h5>
           <div class="pincode_checker">
             <div class="quick-delivery-icon">{% render 'icon' with 'location' %}</div>
-            <input class="pincode_checker_input" placeholder="Enter Delivery Pincode">
+            <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
             <button type="button" class="pincode_checker_btn">Check</button>
           </div>
           <div class="pincode_details">
@@ -795,14 +795,29 @@
         {%- render 'personalised-modal' -%}
       {% endif %}
       {% if product.metafields.custom.product_highlights %}
-      <div class="price-container product-highlight mt-3 desktop">
-        <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
-          Highlights
-        </h6>
-        {{ product.metafields.custom.product_highlights }}
+        <div class="price-container product-highlight mt-3 desktop">
+          <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
+            Highlights
+          </h6>
+          {{ product.metafields.custom.product_highlights }}
+        </div>
+      {%- endif -%}
+      <div class="pincode_checker_container desktop">
+        <h5 class="pincode_heading">Delivery:</h5>
+        <div class="pincode_checker">
+          <div class="quick-delivery-icon">{% render 'icon' with 'location' %}</div>
+          <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
+          <button type="button" class="pincode_checker_btn">Check</button>
+        </div>
+        <div class="pincode_details">
+          <h6>Fastest delivery in {{delivery_date}}</h6>
+          <p>Enter pincode for exact delivery dates</p>
+        </div>
+        <div class="pincode_error"></div>
       </div>
-    {%- endif -%}
     </div>
+
+    
     </div>
     {% endif %}
   </div>
