@@ -64,6 +64,7 @@
     {% endunless %} {% endcomment %}
     <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
+    {% render 'speedsize' %}
     {%- if request.page_type == 'product' -%}
       {%- assign selected_media = product.selected_or_first_available_variant.image
         | default: product.selected_or_first_available_variant.image
@@ -74,14 +75,12 @@
       {%- endif -%}
     {%- elsif request.page_type == 'collection' and collection.image -%}
       <link
-        rel="preload"
         as="image"
         media="(max-width: 740px)"
         imagesizes="100vw"
         imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}"
       >
       <link
-        rel="preload"
         as="image"
         media="(min-width: 741px)"
         imagesizes="100vw"
@@ -406,9 +405,10 @@
       <style>
         @media screen and (max-width: 767px) {
           #main, .footer {
-         background: url({{ settings.home_bg_image }}) !important;
-    background-repeat: repeat-y;
-    background-size: contain !important;
+            background: url({{ settings.home_bg_image }}) !important;
+            background-repeat: repeat-y;
+            background-size: contain !important;
+          }
         }
       </style>
     {% endif %}

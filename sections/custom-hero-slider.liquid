@@ -1,0 +1,485 @@
+<div class="container MultiCarousel_container">
+	<div class="row">
+		<div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}>
+            <div class="MultiCarousel-inner {{ section.id }} draggable" draggable="true">
+              {% for block in section.blocks %}
+                <div class="item slide_{{forloop.index}}">
+                  <a
+                href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}"
+                class="slide-url"
+              > 
+              {% if block.settings.mobile_image != blank %}
+                <picture>
+                  <source
+                    media="(min-width: 769px)"
+                    {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                  >
+                  <img width="91%" style="border-radius:6px;border:1px solid #e3e3e3"
+                    class="image-overlay__image_"
+                    {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
+                    alt="{{block.settings.desktop_image.alt}}" {% if forloop.first %}loading="eager" fetchpriority="high"{% endif %}
+                  >
+                </picture>
+                  {% endif %}
+              </a>
+                </div>
+              {% endfor %}
+            </div>
+            <button class="btn btn-primary leftLst {{ section.id }}"><</button>
+            <button class="btn btn-primary rightLst {{ section.id }}">></button>
+            <ul class="MultiCarousel_dots_container">
+              {% for block in section.blocks %}
+               <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">{{ forloop.index }}/{{ forloop.length }}</li> 
+              {% endfor %} 
+              </ul>
+        </div>
+	</div>
+  </div>
+
+  {% render 'carousel-css' %}
+
+  {% if section.settings.show_popup %}
+    <div id="saleModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body p-0">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-body-content">
+              {% if section.settings.popup_image %}
+                <div class="modal-image">
+                  <img
+                    class="image-overlay__image_"
+                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %}
+                    alt="Popup Image"
+                  >
+                </div>
+              {% endif %}
+              <div class="modal-form p-3">
+                <div class="sale-pop-form">
+                  <div class="form-group" style="margin: 0;">
+                    {% if section.settings.show_splitpopup %}
+                      <div class="d-flex justify-content-center">
+                        <span>
+                          <button type="button" id="btn1st" class="btn btn-primary">
+                            {{ section.settings.split_button }}
+                          </button>
+                        </span>
+                        <span>
+                          <button type="button" id="btn2nd" class="btn btn-info">
+                            {{ section.settings.split_buttontwo }}
+                          </button>
+                        </span>
+                      </div>
+                      <style>
+                        .myform{color:black;}
+                        #myform, .modal-backdrop.show{display:none!important;}
+                      </style>
+                    {% endif %}
+                    <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: center;">
+                      <input
+                        style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
+                        type="email"
+                        name="email"
+                        id="sale_email"
+                        placeholder="Email Address"
+                      >
+                      <button
+                        style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
+                        class="button sale-btn"
+                        type="submit"
+                      >
+                        YES
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if section.settings.show_splitpopup %}
+      <div id="saleModals-1" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body p-0">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <div class="modal-body-content">
+                <div class="modal-form p-3">
+                  <div class="sale-pop-form">
+                    <div class="form-groups-1" style="margin: 0;">
+                      <div class="myform" style="display: flex;margin: 0;justify-content: center;">
+                        <input
+                          style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
+                          type="email"
+                          name="email"
+                          id="sale_emails-1"
+                          placeholder="Email Address"
+                        >
+                        <button
+                          style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
+                          class="button sale-btns-1"
+                          type="submit"
+                        >
+                          YES
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div id="saleModals-2" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body p-0">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <div class="modal-body-content">
+                <div class="modal-form p-3">
+                  <div class="sale-pop-form">
+                    <div class="form-groups-2" style="margin: 0;">
+                      <div class="myform" style="display: flex;margin: 0;justify-content: center;">
+                        <input
+                          style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;"
+                          type="email"
+                          name="email"
+                          id="sale_emails-2"
+                          placeholder="Email Address"
+                        >
+                        <button
+                          style="border-radius: 5px;background: transparent;border:1px solid #ff0000;color: #fff;height:45px;line-height:normal;"
+                          class="button sale-btns-2"
+                          type="submit"
+                        >
+                          YES
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+  {% if block.settings.video_url != blank %}
+  <div class="modal fade videoModals_ banner_video_modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body-content">
+            <div class="modal-form p-3">
+              <div class="sale-pop-form">
+                <div class="form-groups-1 video_container" style="margin: 0;">
+                  <iframe
+                    width="100%"
+                    height="400px"
+                    src=""
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="modal fade custom_gform_modal" role="dialog">
+    <div
+      class="modal-dialog gform_modal_content"
+      style="background: url('https://cdn.shopify.com/s/files/1/0057/8938/4802/files/mob-new.jpg?v=1662359287');"
+    >
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body">
+            <a href="">Submit now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="deferjs">
+  
+      {% if section.settings.show_popup %}
+        var slide_num = '{{ section.settings.banner_number}}';
+        $(`.slide_${slide_num} a`).click(function(e){
+            e.preventDefault();
+            $("#saleModal").modal("show");
+          });
+            {% if customer %}
+              document.getElementById("sale_email").value = '{{customer.email}}'
+          {% endif %}
+          {% if section.settings.show_splitpopup %}
+        $("#btn1st").click(function(e){
+                    $("#saleModal").modal("hide");
+            // $(".modal-backdrop.show").css("display", "none");
+            $("#saleModals-1").modal("show");
+          });
+  
+          $(".sale-btns-1").click(function () {
+          var e = document.getElementById("sale_emails-1").value;
+          "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+              ? localStorage.getItem("userEmailIdSale1") === e
+                  ? $(".form-groups-1").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+                  : (localStorage.setItem("userEmailIdSale1", e),
+                    clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                    clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
+                    $("#saleModals-1 .form-groups-1").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+              : $(".form-groups-1").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          setTimeout(function () {
+              $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          }, 5e3);
+      });
+          $("#btn2nd").click(function(e){
+                 $("#saleModal").modal("hide");
+                    // $(".modal-backdrop.show").css("display", "none");
+            $("#saleModals-2").modal("show");
+          });
+          $(".sale-btns-2").click(function () {
+          var e = document.getElementById("sale_emails-2").value;
+          "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+              ? localStorage.getItem("userEmailIdSale2") === e
+                  ? $(".form-groups-2").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+                  : (localStorage.setItem("userEmailIdSale2", e),
+                    clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                    clevertap.event.push("Notify Me {{ section.settings.clevertap_split }}", { Email: e, Source: "HomePage Banner Popup" }),
+                    $("#saleModals-2 .form-groups-2").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+              : $(".form-groups-2").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          setTimeout(function () {
+              $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          }, 5e3);
+      });
+    {% else %}
+            $(".sale-btn").click(function () {
+          var e = document.getElementById("sale_email").value;
+          "" !== e && /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(e)
+              ? localStorage.getItem("userEmailIdSale") === e
+                  ? $(".form-group").append('<p class="aluser-msg-sale">You are already subscribed!!</p>')
+                  : (localStorage.setItem("userEmailIdSale", e),
+                    clevertap.onUserLogin.push({ Site: { Email: e, "MSG-email": !0 } }),
+                    clevertap.event.push("Notify Me {{ section.settings.clevertap_id }}", { Email: e, Source: "HomePage Banner Popup" }),
+                    $("#saleModal .form-group").append('<p class="thankyou-msg-sale">Thank You for subscribing!</p>'))
+              : $(".form-group").append('<p class="error-msg-sale">Please enter a valid email Id!</p>');
+          setTimeout(function () {
+              $(".error-msg-sale, .thankyou-msg-sale, .aluser-msg-sale").remove();
+          }, 5e3);
+      });
+     {% endif %}
+     {% endif %}
+  </script>
+{% schema %}
+  {
+    "name": "Custom hero Slideshow",
+    "class": "bootstrap-carousel",
+    "max_blocks": 5,
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_popup",
+        "label": "Enable popup on banner",
+        "default": false
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_image",
+        "label": "Popup Image"
+      },
+      {
+        "type": "text",
+        "id": "banner_number",
+        "label": "Enter banner number on which you want to show popup"
+      },
+      {
+        "type": "text",
+        "id": "clevertap_id",
+        "label": "clever tap event"
+      }, {
+        "type": "checkbox",
+        "id": "show_splitpopup",
+        "label": "only for split products",
+        "default": false
+      }, {
+        "type": "text",
+        "id": "split_button",
+        "label": "botton1 textsplit products",
+        "default": "primary"
+      }, {
+        "type": "text",
+        "id": "split_buttontwo",
+        "label": "botton2 textsplit products",
+        "default": "primary2"
+      }, {
+        "type": "text",
+        "id": "clevertap_split",
+        "label": "clevertap event only for split products"
+      }, {
+        "type": "text",
+        "id": "autoplay_timeout",
+        "label": "autoplay_timeout in 5000 = 5sec"
+      }, {
+        "type": "checkbox",
+        "id": "enable_progressbar",
+        "label": "Enable progressbar on slider",
+        "default": true
+      }, {
+        "type": "number",
+        "id": "slides_no",
+        "label": "mobile slides",
+        "default": 1
+      },{
+        "type": "number",
+        "id": "midslides_no",
+        "label": "medium slides",
+        "default": 1
+      }, {
+        "type": "number",
+        "id": "deskslides_no",
+        "label": "desk slides",
+        "default": 1
+      }, {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "infinite loop",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "autoplay",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "scale_center_slide",
+        "label": "scale cente slide",
+        "default": false
+      },{
+        "type": "checkbox",
+        "id": "show_active_dots",
+        "label": "show active dots with index",
+        "default": true
+      },{
+        "type": "number",
+        "id": "slideBy",
+        "label": "number of slides drag in one screen",
+        "default": 1
+      }, {
+        "type": "text",
+        "id": "item_space_desk",
+        "label": "Space between items in desktop",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "item_space_mobile",
+        "label": "Space between items in mobile",
+        "default": "1rem"
+      },{
+        "type": "text",
+        "id": "next_item_visibility_desk",
+        "label": "Next item visibility in desktop",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "next_item_visibility_mobile",
+        "label": "Next item visibility in mobile",
+        "default": "1rem"
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_mobile",
+        "label": "Show Dots on Mobile",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_dots_on_desktop",
+        "label": "Show Dots on Desktop",
+        "default": true
+      },{
+        "type": "number",
+        "id": "last_item_padding",
+        "label": "Last item padding",
+        "default": 24
+      }
+    ],
+    "blocks": [
+      {
+        "name": "slideshow",
+        "type": "slideshow",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "desktop_image",
+            "label": "Desktop Image"
+          },
+          {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile Image"
+          },
+          {
+            "type": "url",
+            "id": "video_url",
+            "label": "video_url"
+          },
+          {
+            "type": "url",
+            "id": "slide_url",
+            "label": "Slide URL"
+          }, {
+            "type": "checkbox",
+            "id": "show_timer",
+            "label": "Show Timer",
+            "default": false
+          }, {
+            "type": "text",
+            "id": "timer_title",
+            "label": "timer_title"
+          }, {
+            "type": "color",
+            "id": "timer_background",
+            "label": "timer_background"
+          }, {
+            "type": "checkbox",
+            "id": "timer_inline",
+            "label": "get_timer_inline"
+          }, {
+            "type": "text",
+            "id": "end_date",
+            "label": "timer End Date (Ex: Apr 30, 2022)"
+          }, {
+            "type": "checkbox",
+            "id": "splitbanner_buttons",
+            "label": "Enable splitbanner"
+          }, {
+            "type": "url",
+            "id": "splitbanner_url",
+            "label": "Enter splitbanner_url"
+          }, {
+            "type": "url",
+            "id": "splitbanner_url2",
+            "label": "Enter splitbanner_url 2"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom hero Slideshow",
+        "category": "image",
+        "settings": {}
+      }
+    ]
+  }
+{% endschema %}
