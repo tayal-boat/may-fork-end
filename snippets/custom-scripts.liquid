@@ -16,7 +16,6 @@
   </script>
 {%- else -%}
   <script>
-
     if (localStorage.getItem('boatHead_input') && localStorage.getItem('boatHead_input') !== '' && localStorage.getItem('boatHead_input') !== 'undefined') {
       sessionStorage.setItem('login', 'true');
       if (sessionStorage.getItem('login') == 'true') {
@@ -65,20 +64,17 @@
         s = d.getElementsByTagName(t)[0];
       g.src = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/track.js';
       s.parentNode.insertBefore(g, s);
-    }(document, 'script'));{% if customer.metafields.custom.gst_address %}Shopify.gst_added =
-    {% if gst_added %}
-      {{ gst_added }}
-    {% else %}
-      false
-    {% endif %};
-    let address = {{ customer.metafields.custom.gst_address }};
-    sessionStorage.setItem('gstin', address.gst);
+    }(document, 'script'));
+    {% if customer.metafields.custom.gst_address %}
+      Shopify.gst_added = {% if gst_added %} {{ gst_added }} {% else %} false {% endif %};
+      let address = {{ customer.metafields.custom.gst_address }};
+        sessionStorage.setItem('gstin', address.gst);
         sessionStorage.setItem('gst_billing_name', address.name);
         sessionStorage.setItem('gst_billing_address', address.address1);
         sessionStorage.setItem('gst_billing_city', address.city);
         sessionStorage.setItem('gst_billing_state', address.state);
-        sessionStorage.setItem('gst_billing_pincode', address.pincode);{% endif %}console.log('hii lazy script');
-
+        sessionStorage.setItem('gst_billing_pincode', address.pincode);
+    {% endif %}
 </script>
 
 
@@ -86,7 +82,7 @@
 <script>
   var cloudfront = 'https://d3ryumxhbd2uw7.cloudfront.net/webtracking/rmShopifyUtils.min.js';
   Defer.js(cloudfront, 'cloudfront-js', 1200, function() {
-    console.info('cloudfront is loaded.'); // debug
+   // console.info('cloudfront is loaded.'); 
   }, true);
 </script>
 
@@ -98,9 +94,9 @@
   Defer.all('script[type="lazyScript2"]', 500, true);
 </script>
 
+{% unless template contains 'index' %}
 <script>
-  {% unless template contains 'index' %}
-console.log('owl slider script');
+// console.log('owl slider script');
 // Owl slider 
 // Note : Need to add custom_slider_init class , section_id , carousel-js snippet and schema to activate owl carosal in a section
 
@@ -158,7 +154,6 @@ for (let i = 0; i < sliderSelector.length; i++) {
     }
   }
 }
-
-  {% endunless %}
 </script>
+{% endunless %}
 <!-- /Algolia head -->
