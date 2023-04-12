@@ -236,8 +236,27 @@ Shopify.variantChange = function(e){
 
 function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
+
 if(varient_swatches_input[i].checked){
+  console.log('varient_swatches_input');
+  $.ajax({
+    url: "https://www.boat-lifestyle.com/products/airdopes-131?variant="+ e.id +"&section_id=main-product",
+    type: "GET",
+    dataType: "html",
+    success: function(e) {
+        var product_media = $(e).find('product-media').html();
+        $("product-media").html(product_media);
+        console.log('product_media');
+        setTimeout(function() {
+          var product_itemsDiv = '.product_media_section .MultiCarousel-inner';
+          var product_itemsMainDiv = ('.product_media_section .MultiCarousel');
+          var product_selector = 'MultiCarousel_product';
+          Shopify.product_slider(product_itemsDiv, product_itemsMainDiv, product_selector); 
+        },500);
+    }
+  })
   if(JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
+    // image swatch selector
       $('.custom-notify-btn').show();
       $('.product__info button#AddToCart').hide();
       $('#AddToCart, .cutomized-btn, .button.custom-prebook').addClass('hide_cTA');
@@ -251,8 +270,8 @@ if(varient_swatches_input[i].checked){
     if($('#BIS_trigger.custom-notify-btn').length > 0){
       $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
     } 
-      
   }else{
+    // color swatch selector 
     $('.custom-notify-btn').hide();
     $('.product__info button#AddToCart').show();
     $("#gokwik-buy-now").removeClass('hide_cTA');
@@ -1431,9 +1450,133 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
   }
  
   }
+
+
+  Shopify.product_slider = function(itemsDiv, itemsMainDiv, selector){
+    slidePre = '',
+    slidePost = '',
+    slideItem = '',
+    numberOfSlides = '',
+    slide_length = '',
+    slider_dots = '';
+      var itemWidth = "";
+      if(document.querySelector(itemsMainDiv) !== null){
+      //  console.log("hii custom slider ");
+      infinite_loop = true;
+      slidePre = document.createDocumentFragment();
+      slidePost = document.createDocumentFragment();
+      slideItem = document.querySelectorAll(itemsDiv + ' .item');
+      slide_length = slideItem.length;
+      slider_dots = $(itemsDiv).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
+      let leftBth = '#' + selector + ' .leftLst';
+      let RightBth = '#' + selector + ' .rightLst';
+    
+    for(var l = 0 ; l < slideItem.length; l++) {
+      slideItem[l].setAttribute('data-index', [l]);
+    }
+    
+      $(RightBth).click(function () {
+        console.log('product rirnt btn click');
+        click(1, this)
+      });
+    
+      $(leftBth).click(function () {
+          var condition = $(this).hasClass("leftLst");
+          console.log('product left btn click');
+          if (condition)click(0, this);
+      });
+    
+    $('#' + selector + ' .multiCarousel_dots').click(function () {
+      var curr = $(this).attr('data-index');
+      changeCurrent(curr, this);
+    });
+    
+     ResCarouselSize(itemsMainDiv, selector);
+     if(!isIOSMobile()){
+    $(window).resize(function () {
+      ResCarouselSize(itemsMainDiv, selector);
+    });
+     }
+    
+    //this function define the size of the items
+    function ResCarouselSize(itemsMainDiv, selector) {
+      var incno = 0;
+      var dataItems = ("data-items");
+      var itemClass = ('.item');
+      var id = 0;
+      var btnParentSb = '';
+      var itemsSplit = '';
+      var sampwidth = $(itemsMainDiv).width();
+      var bodyWidth = $('body').width();
+      $(itemsDiv).each(function () {
+          id = id + 1;
+          var itemNumbers = $(this).find(itemClass).length;
+          btnParentSb = $(this).parent().attr(dataItems);
+          itemsSplit = btnParentSb.split(',');
+          $(this).parent().attr("id", selector + id);
+          
+          let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_desk_items'));
+          let mid_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
+          let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
+              incno = 1;
+              itemWidth = sampwidth / incno;
+    
+          if(!$(this).hasClass('MultiCarousel_loaded')){
+          $(this).addClass('MultiCarousel_loaded');
+          $(this).parent().addClass('MultiCarousel_load');
+          if(incno > 1 && center_slide_scale){
+          for(var j = 1 ; j <= incno-1; j++) {
+            slider_dots[slider_dots.length-j].remove();
+          }
+          let centerIndex = Math.floor(incno / 2);
+          $(this).find(itemClass)[centerIndex].classList.add('center');
+          }
+    
+          for(var k = 0 ; k <= incno-1; k++) {
+            $(this).find(itemClass)[k].classList.add('active');
+            if(!center_slide_scale && incno < 2 && slider_dots[k]){
+            slider_dots[k].classList.add('active');
+          }
+          }
+        }
+          $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+          $(this).find(itemClass).each(function () {
+              $(this).outerWidth(itemWidth);
+          });
+          $(this).addClass('MultiCarousel_loaded');
+          if(autoplay == false && infinite_loop == false) {
+          $(".leftLst").addClass("over");
+          $(".rightLst").removeClass("over");
+          }
+          
+      });
+    }
+    
+    // Get the drag direction
+    
+    document.querySelector(itemsDiv).addEventListener('dragstart', (e) => {
+      oldX = e.pageX;
+      oldY = e.pageY;
+    });
+    
+    document.querySelector(itemsDiv).addEventListener('touchstart', (e) => {
+      oldX = e.changedTouches[0].pageX;
+      oldY = e.changedTouches[0].pageY;
+    });
+    
+    document.querySelector(itemsDiv).addEventListener("dragend", getMouseDirection, false);
+    
+    document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
+      var touch_event = event.changedTouches[0]; 
+      getMouseDirection(touch_event);
+    });
+      }
+     
+      }
   
 //this function used to move the items
 function ResCarousel(e, el, s, slide_container) {
+  console.log(' slider ResCarousel');
     var leftBtn = ('.leftLst');
     var rightBtn = ('.rightLst');
     var itemClass = ('.item');
@@ -1578,11 +1721,12 @@ function ResCarousel(e, el, s, slide_container) {
         }
     }
     else if (e == 1) {
+      console.log('parseInt(xds) translateXval',parseInt(xds), itemWidth , s);
         translateXval = parseInt(xds) + parseInt(itemWidth * s);
         if(autoplay == false && infinite_loop == false) {
         $(el + ' ' + leftBtn).removeClass("over");
         }
-
+console.log('translateXval', translateXval);
         if (translateXval > itemsCondition) {
           translateXval = 0;
         }else if(translateXval > itemsCondition - itemWidth / 2){
@@ -1601,6 +1745,7 @@ function ResCarousel(e, el, s, slide_container) {
       }
       
     }
+    console.log('slide_container translateXval', translateXval);
     $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
     if($(slide_container).attr('autoplay_delay') == 'true'){
       setTimeout(function() {$(slide_container).attr('autoplay_delay','false');},5000);
@@ -1609,6 +1754,7 @@ function ResCarousel(e, el, s, slide_container) {
 
 //It is used to get some elements from btn
 function click(ell, ee) {
+  console.log('slider btn click: ' , ell , ee);
     var Parent = "#" + $(ee).parent().attr("id");
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
@@ -1690,130 +1836,8 @@ for(let i = 0; i < slider_Selector.length; i++){
   Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
 }
 
-Shopify.product_slider = function(itemsDiv, itemsMainDiv, selector){
-  slidePre = '',
-  slidePost = '',
-  slideItem = '',
-  numberOfSlides = '',
-  slide_length = '',
-  slider_dots = '';
-    var itemWidth = "";
-    if(document.querySelector(itemsMainDiv) !== null){
-    //  console.log("hii custom slider ");
-    infinite_loop = true;
-    slidePre = document.createDocumentFragment();
-    slidePost = document.createDocumentFragment();
-    slideItem = document.querySelectorAll(itemsDiv + ' .item');
-    slide_length = slideItem.length;
-    slider_dots = $(itemsDiv).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
-    let leftBth = '#' + selector + ' .leftLst';
-    let RightBth = '#' + selector + ' .rightLst';
-  
-  for(var l = 0 ; l < slideItem.length; l++) {
-    slideItem[l].setAttribute('data-index', [l]);
-  }
-  
-    $(RightBth).click(function () {
-      console.log('product rirnt btn click');
-      click(1, this)
-    });
-  
-    $(leftBth).click(function () {
-        var condition = $(this).hasClass("leftLst");
-        console.log('product left btn click');
-        if (condition)click(0, this);
-    });
-  
-  $('#' + selector + ' .multiCarousel_dots').click(function () {
-    var curr = $(this).attr('data-index');
-    changeCurrent(curr, this);
-  });
-  
-   ResCarouselSize(itemsMainDiv, selector);
-   if(!isIOSMobile()){
-  $(window).resize(function () {
-    ResCarouselSize(itemsMainDiv, selector);
-  });
-   }
-  
-  //this function define the size of the items
-  function ResCarouselSize(itemsMainDiv, selector) {
-    var incno = 0;
-    var dataItems = ("data-items");
-    var itemClass = ('.item');
-    var id = 0;
-    var btnParentSb = '';
-    var itemsSplit = '';
-    var sampwidth = $(itemsMainDiv).width();
-    var bodyWidth = $('body').width();
-    $(itemsDiv).each(function () {
-        id = id + 1;
-        var itemNumbers = $(this).find(itemClass).length;
-        btnParentSb = $(this).parent().attr(dataItems);
-        itemsSplit = btnParentSb.split(',');
-        $(this).parent().attr("id", selector + id);
-        
-        let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_desk_items'));
-        let mid_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
-        let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
-            incno = 1;
-            itemWidth = sampwidth / incno;
-  
-        if(!$(this).hasClass('MultiCarousel_loaded')){
-        $(this).addClass('MultiCarousel_loaded');
-        $(this).parent().addClass('MultiCarousel_load');
-        if(incno > 1 && center_slide_scale){
-        for(var j = 1 ; j <= incno-1; j++) {
-          slider_dots[slider_dots.length-j].remove();
-        }
-        let centerIndex = Math.floor(incno / 2);
-        $(this).find(itemClass)[centerIndex].classList.add('center');
-        }
-  
-        for(var k = 0 ; k <= incno-1; k++) {
-          $(this).find(itemClass)[k].classList.add('active');
-          if(!center_slide_scale && incno < 2 && slider_dots[k]){
-          slider_dots[k].classList.add('active');
-        }
-        }
-      }
-        $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
-        $(this).find(itemClass).each(function () {
-            $(this).outerWidth(itemWidth);
-        });
-        $(this).addClass('MultiCarousel_loaded');
-        if(autoplay == false && infinite_loop == false) {
-        $(".leftLst").addClass("over");
-        $(".rightLst").removeClass("over");
-        }
-        
-    });
-  }
-  
-  // Get the drag direction
-  
-  document.querySelector(itemsDiv).addEventListener('dragstart', (e) => {
-    oldX = e.pageX;
-    oldY = e.pageY;
-  });
-  
-  document.querySelector(itemsDiv).addEventListener('touchstart', (e) => {
-    oldX = e.changedTouches[0].pageX;
-    oldY = e.changedTouches[0].pageY;
-  });
-  
-  document.querySelector(itemsDiv).addEventListener("dragend", getMouseDirection, false);
-  
-  document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
-    var touch_event = event.changedTouches[0]; 
-    getMouseDirection(touch_event);
-  });
-    }
-   
-    }
 
 var product_itemsDiv = '.product_media_section .MultiCarousel-inner';
-// console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
 var product_itemsMainDiv = ('.product_media_section .MultiCarousel');
 var product_selector = 'MultiCarousel_product';
 Shopify.product_slider(product_itemsDiv, product_itemsMainDiv, product_selector); 
