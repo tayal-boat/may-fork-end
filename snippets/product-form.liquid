@@ -634,6 +634,15 @@
       {%- endcomment -%}
       {%- when 'buy_buttons' -%}
       {%- if request.page_type != 'password' -%}
+        {% for variant in product.variants %}
+          {% if variant.id == product.selected_or_first_available_variant.id %}
+            {% if variant.metafields.custom.delivery != blank %}
+              {% assign delivery_date = variant.metafields.custom.delivery %}
+            {% else %}
+              {% assign delivery_date = '2 days' %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
       <div class="product-form__buy-buttons" {{ block.shopify_attributes }}>
         {%- form 'product', product, is: 'product-form', id: product_form_id -%}
         <input type="hidden" disabled name="id" value="{{ product_varient.id }}">
@@ -765,9 +774,17 @@
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
     <div class="d-flex flex-column" data-role="additonal-info">
       {% if product.available %}
-      <div class="price-container p-lg-0 mb-2">
-        {% render 'product-payment-partner' %}
-      </div>
+        {% if product.metafields.custom.product_highlights %}
+          <div class="price-container product-highlight my-3 desktop">
+            <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
+              Highlights
+            </h6>
+            {{ product.metafields.custom.product_highlights }}
+          </div>
+        {%- endif -%}
+       <div class="price-container p-lg-0 mb-2">
+         {% render 'product-payment-partner' %}
+       </div>
       {% endif %}
       {% if product.tags contains 'customized' %}
         {%- render 'personalised-modal' -%}
@@ -788,6 +805,8 @@
       </div>
       {%- endif -%}
     </div>
+
+    
     </div>
     {% endif %}
   </div>
