@@ -5,88 +5,21 @@
   {%- endif -%}
   
   <style>
-      {% comment %} #shopify-section-{{ section.id }} { 
-        {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
-          {%- assign section_background = settings.background -%}
-        {%- else -%}
-          {%- assign section_background = section.settings.background -%}
-        {%- endif -%}
-  
-        {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
-          {%- assign heading_color = settings.heading_color -%}
-          {%- assign text_color = settings.text_color -%}
-        {%- else -%}
-          {%- assign heading_color = section.settings.text_color -%}
-          {%- assign text_color = section.settings.text_color -%}
-        {%- endif -%}
-  
-        {%- if section.settings.button_background == 'rgba(0,0,0,0)' -%}
-          {%- assign button_background = settings.primary_button_background -%}
-        {%- else -%}
-          {%- assign button_background = section.settings.button_background -%}
-        {%- endif -%}
-  
-        {%- if section.settings.button_text_color == 'rgba(0,0,0,0)' -%}
-          {%- assign button_text_color = settings.primary_button_text_color -%}
-        {%- else -%}
-          {%- assign button_text_color = section.settings.button_text_color -%}
-        {%- endif -%}
-  
-        --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
-        --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-        --primary-button-background: {{ button_background.red }}, {{ button_background.green }}, {{ button_background.blue }};
-        --primary-button-text-color: {{ button_text_color.red }}, {{ button_text_color.green }}, {{ button_text_color.blue }};
-  
-        --prev-next-button-background: {{ settings.background.red }}, {{ settings.background.green }}, {{ settings.background.blue }};
-        --prev-next-button-color: {{ settings.text_color.red }}, {{ settings.text_color.green }}, {{ settings.text_color.blue }};
-  
-        background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }});
-      --section-products-per-row:   {% if section.settings.horizontal_ui %}1 {% else %} 2{% endif %};
-      } {% endcomment %}
-      .tabs-nav__item-list button {
-        text-transform: unset !important;font-weight:700 !important;color: black;border: 0px;
-        padding-bottom:0px; padding-inline: 10px; padding-block:2px;border-top-left-radius: 16px !important;
-        border-bottom-left-radius: 16px !important;border-top-right-radius: 16px !important; border-bottom-right-radius: 16px !important;
-      }
-      .tabs-nav__item-list {box-shadow: none;}
-      .tabs-nav--center .tabs-nav__scroller-inner {margin-left: 0;}
-      button.tabs-nav__item.heading.heading--small{color:black;margin-right: 4vw;padding: 0.2rem 1rem;}
-      button.tabs-nav__item.heading.heading--small[aria-expanded="false"]{
-        background-color: #e3e3e3;color:black;opacity:1;font-weight: 500 !important;
-      }
-    button.tabs-nav__item.heading.heading--small[aria-expanded="true"]{ background-color: #000;color: #fff;}
-    .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
-    [dir=ltr] .tabs-nav__position{left: 0;}
-      button.tabs-nav__item.heading.heading--small:focus{outline: none;}
-  
-  
-    .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
-    .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
-    .featured-collections{min-height: 377px !important;}
-    .featured-collections.updated_featured_items .product-item .features-list{display: none;}
-    .custom_loading_icon{position: absolute;left: 50%; transform: translateX(-50%);top: 50%;z-index: 99;}
-  
-    .updated_featured_items .product-item__image-wrapper{margin-top: 0px !important;padding-top: 24px;padding-bottom: 20px;}
-  
-  
     @media screen and (max-width: 768px) {
        .flash-desk{margin-top: 1rem;align-items: center;}
-       .tabs-nav--edge2edge {margin-top: 12px!important;}
       }
     @media screen and (min-width: 741px) {
         #shopify-section-{{ section.id }} { --section-products-per-row: {{ section.settings.products_per_row | at_most: 3 }};}
       }
-  
     @media screen and (min-width: 1000px) {
         .flash-desk{width:80%;}
-        .product-list__inner--scroller { margin-left:0; }
         #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }}; }
       }
     @media screen and (min-width: 1200px) {
         #shopify-section-{{ section.id }} {
-          --section-products-per-row: {{ section.settings.products_per_row }}; margin: {{ section.settings.padding_desktop }};
+          --section-products-per-row: {{ section.settings.products_per_row }};
+          margin: {{ section.settings.padding_desktop }};
         }
-       .product-item-meta__color-count {margin-bottom: 5px;} 
      }
   </style>
   
@@ -97,19 +30,14 @@
           {%- if section.settings.title != blank -%}
               <a class="d-flex justify-content-between align-items-center" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
                 <h3 class="position-relative">{{ section.settings.title }}</h3>
-                <b style="color: #2F5B96;font-size: 12px;">View All --></b>
+                <b style="color: #2F5B96;font-size: 12px;">View All -></b>
               </a>
           {%- endif -%}
-          {% if section.settings['title-url'] and settings.enable_flash_sale %}
+          {% if section.settings.enable_flash_sale %}
             <a style="display:flex;flex-direction: column;justify-content: left;" href="{{section.settings.title-url}}" class="align-items-lg-center flash-desk flex-lg-row-reverse">
               <div class="flash_sale">
-                <p class="m-0 text-uppercase flash_text">
-                  <span class="thunder"
-                    ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-                      <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"></path>
-                      </svg></span
-                  >&nbsp;
-  
+                <p class="m-0">
+            {{ section.settings.flash_sale_title }}
                 </p>
                 {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
               </div>
@@ -207,14 +135,6 @@
                   </prev-next-buttons>
                 {%- endif -%}
               {%- endunless -%}
-  
-              {%- if block.settings.button_text != blank -%}
-                <div class="section__footer">
-                  <a class="button button--primary" href="{{ block.settings.button_url | default: collection.url }}">
-                    {{- block.settings.button_text -}}
-                  </a>
-                </div>
-              {%- endif -%}
             </product-list>
   
           {%- endfor -%}
@@ -237,17 +157,6 @@
             "type": "collection",
             "id": "collection",
             "label": "Collection"
-          },
-          {
-            "type": "text",
-            "id": "button_text",
-            "label": "Button text"
-          },
-          {
-            "type": "url",
-            "id": "button_url",
-            "label": "Button link",
-            "info": "If empty, the collection URL is used."
           }
         ]
       }
@@ -263,6 +172,17 @@
         "id": "title",
         "label": "Heading",
         "default": "Collection"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_flash_sale",
+        "label": "enable flash sale countdown"
+      },
+      {
+        "type": "html",
+        "id": "flash_sale_title",
+        "label": "flash sale title",
+        "default": "flash sale"
       },
       {
         "type": "range",
@@ -294,34 +214,6 @@
         "label": "Show add to cart below info",
         "info": "If enabled, we recommend using 4 products per row at maximum.",
         "default": false
-      },
-      {
-        "type": "header",
-        "content": "Colors"
-      },
-      {
-        "type": "color",
-        "id": "background",
-        "label": "Background",
-        "default": "rgba(0,0,0,0)"
-      },
-      {
-        "type": "color",
-        "id": "text_color",
-        "label": "Text",
-        "default": "rgba(0,0,0,0)"
-      },
-      {
-        "type": "color",
-        "id": "button_background",
-        "label": "Button background",
-        "default": "rgba(0,0,0,0)"
-      },
-      {
-        "type": "color",
-        "id": "button_text_color",
-        "label": "Button text",
-        "default": "rgba(0,0,0,0)"
       }
     ],
     "presets": [
