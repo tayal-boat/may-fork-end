@@ -369,14 +369,40 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
               </span>
+              <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                {%- if settings.currency_code_enabled -%}
+                  {{-
+                      cheapest_variant.compare_at_price
+                    | money_with_currency
+                    | remove: '.00'
+                    | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
             {%- else -%}
-              <span class="price product-card-price sur4" data-price="{{ product.price }}">
+              <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
                   {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
+              <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                {%- if settings.currency_code_enabled -%}
+                  {{-
+                      cheapest_variant.compare_at_price
+                    | money_with_currency
+                    | remove: '.00'
+                    | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- endif -%}
