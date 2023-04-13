@@ -1,43 +1,40 @@
 <div class="container MultiCarousel_container slider-2.0">
 	<div class="row">
 		<div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}>
-            <div class="MultiCarousel-inner {{ section.id }} draggable" draggable="true">
-              {% for block in section.blocks %}
-                <div class="item slide_{{forloop.index}}">
-                  <a
-                href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}"
-                class="slide-url"
-              > 
+      <div class="MultiCarousel-inner {{ section.id }} draggable" draggable="true">
+        {% for block in section.blocks %}
+          <div class="item slide_{{forloop.index}}">
+            <a href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}" class="slide-url"> 
               {% if block.settings.mobile_image != blank %}
                 <picture>
                   <source
                     media="(min-width: 769px)"
                     {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
                   >
-                  <img width="100%" style="border-radius:6px;border:1px solid #e3e3e3"
+                  <img width="91%" style="border-radius:6px;border:1px solid #e3e3e3"
                     class="image-overlay__image_"
                     {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
                     alt="{{block.settings.desktop_image.alt}}" {% if forloop.first %}loading="eager" fetchpriority="high"{% endif %}
                   >
                 </picture>
-                  {% endif %}
-              </a>
-                </div>
-              {% endfor %}
-            </div>
-            <button class="btn btn-primary leftLst {{ section.id }}"><</button>
-            <button class="btn btn-primary rightLst {{ section.id }}">></button>
-            <ul class="MultiCarousel_dots_container">
-              {% for block in section.blocks %}
-               <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">
-                {% comment %} info: Commenting current slide no / total slides in 2.0 {% endcomment %}
-                {% comment %} {{ forloop.index }}/{{ forloop.length }} {% endcomment %}
-              </li> 
-              {% endfor %} 
-              </ul>
-        </div>
+              {% endif %}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary leftLst {{ section.id }}"><</button>
+      <button class="btn btn-primary rightLst {{ section.id }}">></button>
+      <ul class="MultiCarousel_dots_container">
+        {% for block in section.blocks %}
+          <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">
+          {% comment %} info: Commenting current slide no / total slides in 2.0 {% endcomment %}
+          {% comment %} {{ forloop.index }}/{{ forloop.length }} {% endcomment %}
+        </li> 
+        {% endfor %} 
+      </ul>
+    </div>
 	</div>
-  </div>
+</div>
 
   {% render 'carousel-css' %}
 
