@@ -101,6 +101,8 @@
                   {{- block.settings.liquid -}}
 
                 {%- when 'addresses' -%}
+                  {% assign company_array = "" %}
+                  {% capture company_array %} {%- for address in customer.addresses -%}{% if address.company != blank %}{{- company_array | append: address.company | strip -}}{% unless forloop.last %},{% endunless %}  {% endif %}    {%- endfor -%}{% endcapture %}
                   {%- paginate customer.addresses by 8 -%}
                     <div class="account__addresses-list">
                       {%- for address in customer.addresses -%}
@@ -131,12 +133,12 @@
 
                             <form method="post" action="{{ address.url }}">
                               <input type="hidden" name="_method" value="delete">
-                              <button class="link text--subdued" is="confirm-button" data-message="{{ 'customer.addresses.delete_confirm' | t | escape }}">{{ 'customer.addresses.delete' | t }}</button>
+                              <button class="link text--subdued" is="confirm-button" data-message="{{ 'customer.addresses.delete_confirm' | t | escape }}"><img width="12px;" 
+                                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></button>
                             </form>
                           </div>
                         </div>
                       {%- endfor -%}
-
                     </div>
 
                     {%- render 'pagination', paginate: paginate -%}
@@ -280,14 +282,15 @@
           </div>
 
           <div class="input d-flex align-items-center justify-content-around">
-            <div class="input" style="width: 46%;margin-right:20px;">
+            <div class="mr-3 w-46" >
               <input id="address-new[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
               <label for="address-new[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
             </div>
 
-            <div id="address-new-province-container" class="input province-container" style="width: 46%;margin: 0;" hidden>
+            <div id="address-new-province-container" class="input province-container m-0 w-46"  hidden>
               <div class="select-wrapper is-filled">
-                <select class="select" name="address[province]" id="address-new[province]"></select>
+                <select class="select address-new-province" name="address[province]" id="address-new[province]"></select>
+                {%- render 'icon', icon: 'chevron' -%}
               </div>
               <label for="address-new[province]" class="input__label">State</label>
             </div>
@@ -297,13 +300,12 @@
           <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
             <p ><b>Address Type </b>(optional)</p>
             <div class="types_">
-              <span class="ad_type selected">Home</span>
-              <span class="ad_type">Work</span>
-              <span class="ad_type">Custom</span>
+              <div class="ad_type" {% if company_array contains "Home" %}disabled {% endif%}> Home </div>
+              <div class="ad_type" {% if company_array contains "Work" %}disabled {% endif%}> Work </div>
+              <div class="ad_type"> Custom </div>
             </div>
             <div class="input">
-            <input id="address-new[company]" type="text" class="input__field input__field--text address_type_field" name="address[company]" value="Home">
-            {% comment %} <label for="address-new[company]" class="input__label">Home, Work, Custom</label> {% endcomment %}
+            <input id="address-new[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" >
             </div>
         </div>
 
@@ -463,14 +465,15 @@
               </div>
 
               <div class="input d-flex align-items-center justify-content-around">
-                <div class="input" style="width: 46%;">
+                <div class="w-46" >
                   <input id="address-{{ address.id }}[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
                   <label for="address-{{ address.id }}[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
                 </div>
 
-                <div id="address-{{ address.id }}-province-container" class="input province-container" style="width: 46%;margin: 0;" hidden>
+                <div id="address-{{ address.id }}-province-container" class="input province-container m-0 w-46"  hidden>
                   <div class="select-wrapper is-filled">
                     <select class="select" name="address[province]" id="address-{{ address.id }}[province]" data-default="{{ form.province }}"></select>
+                    {%- render 'icon', icon: 'chevron' -%}
                   </div>
                   <label for="address-{{ address.id }}[province]" class="input__label">State</label>
                 </div>
@@ -479,14 +482,14 @@
 
               <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
                 <p ><b>Address Type </b>(optional)</p>
+                {%- assign name_company = form.company | strip -%}
                 <div class="types_">
-                  <span class="ad_type selected">Home</span>
-                  <span class="ad_type">Work</span>
-                  <span class="ad_type">Custom</span>
+                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}" {% if company_array contains "Home" %}disabled {% endif %}> Home </div>
+                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"  {% if company_array contains "Work" %}disabled {% endif %}> Work </div>
+                  <div class="ad_type "> Custom </div>
                 </div>
                 <div class="input">
-                <input id="address-new[company]" type="text" class="input__field input__field--text address_type_field" name="address[company]" value="Home">
-                {% comment %} <label for="address-new[company]" class="input__label">Home, Work, Custom</label> {% endcomment %}
+                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{- form.company | strip -}}" >
                 </div>
             </div>
             {%- endif -%}
@@ -511,32 +514,38 @@
   {%- endpaginate -%}
 </section>
 <script>
- {% comment %} $(".address-type-btn").each(function() {
+ $(".account__address.account__address--empty").one("click", function(e){
+  $("select.address-new-province").prepend(`<option class="dummy_select" value>Select</option>`);
+  $("select.address-new-province option.dummy_select").prop("selected", true);
+ })
+ $('.ad_type').each(function() {
     $(this).click(function() {
-      let val = $(this).html();
-       val = val.trim();
-       console.log(val)
-      $(".address-btn-province_code").value = `${val}`;
-    });
-  });  {% endcomment %}
-  
-  {%- for address in customer.addresses -%}
-    $("#check-{{ address.id }}").change(function() {
-      if($(this).prop('checked')) {
-         $("#address_form_{{ address.id }} .checkbox").click();
-          $("#address_form_{{ address.id }}").submit();
+      let text = $(this).text();
+      text = text.trim();
+      $(this).addClass('selected')
+      $(this).siblings('.ad_type').removeClass('selected')
+      if (text === 'Custom'){
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').val("");
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').focus();
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').attr("placeholder",  "type");
+      }else{
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').val(text)
       }
-    });
-   {%- endfor -%}
-   $('.ad_type').each(function() {
-      $(this).click(function() {
-        const text = $(this).text();
-        $(this).addClass('selected')
-        $(this).siblings('.ad_type').removeClass('selected')
-        $(this).closest('.types_').siblings('.input').find('.address_type_field').val(text)
-      })
-   })
-  </script>
+    })
+ });
+  
+{%- for address in customer.addresses -%}
+  $("#check-{{ address.id }}").change(function() {
+    $("input[id^='check-']").each(function(){
+      $(this).attr("checked", false);
+    })
+    if($(this).prop('checked')) {
+        $("#address_form_{{ address.id }} .checkbox").click();
+        $("#address_form_{{ address.id }}").submit();
+    }
+  });
+  {%- endfor -%}
+</script>
 {% schema %}
 {
   "name": "Customer addresses",
