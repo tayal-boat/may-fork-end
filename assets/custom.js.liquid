@@ -1,4 +1,3 @@
-console.log('hii 11');
 {% comment %}
 /**
  * DEVELOPER DOCUMENTATION
@@ -138,7 +137,6 @@ console.log('hii 11');
  *
  */
 {% endcomment %}
-console.log('hii 1');
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 
 
@@ -164,7 +162,6 @@ $(document).on("click", ".custom-search-cta", function(e) {
       }
   })
 });
-console.log('hii 2');
 document.addEventListener("readystatechange", (event) => {
   if (event.target.readyState === "complete") {
   function lazyloaded_sections() {
@@ -183,7 +180,6 @@ document.addEventListener("readystatechange", (event) => {
   sessionStorage.setItem("lazyloaded_sections", "false"), document.addEventListener("touchmove", lazyloaded_sections, !0), document.addEventListener("scroll", lazyloaded_sections, !0)
   }
 });
-console.log('hii 3');
 function isIOSMobile() {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent)
 };
@@ -238,7 +234,6 @@ function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
 
 if(varient_swatches_input[i].checked){
-  console.log('varient_swatches_input');
   $.ajax({
     url: "https://www.boat-lifestyle.com/products/airdopes-131?variant="+ e.id +"&section_id=main-product",
     type: "GET",
@@ -246,12 +241,12 @@ if(varient_swatches_input[i].checked){
     success: function(e) {
         var product_media = $(e).find('product-media').html();
         $("product-media").html(product_media);
-        console.log('product_media');
         setTimeout(function() {
           var product_itemsDiv = '.product_media_section .MultiCarousel-inner';
           var product_itemsMainDiv = ('.product_media_section .MultiCarousel');
           var product_selector = 'MultiCarousel_product';
           Shopify.product_slider(product_itemsDiv, product_itemsMainDiv, product_selector); 
+          $('button.product__thumbnail-item.hidden-pocket').hover(function(){  $(this).trigger('click');  }); 
         },500);
     }
   })
@@ -339,13 +334,11 @@ Shopify.homepageLazyload = function(){
   // Shopify.custom_slider(e);
 
   var press_itemsDiv = '.press_section .MultiCarousel-inner';
-  // console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
- var press_itemsMainDiv = ('.press_section .MultiCarousel');
- var press_selector = 'MultiCarousel_press';
+  var press_itemsMainDiv = ('.press_section .MultiCarousel');
+  var press_selector = 'MultiCarousel_press';
 Shopify.custom_slider(press_itemsDiv, press_itemsMainDiv, press_selector);
 
 var explore_itemsDiv = '.explore_now_section .MultiCarousel-inner';
-// console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
 var explore_itemsMainDiv = ('.explore_now_section .MultiCarousel');
 var explore_selector = 'MultiCarousel_explore';
 Shopify.custom_slider(explore_itemsDiv, explore_itemsMainDiv, explore_selector);
@@ -1039,7 +1032,6 @@ function verifyotp(session_id, otp, url){
       emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
       let emailSelector = $('.email-list-container span');
       let selectedEmail = '';
-      console.dir(emailSelector[0]);
       selectedEmail = emailSelector[0].dataset.value;
       sessionStorage.setItem('selected_email', selectedEmail);
     //  console.log(selectedEmail);
@@ -1317,7 +1309,6 @@ slide_length = '',
 slider_dots = '';
   var itemWidth = "";
   if(document.querySelector(itemsMainDiv) !== null){
-  //  console.log("hii custom slider ");
   autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
   autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
   infinite_loop = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-loop'));
@@ -1461,7 +1452,6 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
     slider_dots = '';
       var itemWidth = "";
       if(document.querySelector(itemsMainDiv) !== null){
-      //  console.log("hii custom slider ");
       infinite_loop = true;
       slidePre = document.createDocumentFragment();
       slidePost = document.createDocumentFragment();
@@ -1476,13 +1466,11 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
     }
     
       $(RightBth).click(function () {
-        console.log('product rirnt btn click');
         click(1, this)
       });
     
       $(leftBth).click(function () {
           var condition = $(this).hasClass("leftLst");
-          console.log('product left btn click');
           if (condition)click(0, this);
       });
     
@@ -1494,8 +1482,6 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
     $('.product__thumbnail-item').click(function () {
       var thumbnail_curr = $(this).attr('data-index');
       product_changeCurrent(thumbnail_curr, this);
-    //    console.log(thumbnail_curr);
-    //  $('#MultiCarousel_product .multiCarousel_dots[data-index="'+ thumbnail_curr +'"]').click();
     });
     
      ResCarouselSize(itemsMainDiv, selector);
@@ -1583,9 +1569,6 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
   
 //this function used to move the items
 function ResCarousel(e, el, s, slide_container, dot) {
-  console.log(' slider ResCarousel');
-  console.log(s,'s');
-  console.log(dot,'dot');
     var leftBtn = ('.leftLst');
     var rightBtn = ('.rightLst');
     var itemClass = ('.item');
@@ -1713,7 +1696,6 @@ function ResCarousel(e, el, s, slide_container, dot) {
           slider_dots[k].classList.remove('active');
           }
       }
-      console.log(slider_dots[active_slide_position]);
     slider_dots[active_slide_position].classList.add('active');
   } 
   }
@@ -1735,12 +1717,10 @@ function ResCarousel(e, el, s, slide_container, dot) {
         }
     }
     else if (e == 1) {
-      console.log('parseInt(xds) translateXval',parseInt(xds), itemWidth , s);
         translateXval = parseInt(xds) + parseInt(itemWidth * s);
         if(autoplay == false && infinite_loop == false) {
         $(el + ' ' + leftBtn).removeClass("over");
         }
-console.log('translateXval', translateXval);
         if (translateXval > itemsCondition) {
           translateXval = 0;
         }else if(translateXval > itemsCondition - itemWidth / 2){
@@ -1759,7 +1739,6 @@ console.log('translateXval', translateXval);
       }
       
     }
-    console.log('slide_container translateXval', translateXval);
     $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
     if($(slide_container).attr('autoplay_delay') == 'true'){
       setTimeout(function() {$(slide_container).attr('autoplay_delay','false');},5000);
@@ -1768,7 +1747,6 @@ console.log('translateXval', translateXval);
 
 //It is used to get some elements from btn
 function click(ell, ee) {
-  console.log('slider btn click: ' , ell , ee);
     var Parent = "#" + $(ee).parent().attr("id");
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
@@ -1790,10 +1768,8 @@ ResCarousel(e=null, Parent, curr, slide_container, dots);
 function product_changeCurrent(curr, dot) {
   var Parent = "#MultiCarousel_product1";
   var slide_container = $(Parent).children('.MultiCarousel-inner');
-  console.log(dot, 'hii dot');
   var dots = $(dot).attr('data-class');
     dots = $('.' + dots)
-  console.log(dots, 'hii dots');
   ResCarousel(e=null, Parent, curr, slide_container, dots);
   }
 
@@ -1822,8 +1798,6 @@ var yDirection = "";
 // function to get the drag_direction
 function getMouseDirection(e) {
     //Adding threshold for IOS anchor not working
-    // console.log(oldX-e.pageX, 'oldX-e.pageX');
-    // console.log(oldX-e.pageX > -20 && oldX-e.pageX < 20);
     if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
       // e.target.closest('a')?.click();
     }else{
@@ -1857,7 +1831,6 @@ var slider_Selector = document.querySelectorAll('.MultiCarousel:not(.MultiCarous
 for(let i = 0; i < slider_Selector.length; i++){
   Slider_section_id = slider_Selector[i].getAttribute('data-sliderId');
   var itemsDiv = '.MultiCarousel-inner.' + Slider_section_id;
-  //  console.dir(document.querySelector(itemsDiv));
   var itemsMainDiv = ('.MultiCarousel.' + Slider_section_id);
   var selector = 'MultiCarousel_' + Slider_section_id;
   Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
