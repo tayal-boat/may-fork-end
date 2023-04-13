@@ -1490,6 +1490,13 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
       var curr = $(this).attr('data-index');
       changeCurrent(curr, this);
     });
+
+    $('.product__thumbnail-item').click(function () {
+      var thumbnail_curr = $(this).attr('data-index');
+      product_changeCurrent(thumbnail_curr, this);
+    //    console.log(thumbnail_curr);
+    //  $('#MultiCarousel_product .multiCarousel_dots[data-index="'+ thumbnail_curr +'"]').click();
+    });
     
      ResCarouselSize(itemsMainDiv, selector);
      if(!isIOSMobile()){
@@ -1575,15 +1582,21 @@ document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
       }
   
 //this function used to move the items
-function ResCarousel(e, el, s, slide_container) {
+function ResCarousel(e, el, s, slide_container, dot) {
   console.log(' slider ResCarousel');
+  console.log(s,'s');
+  console.log(dot,'dot');
     var leftBtn = ('.leftLst');
     var rightBtn = ('.rightLst');
     var itemClass = ('.item');
     var translateXval = '';
     var divStyle = $(slide_container).css('transform');
     var slider_item = $(slide_container).find(itemClass);
-    var slider_dots = $(el).find('.multiCarousel_dots');
+    if(dot != null) {
+    var slider_dots = dot;
+    }else {
+      var slider_dots = $(el).find('.multiCarousel_dots');
+    }
     if(divStyle == 'none'){
       divStyle = 'matrix(1, 0, 0, 1, 0, 0)';
     }
@@ -1700,6 +1713,7 @@ function ResCarousel(e, el, s, slide_container) {
           slider_dots[k].classList.remove('active');
           }
       }
+      console.log(slider_dots[active_slide_position]);
     slider_dots[active_slide_position].classList.add('active');
   } 
   }
@@ -1759,16 +1773,29 @@ function click(ell, ee) {
     var slide = $(Parent).attr("data-slide");
     var slide_container = $(Parent).children('.MultiCarousel-inner');
     slide_container.attr('autoplay_delay','true');
-    ResCarousel(ell, Parent, slide, slide_container);
+    ResCarousel(ell, Parent, slide, slide_container, dot=null);
 }
 
 /* slide number click function */  
 function changeCurrent(curr, dot) {
 var Parent = "#" + $(dot).parent().parent().attr("id");
 var slide_container = $(Parent).children('.MultiCarousel-inner');
+var dots = $(dot).attr('class');
+  dots = $('.' + dots)
 slide_container.attr('autoplay_delay','true');
-ResCarousel(e=null, Parent, curr, slide_container);
+ResCarousel(e=null, Parent, curr, slide_container, dots);
 }
+
+/* slide number click function */  
+function product_changeCurrent(curr, dot) {
+  var Parent = "#MultiCarousel_product1";
+  var slide_container = $(Parent).children('.MultiCarousel-inner');
+  console.log(dot, 'hii dot');
+  var dots = $(dot).attr('data-class');
+    dots = $('.' + dots)
+  console.log(dots, 'hii dots');
+  ResCarousel(e=null, Parent, curr, slide_container, dots);
+  }
 
 /* slide autoplay function */  
 function slideAutoplay(selector , duration) {
@@ -1776,7 +1803,7 @@ var newIndex = $(selector).attr("data-slide");
 var slides_container = $(selector).children('.MultiCarousel-inner');
 setInterval(function() {
 if(slides_container.attr('autoplay_delay') == 'false'){ 
-ResCarousel(1, selector, newIndex, slides_container);
+ResCarousel(1, selector, newIndex, slides_container, dot=null);
 }
 }, duration);
 }
@@ -1787,7 +1814,7 @@ function sliderDrag(event, slide_direction) {
   var Parent = "#" + $(event.target).parents('.MultiCarousel').attr('id');
   var slide = $(Parent).attr("data-slide");
   var slide_container = $(Parent).children('.MultiCarousel-inner');
-  ResCarousel(slide_direction, Parent, slide, slide_container);
+  ResCarousel(slide_direction, Parent, slide, slide_container, dot=null);
 }
 
 var xDirection = "";
