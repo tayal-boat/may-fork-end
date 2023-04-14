@@ -36,8 +36,13 @@
 
     return function multiQuerySource(singleIndex, params, extendHits = null) {
       return function search(query, cb) {
-        sessionStorage.setItem('algoliaSearchQuery', query);
-
+      if(query.match(/[`~!@#$%^&*()_|\-=?;:'",.<>\{\}\[\]\\\/]/gi)) {
+      query = query.replace(/[`~!@#$%^&*()_|\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+      setTimeout(function(){
+      $('.aa-input').val(query);
+      },500);
+      }
+      sessionStorage.setItem('algoliaSearchQuery', query);
         if (query.length >= 3) {
           const index =
             queue.push({
@@ -590,5 +595,7 @@
       }
     });
   }
+
+ // console.log('algolia - autocomplete');
 
 })(window.algoliaShopify);
