@@ -142,7 +142,7 @@
                     {%- endif -%}
 
                     <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">
-                      {{ line_item.product.title | split: "|" | first | split: "," | first | remove: 'boAt' }}</a>
+                      {{ line_item.product.title | split: "|" | first | split: "," | first }}</a>
 
                     {%- capture line_item_properties -%}
                       {%- unless line_item.product.has_only_default_variant -%}
@@ -671,7 +671,7 @@ jQuery.getJSON('/cart.js', function(cart) {
     onloadcustomisedqnt += el.quantity;
     if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
   })
- // console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
+  console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
   if (onloadcustomisedqnt > 0){customized_added() }
 })
 
@@ -744,15 +744,15 @@ jQuery.getJSON('/cart.js', function(cart) {
    cartI = cart.items;
    let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
    $(updatedfreeitems).each(function(ind, el){
-    updatedqnty += el.quantity;
+     updatedqnty += el.quantity;
    })
    checkbox.addEventListener('change', () => {
-    if (checkbox.checked) {
-      message.textContent = 'Billing address will be PPOB address as per GST portal'
-    } else {
-      message.textContent = '{{ section.settings.cart_announcement }}'
-    }
-  })
+      if (checkbox.checked) {
+        message.textContent = 'Billing address will be PPOB address as per GST portal'
+      } else {
+        message.textContent = '{{ section.settings.cart_announcement }}'
+      }
+   })
    console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty",updatedqnty)
    if(updatedqnty > onloadfreeqnty) {
    console.log("add free product");  $('.custom-gift-button')[0].click();  onloadfreeqnty += 1;
