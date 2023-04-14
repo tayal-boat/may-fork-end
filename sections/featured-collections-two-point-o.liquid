@@ -29,17 +29,25 @@
         <header class="section__header">
           {%- if section.settings.title != blank -%}
               <a class="d-flex justify-content-between align-items-center" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
-                <h3 class="position-relative">{{ section.settings.title }}</h3>
+                <h3 class="position-relative ui2-heading">{{ section.settings.title }}</h3>
                 <b style="color: #2F5B96;font-size: 12px;">View All -></b>
               </a>
           {%- endif -%}
           {% if section.settings.enable_flash_sale %}
-            <a style="display:flex;flex-direction: column;justify-content: left;" href="{{section.settings.title-url}}" class="align-items-lg-center flash-desk flex-lg-row-reverse">
-              <div class="flash_sale">
-                <p class="m-0">
-            {{ section.settings.flash_sale_title }}
-                </p>
-                {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
+            <a style="display:flex;flex-direction: column;justify-content: left;position:relative;" href="{{section.settings.title-url}}" class="align-items-lg-center flex-lg-row-reverse">
+              <picture>
+                <source
+                  media="(min-width: 769px)"
+                  {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                >
+                <img alt="flash_timer" width="100%"
+                  {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
+                >
+              </picture>
+        
+              <div class="flash_sale ui2">
+                <p class="my-0 ml-3 text-left">{{ section.settings.flash_sale_title }}</p>
+                {% render 'flashsale-timer-2.0', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
               </div>
             </a>
           {% endif %}
@@ -168,7 +176,7 @@
         "label": "required-input-for-view-all"
       },
       {
-        "type": "html",
+        "type": "text",
         "id": "title",
         "label": "Heading",
         "default": "Collection"
@@ -179,7 +187,17 @@
         "label": "enable flash sale countdown"
       },
       {
-        "type": "html",
+        "type": "image_picker",
+        "id": "web_banner",
+        "label": "Desktop Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_banner",
+        "label": "Mobile Image"
+      },
+      {
+        "type": "text",
         "id": "flash_sale_title",
         "label": "flash sale title",
         "default": "flash sale"
