@@ -157,22 +157,25 @@
 
       <a
         href="{{ product.url }}"
-        class="product-item__aspect-ratio aspect-ratio {% if settings.product_image_size != 'natural' %}aspect-ratio--{{ settings.product_image_size }}{% endif %}"
+        class="product-item__aspect-ratio aspect-ratio"
         style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}">
-        
+      {% if product.metafields.custom.product_cards_placeholder %}
+        <img
+          class="product-item__primary-image"
+          loading="lazy"
+          {% render 'image-attributes', image: product.metafields.custom.product_cards_placeholder, sizes: '200,300' -%}>
+        {% else %}
             {% if product.variants.size > 1 %}
               <img
                 class="product-item__primary-image"
                 loading="lazy"
                 data-media-id="{{ product.featured_media.id | escape }}"
-                sizes="{{ sizes_attribute }}"
                 {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
             {% else %}
               <img
                 class="product-item__primary-image"
                 loading="lazy"
                 data-media-id="{{ product.featured_media.id | escape }}"
-                sizes="{{ sizes_attribute }}"
                 {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
             {% endif %}
 
@@ -186,7 +189,6 @@
                 hidden
                 data-media-id="{{ media.id | escape }}"
                 loading="lazy"
-                sizes="{{ sizes_attribute }}"
                 {% render 'image-attributes', image: media, sizes: '200,300' %}>
             {%- endunless -%}
           {%- endfor -%}
@@ -198,9 +200,9 @@
           <img
             class="product-item__secondary-image"
             loading="lazy"
-            sizes="{{ sizes_attribute }}"
             {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
         {%- endif -%}
+      {% endif %}
       </a>
       {% comment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}
         {% if product.available and product.tags contains 'flash-sale' -%}
