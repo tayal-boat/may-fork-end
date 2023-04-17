@@ -25,23 +25,34 @@
   
   <section class="section section--flush">
     <div class="section__color-wrapper">
-      <div class="container ">
-        <header class="section__header">
+    {% if section.settings.enable_featured_img %}
+      <picture class="mobile-only">
+        <source
+          media="(min-width: 769px)"
+          {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+        >
+        <img alt="featured_section_img" width="100%"
+          {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
+        >
+      </picture>
+    {% endif %}
+      <div class="container {% if section.settings.enable_featured_img %}featured_img {% endif %}" >
+        <header class="section__header {% if section.settings.enable_featured_img %}featured_img {% endif %}">
           {%- if section.settings.title != blank -%}
               <a class="d-flex justify-content-between align-items-center" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
-                <h3 class="position-relative ui2-heading">{{ section.settings.title }}</h3>
-                <b style="color: #2F5B96;font-size: 12px;">View All -></b>
+                <h3 class="ui2-heading">{{ section.settings.title }}</h3>
+                <b class="view-all">View All -></b>
               </a>
           {%- endif -%}
           {% if section.settings.enable_flash_sale %}
-            <a style="display:flex;flex-direction: column;justify-content: left;position:relative;" href="{{section.settings.title-url}}" class="align-items-lg-center flex-lg-row-reverse">
+            <a class="d-flex position-relative" href="{{section.settings.title-url}}">
               <picture>
                 <source
                   media="(min-width: 769px)"
-                  {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                  {% render 'image-attributes', image: section.settings.Flash_web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
                 >
                 <img alt="flash_timer" width="100%"
-                  {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
+                  {% render 'image-attributes', image: section.settings.Flash_mobile_banner, sizes: '200,300,400,500,600' %}
                 >
               </picture>
         
@@ -52,12 +63,29 @@
             </a>
           {% endif %}
         </header>
-  
         <div class="featured-collections">
           {%- for block in section.blocks -%}
             {%- assign collection = block.settings.collection -%}
             {%- assign smallest_image_aspect_ratio = 0 -%}
-  
+            {% if section.settings.enable_featured_img %}
+              <div class="only-desktop">
+               <picture>
+                 <source
+                   media="(min-width: 769px)"
+                   {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                 >
+                 <img alt="featured_section_img" width="100%"
+                   {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
+                 >
+               </picture>
+               {%- if section.settings.title != blank -%}
+                 <a class="my-4" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
+                   <h3 class="ui2-heading">{{ section.settings.title }}</h3>
+                   <b class="view-all">View All -></b>
+                 </a>
+               {%- endif -%}
+              </div>
+             {% endif %}
             <product-list
               {% if settings.stagger_products_apparition %}
                 stagger-apparition
@@ -84,7 +112,8 @@
                       (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
                       {{ gap_width | ceil }}px)
                     {%- endcapture -%}
-  
+
+
                     {%- for product in collection.products limit: section.settings.products_count -%}
                       {%- if product.featured_media -%}
                         {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
@@ -188,19 +217,33 @@
       },
       {
         "type": "image_picker",
-        "id": "web_banner",
-        "label": "Desktop Image"
+        "id": "Flash_web_banner",
+        "label": "Flash Desktop Image"
       },
       {
         "type": "image_picker",
-        "id": "mobile_banner",
-        "label": "Mobile Image"
+        "id": "Flash_mobile_banner",
+        "label": "Flash Mobile Image"
       },
       {
         "type": "text",
         "id": "flash_sale_title",
-        "label": "flash sale title",
-        "default": "flash sale"
+        "label": "flash sale title"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_featured_img",
+        "label": "enable featured for section"
+      },
+      {
+        "type": "image_picker",
+        "id": "web_banner",
+        "label": "Featured Desktop Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_banner",
+        "label": "Featured Mobile Image"
       },
       {
         "type": "range",
