@@ -466,7 +466,7 @@ role="banner"
          <img
            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/search_558f3ad8-0ef9-4a9b-8576-a396b44aacd8.png?v=1680091847"
            width="12"
-           height="12" style='margin-left:4px;'
+           height="12" style='margin-left:4px;' alt="search-icon"
          ></div>
         
          <div
@@ -541,7 +541,7 @@ role="banner"
            {%- if shop.customer_accounts_enabled -%}
              <div class="account-links-inline contains-dropdown">
                {%- if customer -%}
-                 <div class="your-acct"><a href="/account/addresses">Account</a></div>
+                 <div class="your-acct"><a href="/account">Account</a></div>
                  <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
                {%- else -%}
                  <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
@@ -754,45 +754,20 @@ SEARCH DRAWER
  const documentStyle = getComputedStyle(document.documentElement);
  let mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
  document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
- $('button.header__icon-wrapper.rounded-0.tap-area.hidden-desk').click(function(){
-     if ($(window).scrollTop() == 0){
-       mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
-     }else if(mobilemenuHeight - $(window).scrollTop() > 0.1){
-       {% comment %} $("html, body").animate({ scrollTop: $('#shopify-section-announcement-bar').height() }, 0); {% endcomment %}
-       mobilemenuHeight =  $('.shopify-section--header .container').height();
-       console.log(">0" ,  mobilemenuHeight);
-     }else{
-       mobilemenuHeight = $('.shopify-section--header .container').height();
-       console.log("else" ,  mobilemenuHeight);
-     }
-       document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
-   });
-</script>
-
-<script>
-
-  $(document).ready(function(){
-    $('.mobile_hamburger_btn').on('click', function(e){
-      e.preventDefault();
-      if( $(this).attr('aria-expanded') == 'true' ){
-        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
-      }else{
-        // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
-        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110');
-        $(this).find('.mobile_hamburger_icon').css('height', 'auto');
-      }
-      return false;
-    })
-
-
- $('store-header').on('click', function(){
-   
-   $(this).find(".mobile_hamburger_btn").click();
-   $(this).find(".mobile_hamburger_btn").attr('aria-expanded', 'false');
-   $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
- })
-
-});
+   const targNode = document.getElementById('shopify-section-announcement-bar');
+   const config_ = { attributes: true, childList: true, subtree: true };
+   const callback_ = (mutationList, observer) => {
+   for (const mutation of mutationList) {
+    if ($("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") ){
+      mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+    }else{
+      mobilemenuHeight =  $('.shopify-section--header .container').height();
+    }
+    document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+    }
+   };
+   const observer_ = new MutationObserver(callback_);
+   observer_.observe(targNode, config_);
 </script>
 
 

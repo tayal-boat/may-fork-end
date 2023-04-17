@@ -1,257 +1,255 @@
-
-{{ 'algolia_config.js' | asset_url | script_tag }}
-<script src="{{ 'algolia_externals.js' | asset_url }}" defer></script>
-{{ 'algolia_init.js' | asset_url | script_tag }}
-<script src="{{ 'algolia_analytics.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_translations.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_helpers.js' | asset_url }}" defer></script>
-<script src="{{ 'algolia_autocomplete.js' | asset_url }}" defer></script>
-
-<script>
-
+// console.log('hii algolia 1');
   {% comment %}
-  var algolia_config = "{{ 'algolia_config.js' | asset_url }}";
-  var algolia_externals = "{{ 'algolia_externals.js' | asset_url }}";
-  var algolia_init = "{{ 'algolia_init.js' | asset_url }}";
-  var algolia_analytics = "{{ 'algolia_analytics.js' | asset_url }}";
-  var algolia_translations = "{{ 'algolia_translations.js' | asset_url }}";
-  var algolia_helpers = "{{ 'algolia_helpers.js' | asset_url }}";
-  var algolia_autocomplete = "{{ 'algolia_autocomplete.js' | asset_url }}";
-  {% comment %} var algolia_facets = "{{ 'algolia_facets.js' | asset_url }}";
-  var algolia_sort_orders = "{{ 'algolia_sort_orders.js' | asset_url }}"; {% endcomment %}
+    var algolia_config = "{{ 'algolia_config.js' | asset_url }}";
+    var algolia_externals = "{{ 'algolia_externals.js' | asset_url }}";
+    var algolia_init = "{{ 'algolia_init.js' | asset_url }}";
+    var algolia_analytics = "{{ 'algolia_analytics.js' | asset_url }}";
+    var algolia_translations = "{{ 'algolia_translations.js' | asset_url }}";
+    var algolia_helpers = "{{ 'algolia_helpers.js' | asset_url }}";
+    var algolia_autocomplete = "{{ 'algolia_autocomplete.js' | asset_url }}";{% comment %}
+      var algolia_facets = "{{ 'algolia_facets.js' | asset_url }}";
+      var algolia_sort_orders = "{{ 'algolia_sort_orders.js' | asset_url }}";{% endcomment %}
 
-  let search_input = document.querySelector('.predictive-search__input_mobile');
-  sessionStorage.setItem('preSearch', true);
-  if (window.innerWidth > 989) {
-    search_input = document.querySelector('.predictive-search__input_desk');
-  }
-  if (sessionStorage.getItem('preSearch') == true) {
-    search_input.addEventListener('input', function(e) {
-      sessionStorage.setItem('preSearchInput', this.value)
-    });
-  };
-  Defer.js(algolia_config, 'algolia_config-js', 0, function() {
-    console.info('algolia_config is loaded.'); // debug
+    let search_input = document.querySelector('.predictive-search__input_mobile');
+    sessionStorage.setItem('preSearch', true);
+    if (window.innerWidth > 989) {
+      search_input = document.querySelector('.predictive-search__input_desk');
+    }
+    if (sessionStorage.getItem('preSearch') == true) {
+      search_input.addEventListener('input', function(e) {
+        sessionStorage.setItem('preSearchInput', this.value)
+      });
+    };
+    Defer.js(algolia_config, 'algolia_config-js', 0, function() {
+      console.info('algolia_config is loaded.'); // debug
 
-    Defer.js(algolia_externals, 'algolia_externals-js', 0, function() {
-      console.info('algolia_externals is loaded.'); // debug
+      Defer.js(algolia_externals, 'algolia_externals-js', 0, function() {
+        console.info('algolia_externals is loaded.'); // debug
 
-      Defer.js(algolia_init, 'algolia_init-js', 0, function() {
-        console.info('algolia_init is loaded.'); // debug
+        Defer.js(algolia_init, 'algolia_init-js', 0, function() {
+          console.info('algolia_init is loaded.'); // debug
 
-        Defer.js(algolia_analytics, 'algolia_analytics-js', 0, function() {
-          console.info('algolia_analytics is loaded.'); // debug
-        }, true);
-        Defer.js(algolia_translations, 'algolia_translations-js', 0, function() {
-          console.info('algolia_translations is loaded.'); // debug
-        }, true);
-        Defer.js(algolia_helpers, 'algolia_helpers-js', 0, function() {
-          console.info('algolia_helpers is loaded.'); // debug
-        }, true);
-        Defer.js(algolia_autocomplete, 'algolia_autocomplete-js', 0, function() {
-          console.info('Algolia_autocomplete is loaded.'); // debug
-          if (sessionStorage.getItem('preSearchInput') && sessionStorage.getItem('preSearchInput') !== '') {
-            search_input.value = sessionStorage.getItem('preSearchInput') + ' ';
-            search_input.dispatchEvent(new Event("input", {
-              bubbles: !0
-            }));
-            setTimeout(function() {
-              sessionStorage.removeItem('preSearchInput');
-            }, 1500);
-          }
-        }, true);
-        {% comment %} Defer.js(algolia_facets, 'algolia_facets-js', 0, function() {
-          console.info('algolia_facets is loaded.'); // debug
-        }, true);
-        Defer.js(algolia_sort_orders, 'algolia_sort_orders-js', 0, function() {
-          console.info('algolia_sort_orders is loaded.'); // debug
-        }, true); {% endcomment %}
+          Defer.js(algolia_analytics, 'algolia_analytics-js', 0, function() {
+            console.info('algolia_analytics is loaded.'); // debug
+          }, true);
+          Defer.js(algolia_translations, 'algolia_translations-js', 0, function() {
+            console.info('algolia_translations is loaded.'); // debug
+          }, true);
+          Defer.js(algolia_helpers, 'algolia_helpers-js', 0, function() {
+            console.info('algolia_helpers is loaded.'); // debug
+          }, true);
+          Defer.js(algolia_autocomplete, 'algolia_autocomplete-js', 0, function() {
+            console.info('Algolia_autocomplete is loaded.'); // debug
+            if (sessionStorage.getItem('preSearchInput') && sessionStorage.getItem('preSearchInput') !== '') {
+              search_input.value = sessionStorage.getItem('preSearchInput') + ' ';
+              search_input.dispatchEvent(new Event("input", {
+                bubbles: !0
+              }));
+              setTimeout(function() {
+                sessionStorage.removeItem('preSearchInput');
+              }, 1500);
+            }
+          }, true);{% comment %}
+            Defer.js(algolia_facets, 'algolia_facets-js', 0, function() {
+              console.info('algolia_facets is loaded.'); // debug
+            }, true);
+            Defer.js(algolia_sort_orders, 'algolia_sort_orders-js', 0, function() {
+              console.info('algolia_sort_orders is loaded.'); // debug
+            }, true);{% endcomment %}
       }, true);
 
     }, true);
-  }, true); {% endcomment %}
+  }, true);{% endcomment %}
 
-  
-  function debounce(e, t, r) {
-    var a;
-    var letterNumber = /^[0-9a-zA-Z]+$/;
-    var input_value = '';
-    return function s() {
-        input_value = this.value;
-         this.value = input_value.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
-          var l = this,
-          o = arguments,
-          c = function() {
-            a = null,
-            r || e.apply(l, o)
-          },
-          h = r && ! a;
-        clearTimeout(a),
-        a = setTimeout(c, t),
-        h && e.apply(l, o)
-    }
+
+// console.log('hii algolia 2');
+function debounce(e, t, r) {
+  var a;
+  var input_value = '';
+  return function s() {
+    input_value = this.value;
+    this.value = input_value.replace(/[`~!@#$%^&*()_|\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    var l = this,
+      o = arguments,
+      c = function() {
+        a = null,
+        r || e.apply(l, o)
+      },
+      h = r && ! a;
+    clearTimeout(a),
+    a = setTimeout(c, t),
+    h && e.apply(l, o)
   }
-  if (window.innerWidth < 1200) {
-    let e = document.querySelector(".predictive-search__input_mobile"),
-      t = document.querySelector(".algolia-search__form_mobile input");
-    var r = debounce(function() {
-      t.value = e.value,
-     //  console.log(t.value, 't.value');
-      t.dispatchEvent(new Event("input", {
-        bubbles: !0
-      }))
-    }, 800);
-    e.addEventListener("input", r)
-  } else {
-    let a = document.querySelector(".predictive-search__input_desk"),
-      s = document.querySelector(".algolia-search__form input");
-    var l = debounce(function() {
-      s.value = a.value,
-     // console.log(s.value, 's.value');
-      s.dispatchEvent(new Event("input", {
-        bubbles: !0
-      }))
-    }, 800);
-    a.addEventListener("input", l)
-  }
-  console.log('hii algolia 3');
-  var n = new IntersectionObserver(function(e) {
-    !0 === e[0].isIntersecting
-      ? $("#shopify-section-announcement-bar").addClass("announcement-non-sticky")
-      : $("#shopify-section-announcement-bar").removeClass("announcement-non-sticky")
-  }, {threshold: [1]});
-  null !== document.querySelector("#shopify-section-announcement-bar") && n.observe(document.querySelector("#shopify-section-announcement-bar")),
-  $(".algolia-header-search-input .predictive-search__input, .search-icon").click(function() {
-    $("body").addClass("noScroll"),
-    $(".clear-recent-search").click(function() {
-      sessionStorage.setItem("queryList", ""),
-      $(".algolia-recently-search").removeAttr("style"),
-      $(".algolia-recently-search-container").html(""),
-      $(".algolia-recently-search-container").removeAttr("style"),
-      $(".algolia-recently-search-header").hide()
-    });
-    let e = sessionStorage.queryList,
-      t = "";
-    if (e) {
-      e = e.split(",");
-      for (let r = 0; r < e.length; r++) 
-        t += "<div>" + e[r] + "</div>";
-      $(".algolia-recently-search-header").show(),
-      $(".algolia-recently-search, .algolia-trending-search, .algolia-most-searched-bought").css("display", "block")
-    } else 
-      $(".algolia-recently-search-header").hide();
-    $(".algolia-recently-search-container").html(t),
-    $(".algolia-trending-item, .algolia-recently-search-container div").click(function() {
-      if (null !== this.offsetParent) {
-        let e = this
-            .offsetParent
-            .previousElementSibling
-            .firstElementChild
-            .querySelector(".predictive-search__input"),
-          t = "";
-        t = $(this) == $(".algolia-trending-item")
-          ? $(this).children(".algolia-trending-label").text()
-          : $(this).text(),
-        e.value = t.trim(),
-        e.dispatchEvent(new Event("input", {
-          bubbles: !0
-        }))
-      }
-    });
-    // console.log('hii search');
-    $(".fixed_nav").addClass("search-nav");
-    let a = $(".shopify-section--header .container").height();
-    $("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") && (a += $("#shopify-section-announcement-bar").height()),
-    $(".search-popup-container").css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"});
-    $('.algolia-header-custom-search.hidden-desk').removeClass('d-none').css('display', 'block'),
-    $(".search-clear-icon").css("display", "flex"),
-    setTimeout(function() {
-      $(".algolia-autocomplete .aa-dataset-products").show(),
-      $(".fixed_nav").css({display: "block", "z-index": "999"});
-    }, 1e3),
-    setTimeout(function() {
-      let e = "";
-      (
-        e = window.innerWidth < 1200
-          ? document.querySelectorAll(".algolia-recently-search-container")[1]
-          : document.querySelectorAll(".algolia-recently-search-container")[0]
-      ).offsetHeight > 38 && $(".algolia-recently-search-container").css("height", "76px")
-    }, 300),
-    $(".algoinput").css("display", "none")
-  }),
-  $(".search-clear-icon").click(function() {
-    $(".fixed_nav").removeAttr("style");
-    $(".fixed_nav").removeClass("search-nav");
-    let e = this.offsetParent;
-    var t = $(this).closest(".algolia-header-custom-search").find(".search-popup-container");
-    $(this).removeAttr("style"),
-    e.querySelector(".predictive-search__input").value = "",
-    e.querySelector(".predictive-search__input").dispatchEvent(new Event("input", {
+}
+if (window.innerWidth < 1200) {
+  let e = document.querySelector(".predictive-search__input_mobile"),
+    t = document.querySelector(".algolia-search__form_mobile input");
+  var r = debounce(function() {
+    t.value = e.value,
+
+// console.log(t.value, 't.value');
+    t.dispatchEvent(new Event("input", {
       bubbles: !0
-    })),
-    setTimeout(function() {
-      $("body").removeClass("noScroll"),
-      t.removeAttr("style"),
-      $(".algolia-autocomplete .aa-dataset-products").hide()
-      $('.algolia-header-custom-search.hidden-desk').addClass('d-none')
-    }, 100)
-  });
-  if (window.innerWidth > 1199) {
-   // console.log('hii 2');
-    $(document).click(function(e) {
-      $(e.target).closest(".algolia-header-custom-search").length || $(".search-popup-container").removeAttr("style"),
-      document.querySelectorAll(".algolia-autocomplete").length && "none" == document.querySelectorAll(".algolia-autocomplete")[0].style.display && "none" == document.querySelectorAll(".algolia-autocomplete")[1].style.display && ($(e.target).closest(".algolia-header-custom-search").length || ($("body").removeClass("noScroll"), $(".search-clear-icon").removeAttr("style")))
-    });
-  };
-  $(".algolia-search__form, .algolia-search__form_mobile ").submit(function(e) {
-    e.preventDefault()
-  });
-  let headerHeight = $("#shopify-section-header").height() + 60;
-  $(".algolia-autocomplete").css("top", headerHeight + "px"),
-  $(".predictive-search__input_mobile, .predictive-search__input_desk").on("input", function() {
-    let e = $(this).val().length,
-      t = 3 - e,
-      r = document.querySelectorAll(".aa-dataset-products .aa-suggestions"),
-      a = $(".search-popup-container");
-    if (r.length > 0) 
-      a.removeAttr("style");
-     else if (e > 0) {
-      a.css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"}),
-      $(".algoinput").css("display", "block"),
-      $(".algolia-recently-search, .algolia-trending-search, .algolia-most-searched-bought").css("display", "none");
-      let s = "";
-      1 == e
-        ? s = "Type in another " + t + " characters to unveil the magic…"
-        : 2 == e
-          ? s = "Type in " + t + " more character to unveil the magic…"
-          : e >= 3 && (s = "Personalizing products to your taste…"),
-      $(".algoinput .algoMessage").html(s)
-    } else 
-      a.css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"}),
-      $(".algoinput").css("display", "none"),
-      $(".algolia-recently-search, .algolia-trending-search").css("display", "block")
-  });
-  "use strict";
+    }))
+  }, 800);
+  e.addEventListener("input", r)
+} else {
+  let a = document.querySelector(".predictive-search__input_desk"),
+    s = document.querySelector(".algolia-search__form input");
+  var l = debounce(function() {
+    s.value = a.value,
 
-  var actualDimension = $(window).width() + $(window).height();
-  $(window).resize(function() {
-    $(window).width() + $(window).height() < actualDimension
-      ? $(".fixed_nav.fixed_nav_mobile").css("position", "relative")
-      : $(".fixed_nav.fixed_nav_mobile").removeAttr("style")
+// console.log(s.value, 's.value');
+    s.dispatchEvent(new Event("input", {
+      bubbles: !0
+    }))
+  }, 800);
+  a.addEventListener("input", l)
+}
+
+// console.log('hii algolia 3');
+var n = new IntersectionObserver(function(e) {
+  !0 === e[0].isIntersecting
+    ? $("#shopify-section-announcement-bar").addClass("announcement-non-sticky")
+    : $("#shopify-section-announcement-bar").removeClass("announcement-non-sticky")
+}, {threshold: [1]});
+null !== document.querySelector("#shopify-section-announcement-bar") && n.observe(document.querySelector("#shopify-section-announcement-bar")),
+$(".algolia-header-search-input .predictive-search__input, .search-icon").click(function() {
+  $("body").addClass("noScroll"),
+  $(".clear-recent-search").click(function() {
+    sessionStorage.setItem("queryList", ""),
+    $(".algolia-recently-search").removeAttr("style"),
+    $(".algolia-recently-search-container").html(""),
+    $(".algolia-recently-search-container").removeAttr("style"),
+    $(".algolia-recently-search-header").hide()
+  });
+  let e = sessionStorage.queryList,
+    t = "";
+  if (e) {
+    e = e.split(",");
+    for (let r = 0; r < e.length; r++) 
+      t += "<div>" + e[r] + "</div>";
+    
+    $(".algolia-recently-search-header").show(),
+    $(".algolia-recently-search, .algolia-trending-search, .algolia-most-searched-bought").css("display", "block")
+  } else 
+    $(".algolia-recently-search-header").hide();
+  
+  $(".algolia-recently-search-container").html(t),
+  $(".algolia-trending-item, .algolia-recently-search-container div").click(function() {
+    if (null !== this.offsetParent) {
+      let e = this
+          .offsetParent
+          .previousElementSibling
+          .firstElementChild
+          .querySelector(".predictive-search__input"),
+        t = "";
+      t = $(this) == $(".algolia-trending-item")
+        ? $(this).children(".algolia-trending-label").text()
+        : $(this).text(),
+      e.value = t.trim(),
+      e.dispatchEvent(new Event("input", {
+        bubbles: !0
+      }))
+    }
   });
 
-  let announcement_bar_height = document.getElementById('shopify-section-announcement-bar').offsetHeight;
-  document.documentElement.style.setProperty('--announcement-bar-height', `${announcement_bar_height}px`);
-  {% comment %} var customPlaceholder = function(e) {
+// console.log('hii search');
+  $(".fixed_nav").addClass("search-nav");
+  let a = $(".shopify-section--header .container").height();
+  $("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") && (a += $("#shopify-section-announcement-bar").height()),
+  $(".search-popup-container").css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"});
+  $('.algolia-header-custom-search.hidden-desk').removeClass('d-none').css('display', 'block'),
+  $(".search-clear-icon").css("display", "flex"),
+  setTimeout(function() {
+    $(".algolia-autocomplete .aa-dataset-products").show(),
+    $(".fixed_nav").css({display: "block", "z-index": "999"});
+  }, 1e3),
+  setTimeout(function() {
+    let e = "";
+    (
+      e = window.innerWidth < 1200
+        ? document.querySelectorAll(".algolia-recently-search-container")[1]
+        : document.querySelectorAll(".algolia-recently-search-container")[0]
+    ).offsetHeight > 38 && $(".algolia-recently-search-container").css("height", "76px")
+  }, 300),
+  $(".algoinput").css("display", "none")
+}),
+$(".search-clear-icon").click(function() {
+  $(".fixed_nav").removeAttr("style");
+  $(".fixed_nav").removeClass("search-nav");
+  let e = this.offsetParent;
+  var t = $(this).closest(".algolia-header-custom-search").find(".search-popup-container");
+  $(this).removeAttr("style"),
+  e.querySelector(".predictive-search__input").value = "",
+  e.querySelector(".predictive-search__input").dispatchEvent(new Event("input", {
+    bubbles: !0
+  })),
+  setTimeout(function() {
+    $("body").removeClass("noScroll"),
+    t.removeAttr("style"),
+    $(".algolia-autocomplete .aa-dataset-products").hide()
+    $('.algolia-header-custom-search.hidden-desk').addClass('d-none')
+  }, 100)
+});
+if (window.innerWidth > 1199) {
+
+// console.log('hii 2');
+  $(document).click(function(e) {
+    $(e.target).closest(".algolia-header-custom-search").length || $(".search-popup-container").removeAttr("style"),
+    document.querySelectorAll(".algolia-autocomplete").length && "none" == document.querySelectorAll(".algolia-autocomplete")[0].style.display && "none" == document.querySelectorAll(".algolia-autocomplete")[1].style.display && ($(e.target).closest(".algolia-header-custom-search").length || ($("body").removeClass("noScroll"), $(".search-clear-icon").removeAttr("style")))
+  });
+};
+$(".algolia-search__form, .algolia-search__form_mobile ").submit(function(e) {
+  e.preventDefault()
+});
+let headerHeight = $("#shopify-section-header").height() + 60;
+$(".algolia-autocomplete").css("top", headerHeight + "px"),
+$(".predictive-search__input_mobile, .predictive-search__input_desk").on("input", function() {
+  let e = $(this).val().length,
+    t = 3 - e,
+    r = document.querySelectorAll(".aa-dataset-products .aa-suggestions"),
+    a = $(".search-popup-container");
+  if (r.length > 0) 
+    a.removeAttr("style");
+   else if (e > 0) {
+    a.css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"}),
+    $(".algoinput").css("display", "block"),
+    $(".algolia-recently-search, .algolia-trending-search, .algolia-most-searched-bought").css("display", "none");
+    let s = "";
+    1 == e
+      ? s = "Type in another " + t + " characters to unveil the magic…"
+      : 2 == e
+        ? s = "Type in " + t + " more character to unveil the magic…"
+        : e >= 3 && (s = "Personalizing products to your taste…"),
+    $(".algoinput .algoMessage").html(s)
+  } else 
+    a.css({opacity: "1", transform: "translateY(0px) translateZ(0px)", display: "block"}),
+    $(".algoinput").css("display", "none"),
+    $(".algolia-recently-search, .algolia-trending-search").css("display", "block")
+  
+});
+"use strict";
+
+var actualDimension = $(window).width() + $(window).height();
+$(window).resize(function() {
+  $(window).width() + $(window).height() < actualDimension
+    ? $(".fixed_nav.fixed_nav_mobile").css("position", "relative")
+    : $(".fixed_nav.fixed_nav_mobile").removeAttr("style")
+});
+
+let announcement_bar_height = document.getElementById('shopify-section-announcement-bar').offsetHeight;
+document.documentElement.style.setProperty('--announcement-bar-height', `${announcement_bar_height}px`);{% comment %}
+  var customPlaceholder = function(e) {
     this.options = e,
     this.element = e.element,
     this.placeholderIdx = 0,
     this.charIdx = 0,
- 
+
     this.setPlaceholder = function() {
       var t = placeholder = e.placeholders[this.placeholderIdx];
-      if(document.querySelector(this.element)){
-      document.querySelector(this.element).setAttribute("placeholder", this.options.preText + " " + t)
+      if (document.querySelector(this.element)) {
+        document.querySelector(this.element).setAttribute("placeholder", this.options.preText + " " + t)
       }
     },
     this.onTickReverse = function(e) {
@@ -264,14 +262,15 @@
       this.intervalId = setInterval(this.onTickReverse.bind(this, function() {
         this.charIdx = 0,
         this.placeholderIdx ++,
-       // console.log(this);
+
+// console.log(this);
         this.placeholderIdx === e.placeholders.length && (this.placeholderIdx = 0)
       }), this.options.speed)
     },
     this.onTick = function() {
       var t = e.placeholders[this.placeholderIdx];
       this.charIdx === t.length && setTimeout(this.goReverse.bind(this), this.options.stay),
-      
+
       this.setPlaceholder(),
       this.charIdx ++
     },
@@ -281,55 +280,69 @@
     this.kill = function() {
       clearInterval(this.intervalId)
     }
-  }; {% endcomment %}
+  };{% endcomment %}
 
-  var customPlaceholder_animation = function(placeholders, element, delay, preText ) {
-      placeholderIdx = 0;
-      const placeholderAnimateUp = [
-        {transform: "translateY(100%)", visibility: "visible" }, {transform: "translateY(0)", visibility: "visible" },
-      ];
-      const placeholderAnimateDown = [
-        {transform: "translateY(0)", visibility: "visible" }, {transform: "translateY(-100%)", visibility: "hidden" },
-      ];
-      const placeholderTiming = {
-        duration: 300,
-      };
-      $('.predictive-search__input__lable input').attr('placeholder','');
-      var placeholderSelector = document.querySelector(element);
-    setInterval(function(){
-      var t = placeholder = placeholders[this.placeholderIdx];
-      if(placeholderSelector){
-        placeholderSelector.innerHTML = preText + ' "' + t + '"';
-        placeholderSelector.animate(placeholderAnimateUp, placeholderTiming);
-        placeholderSelector.style.visibility = "visible";
-        placeholderSelector.style.transform = "translateY(0)";
-      }
-      setTimeout(function(){placeholderSelector.animate(placeholderAnimateDown, placeholderTiming),placeholderSelector.removeAttribute("style")},2200)
-      placeholderIdx ++;
-      if(placeholderIdx === placeholders.length){
-        placeholderIdx = 0
-      }
-      }, delay);
-  }
-  var placeholder = JSON.parse(Shopify.search_placeholders);
-  placeholder = placeholder.split(', ')
-  document.addEventListener("DOMContentLoaded", function() {
-     customPlaceholder_animation(placeholder, ".predictive-search__input_mobile_lable span", 3000, "Search");
-     customPlaceholder_animation(placeholder, ".predictive-search__input_desk_lable span", 3000, "Search");
-  });
-
-  $('.predictive-search__input_mobile, .predictive-search__input_desk').on( "input", function() {
-    var serch_input_length = $(this).val().length;
-    if(serch_input_length > 0){
-    $(this).siblings('span').addClass('hide');
-    }else{
-    $(this).siblings('span').removeClass('hide');
+var customPlaceholder_animation = function(placeholders, element, delay, preText) {
+  placeholderIdx = 0;
+  const placeholderAnimateUp = [
+    {
+      transform: "translateY(100%)",
+      visibility: "visible"
+    }, {
+      transform: "translateY(0)",
+      visibility: "visible"
     }
-    });
+  ];
+  const placeholderAnimateDown = [
+    {
+      transform: "translateY(0)",
+      visibility: "visible"
+    }, {
+      transform: "translateY(-100%)",
+      visibility: "hidden"
+    }
+  ];
+  const placeholderTiming = {
+    duration: 300
+  };
+  $('.predictive-search__input__lable input').attr('placeholder', '');
+  var placeholderSelector = document.querySelector(element);
+  setInterval(function() {
+    var t = placeholder = placeholders[this.placeholderIdx];
+    if (placeholderSelector) {
+      placeholderSelector.innerHTML = preText + ' "' + t + '"';
+      placeholderSelector.animate(placeholderAnimateUp, placeholderTiming);
+      placeholderSelector.style.visibility = "visible";
+      placeholderSelector.style.transform = "translateY(0)";
+    }
+    setTimeout(function() {
+      placeholderSelector.animate(placeholderAnimateDown, placeholderTiming),
+      placeholderSelector.removeAttribute("style")
+    }, 2200)
+    placeholderIdx ++;
+    if (placeholderIdx === placeholders.length) {
+      placeholderIdx = 0
+    }
+  }, delay);
+}
+var placeholder = JSON.parse(Shopify.search_placeholders);
+placeholder = placeholder.split(', ')
+document.addEventListener("DOMContentLoaded", function() {
+  customPlaceholder_animation(placeholder, ".predictive-search__input_mobile_lable span", 3000, "Search");
+  customPlaceholder_animation(placeholder, ".predictive-search__input_desk_lable span", 3000, "Search");
+});
 
-  $('.search-icon').click(function() {
-    setTimeout(() => {
-      $('.predictive-search__input_mobile').focus();
-    }, 100)
-  })
-</script>
+$('.predictive-search__input_mobile, .predictive-search__input_desk').on("input", function() {
+  var serch_input_length = $(this).val().length;
+  if (serch_input_length > 0) {
+    $(this).siblings('span').addClass('hide');
+  } else {
+    $(this).siblings('span').removeClass('hide');
+  }
+});
+
+$('.search-icon').click(function() {
+  setTimeout(() => {
+    $('.predictive-search__input_mobile').focus();
+  }, 100)
+})
