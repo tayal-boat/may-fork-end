@@ -159,21 +159,23 @@
         href="{{ product.url }}"
         class="product-item__aspect-ratio aspect-ratio {% if settings.product_image_size != 'natural' %}aspect-ratio--{{ settings.product_image_size }}{% endif %}"
         style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}">
-        {% if product.variants.size > 1 %}
-          <img
-            class="product-item__primary-image"
-            loading="lazy"
-            data-media-id="{{ product.featured_media.id | escape }}"
-            sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
-        {% else %}
-          <img
-            class="product-item__primary-image"
-            loading="lazy"
-            data-media-id="{{ product.featured_media.id | escape }}"
-            sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
-        {% endif %}
+        
+            {% if product.variants.size > 1 %}
+              <img
+                class="product-item__primary-image"
+                loading="lazy"
+                data-media-id="{{ product.featured_media.id | escape }}"
+                sizes="{{ sizes_attribute }}"
+                {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
+            {% else %}
+              <img
+                class="product-item__primary-image"
+                loading="lazy"
+                data-media-id="{{ product.featured_media.id | escape }}"
+                sizes="{{ sizes_attribute }}"
+                {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
+            {% endif %}
+
         {%- if settings.product_color_display == 'swatch' -%}
           {%- assign featured_media = product.variants | map: 'featured_media' -%}
 
