@@ -659,7 +659,8 @@ $(window).on("load", function(){
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
 let custumisedvariant_ids = [];
 let giftId = "{{ gift-product_variant }}";
-let onloadfreeqnty, onloadcustomisedqnt = 0;
+let onloadfreeqnty = 0;
+let onloadcustomisedqnt = 0;
 jQuery.getJSON('/cart.js', function(cart) {
   let cartItem = cart.items;
   console.log(cartItem);
@@ -741,13 +742,13 @@ jQuery.getJSON('/cart.js', function(cart) {
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
    })
-   checkbox.addEventListener('change', () => {
+   {% comment %} checkbox.addEventListener('change', () => {
     if (checkbox.checked) {
       message.textContent = 'Billing address will be PPOB address as per GST portal'
     } else {
       message.textContent = '{{ section.settings.cart_announcement }}'
     }
-  })
+  }) {% endcomment %}
    console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty",updatedqnty)
    if(updatedqnty > onloadfreeqnty) {
    console.log("add free product");  $('.custom-gift-button')[0].click();  onloadfreeqnty += 1;
