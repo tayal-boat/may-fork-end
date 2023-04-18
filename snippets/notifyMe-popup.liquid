@@ -1,3 +1,4 @@
+
 <div class="notifyMe_popup__main_container custom_popup">
     <div class="notifyMe_popup_main container">
         <div class="notifyMe_popup_container">
@@ -10,40 +11,46 @@
                         fill="black"></path>
                 </svg>
             </button>
-            <h3 class="notifyMe_popup_heading">EMAIL ME WHEN AVAILABLE</h3>
-            <p>Register your email address and we will notify you as soon as this product is back in stock.</p>
-        
-        <hr>
-        <div class="notifyMe_popup_title">
-        <h4 class="product-name"></h4><h4> - </h4><h4 class="product-varient-title"></h4>
-        </div>
-        <form action="#" class="notifyMe_form-horizontal">
-            <div id="notifyMe_variant-select-container">
-                <div class="notifyMe_form-group">
-                    <div class="col-xs-12">
-                        <select id="variants_select" class="input-lg" name="varient_id">
-                        </select>
+            {% if customer %}
+                <div class="notifyMe_popup_body">
+                    <h3 class="notifyMe_popup_heading">EMAIL ME WHEN AVAILABLE</h3>
+                    <p>Register your email address and we will notify you as soon as this product is back in stock.</p>
+                    
+                    <hr>
+                    <div class="notifyMe_popup_title">
+                    <h4 class="product-name"></h4><h4> - </h4><h4 class="product-varient-title"></h4>
                     </div>
+                    <form action="#" class="notifyMe_form-horizontal">
+                        <div id="notifyMe_variant-select-container">
+                            <div class="notifyMe_form-group">
+                                <div class="col-xs-12">
+                                    <select id="variants_select" class="input-lg" name="varient_id">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="customer-contact-container">
+                            <div id="phone-number" class="form-group hidden">
+                                <div class="col-xs-12">
+                                    <input type="tel" id="mobile_number" name="mobile_number" class="form-control input-lg" value=" {{ customer.phone }}" placeholder="Mobile number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <button type="submit" id="notifyMe_submit_btn" class="btn btn-success btn-lg btn-block"> Notify me when
+                                    available </button>
+                            </div>
+                        </div>
+                        <div id="message_holder"></div>
+                        <div class="completed_message"> Your notification has been registered.
+                            <span class="action-close" onclick="this.closest('.custom_popup').classList.remove('show'); document.querySelector('body').classList.remove('overflow-hidden'); document.querySelector('.completed_message').removeAttribute('style')">Close</span>
+                        </div>
+                    </form>
                 </div>
-            </div>
-            <div id="customer-contact-container">
-                <div id="phone-number" class="form-group hidden">
-                    <div class="col-xs-12">
-                        <input type="tel" id="mobile_number" name="mobile_number" class="form-control input-lg" value="" placeholder="Mobile number">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-xs-12">
-                    <button type="submit" id="notifyMe_submit_btn" class="btn btn-success btn-lg btn-block"> Notify me when
-                        available </button>
-                </div>
-            </div>
-            <div id="message_holder"></div>
-            <div class="completed_message"> Your notification has been registered.
-                <span class="action-close" onclick="this.closest('.custom_popup').classList.remove('show'); document.querySelector('body').classList.remove('overflow-hidden'); document.querySelector('.completed_message').removeAttribute('style')">Close</span>
-            </div>
-        </form>
+            {% else %}
+            {% render 'otp-login' %}
+            {% endif %}
         </div>
     </div>
 </div>
