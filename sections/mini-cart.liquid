@@ -778,13 +778,16 @@ jQuery.getJSON('/cart.js', function(cart) {
 const observer_ = new MutationObserver(callback_);
 observer_.observe(targNode, config_);
 
-checkbox.addEventListener('change', () => {
-  if (checkbox.checked) {
-    message.textContent = 'Billing address will be PPOB address as per GST portal'
-  } else {
-    message.textContent = '{{ section.settings.cart_announcement }}'
-  }
-})
+if(checkbox.length > 0) {
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      message.textContent = 'Billing address will be PPOB address as per GST portal'
+    } else {
+      message.textContent = '{{ section.settings.cart_announcement }}'
+    }
+  })
+}
+
 {% comment %}
 const customer_id = "{{customer.id}}"
 $('#mini-cart-form .line-item').each(function() {
