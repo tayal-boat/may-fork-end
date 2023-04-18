@@ -25,8 +25,8 @@
   
   <section class="section section--flush">
     <div class="section__color-wrapper">
-    {% if section.settings.enable_featured_img %}
-      <picture class="mobile-only">
+     {% capture featured_image %} 
+      <picture>
         <source
           media="(min-width: 769px)"
           {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
@@ -35,15 +35,18 @@
           {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
         >
       </picture>
-    {% endif %}
+     {% endcapture %}
+     {% capture featured_header %} 
+        <a class="featured_header" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
+          <h3 class="ui2-heading">{{ section.settings.title }}</h3>
+          <b class="view-all">View All -></b>
+        </a>
+     {% endcapture %}
+     {% if section.settings.enable_featured_img %} <div class="mobile-only">{{ featured_image }}</div> {% endif %}
+
       <div class="container {% if section.settings.enable_featured_img %}featured_img {% endif %}" >
         <header class="section__header {% if section.settings.enable_featured_img %}featured_img {% endif %}">
-          {%- if section.settings.title != blank -%}
-              <a class="d-flex justify-content-between align-items-center" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
-                <h3 class="ui2-heading">{{ section.settings.title }}</h3>
-                <b class="view-all">View All -></b>
-              </a>
-          {%- endif -%}
+          {%- if section.settings.title != blank -%} <div class="mobile-only">  {{ featured_header }} </div> {%- endif -%}
           {% if section.settings.enable_flash_sale %}
             <a class="d-flex position-relative" href="{{section.settings.title-url}}">
               <picture>
@@ -69,21 +72,8 @@
             {%- assign smallest_image_aspect_ratio = 0 -%}
             {% if section.settings.enable_featured_img %}
               <div class="only-desktop">
-               <picture>
-                 <source
-                   media="(min-width: 769px)"
-                   {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
-                 >
-                 <img alt="featured_section_img" width="100%"
-                   {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
-                 >
-               </picture>
-               {%- if section.settings.title != blank -%}
-                 <a class="my-4" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
-                   <h3 class="ui2-heading">{{ section.settings.title }}</h3>
-                   <b class="view-all">View All -></b>
-                 </a>
-               {%- endif -%}
+                {{ featured_image }}
+                {%- if section.settings.title != blank -%} {{ featured_header }} {%- endif -%}
               </div>
              {% endif %}
             <product-list
