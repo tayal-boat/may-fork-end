@@ -731,6 +731,7 @@ jQuery.getJSON('/cart.js', function(cart) {
 {% endcomment %}
 
 const checkbox = document.querySelector(".check_container input");
+const message = document.querySelector(".message-container .message");
 const targNode = document.getElementById('mini-cart');
 const config_ = { attributes: false, childList: true, subtree: false };
 const callback_ = (mutationList, observer) => {
@@ -742,13 +743,6 @@ jQuery.getJSON('/cart.js', function(cart) {
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
    })
-   {% comment %} checkbox.addEventListener('change', () => {
-    if (checkbox.checked) {
-      message.textContent = 'Billing address will be PPOB address as per GST portal'
-    } else {
-      message.textContent = '{{ section.settings.cart_announcement }}'
-    }
-  }) {% endcomment %}
    console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty",updatedqnty)
    if(updatedqnty > onloadfreeqnty) {
    console.log("add free product");  $('.custom-gift-button')[0].click();  onloadfreeqnty += 1;
@@ -784,6 +778,13 @@ jQuery.getJSON('/cart.js', function(cart) {
 const observer_ = new MutationObserver(callback_);
 observer_.observe(targNode, config_);
 
+checkbox.addEventListener('change', () => {
+  if (checkbox.checked) {
+    message.textContent = 'Billing address will be PPOB address as per GST portal'
+  } else {
+    message.textContent = '{{ section.settings.cart_announcement }}'
+  }
+})
 {% comment %}
 const customer_id = "{{customer.id}}"
 $('#mini-cart-form .line-item').each(function() {
