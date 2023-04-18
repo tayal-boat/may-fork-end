@@ -663,21 +663,22 @@ let onloadfreeqnty = 0;
 let onloadcustomisedqnt = 0;
 jQuery.getJSON('/cart.js', function(cart) {
   let cartItem = cart.items;
-  console.log(cartItem);
   let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
   $(onloadfreeItems).each(function(ind, el){
     onloadfreeqnty += el.quantity;
   })
-  {% comment %} let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
-  $(onloadcustomised).each(function(ind, el){
-    onloadcustomisedqnt += el.quantity;
-    if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
-  }) {% endcomment %}
+  {% comment %} info: for product customisation
+    let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
+    $(onloadcustomised).each(function(ind, el){
+      onloadcustomisedqnt += el.quantity;
+      if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
+    }) 
+  {% endcomment %}
   if (onloadcustomisedqnt > 0){customized_added() }
   console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
 })
 
-{% comment %} 
+{% comment %}  info: for product customisation
   let updatedcustomisedqnt = 0;
   document.addEventListener('cart:updated', function(event) {
     console.log("old",updatedcustomisedqnt);
@@ -737,7 +738,6 @@ for (const mutation of mutationList) {
 let updatedqnty = 0;
 jQuery.getJSON('/cart.js', function(cart) {
    cartI = cart.items;
-   console.log(cartI);
    let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
@@ -758,7 +758,7 @@ jQuery.getJSON('/cart.js', function(cart) {
     $('#mini-cart-form .line-item').each(function() {
      let dataItemId = $(this).data('item-id');
      if (dataItemId == giftId){
-       $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+       $(`.line-item[data-item-id="${dataItemId}"] a[aria-label="Decrease quantity"]`)[0].click();
      }
     });
     onloadfreeqnty -= 1;
