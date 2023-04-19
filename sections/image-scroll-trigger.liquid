@@ -1,0 +1,93 @@
+<div class="image_scroll_trigger_container">
+  <div class="image_scroll_trigger_inner">
+    <div class="image_scroll_trigger_text">
+      <h3>
+        {{ section.settings.title }}</h3>
+      <span>{{ section.settings.subText }}</span>
+      <h1>{{ section.settings.productTitle }}</h1>
+      <p>{{ section.settings.discription }}</p>
+    </div>
+    <div class="image_scroll_trigger_image_container">
+      {% for block in section.blocks %}
+        {% if block.settings.image %}
+          <img
+            src="{{ block.settings.image | img_url: 'master' }}"
+            alt="{{ block.settings.image.alt }}"
+            width="{{ block.settings.image.width }}"
+            height="auto">
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+    .image_scroll_trigger_inner {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+.image_scroll_trigger_image_container {
+    max-width: 50%;
+    margin-left: auto;
+}
+.image_scroll_trigger_image_container img {
+    opacity: 0;
+}
+.image_scroll_trigger_image_container img:first-child {
+    opacity: 1;
+}
+.image_scroll_trigger_text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    margin: 2rem;
+}
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "Image scroll trigger",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading"
+      }, {
+        "type": "text",
+        "id": "subText",
+        "label": "Sub Text"
+      }, {
+        "type": "text",
+        "id": "productTitle",
+        "label": "Product Title"
+      }, {
+        "type": "richtext",
+        "id": "discription",
+        "label": "Discription"
+      }
+    ],
+    "max_blocks": 8,
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image slide",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Image",
+        "name": "Image scroll trigger",
+        "settings": {}
+      }
+    ]
+  }
+{% endschema %}
