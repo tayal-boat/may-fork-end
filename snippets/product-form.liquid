@@ -63,11 +63,11 @@
       data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
       <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
         <div>
-          <span class="text-capitalize product-form__option-name">{{ option.name | capitilize }} :</span>
+          <span class="text-capitalize product-form__option-name">Chose your colour</span>
 
-          {%- if selector_type != 'dropdown' -%}
+          {% comment %} {%- if selector_type != 'dropdown' -%}
           <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
-          {%- endif -%}
+          {%- endif -%} {% endcomment %}
 
           {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
           {%- assign found_size_option = true -%}
@@ -117,7 +117,9 @@
             </div>
 
             {%- when 'color' -%}
-              <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+              {% endif %}
               <div class="color-swatch-list">
                 {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
                 {%- assign option_position0 = option.position | minus: 1 -%}

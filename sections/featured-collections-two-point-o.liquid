@@ -18,7 +18,7 @@
     @media screen and (min-width: 1200px) {
         #shopify-section-{{ section.id }} {
           --section-products-per-row: {{ section.settings.products_per_row }};
-          margin: {{ section.settings.padding_desktop }};
+          overflow-y: hidden;
         }
      }
   </style>
@@ -37,16 +37,49 @@
       </picture>
      {% endcapture %}
      {% capture featured_header %} 
-        <a class="featured_header" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
+        <a class="{% if section.settings.enable_featured_img %}featured_header {% else %}d-flex justify-content-between align-items-center{% endif %}" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
           <h3 class="ui2-heading">{{ section.settings.title }}</h3>
           <b class="view-all">View All -></b>
         </a>
      {% endcapture %}
-     {% if section.settings.enable_featured_img %} <div class="mobile-only">{{ featured_image }}</div> {% endif %}
+     {% if section.settings.enable_featured_img %}  <div class="mobile-only">{{ featured_image }}</div>     {% endif %}
 
       <div class="container {% if section.settings.enable_featured_img %}featured_img {% endif %}" >
         <header class="section__header {% if section.settings.enable_featured_img %}featured_img {% endif %}">
-          {%- if section.settings.title != blank -%} <div class="mobile-only">  {{ featured_header }} </div> {%- endif -%}
+          {%- if section.settings.title != blank -%} 
+           <div class="{% if section.settings.enable_featured_img %}mobile-only{% endif %}">  {{ featured_header }} </div>     
+          {% endif %}
+          {%- if section.blocks.size > 1 -%}
+            <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
+              <scrollable-content class="tabs-nav__scroller hide-scrollbar">
+                <div class="tabs-nav__scroller-inner">
+                  <div class="tabs-nav__item-list">
+                    {%- for block in section.blocks -%}
+                      {%- capture on_boarding_title -%}
+                        {{ 'general.onboarding.collection_title' | t }}
+                        {{ forloop.index }}
+                      {%- endcapture -%}
+  
+                      <button
+                        type="button"
+                        class="tabs-nav__item heading heading--small ml-0"
+                        aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                        aria-controls="block-{{ section.id }}-{{ block.id }}"
+                        data-collection-handle="{{ block.settings.collection.handle }}"
+                        {{ block.shopify_attributes }}
+                      >
+                        {{-
+                          block.settings.label
+                          | default: block.settings.collection.title
+                          | default: on_boarding_title
+                        -}}
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </scrollable-content>
+            </tabs-nav>
+          {%- endif -%}
           {% if section.settings.enable_flash_sale %}
             <a class="d-flex position-relative" href="{{section.settings.title-url}}">
               <picture>
@@ -65,17 +98,19 @@
               </div>
             </a>
           {% endif %}
+
         </header>
         <div class="featured-collections">
+          {% if section.settings.enable_featured_img %}
+            <div class="only-desktop">
+              {{ featured_image }}
+              {%- if section.settings.title != blank -%} {{ featured_header }} {%- endif -%}
+            </div>
+           {% endif %}
           {%- for block in section.blocks -%}
             {%- assign collection = block.settings.collection -%}
             {%- assign smallest_image_aspect_ratio = 0 -%}
-            {% if section.settings.enable_featured_img %}
-              <div class="only-desktop">
-                {{ featured_image }}
-                {%- if section.settings.title != blank -%} {{ featured_header }} {%- endif -%}
-              </div>
-             {% endif %}
+
             <product-list
               {% if settings.stagger_products_apparition %}
                 stagger-apparition
@@ -92,7 +127,7 @@
               >
                 <div
                   class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
-                  {% if forloop.index == 1 %}
+                  {% comment %} info:ajax-tabs  if forloop.index == 1  {% endcomment %}
                     {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
                     {%- assign gap_width = 24.0
                       | divided_by: section.settings.products_per_row
@@ -130,7 +165,7 @@
                         -%}
                       {%- endfor -%}
                     {%- endfor -%}
-                  {% endif %}
+                  {% comment %}info:ajax-tabs {% endif %} {% endcomment %}
   
                 </div>
               </div>
@@ -169,12 +204,109 @@
       </div>
     </div>
   </section>
+{% comment %} info:ajax-tabs 
+  <script>
+    function load_ajax_tab_content(collection_handle, collection_tab_id){
   
+      let html_response = "";
+         
+      $.ajax({
+        url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+        method: "get",
+        type: "GET",
+        async: false,
+        dataType: "html",
+        success: function (result) {
+          
+          html_response = $(result).find("product-list.product-list .product-list__inner").html();
+        },
+        error: function (error) {
+            console.log(error);
+        }
+      });
+  
+      return html_response;
+    }
+  
+  
+    
+    $(document).ready(function(){
+      // getting products cards on clicking of featured collection tabs
+      
+      $('body').on('click', '#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button', function(e){
+        e.preventDefault();
+        
+        let tab_id = $(this).attr('aria-controls');
+  
+        // Checking the tab has content loaded already or not
+  
+        if( $('#'+tab_id+' .product-list__inner').html().trim() == "" ){
+          $(this).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
+              
+          $(this).attr('aria-expanded', 'true');
+          
+          $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
+            
+          let collection_handle = $(this).data("collection-handle");
+          //let products_limit = {{ section.settings.products_count }};
+  
+          let self = this;
+  
+          $.ajax({
+            url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+            method: "get",
+            type: "GET",
+            dataType: "html",
+            success: function (result) {
+              
+              let t = $(result).find("product-list.product-list .product-list__inner").html();
+              $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
+              $(self).parents('.shopify-section--featured-collections').find("product-list#"+tab_id+".product-list").removeAttr('hidden');
+              $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html(t);
+              $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
+              
+              var biggestNum = 0;
+              $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
+                let z_index_val = [];
+  
+                $(this).find('.product-horizontal span').each(function(){
+                  let all_classes = $(this).attr('class').split(' ');
+                  let get_classname = filterItems('z-', all_classes);
+                  if( get_classname.length > 0 ){
+                    z_index_val.push(get_classname[0].split('-')[1]);
+                  }
+                })
+  
+                let element_max_num = Math.max.apply(Math, z_index_val);
+                $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
+              });
+              
+            //  $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+  
+              $('.custom_loading_icon').remove();
+  
+            },
+            error: function (error) {
+                console.log(error);
+            },
+          });
+        }
+  
+      
+        function filterItems (needle, itemStack) {
+          let query = needle.toLowerCase();
+          return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
+        }
+  
+      })
+    })
+  </script>
+{% endcomment %}
   {% schema %}
   {
     "name": "Featured collections2.0",
     "class": "shopify-section--featured-collections two-pt-o",
-    "max_blocks": 1,
+    "max_blocks": 5,
     "blocks": [
       {
         "type": "collection",
@@ -184,6 +316,12 @@
             "type": "collection",
             "id": "collection",
             "label": "Collection"
+          },
+          {
+            "type": "text",
+            "id": "label",
+            "label": "Tab label",
+            "info": "Shown when more than 1 collection is featured. Collection title is used if none is set."
           }
         ]
       }
