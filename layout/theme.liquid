@@ -367,67 +367,8 @@
     {%- if request.page_type != 'gift_card' and request.page_type != 'password' -%}
       {%- section 'footer' -%}
     {%- endif -%}
-    {% comment %}
-<script>
-Shopify.collectionFilter = function(event){
-console.log('collectionFilter');
-    function accordion(summary, tablinks){
-    summary.click(function(){
-        for (i = 0; i < tablinks.length; i++) {
-          if (tablinks[i].hasAttribute("open")) {
-            tablinks[i].removeAttribute("open"); 
-            tablinks[i].previousElementSibling.setAttribute('aria-expanded','false');
-            console.dir(tablinks[i]);  
-          }
-        } 
-        this.setAttribute('aria-expanded','false');
-        this.nextElementSibling.setAttribute('open','true');  
-    });
-  }
-let details = document.querySelectorAll("#facet-filters-form collapsible-content");
-let summary = $('#facet-filters-form .collapsible-toggle');
-accordion(summary, details);
 
-  function preserveQuery() {
-    Shopify.queryParams = {};
-    if (window.location.search.length) {
-      const params = window
-        .location
-        .search
-        .substr(1)
-        .split('&');
 
-      for (let i = 0; i < params.length; i++) {
-        const keyValue = params[i].split('=');
-
-        if (keyValue.length) {
-          Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
-        }
-      }
-    }
-
-  }
-  preserveQuery();
-  let sortItems = document.querySelectorAll('.price-tag-filter .tag');
-  for (let i = 0; i < sortItems.length; i++) {
-    sortItems[i].addEventListener('click', function(e) {
-      preserveQuery();
-      console.log(e.target.attributes);
-      Shopify.queryParams['filter.v.price.gte'] = e.target.attributes['data-min'].value;
-      Shopify.queryParams['filter.v.price.lte'] = e.target.attributes['data-max'].value;
-      let searchParams = new URLSearchParams(Shopify.queryParams).toString();
-
-console.log(searchParams);
-      // customTriggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${searchParams}` });
-      this.dispatchEvent(new CustomEvent("facet:criteria-changed", {
-      bubbles: true,
-      detail: { url: `${window.location.pathname}?${searchParams}` }
-    }));
-    })
-  }
-}
-</script>
- {% endcomment %}
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
     {% unless page.handle == 'dwfyb' %}
       <script src="{{ 'custom.js' | asset_url }}" defer></script>
