@@ -292,23 +292,40 @@
 
                 {%- assign product_rep = 1 -%}
                 {%- for product in collection.products -%}
-                {% unless product.handle == 'membership' %}
-                {% if section.settings.enable_price_slab %}
-                {% if forloop.index == 3 and paginate.current_page == 1 %}
-                <div class="price-tag-filter-container">
-                <h3>Sort By Price Range</h3>
-                <div class="price-tag-filter">
-                  {%- for block in section.blocks -%}
-                  {%- if block.type == 'filters' -%}
-                  <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
+                  {% unless product.handle == 'membership' %}
+                  {% if section.settings.enable_price_slab %}
+                  {% if forloop.index == 3 and paginate.current_page == 1 %}
+                  <div class="price-tag-filter-container">
+                  <h3>Sort By Price Range</h3>
+                  <div class="price-tag-filter">
+                    {%- for block in section.blocks -%}
+                    {%- if block.type == 'filters' -%}
+                    <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
+                    {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                  </div>
+                  {% endif %}
+                  {% endif %}
+                    {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
+                  {% endunless %}
+                  
+                  {%- if product_rep == 6 -%}
+                    {%- if collection.metafields.custom.mobile_separator_image_slider -%}
+                      {%- assign all_banners = collection.metafields.custom.mobile_separator_image_slider | split: "," -%}
+                      <div class="mobile-only collection_separator_banner">
+                        <div class="owl-carousel owl-theme collection-image-slider {{ section.id }} ">
+                          {% for single_banner in all_banners %}
+                            <div class="item">
+                              <img alt="collection-banner" src="{{ single_banner }}" class="collection_single_image" />
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {%- endif -%}
                   {%- endif -%}
-                  {%- endfor -%}
-                </div>
-                </div>
-                {% endif %}
-                {% endif %}
-                  {%- render 'product-item', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
-                {% endunless %}
+
+                  {%- assign product_rep = product_rep | plus:1 -%}
                 {%- endfor -%}
               </div>
           {% if paginate.pages > 1 %}
