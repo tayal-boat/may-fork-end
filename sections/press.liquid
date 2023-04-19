@@ -98,6 +98,58 @@
     width: 40px;
     border-radius: 12px !important;
   }
+  .press-list .custom_press_slider.MultiCarousel-inner {margin-left:0!important;padding-bottom:70px;}
+  .press-list .item{font-size:20px;color: #4e5358;}
+  .press-list .leftLst,.press-list .rightLst{display:block!important;width: 40px;height: 40px;background: #a5aeb3;border-radius: 50% !important;z-index: 9;border: 0;color: transparent;top:unset;bottom:21px;visibility:visible;opacity:.7;}
+  .press-list .leftLst{left: 40%;transform: translateX(-40%);}
+  .press-list .rightLst{right: 36%;transform: translateX(-40%);}
+  .press-list .leftLst:before, .press-list .rightLst:before {
+    visibility: visible;
+    font-size: 40px!important;
+    color: black;
+    font-weight: normal;
+    line-height: 40px;
+    width: 40px;
+    height: 40px;
+    z-index: 999;
+    display: block;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.press-list .leftLst:focus, .press-list .rightLst:focus,
+.press-list .leftLst:active, .press-list .rightLst:active {background: #a5aeb3!important;border: 0!important;color: transparent!important;box-shadow:none!important;}
+  .press_section .section__color-wrapper > .container{padding:0!important;}
+  .press_section .section__color-wrapper > .container .MultiCarousel_container{background: #eff3f5;padding-left: 24px;padding-right: 24px;}
+
+@media screen and (min-width:1099px){
+.press-list .item{display: flex!important;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;}
+.press-content{width: 60%;
+  height: 100%;}
+  .MultiCarousel .MultiCarousel-inner .item>div.press-logos{width: 40%;
+  height: 240px;
+  background: #d0d9de;
+  display: flex;
+  align-items: center;
+  justify-content: center;}
+  .MultiCarousel .MultiCarousel-inner .item>div.press-content{background:transparent;padding-inline:1rem;}
+  .MultiCarousel.template--14861046743138__16476194914dad6aa9{margin-left:-24px;padding:0;}
+  .press-list .custom_press_slider.MultiCarousel-inner{margin-top:0;padding-bottom:0;}
+  .press-list .rightLst {
+    right: 28%;
+  }
+  .press-list .leftLst {
+    left: 67%;
+  }
+  .press-list .leftLst:before, .press-list .rightLst:before{width:30px;height:30px;line-height:30px;font-size:30px!important;}
+  .press-list .leftLst, .press-list .rightLst{width:30px;height:30px;}
+}
 </style>
 
 <section class="press_section {% unless blends_with_background %}section--flush{% endunless %}">
@@ -149,17 +201,21 @@
             <div class="custom_press_slider MultiCarousel-inner {{ section.id }} draggable" draggable="true">
               {%- for block in section.blocks -%}
                 <div class="item">
-                  <p>{{ block.settings.content | escape }}</p>
-                  {%- if block.settings.logo != blank -%}
-                    {%- capture image_sizes -%}
-                      {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
-                    <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
-                    <img
-                      class="press-list__logo-image"
-                      loading="lazy"
-                      style="max-width: 160px"
-                      sizes="160px"
-                      {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+                  <div class="press-content">
+                    <p>{{ block.settings.content | escape }}</p>
+                    {%- if block.settings.logo != blank -%}
+                      {%- capture image_sizes -%}
+                        {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
+                      <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
+                  </div>
+                    <div class="press-logos">
+                      <img
+                        class="press-list__logo-image"
+                        loading="lazy"
+                        style="max-width: 160px"
+                        sizes="160px"
+                        {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+                    </div>
                   {%- else -%}
                     <span class="heading h6">Logo {{ forloop.index }}</span>
                   {%- endif -%}
