@@ -49,6 +49,25 @@
           {%- if section.settings.title != blank -%} 
            <div class="{% if section.settings.enable_featured_img %}mobile-only{% endif %}">  {{ featured_header }} </div>     
           {% endif %}
+
+          {% if section.settings.enable_flash_sale %}
+            <a class="d-flex position-relative" href="{{section.settings.title-url}}">
+              <picture>
+                <source
+                  media="(min-width: 769px)"
+                  {% render 'image-attributes', image: section.settings.Flash_web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                >
+                <img alt="flash_timer" width="100%"
+                  {% render 'image-attributes', image: section.settings.Flash_mobile_banner, sizes: '200,300,400,500,600' %}
+                >
+              </picture>
+        
+              <div class="flash_sale ui2">
+                <p class="my-0 ml-3 text-left">{{ section.settings.flash_sale_title }}</p>
+                {% render 'flashsale-timer-2.0', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
+              </div>
+            </a>
+          {% endif %}
           {%- if section.blocks.size > 1 -%}
             <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
               <scrollable-content class="tabs-nav__scroller hide-scrollbar">
@@ -80,25 +99,7 @@
               </scrollable-content>
             </tabs-nav>
           {%- endif -%}
-          {% if section.settings.enable_flash_sale %}
-            <a class="d-flex position-relative" href="{{section.settings.title-url}}">
-              <picture>
-                <source
-                  media="(min-width: 769px)"
-                  {% render 'image-attributes', image: section.settings.Flash_web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
-                >
-                <img alt="flash_timer" width="100%"
-                  {% render 'image-attributes', image: section.settings.Flash_mobile_banner, sizes: '200,300,400,500,600' %}
-                >
-              </picture>
-        
-              <div class="flash_sale ui2">
-                <p class="my-0 ml-3 text-left">{{ section.settings.flash_sale_title }}</p>
-                {% render 'flashsale-timer-2.0', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
-              </div>
-            </a>
-          {% endif %}
-
+          
         </header>
         <div class="featured-collections">
           {% if section.settings.enable_featured_img %}
