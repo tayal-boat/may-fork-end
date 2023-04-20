@@ -541,7 +541,7 @@ role="banner"
            {%- if shop.customer_accounts_enabled -%}
              <div class="account-links-inline contains-dropdown">
                {%- if customer -%}
-                 <div class="your-acct"><a href="/account/addresses">Account</a></div>
+                 <div class="your-acct"><a href="/account">Account</a></div>
                  <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
                {%- else -%}
                  <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
@@ -754,19 +754,20 @@ SEARCH DRAWER
  const documentStyle = getComputedStyle(document.documentElement);
  let mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
  document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
- $('button.header__icon-wrapper.rounded-0.tap-area.hidden-desk').click(function(){
-     if ($(window).scrollTop() == 0){
-       mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
-     }else if(mobilemenuHeight - $(window).scrollTop() > 0.1){
-       {% comment %} $("html, body").animate({ scrollTop: $('#shopify-section-announcement-bar').height() }, 0); {% endcomment %}
-       mobilemenuHeight =  $('.shopify-section--header .container').height();
-       console.log(">0" ,  mobilemenuHeight);
-     }else{
-       mobilemenuHeight = $('.shopify-section--header .container').height();
-       console.log("else" ,  mobilemenuHeight);
-     }
-       document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
-   });
+   const targNode = document.getElementById('shopify-section-announcement-bar');
+   const config_ = { attributes: true, childList: true, subtree: true };
+   const callback_ = (mutationList, observer) => {
+   for (const mutation of mutationList) {
+    if ($("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") ){
+      mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+    }else{
+      mobilemenuHeight =  $('.shopify-section--header .container').height();
+    }
+    document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+    }
+   };
+   const observer_ = new MutationObserver(callback_);
+   observer_.observe(targNode, config_);
 </script>
 
 

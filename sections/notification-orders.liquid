@@ -1,0 +1,83 @@
+<style>
+  .notification-blog-box{margin: 10px 24px;padding: 12px;border-radius: 16px;border: solid 0.5px #bbb;}
+  .notification-blog-box .notification-blog-header{position: relative;margin-bottom: 12px}
+  .notification-blog-box .notification-blog-header h2{font-size: 16px;font-weight: bold;padding: 4px 0px}
+  .notification-blog-box .notification-blog-header .current_time{position: absolute;right: 36px;color: #8d8d8d;font-size: 12px;top: 0px;}
+  .notification-blog-box .notification-blog-items .single-notification-item{display: flex;justify-content: space-evenly;gap: 20px;padding: 16px;border-radius: 16px;background-color: #f2f2f2;margin-bottom: 12px;}
+  .notification-blog-box .notification-blog-items .single-notification-item img{max-width: min-content;}
+  .notification-blog-box .notification-blog-items .single-notification-item h3{font-size: 14px;color: #1b1b1b;font-weight: bold;}
+  .horizontal-space{height: 1px;background: #ececec;margin-bottom: 12px;display: block;}
+  .notification-blog-box .notification-blog-items .single-notification-item p{font-size: 10px;line-height: 1.2;letter-spacing: normal;color: #5f5f5f;margin-bottom: 13px;}
+  .notification-blog-box .notification-blog-items .single-notification-item .blog_link{color: #5f5f5f;font-size: 10px;font-weight: normal;}
+</style>
+
+
+<div class="notification-blog-box notification-box">
+    <div class="notification-blog-header notification-box-header">
+      <h2>Your Orders</h2>
+      <span class="current_time">{{ "now" | date: "%H:%M" }}</span>
+    </div>
+    <span>Order ID: </span>
+    <span class="horizontal-space"></span>
+    <div class="notification-blog-items">
+
+      {% for order in customer.orders %}
+        {% for item in order.line_items %}
+      
+      <div class="single-notification-item">
+        <div class="line_item_image">
+          {{ line_item.featured_image | img_url: '58x58' | img_tag }}
+        </div>
+        <div class="line_item_box">
+          <h3>Your order has been delivered</h3>
+          <p>{{ item.title | split: '|' | last }}</p>
+        </div>
+      </div>
+
+    {% endfor %}
+  {% endfor %}
+    </div>
+</div>
+
+{% schema %}
+{
+ "name": "Notification Orders",
+ "class": "shopify-section--newlaunches-notification",
+ "settings": [],
+ "blocks": [
+   {
+     "name": "new-launches-notification",
+     "type": "new-launches-home",
+     "settings": [
+       {
+         "type": "blog",
+         "id": "blog_new_launches",
+         "label": "Blog"
+       },
+       {
+         "type": "text",
+         "id": "blog_title",
+         "label": "Custom title"
+       },
+       {
+         "type": "richtext",
+         "id": "blog_desc",
+         "label": "Custom Description"
+       },
+       {
+         "type": "url",
+         "id": "blog_link",
+         "label": "Custom Link"
+       }
+     ]
+   }
+ ],
+ "presets": [
+   {
+     "name": "Notification Orders",
+     "category": "layout",
+     "settings": {}
+   }
+ ]
+}
+{% endschema %}
