@@ -696,7 +696,7 @@
                   <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
                 {% endif %}
                 </span>
-                <span class="loader-button__loader" hidden="">        <div class="spinner">          <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
+                <span class="loader-button__loader" hidden="">  <div class="spinner"> <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
                 </a>
                 <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
@@ -736,25 +736,27 @@
 
           {%- endif -%}
 
-          {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+        {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
           {% unless product.tags contains settings.products_offering_freebie %}
-          <div class="amazon-c d-flex align-items-baseline justify-content-between">
-              <button id="BIS_trigger" type="button" class="custom-notify-btn"
-              data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
-              Notify me
-              </button>
-              <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+              <div class="amazon-c d-flex align-items-baseline justify-content-between">
+                <button id="BIS_trigger" type="button" class="custom-notify-btn"
+                data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+                Notify me
+                </button>
+                <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
+                </div>
               </div>
-              </div>
-              {% endunless %}
+          {% endunless %}
 
-          </div>
-
+        </div>
     </div>
-
+    {% else %}
+    <div class="text-center" style="font-size: 16px;font-weight: 600;line-height: normal;color: #2f5b96;">
+      View Product  {%- render 'icon' with 'right-arrow-blue' -%}
+    </div>
     {%- endif -%}
     {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
     <div class="product-item__quick-form quick-buy-notify-me" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
@@ -838,12 +840,6 @@ one
 {%- endform -%}
 {%- endif -%}
 
-
-{%- if template.suffix == 'quick-buy-drawer' -%}
-<div class="product-form__view-details">
-  <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
-</div>
-{%- endif -%}
 
 {%- comment -%}
 IMPLEMENTATION NOTE: if during the iteration of the options we have found an option matching a size chart, we add it
