@@ -47,14 +47,17 @@
     .mobile_footer_item_title button.active{color: #000;}
     .mobile_footer_item_title button.active::after { content: '';height: 5px;width: 56px;background: #ED1C24;display: block;position: absolute; top: 25px; left: -5px;}
     .desktop_menu_link{ display: none;}
-    footer ul.linklist.list--unstyled li:nth-child(odd) {border-right: 1px solid #bcbcbc;}
+    {% comment %} footer ul.linklist.list--unstyled li:nth-child(odd) {border-right: 1px solid #bcbcbc;} {% endcomment %}
+    .footer .container{max-width:95%;}
     footer ul.linklist.list--unstyled li:nth-child(even) {padding-left: 20px;}
-    .mobile_footer_item_title button{ margin: 10px 0px !important;color: #686868;}
+    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #686868;border-bottom:1px solid #696969;padding-bottom:10px;width:100%;text-transform:none;}
     .mobile_footer_item_title button:active, .mobile_footer_item_title button:focus{outline: none;}
-    .mobile_footer_item_title button span{display: none;}
+    {% comment %} .mobile_footer_item_title button span{display: none;} {% endcomment %}
+    .mobile_footer_item_title .footer__item-content{display:none;padding:0!important;margin-bottom:2rem;}
+    .mobile_footer_item_title .footer__item-mobile.active{display:block!important;padding: 1rem 0 0 !important;overflow: hidden;}
     footer .footer__item-list{padding-top: 0px;}
     footer .footer__item-list .footer__item--newsletter{display: block !important;}
-    .mobile_footer_item_title{padding: 0px 18px;justify-content: space-between; display: flex;border-bottom: 1px solid #696969;border-top: 1px solid #696969;}
+    .mobile_footer_item_title{padding: 0px 18px;justify-content: space-between; display: flex;flex-direction:column;}
     footer .footer__item--links .footer__item-content{ display: block;}
     footer .footer__item-list .footer__item-content{ padding: 0px 16px;}
     footer .footer__item--links {border-bottom: 0;}
@@ -177,13 +180,23 @@ li.extra--link:nth-child(2)::after {
             {%- if block.type == 'links' -%}
               {%- assign total_menus = total_menus | plus: 1 -%}
               {%- assign menu = block.settings.menu -%}
-              <button
-                id="link_btn_{{ total_menus }}"
-                class="footer__item-title heading heading--small"
-                onclick="openLink(event, 'footer_item_{{ total_menus }}')"
-              >
-                {{ menu.title | split: '2' | first }}
-              </button>
+              <div class="menu-panel">
+                <button
+                  id="link_btn_{{ total_menus }}"
+                  class="footer__item-title heading heading--small"
+                >
+                  {{ menu.title | split: '2' | first }}
+                </button>
+                <div class="footer__item-content footer__item-mobile footer_item_{{ total_menus }}">
+                  <ul class="linklist list--unstyled" role="list">
+                    {%- for link in menu.links -%}
+                      <li class="linklist__item">
+                        <a href="{{ link.url }}" class="link--faded">{{ link.title }}</a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </div>
             {%- endif -%}
           {%- endfor -%}
         </div>
@@ -225,7 +238,7 @@ li.extra--link:nth-child(2)::after {
                   {{ menu.title | split: '2' | first }}
                 </p>
 
-                <div class="footer__item-content">
+                <div class="footer__item-content hidden-pocket hidden-phone">
                   <ul class="linklist list--unstyled" role="list">
                     {%- for link in menu.links -%}
                       <li class="linklist__item">
@@ -599,11 +612,11 @@ $('#btn-back-to-top').click(function () {
 </script>
 
 <script>
-document.getElementById('link_btn_1').click();
+{% comment %} document.getElementById('link_btn_1').click();
 
 function openLink(evt, tabName) {
   var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName('footer__item');
+  tabcontent = document.getElementsByClassName('footer__item-mobile');
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = 'none';
   }
@@ -613,7 +626,19 @@ function openLink(evt, tabName) {
   }
   document.getElementById(tabName).style.display = 'block';
   evt.currentTarget.className += ' active';
-}
+} {% endcomment %}
+
+$('.menu-panel').each(function(i) {
+  $(this).find(`.footer__item-title`).click(function() {
+    $(this).find('.expanded').toggleClass('visually-hidden')
+    $(this).find('.collapsed').toggleClass('visually-hidden')
+    $(this).siblings(`.footer__item-mobile`).toggleClass('active')
+    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.footer__item-mobile').removeClass('active')
+    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.expanded').removeClass('visually-hidden')
+    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.collapsed').addClass('visually-hidden')
+  })
+})
+
 </script>
 
 {% schema %}
