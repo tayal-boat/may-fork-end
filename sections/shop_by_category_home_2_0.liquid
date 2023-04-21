@@ -1,49 +1,62 @@
 <style>
-    .top-collections {
-        margin: {{ section.settings.sectiondeskmargin | default: 0 }};
-    }
+    
+    .shop_by_category_section_2_0 .MultiCarousel .MultiCarousel-inner .item>div{background: transparent;}
+    .shop_by_category_section_2_0 .img_container{position: relative;height: 100px;display: flex;align-items: center;}
+    .shop_by_category_section_2_0 .img_container img{margin: 0px auto;width: 48px;}
+    .shop_by_category_section_2_0 .MultiCarousel .MultiCarousel-inner .img_container img{width: 45px;height: auto;display: flex;align-items: center;margin: auto}
+    .shop_by_category_section_2_0 .img_container:after{content: '';width: 68px;height: 68px;opacity: 0.53;background-color: #d0d9de;position: absolute;bottom: 4px;left: 50%;transform: translateX(-50%);border-radius: 50%;z-index: -1;}
+    .shop_by_category_section_2_0 .shop_by_category_slider{margin: 0px auto;width: max-content;overflow-x: auto;display: flex;gap: 10px;}
+    .shop_by_category_section_2_0 .single_column{width: 115px;display: grid;max-width: 115px;min-width: 115px;}
+    .shop_by_category_section_2_0 .single_collection .collection_title{text-align: center;margin-top: 20px;}
+    .shop_by_category_section_2_0 .single_collection .collection_title span{font-size: 10px;font-weight: bold;line-height: 1;color: #1a2024;display: block;}
+
     @media(max-width:768px) {
-        .top-collections {
-            margin: {{ section.settings.sectionmargin | default: 0 }};
-        }
-    }=
+        .shop_by_category_section_2_0 .shop_by_category_slider{gap: 18px;}
+        .shop_by_category_section_2_0 .single_column{width: 65px;max-width: 65px;min-width: 65px;gap: 16px;}
+    }
     @media(min-width:768px) {
-        .row.shop-by-category-slider.hidden-pocket.custom_slider_init {flex-wrap: wrap;padding-left:0;}
-        .row.shop-by-category-slider.hidden-pocket.custom_slider_init .cat_single_column{max-width:169px;min-width:169px;}
-        .shop_by_category_section .shop_by_collection-row .shop-by-category-slider.hidden-pocket .cat_single_column:last-child a:last-child{margin-left:0;}
+        
     }
     
 </style>
-<div class="shop_by_category_section container cf section-id-{{ section.id }} top-collections top-2 px-lg-0" data-section-type="custom-row">
-    {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
-        <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 shop-heading">
-            {%- if section.settings.title != blank -%}
-                <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
-            {%- endif -%}
-        </header>
-    {%- endif -%}
 
-    <div class="shop_by_collection-row mx-lg-5 ">
-        <div class="row shop-by-category-slider hidden-desk {{ section.id }}">
-            <div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}>
-                <div class="MultiCarousel-inner {{ section.id }} draggable" draggable="true">
+
+<!-- Shop by section starts here -->
+<div class="shop_by_category_section_2_0 container top-collections top-2 px-lg-0 pr-0 section-id-{{ section.id }}">
+    <div class="container">
+        {%- if section.settings.view_Url != blank or section.settings.title != blank -%}
+            <header class="section__header text-container d-flex justify-content-between px-lg-5 mb-0 mb-lg-3 shop-heading">
+                {%- if section.settings.title != blank -%}
+                    <h3 class="heading h2">{{ section.settings.title | escape }}</h3>
+                {%- endif -%}
+            </header>
+        {%- endif -%}
+        <div class="row shop_by_collection-row">
+            <div class="shop-by-category-slider {{ section.id }}"> 
+                <div class="shop_by_category_slider">
                     {% for block in section.blocks %}
-                        {% assign cat_rep = forloop.index | modulo: 2 %}
-                        {% if cat_rep != 0 %}
-                            
-                            <div class="item slide_{{forloop.index}}">
-                                <a href="" class="slide-url"> 
-                                Slide {{ forloop.index }}
-                                </a>
-                            </div>
-                        
+                        {% assign rep_value = forloop.index | modulo:2 %}
+                        {% if forloop.index == 1 or rep_value != 0 %}
+                            <div class="single_column">
                         {% endif %}
-                    {% endfor %}
+                        <div class="single_collection cat_single_column">
+                            <div class="img_container">
+                                <img loading="lazy" src="{{block.settings.image | img_url: 'small'}}" alt="{{ block.settings.collection_Title }}" />
+                            </div>
+                            <div class="collection_title">
+                                <span>{{ block.settings.collection_Title }}</span>
+                            </div>
+                        </div>
+                        {% if forloop.last or rep_value == 0 %}
+                            </div>
+                        {% endif %}
+                    {%- endfor -%}
                 </div>
             </div>
         </div>
     </div>
 </div>
+  <!-- Shop by section ends here -->
 
 {% schema %}
 {
@@ -123,7 +136,23 @@
                     "type": "text",
                     "id": "collection_Title",
                     "label": "Collection Title"
-                }
+                },
+                {
+                    "type": "select",
+                    "id": "show_in_row",
+                    "label": "Show in row",
+                    "options": [
+                      {
+                        "value": "first_row",
+                        "label": "First Row"
+                      },
+                      {
+                        "value": "second_row",
+                        "label": "Second Row"
+                      }
+                    ],
+                    "default": "first_row"
+                  }
             ]
         }
     ],
