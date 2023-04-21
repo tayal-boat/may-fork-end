@@ -223,8 +223,9 @@ End automatically added Judge.me widget{% endcomment %}
         <img loading="lazy" sizes="114px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '114,228,342' %}>
       {%- else -%}
         <img loading="lazy" sizes="85px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '65,130,195' %}>
-      {%- endif -%}
-
+      {%- endif -%} 
+    </div>
+    <a href="{{ product.url }}" class="product-item-meta__title">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</a>
       <div class="quick-buy-product__info {% if template.suffix == 'quick-buy-popover' %}text--small{% endif %}">
         <product-meta form-id="product-form-{{ section.id }}-{{ product.id }}" unit-price-class="text--xsmall" class="product-item-meta" >
           {%- if section.settings.show_vendor -%}
@@ -237,8 +238,6 @@ End automatically added Judge.me widget{% endcomment %}
               <a href="{{ product.vendor | url_for_vendor }}" class="product-item-meta__vendor heading {% if template.suffix == 'quick-buy-drawer' %}heading--small{% else %}heading--xsmall{% endif %}">{{ product.vendor }}</a>
             {%- endunless -%}
           {%- endif -%}
-
-          <a href="{{ product.url }}" class="product-item-meta__title">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</a>
 
             {% capture fixed_discount %}
               {% render 'fixed-discount-by-tag', product: product %}
@@ -258,26 +257,25 @@ End automatically added Judge.me widget{% endcomment %}
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: '.00'| replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-                {% if product.compare_at_price > discounted_price %}
-                <p class="custom-saved-price">{{
-                  product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-                  round
-                  | append: '% Off' }} </p>
-                {% endif %}
                 <span class="price price--compare line-through">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: '.00'| replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money | replace: 'Rs.', '₹' -}}
+                    {{- product.selected_or_first_available_variant.compare_at_price | money | remove: '.00'| replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
+                {% if product.compare_at_price > discounted_price %}
+                  <p class="custom-saved-price">
+                    {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |round | append: '% Off' }}
+                  </p>
+                  {% endif %}
               {%- else -%}
                 <span class="price quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -305,24 +303,18 @@ End automatically added Judge.me widget{% endcomment %}
                 </div>
               {%- endif -%}
             </div>
-            {%- if product.metafields.benefits.usp1 -%}
-              <div class="product-feature" style="line-height: normal;margin-top:12px;">
-                <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-                <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-                <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-              </div>
-            {%- endif -%}
-            {%- if template.suffix == 'quick-buy-popover' -%}
-              <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
-            {%- endif -%}
+           <p class="inc-tax">Inclusive of all Taxes</p>
           </div>
           
         </product-meta>
-        
       </div>
-      
-    </div>
-
+      {%- if product.metafields.benefits.usp1 -%}
+        <div class="product-feature">
+          <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
+          <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
+          <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+        </div>
+      {%- endif -%}
   {%- endcapture -%}
 
   {%- if template.suffix == 'quick-buy-drawer' -%}
@@ -331,13 +323,13 @@ End automatically added Judge.me widget{% endcomment %}
 
       <span class="drawer__overlay"></span>
 
-      <header class="drawer__header">
+      {% comment %} <header class="drawer__header">
         <p class="drawer__title heading h6">{{ 'product.form.choose_options' | t }}</p>
-
+      </header> {% endcomment %}
         <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
           {%- render 'icon' with 'close' -%}
         </button>
-      </header>
+
 
       <div class="drawer__content">
         {{- quick_buy_product_info -}}
@@ -591,7 +583,7 @@ End automatically added Judge.me widget{% endcomment %}
               "label": "Variant image"
             }
           ],
-          "default": "variant_image"
+          "default": "color"
         },
         {
           "type": "page",

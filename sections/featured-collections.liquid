@@ -59,16 +59,11 @@
   .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
   [dir=ltr] .tabs-nav__position{left: 0;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
-
-
   .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
   .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
-  .featured-collections{min-height: 377px !important;}
   .featured-collections.updated_featured_items .product-item .features-list{display: none;}
   .custom_loading_icon{position: absolute;left: 50%; transform: translateX(-50%);top: 50%;z-index: 99;}
-
   .updated_featured_items .product-item__image-wrapper{margin-top: 0px !important;padding-top: 24px;padding-bottom: 20px;}
-
 
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
@@ -80,7 +75,6 @@
 
   @media screen and (min-width: 1000px) {
       .flash-desk{width:80%;}
-      .product-list__inner--scroller { margin-left:0; }
       #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }}; }
     }
   @media screen and (min-width: 1200px) {
@@ -130,13 +124,11 @@
         class="section__header{% if section.settings.content != blank %} section__header--tight{% endif %}"
       >
         {%- if section.settings.title != blank -%}
-          <div class="d-flex justify-content-between text-container">
+          <div class="text-container">
             <a href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
               <h3 class="heading h2">{{ section.settings.title }}</h3>
             </a>
-            <p  class="view-all">
-              <a style="color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
-            </p>
+
             {%- if section.settings.content != blank -%}
               {{- section.settings.content -}}
             {%- endif -%}
@@ -157,14 +149,12 @@
             </div>
           </a>
         {% endif %}
-      {% comment %}
-       info:  ui2.0
         {%- if section.blocks.size > 1 -%}
           <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
             <scrollable-content class="tabs-nav__scroller hide-scrollbar">
               <div class="tabs-nav__scroller-inner">
                 <div class="tabs-nav__item-list">
-                     {%- for block in section.blocks -%}
+                  {%- for block in section.blocks -%}
                     {%- capture on_boarding_title -%}
                       {{ 'general.onboarding.collection_title' | t }}
                       {{ forloop.index }}
@@ -190,7 +180,6 @@
             </scrollable-content>
           </tabs-nav>
         {%- endif -%}
-      {% endcomment %}
       </header>
 
       <div class="featured-collections">
@@ -231,15 +220,15 @@
                         | at_least: product.featured_media.aspect_ratio
                       -%}
                     {%- endif -%}
-{% comment %}   info: ui2.0 replace product-item2.0 with product-item to switch to old ui  {% endcomment %}
-                      {%- render 'product-item2.0',
-                        product: product,
-                        collection: collection,
-                        show_cta: section.settings.show_cta,
-                        block: block,
-                        sizes_attribute: sizes_attribute,
-                        reveal: settings.stagger_products_apparition
-                      -%}
+
+                    {%- render 'product-item',
+                      product: product,
+                      collection: collection,
+                      show_cta: section.settings.show_cta,
+                      block: block,
+                      sizes_attribute: sizes_attribute,
+                      reveal: settings.stagger_products_apparition
+                    -%}
                   {%- else -%}
                     {%- assign smallest_image_aspect_ratio = 1 -%}
 
@@ -252,6 +241,9 @@
                       -%}
                     {%- endfor -%}
                   {%- endfor -%}
+                  <p style="position: absolute;top: -2rem; right: 0;" class="view-all">
+                    <a style="color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
+                  </p>
                 {% endif %}
 
               </div>
@@ -300,10 +292,11 @@
   </div>
 </section>
 
-{% comment %}
-   <script>
+<script>
   function load_ajax_tab_content(collection_handle, collection_tab_id){
-    let html_response = ""; 
+
+    let html_response = "";
+       
     $.ajax({
       url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
       method: "get",
@@ -318,9 +311,12 @@
           console.log(error);
       }
     });
+
     return html_response;
   }
 
+
+  
   $(document).ready(function(){
     // getting products cards on clicking of featured collection tabs
     
@@ -383,6 +379,7 @@
         });
       }
 
+    
       function filterItems (needle, itemStack) {
         let query = needle.toLowerCase();
         return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
@@ -390,8 +387,7 @@
 
     })
   })
-</script> 
-{% endcomment %}
+</script>
 
 {% schema %}
 {

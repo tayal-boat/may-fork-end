@@ -1,0 +1,422 @@
+{%- if section.settings.background != settings.background and section.settings.background != 'rgba(0,0,0,0)' -%}
+    {%- assign blends_with_background = false -%}
+  {%- else -%}
+    {%- assign blends_with_background = true -%}
+  {%- endif -%}
+  
+  <style>
+    @media screen and (max-width: 768px) {
+       .flash-desk{margin-top: 1rem;align-items: center;}
+      }
+    @media screen and (min-width: 741px) {
+        #shopify-section-{{ section.id }} { --section-products-per-row: {{ section.settings.products_per_row | at_most: 3 }};}
+      }
+    @media screen and (min-width: 1000px) {
+        .flash-desk{width:80%;}
+        #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }}; }
+      }
+    @media screen and (min-width: 1200px) {
+        #shopify-section-{{ section.id }} {
+          --section-products-per-row: {{ section.settings.products_per_row }};
+          overflow-y: hidden;
+        }
+     }
+  </style>
+  
+  <section class="section section--flush">
+    <div class="section__color-wrapper">
+     {% capture featured_image %} 
+      <picture>
+        <source
+          media="(min-width: 769px)"
+          {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+        >
+        <img alt="featured_section_img" width="100%"
+          {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
+        >
+      </picture>
+     {% endcapture %}
+     {% capture featured_header %} 
+        <a class="{% if section.settings.enable_featured_img %}featured_header {% else %}d-flex justify-content-between align-items-center{% endif %}" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
+          <h3 class="ui2-heading">{{ section.settings.title }}</h3>
+          <b class="view-all">View All {%- render 'icon' with 'right-arrow-blue' -%}</b>
+        </a>
+     {% endcapture %}
+     {% if section.settings.enable_featured_img %}  <div class="mobile-only">{{ featured_image }}</div>     {% endif %}
+
+      <div class="container {% if section.settings.enable_featured_img %}featured_img {% endif %}" >
+        <header class="section__header {% if section.settings.enable_featured_img %}featured_img {% endif %}">
+          {%- if section.settings.title != blank -%} 
+           <div class="{% if section.settings.enable_featured_img %}mobile-only{% endif %}">  {{ featured_header }} </div>     
+          {% endif %}
+
+          {% if section.settings.enable_flash_sale %}
+            <a class="d-flex position-relative" href="{{section.settings.title-url}}">
+              <picture>
+                <source
+                  media="(min-width: 769px)"
+                  {% render 'image-attributes', image: section.settings.Flash_web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+                >
+                <img alt="flash_timer" width="100%"
+                  {% render 'image-attributes', image: section.settings.Flash_mobile_banner, sizes: '200,300,400,500,600' %}
+                >
+              </picture>
+        
+              <div class="flash_sale ui2">
+                <p class="my-0 ml-3 text-left">{{ section.settings.flash_sale_title }}</p>
+                {% render 'flashsale-timer-2.0', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
+              </div>
+            </a>
+          {% endif %}
+          {%- if section.blocks.size > 1 -%}
+            <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
+              <scrollable-content class="tabs-nav__scroller hide-scrollbar">
+                <div class="tabs-nav__scroller-inner">
+                  <div class="tabs-nav__item-list">
+                    {%- for block in section.blocks -%}
+                      {%- capture on_boarding_title -%}
+                        {{ 'general.onboarding.collection_title' | t }}
+                        {{ forloop.index }}
+                      {%- endcapture -%}
+  
+                      <button
+                        type="button"
+                        class="tabs-nav__item heading heading--small ml-0"
+                        aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                        aria-controls="block-{{ section.id }}-{{ block.id }}"
+                        data-collection-handle="{{ block.settings.collection.handle }}"
+                        {{ block.shopify_attributes }}
+                      >
+                        {{-
+                          block.settings.label
+                          | default: block.settings.collection.title
+                          | default: on_boarding_title
+                        -}}
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </scrollable-content>
+            </tabs-nav>
+          {%- endif -%}
+
+        </header>
+        <div class="featured-collections">
+          {% if section.settings.enable_featured_img %}
+            <div class="only-desktop">
+              {{ featured_image }}
+              {%- if section.settings.title != blank -%} {{ featured_header }} {%- endif -%}
+            </div>
+           {% endif %}
+          {%- for block in section.blocks -%}
+            {%- assign collection = block.settings.collection -%}
+            {%- assign smallest_image_aspect_ratio = 0 -%}
+
+            <product-list
+              {% if settings.stagger_products_apparition %}
+                stagger-apparition
+              {% endif %}
+              {% unless forloop.first %}
+                hidden
+              {% endunless %}
+              id="block-{{ section.id }}-{{ block.id }}"
+              class="product-list product-list--center" >
+              <div
+                {% unless section.settings.stack_products %}
+                  class="scroller"
+                {% endunless %}
+              >
+                <div
+                  class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
+                  {% comment %} info:ajax-tabs  if forloop.index == 1  {% endcomment %}
+                    {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
+                    {%- assign gap_width = 24.0
+                      | divided_by: section.settings.products_per_row
+                      | times: number_of_products_minus_one
+                    -%}
+                    {%- capture sizes_attribute -%}
+                      (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
+                      {{ gap_width | ceil }}px)
+                    {%- endcapture -%}
+
+
+                    {%- for product in collection.products limit: section.settings.products_count -%}
+                      {%- if product.featured_media -%}
+                        {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
+                          | at_least: product.featured_media.aspect_ratio
+                        -%}
+                      {%- endif -%}
+                        {%- render 'product-item2.0',
+                          product: product,
+                          collection: collection,
+                          show_cta: section.settings.show_cta,
+                          block: block,
+                          sizes_attribute: sizes_attribute,
+                          reveal: settings.stagger_products_apparition
+                        -%}
+                    {%- else -%}
+                      {%- assign smallest_image_aspect_ratio = 1 -%}
+  
+                      {%- for i in (1..section.settings.products_count) -%}
+                        {%- capture product_image -%}product-{% cycle '1', '2', '3', '4', '5' %}{% endcapture %}
+                        {%- render 'product-item-placeholder',
+                          product_image: product_image,
+                          show_cta: section.settings.show_cta,
+                          reveal: settings.stagger_products_apparition
+                        -%}
+                      {%- endfor -%}
+                    {%- endfor -%}
+                  {% comment %}info:ajax-tabs {% endif %} {% endcomment %}
+  
+                </div>
+              </div>
+  
+              {%- unless section.settings.stack_products -%}
+                {%- if collection.products_count == 0 -%}
+                  {%- assign products_shown = section.settings.products_count -%}
+                {%- else -%}
+                  {%- assign products_shown = collection.products_count
+                    | default: section.settings.products_count
+                    | at_most: section.settings.products_count
+                  -%}
+                {%- endif -%}
+  
+                {%- if products_shown > section.settings.products_per_row -%}
+                  <prev-next-buttons
+                    class="product-list__prev-next hidden-pocket"
+                    style="--smallest-image-aspect-ratio: {{ smallest_image_aspect_ratio }}"
+                  >
+                    <button class="product-list__arrow prev-next-button prev-next-button--prev" disabled>
+                      <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
+                      {%- include 'icon' with 'nav-arrow-left', block: true, direction_aware: true -%}
+                    </button>
+  
+                    <button class="product-list__arrow prev-next-button prev-next-button--next">
+                      <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+                      {%- include 'icon' with 'nav-arrow-right', block: true, direction_aware: true -%}
+                    </button>
+                  </prev-next-buttons>
+                {%- endif -%}
+              {%- endunless -%}
+            </product-list>
+  
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+{% comment %} info:ajax-tabs 
+  <script>
+    function load_ajax_tab_content(collection_handle, collection_tab_id){
+  
+      let html_response = "";
+         
+      $.ajax({
+        url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+        method: "get",
+        type: "GET",
+        async: false,
+        dataType: "html",
+        success: function (result) {
+          
+          html_response = $(result).find("product-list.product-list .product-list__inner").html();
+        },
+        error: function (error) {
+            console.log(error);
+        }
+      });
+  
+      return html_response;
+    }
+  
+  
+    
+    $(document).ready(function(){
+      // getting products cards on clicking of featured collection tabs
+      
+      $('body').on('click', '#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button', function(e){
+        e.preventDefault();
+        
+        let tab_id = $(this).attr('aria-controls');
+  
+        // Checking the tab has content loaded already or not
+  
+        if( $('#'+tab_id+' .product-list__inner').html().trim() == "" ){
+          $(this).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
+              
+          $(this).attr('aria-expanded', 'true');
+          
+          $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
+            
+          let collection_handle = $(this).data("collection-handle");
+          //let products_limit = {{ section.settings.products_count }};
+  
+          let self = this;
+  
+          $.ajax({
+            url: 'https://www.boat-lifestyle.com/collections/'+collection_handle+'?page=1',
+            method: "get",
+            type: "GET",
+            dataType: "html",
+            success: function (result) {
+              
+              let t = $(result).find("product-list.product-list .product-list__inner").html();
+              $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
+              $(self).parents('.shopify-section--featured-collections').find("product-list#"+tab_id+".product-list").removeAttr('hidden');
+              $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html(t);
+              $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
+              
+              var biggestNum = 0;
+              $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
+                let z_index_val = [];
+  
+                $(this).find('.product-horizontal span').each(function(){
+                  let all_classes = $(this).attr('class').split(' ');
+                  let get_classname = filterItems('z-', all_classes);
+                  if( get_classname.length > 0 ){
+                    z_index_val.push(get_classname[0].split('-')[1]);
+                  }
+                })
+  
+                let element_max_num = Math.max.apply(Math, z_index_val);
+                $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
+              });
+              
+            //  $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+  
+              $('.custom_loading_icon').remove();
+  
+            },
+            error: function (error) {
+                console.log(error);
+            },
+          });
+        }
+  
+      
+        function filterItems (needle, itemStack) {
+          let query = needle.toLowerCase();
+          return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
+        }
+  
+      })
+    })
+  </script>
+{% endcomment %}
+  {% schema %}
+  {
+    "name": "Featured collections2.0",
+    "class": "shopify-section--featured-collections two-pt-o",
+    "max_blocks": 5,
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+          },
+          {
+            "type": "text",
+            "id": "label",
+            "label": "Tab label",
+            "info": "Shown when more than 1 collection is featured. Collection title is used if none is set."
+          }
+        ]
+      }
+    ],
+    "settings": [
+      {
+        "type": "url",
+        "id": "title-url",
+        "label": "required-input-for-view-all"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Collection"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_flash_sale",
+        "label": "enable flash sale countdown"
+      },
+      {
+        "type": "image_picker",
+        "id": "Flash_web_banner",
+        "label": "Flash Desktop Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "Flash_mobile_banner",
+        "label": "Flash Mobile Image"
+      },
+      {
+        "type": "text",
+        "id": "flash_sale_title",
+        "label": "flash sale title"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_featured_img",
+        "label": "enable featured-image for section"
+      },
+      {
+        "type": "image_picker",
+        "id": "web_banner",
+        "label": "Featured Desktop Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_banner",
+        "label": "Featured Mobile Image"
+      },
+      {
+        "type": "range",
+        "id": "products_count",
+        "label": "Products to show",
+        "min": 4,
+        "max": 50,
+        "step": 1,
+        "default": 8
+      },
+        {
+        "type": "range",
+        "id": "products_per_row",
+        "label": "Products per row (desktop)",
+        "min": 2,
+        "max": 6,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "checkbox",
+        "id": "stack_products",
+        "label": "Stack products",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cta",
+        "label": "Show add to cart below info",
+        "info": "If enabled, we recommend using 4 products per row at maximum.",
+        "default": false
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured collections 2.0",
+        "blocks": [
+          {
+            "type": "collection"
+          }
+        ],
+        "settings": {}
+      }
+    ]
+  }
+  {% endschema %}
+  

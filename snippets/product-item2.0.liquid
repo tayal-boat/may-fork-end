@@ -83,7 +83,7 @@
   <div class="product__wrapper">
   <div class="labels-wrapper {% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
     {% if product.metafields.product_labels.label %}
-    <span class="metafeild-label label--highlight custom-label label bg-black">
+    <span class="metafeild-label label--highlight custom-label label ui-2">
        {{- product.metafields.product_labels.label -}}
     </span>
   {% endif %}
@@ -157,50 +157,52 @@
 
       <a
         href="{{ product.url }}"
-        class="product-item__aspect-ratio aspect-ratio {% if settings.product_image_size != 'natural' %}aspect-ratio--{{ settings.product_image_size }}{% endif %}"
+        class="product-item__aspect-ratio aspect-ratio"
         style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}">
-        {% if product.variants.size > 1 %}
-          <img
-            class="product-item__primary-image"
-            loading="lazy"
-            data-media-id="{{ product.featured_media.id | escape }}"
-            sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
+      {% if product.metafields.custom.product_cards_placeholder %}
+        <img
+          class="product-item__primary-image"
+          loading="lazy"
+          {% render 'image-attributes', image: product.metafields.custom.product_cards_placeholder, sizes: '200,300' -%}>
         {% else %}
-          <img
-            class="product-item__primary-image"
-            loading="lazy"
-            data-media-id="{{ product.featured_media.id | escape }}"
-            sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
-        {% endif %}
+            {% if product.variants.size > 1 %}
+              <img
+                class="product-item__primary-image old"
+                loading="lazy"
+                data-media-id="{{ product.featured_media.id | escape }}"
+                {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
+            {% else %}
+              <img
+                class="product-item__primary-image old"
+                loading="lazy"
+                data-media-id="{{ product.featured_media.id | escape }}"
+                {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
+            {% endif %}
+
         {%- if settings.product_color_display == 'swatch' -%}
           {%- assign featured_media = product.variants | map: 'featured_media' -%}
 
           {%- for media in featured_media -%}
             {%- unless media == product.featured_media -%}
               <img
-                class="product-item__primary-image"
+                class="product-item__primary-image old"
                 hidden
                 data-media-id="{{ media.id | escape }}"
                 loading="lazy"
-                sizes="{{ sizes_attribute }}"
                 {% render 'image-attributes', image: media, sizes: '200,300' %}>
             {%- endunless -%}
           {%- endfor -%}
         {%- endif -%}
 
         {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-          {%- assign next_media_pos = product.media[product_varient.image.position] 
-            | plus: 1 -%}
-          {%- assign next_media = product.media[product_varient.image.position] 
-            | default: product.media[next_media_pos] -%}
+          {%- assign next_media_pos = product.media[product_varient.image.position] | plus: 1 -%}
+          {%- assign next_media = product.media[product_varient.image.position] | default: product.media[next_media_pos] -%}
           <img
             class="product-item__secondary-image"
             loading="lazy"
-            sizes="{{ sizes_attribute }}"
             {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
         {%- endif -%}
+      {% endif %}
       </a>
       {% comment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}
         {% if product.available and product.tags contains 'flash-sale' -%}
@@ -369,14 +371,40 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
               </span>
+              <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                {%- if settings.currency_code_enabled -%}
+                  {{-
+                      cheapest_variant.compare_at_price
+                    | money_with_currency
+                    | remove: '.00'
+                    | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
             {%- else -%}
-              <span class="price product-card-price sur4" data-price="{{ product.price }}">
+              <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
                   {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
                   {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
+              <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                {%- if settings.currency_code_enabled -%}
+                  {{-
+                      cheapest_variant.compare_at_price
+                    | money_with_currency
+                    | remove: '.00'
+                    | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- endif -%}
