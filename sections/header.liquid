@@ -125,7 +125,7 @@ END of Namogoo Snippet
      }
     @media(max-width:768px){
       .header__wrapper{/* align-items:flex-end;*/ align-items: unset}
-      nav.header__inline-navigation {flex: 0;position: relative;top: -2.5px;}
+      nav.header__inline-navigation {flex: 0;position: relative;}
       .header__logo{top:-1px;}
       /* .search-icon{padding:0 10px!important;height:27.5px;line-height:27.5px;} */
       .search-icon img{padding-bottom:0!important;}
@@ -458,11 +458,17 @@ role="banner"
        </button>
 
        {%- if section.settings.header_layout != 'logo_center_search_open' -%}
-         {% comment -%}
-           <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area hidden-pocket hidden-lap {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'search.general.title' | t | escape }}" aria-controls="search-drawer" aria-expanded="false">
+         
+           {% comment %} <a href="{{ routes.search_url }}" is="toggle-link" class="header__icon-wrapper tap-area hidden-pocket hidden-lap {% unless section.settings.show_icons %}hidden-desk{% endunless %}" aria-label="{{ 'search.general.title' | t | escape }}" aria-controls="search-drawer" aria-expanded="false">
              {%- render 'icon' with 'header-search' -%}
-           </a>
-         {% endcomment -%}
+           </a> {% endcomment %}
+           <div class="search-icon hidden-tablet-and-up">
+         <img
+           src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/search_558f3ad8-0ef9-4a9b-8576-a396b44aacd8.png?v=1680091847"
+           width="12"
+           height="12" style='margin-left:4px;' alt="search-icon"
+         ></div>
+        
          <div
            class="header__icon-wrapper tap-area hidden-pocket hidden-lap{% unless section.settings.show_icons %} hidden-desk{% endunless %}"
            aria-label="{{ 'search.general.title' | t | escape }}"
@@ -470,14 +476,17 @@ role="banner"
            <div class="algolia-header-custom-search">
              <div class="algolia-header-search-input">
                <div class="algolia-custom-search-input">
+                <label class="predictive-search__input__lable predictive-search__input_desk_lable">
                  <input
                    class="search__input predictive-search__input predictive-search__input_desk"
                    type="search"
                    name="q"
                    autocomplete="off"
                    aria-label="{{ 'search.general.title' | t }}"
-                   placeholder=""
+                   placeholder="Search"
                  >
+                 <span>Search</span>
+                 </label>
                  <div class="search-clear-icon">
                    <span>
                      <svg
@@ -532,7 +541,7 @@ role="banner"
            {%- if shop.customer_accounts_enabled -%}
              <div class="account-links-inline contains-dropdown">
                {%- if customer -%}
-                 <div class="your-acct"><a href="/account/addresses">Account</a></div>
+                 <div class="your-acct"><a href="/account">Account</a></div>
                  <div class="logout"><a href="{{ routes.account_logout_url }}">Logout</a></div>
                {%- else -%}
                  <div class="login"><a href="{{ routes.account_login_url }}">Login</a></div>
@@ -574,13 +583,13 @@ role="banner"
            >
          </a>
        </div>
-       <div class="search-icon hidden-tablet-and-up">
+       {% comment %} <div class="search-icon hidden-tablet-and-up">
          <img style="padding-bottom:2px;opacity:0.7;"
            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBkPSJNNTA4LjkgNDc4LjdMMzYwLjEgMzMwYzI4LjItMzQuOCA0NS4yLTc5LjEgNDUuMi0xMjcuM0M0MDUuMyA5MC45IDMxNC40IDAgMjAyLjcgMFMwIDkwLjkgMCAyMDIuN3M5MC45IDIwMi43IDIwMi43IDIwMi43YzQ4LjIgMCA5Mi41LTE3IDEyNy4zLTQ1LjJsMTQ4LjcgMTQ4LjdjNC4yIDQuMiAxMC45IDQuMiAxNS4xIDBsMTUuMS0xNS4xYzQuMS00LjIgNC4xLTEwLjkgMC0xNS4xem0tMzA2LjItMTE2Yy04OC4yIDAtMTYwLTcxLjgtMTYwLTE2MHM3MS44LTE2MCAxNjAtMTYwIDE2MCA3MS44IDE2MCAxNjAtNzEuOCAxNjAtMTYwIDE2MHoiIGZpbGw9IiMzNDNmNDkiLz48L3N2Zz4="
            width="12"
            height="12" style='margin-left:4px;'
          ><input class="search__input predictive-search__input_1mobile" readonly type="search" name="q" autocomplete="off" aria-label="Search" placeholder="Search  Earphones">
-       </div>
+       </div> {% endcomment %}
        {% unless template.name == 'page' and template.suffix == 'quick-checkout' %}
          <a
            href="{{ routes.cart_url }}"
@@ -663,14 +672,17 @@ role="banner"
  <div class="algolia-header-search-input" aria-label="{{ 'search.general.title' | t | escape }}">
    <div class="algolia-custom-search-input">
     <div class="w-100 bg-white new-container">
+      <label class="predictive-search__input__lable predictive-search__input_mobile_lable">
      <input
        class="search__input predictive-search__input predictive-search__input_mobile"
        type="search"
        name="q"
        autocomplete="off"
        aria-label="{{ 'search.general.title' | t }}"
-       placeholder=""
+       placeholder="Search"
      >
+     <span>Search</span>
+     </label>
      <div class="search-clear-icon">
        <p style="color: #ed1c24;font-size: 12px;font-weight:700;z-index:99;background:white">Cancel</p>
      </div>
@@ -742,45 +754,20 @@ SEARCH DRAWER
  const documentStyle = getComputedStyle(document.documentElement);
  let mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
  document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
- $('button.header__icon-wrapper.rounded-0.tap-area.hidden-desk').click(function(){
-     if ($(window).scrollTop() == 0){
-       mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
-     }else if(mobilemenuHeight - $(window).scrollTop() > 0.1){
-       {% comment %} $("html, body").animate({ scrollTop: $('#shopify-section-announcement-bar').height() }, 0); {% endcomment %}
-       mobilemenuHeight =  $('.shopify-section--header .container').height();
-       console.log(">0" ,  mobilemenuHeight);
-     }else{
-       mobilemenuHeight = $('.shopify-section--header .container').height();
-       console.log("else" ,  mobilemenuHeight);
-     }
-       document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
-   });
-</script>
-
-<script>
-
-  $(document).ready(function(){
-    $('.mobile_hamburger_btn').on('click', function(e){
-      e.preventDefault();
-      if( $(this).attr('aria-expanded') == 'true' ){
-        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
-      }else{
-        // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
-        $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110');
-        $(this).find('.mobile_hamburger_icon').css('height', 'auto');
-      }
-      return false;
-    })
-
-
- $('store-header').on('click', function(){
-   
-   $(this).find(".mobile_hamburger_btn").click();
-   $(this).find(".mobile_hamburger_btn").attr('aria-expanded', 'false');
-   $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
- })
-
-});
+   const targNode = document.getElementById('shopify-section-announcement-bar');
+   const config_ = { attributes: true, childList: true, subtree: true };
+   const callback_ = (mutationList, observer) => {
+   for (const mutation of mutationList) {
+    if ($("#shopify-section-announcement-bar").hasClass("announcement-non-sticky") ){
+      mobilemenuHeight =  $('.shopify-section--header .container').height() + $('#shopify-section-announcement-bar').height();
+    }else{
+      mobilemenuHeight =  $('.shopify-section--header .container').height();
+    }
+    document.documentElement.style.setProperty('--mobilemenuHeight', `${mobilemenuHeight}px`);
+    }
+   };
+   const observer_ = new MutationObserver(callback_);
+   observer_.observe(targNode, config_);
 </script>
 
 
