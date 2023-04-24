@@ -22,7 +22,7 @@
   .desktop_menu_link{display: block;}
   .mobile_footer_item_title{display: none;}
   .footer__item-list {gap: 3vw;}
-  .footer .container{background:#eff4f7;max-width:98%;}
+  .footer .container{background:#eff4f7;max-width:98%;padding:0 20px;}
   p.desktop_menu_link.footer__item-title.heading.heading--small, footer .signup-form .input-block #subscriber-email{color: #000;text-transform: none;}
   button#btn-back-to-top {display: none;padding: 0.5rem 0.75rem;width: 40px;font-weight: 400!important;border-radius: 0!important;position: fixed;color:white;background-color:black;{% if template contains 'product' or template contains 'collection' %}bottom: 18%!important;{% else %}bottom: 9%;{% endif %}right: 0.1%;align-items: center;z-index:9;}
   .social-media__item--facebook:before {background: #4267B2; }
@@ -31,10 +31,15 @@
   .social-media__item--youtube:before{background: #FF0000; }
   .social-media__item--linkedin:before{background: #0A66C2; }
   br.only_mobile{display: none;}
+  .footer__aside .copyright_footer .copy{font-size: 12px;color: #a7afb7;}
 
   @media screen and (max-width: 767px) {
+    .signup-form span{font-size:22px;margin-bottom:7px;}
+    #subscribe-btn{margin:0!important;border-bottom:0;}
+    #shopify-section-footer .footer{padding-bottom:3rem;}
+    .footer__item-content-newsletter{margin-bottom:2rem;}
     ul.social-media.list--unstyled {justify-content: center;}
-    .footer-logo {margin-left: 2px;}
+    .footer-logo{text-align: center;margin: 2rem auto 0;}
     .payment-box.payment_gateway_icons, .app-icons, p.copy.text-black {text-align: center;}
     footer .footer_section{padding-bottom: 30px;}
     footer .brand-text p.brand_content{color: #fff;text-align: left;}
@@ -50,7 +55,7 @@
     {% comment %} footer ul.linklist.list--unstyled li:nth-child(odd) {border-right: 1px solid #bcbcbc;} {% endcomment %}
     .footer .container{max-width:95%;}
     footer ul.linklist.list--unstyled li:nth-child(even) {padding-left: 20px;}
-    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #686868;border-bottom:1px solid #696969;padding-bottom:10px;width:100%;text-transform:none;}
+    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #686868;border-bottom:1px solid #696969;padding-bottom:10px;width:100%;text-transform:none;font-size: 14px !important;font-weight: 500 !important;}
     .mobile_footer_item_title button:active, .mobile_footer_item_title button:focus{outline: none;}
     {% comment %} .mobile_footer_item_title button span{display: none;} {% endcomment %}
     .mobile_footer_item_title .footer__item-content{display:none;padding:0!important;margin-bottom:2rem;}
@@ -62,7 +67,7 @@
     footer .footer__item-list .footer__item-content{ padding: 0px 16px;}
     footer .footer__item--links {border-bottom: 0;}
     footer ul.linklist.list--unstyled li{width: 47%;float: left;padding: 10px 0px 5px;}
-    footer ul.linklist.list--unstyled li a{/*color: #A8A8A8;*/font-weight: 600;}
+    footer ul.linklist.list--unstyled li a{font-weight: normal;font-size:12px!important;}
     footer .footer__aside .social--media{width: 100%;margin-top: 22px;}
     .footer .container {padding: 0;}
     .footer .container .footer__inner{padding: 0;}
@@ -90,11 +95,12 @@
     {% comment %} .footer-logo{margin-top:-8px;} {% endcomment %}
     ul.linklist.list--unstyled li a {font-size: 12px;word-break: initial;}
     .footer__aside .copyright_footer{padding-top: 20px;}
-    .footer__aside .copyright_footer .copy{font-size: 12px;color: #a7afb7;}
+    
     .footer-bottom-row {width: 100vw;padding: 0 40px;}
     .footer__aside .footer-bottom-row.social_app_links{width: 100vw;padding: 0 40px;}
     #footer_item_1 ul.linklist.list--unstyled li:nth-child(even), #footer_item_2 ul.linklist.list--unstyled li:nth-child(even) {padding-left: 12px;}
     #footer_item_1 ul.linklist.list--unstyled li, #footer_item_2 ul.linklist.list--unstyled li {width: 50%;float: left;padding-top: 10px;}
+    #footer_item_3 ul.linklist.list--unstyled li{padding-top: 10px;}
   }
   .footer-bottom-row .social-media{justify-content:center;}
   .footer-bottom-row .social-container{display: flex;align-items: center;justify-content: center;}
@@ -140,7 +146,7 @@ li.extra--link:nth-child(2)::after {
 }
 #shopify-section-footer{margin-bottom:0!important;}
   @media screen and (pointer: fine){
-   .social-media__item:hover .social-media__link {color: white;}
+   .social-media__item:hover .social-media__link {color: black;}
   }
   @media screen and (min-width: 1024px){
    .footer__aside {row-gap: 0px!important;}
@@ -283,32 +289,6 @@ li.extra--link:nth-child(2)::after {
                   {{- block.settings.content -}}
                 {%- endif -%}
                 {% render 'footer--newsletter' %}
-
-                {%- comment -%}
-                  {%- form 'customer', id: 'footer-newsletter', class: 'footer__newsletter-form form' -%}
-                    {%- if form.posted_successfully? -%}
-                      <div class="form__banner banner banner--success">
-                        <span class="banner__ribbon">{% render 'icon' with 'form-success' %}</span>
-                        <p class="banner__content">{{ 'footer.newsletter.success' | t }}</p>
-                      </div>
-                    {%- else -%}
-                      {%- if form.errors -%}
-                        <div class="form__banner banner banner--error">
-                          <span class="banner__ribbon">{% render 'icon' with 'form-error' %}</span>
-                          <p class="banner__content">{{ form.errors.translated_fields['email'] }} {{ form.errors.messages['email'] }}</p>
-                        </div>
-                      {%- endif -%}
-
-                      <input type="hidden" name="contact[tags]" value="newsletter">
-
-                      <div class="input">
-                        <input type="email" id="footer[contact][email]" name="contact[email]" class="input__field input__field--text">
-                        <label for="footer[contact][email]" class="input__label">{{ 'footer.newsletter.email' | t }}</label>
-                        <button type="submit" class="input__submit-icon tap-area" title="{{ 'footer.newsletter.submit' | t }}">{% render 'icon' with 'nav-arrow-right', direction_aware: true %}</button>
-                      </div>
-                    {%- endif -%}
-                  {%- endform -%}
-                {%- endcomment -%}
               </div>
           {%- endcase -%}
         {%- endcapture -%}
@@ -525,10 +505,10 @@ li.extra--link:nth-child(2)::after {
         <div class="col-12 extra--links">
           <ul class="extra--links-list list--unstyled" role="list">
             <li class="extra--link">
-              <a href="">Privacy Policy</a>
+              <a href="/pages/privacy-policy">Privacy Policy</a>
             </li>
             <li class="extra--link">
-              <a href="">Terms & Conditions</a>
+              <a href="/pages/terms-of-use">Terms & Conditions</a>
             </li>
             <li class="extra--link">
               <a href="">Disclaimers</a>
