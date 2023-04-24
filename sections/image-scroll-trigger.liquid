@@ -1,4 +1,8 @@
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.11/dist/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/ScrollTrigger.min.js"></script>
+
 <div class="image_scroll_trigger_container">
+  <div class="image_scroll_trigger_top"></div>
   <div class="image_scroll_trigger_inner">
     <div class="image_scroll_trigger_text">
       <h3>
@@ -10,7 +14,7 @@
     <div class="image_scroll_trigger_image_container">
       {% for block in section.blocks %}
         {% if block.settings.image %}
-          <div class="mySlides image_scroll_fade">
+          <div class="image_scroll_image loop-img">
             <img
               src="{{ block.settings.image | img_url: 'master' }}"
               alt="{{ block.settings.image.alt }}"
@@ -21,7 +25,85 @@
       {% endfor %}
     </div>
   </div>
+  <div class="image_scroll_trigger_bottom"></div>
 </div>
+
+<script>
+  history.scrollRestoration = "manual"
+  $(window).on('load', function() {
+    $('.loop-img').each(function(i) {
+      if (i == 0) {
+        $(this).css('opacity', 1)
+      }
+      $(this).addClass(`loop-${
+        i + 1
+      }`)
+      $(this).attr('loop-num', i + 1)
+    })
+    gsap.registerPlugin(ScrollTrigger);
+    var scrollInterval = 0;
+    var i = 1;
+
+//     setTimeout(function(){
+    gsap.to('.image_scroll_trigger_container', {
+      scrollTrigger: {
+        trigger: ".image_scroll_trigger_container",
+        pin: '.image_scroll_trigger_container .image_scroll_trigger_inner',
+        toggleActions: "restart reverse",
+        start: 'top top',
+        end: `+=100%`,
+        scrub: true,
+        onEnter: self => {
+
+// console.log('Pinned')
+        }
+      }
+    });
+
+//     },2500)
+
+    var loopArray = document.querySelectorAll('.loop-img')
+
+    loopArray.forEach(element => {
+      var getLoopNum = parseInt(element.getAttribute('loop-num'))
+      gsap.to(`.loop-${i}`, {
+        scrollTrigger: {
+          trigger: ".image_scroll_trigger_container",
+          toggleActions: "restart reverse",
+          start: `${scrollInterval}%`,
+          end: `${
+            scrollInterval + 10
+          }%`,
+          scrub: .3,
+          onEnter: self => {
+            element.style.opacity = 1;
+          },
+          onEnterBack: self => {
+            element.style.opacity = 1;
+          },
+          onLeave: self => {
+            if (getLoopNum === loopArray.length) {
+              return
+            } else {
+              element.style.opacity = 0;
+            }
+          },
+          onLeaveBack: self => {
+            if (getLoopNum === 1) {
+              return
+            } else {
+              element.style.opacity = 0;
+            }
+          }
+        },
+
+//             opacity: 1,
+      });
+      scrollInterval = scrollInterval + 5;
+      i++;
+    })
+  })
+</script>
 
 {% schema %}
   {
