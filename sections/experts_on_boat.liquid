@@ -1,30 +1,97 @@
+<style>
+  .expert_reviews{background: #1a2024;padding: 10px;}
+  .expert_reviews .MultiCarousel .MultiCarousel-inner{margin-left: 0px;}
+  .expert_reviews .MultiCarousel .MultiCarousel-inner .item{padding-left: 0px !important;}
+  .expert_reviews .item p.expert_review{color: #fff;text-align: center;font-size: 14px;padding: 2rem 1rem;background: #000;border-bottom-left-radius: 16px;border-bottom-right-radius: 16px;font-weight: normal;}
+  .expert_reviews .item .expert_image_wrapper .rating_section p{color: #fff;text-align: center;font-size: 14px;}
+  .expert_text_container{text-align: center;display: block;margin: 22px auto 0px auto;color: #fff;}
+  .expert_reviews .MultiCarousel{padding-bottom: 2rem;}
+  .expert_reviews .bot_experts_slider_dots{bottom: 0px;}
+  .expert_reviews .bot_experts_slider_dots li.active:after{background: #fff;}
+
+  @media (max-width: 767px){
+    .shop_by_category_section_2_0 .single_collection .collection_title{margin-top: 8px;}
+    .shop_by_category_section_2_0 .img_container:after{bottom: 12px !important;}
+    .expert_reviews .expert_image_wrapper {position: relative;background: transparent !important;padding: 0px !important;}
+    .expert_reviews .expert_image_wrapper img{border-radius: 0px;}
+    .expert_image_wrapper .rating_section {position: absolute;bottom: 10px; left: 50%; transform: translateX(-50%);}
+    .expert_reviews .item .expert_image_wrapper .rating_section p.review_heading {font-size: 14px;margin: 0px;}
+    .expert_reviews .item .expert_image_wrapper .rating_section .expert_rating{text-align: center;}
+    .expert_reviews .item .expert_image_wrapper .video_play_icon{position: absolute;top: 50%;left: 50%;transform: translate(-50%);}
+    .expert_text_container h2{font-size: 44px;font-weight: normal;margin-bottom: 6px;line-height: 1.05;}
+    .expert_text_container p{font-size: 16px;}
+  }
+</style>
+
 <div class="container MultiCarousel_container slider-2.0">
+  <div class="row">
+    <div class="text_container expert_text_container">
+      <h2>The experts <br><strong>are on boAt</strong></h2>
+      <p>The experts listen, compare, and weigh in</p>
+  </div>
+</div>
 	<div class="row">
 		<div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}>
       <div class="MultiCarousel-inner {{ section.id }} draggable" draggable="true">
         {% for block in section.blocks %}
           <div class="item slide_{{forloop.index}}">
-            <a href="{% if block.settings.slide_url != blank %}{{block.settings.slide_url}}{% else %}javascript:void(0){% endif %}" class="slide-url"> 
-              {% if block.settings.mobile_image != blank %}
+            {% if block.settings.mobile_image != blank %}
+              <div class="expert_image_wrapper">
                 <picture>
                   <source
                     media="(min-width: 769px)"
                     {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
                   >
-                  <img width="100%" style="border-radius:6px;border:1px solid #e3e3e3"
+                  <img width="91%" 
                     class="image-overlay__image_"
                     {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
                     alt="{{block.settings.desktop_image.alt}}" {% if forloop.first %}loading="eager" fetchpriority="high"{% endif %}
                   >
                 </picture>
-              {% endif %}
-            </a>
+                <div class="rating_section">
+                  <p class="review_heading">Best of the year</p>
+                  <div class="expert_rating">
+                    {% for i in (1..5) %}
+                      {% if i <= 3 %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16.121" height="15.542" viewBox="0 0 16.121 15.542">
+                          <g id="Star_Filled_icon" data-name="Star Filled icon" transform="translate(-107 -626.5)">
+                            <g id="Group_205714" data-name="Group 205714" transform="translate(103 626.5)">
+                              <path id="Path_305344" data-name="Path 305344" d="M1151.345,361.188a1.213,1.213,0,0,1,2.176,0l1.839,3.73,4.1.611a1.214,1.214,0,0,1,.674,2.063l-2.964,2.928.69,4.117a1.213,1.213,0,0,1-1.762,1.274l-3.662-1.927-3.662,1.927a1.213,1.213,0,0,1-1.762-1.274l.69-4.117-2.965-2.928a1.213,1.213,0,0,1,.674-2.063l4.1-.611Z" transform="translate(-1140.374 -360.511)" fill="#f4c730" fill-rule="evenodd"/>
+                            </g>
+                          </g>
+                        </svg>
+                      {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17.148" height="16.561" viewBox="0 0 17.148 16.561">
+                          <g id="Star_Unfilled_icon" data-name="Star Unfilled icon" transform="translate(-106.486 -626)">
+                            <g id="Group_205714" data-name="Group 205714" transform="translate(103 626.5)">
+                              <path id="Path_305344" data-name="Path 305344" d="M1151.345,361.188a1.213,1.213,0,0,1,2.176,0l1.839,3.73,4.1.611a1.214,1.214,0,0,1,.674,2.063l-2.964,2.928.69,4.117a1.213,1.213,0,0,1-1.762,1.274l-3.662-1.927-3.662,1.927a1.213,1.213,0,0,1-1.762-1.274l.69-4.117-2.965-2.928a1.213,1.213,0,0,1,.674-2.063l4.1-.611Z" transform="translate(-1140.374 -360.511)" fill="none" stroke="#fff" stroke-width="1" fill-rule="evenodd"/>
+                            </g>
+                          </g>
+                        </svg>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <p class="review_short_desc">5mins • Airdopes 413 ANC Unboxing & Review</p>
+                </div>
+                <div class="video_play_icon">
+                  <span class="play_video_icon" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="44.59" height="44.588" viewBox="0 0 44.59 44.588">
+                      <g id="Play_icon" data-name="Play icon" transform="translate(8176.295 -4629.229)">
+                        <path id="Subtraction_11" data-name="Subtraction 11" d="M22.295,44.588A22.3,22.3,0,0,1,13.617,1.752,22.3,22.3,0,0,1,30.973,42.836,22.155,22.155,0,0,1,22.295,44.588ZM19.839,16.157a2.035,2.035,0,0,0-1.393.564,1.972,1.972,0,0,0-.609,1.439v8.268a1.995,1.995,0,0,0,3,1.73l7.128-4.134a2,2,0,0,0,0-3.46L20.84,16.43A1.972,1.972,0,0,0,19.839,16.157Z" transform="translate(-8176.295 4629.229)" fill="#fff"/>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <p class="expert_review">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et</p>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
       <button class="btn btn-primary leftLst {{ section.id }}"><</button>
       <button class="btn btn-primary rightLst {{ section.id }}">></button>
-      <ul class="MultiCarousel_dots_container">
+      <ul class="MultiCarousel_dots_container bot_experts_slider_dots">
         {% for block in section.blocks %}
           <li class="multiCarousel_dots" data-index="{{ forloop.index0 }}">
           {% comment %} info: Commenting current slide no / total slides in 2.0 {% endcomment %}
@@ -169,7 +236,7 @@
       </div>
     {% endif %}
   {% endif %}
-  {% if block.settings.video_url != blank %}
+  
   <div class="modal fade videoModals_ banner_video_modal" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -195,7 +262,16 @@
       </div>
     </div>
   </div>
-  {% endif %}
+  
+
+  <script>
+
+    document.querySelector('.play_video_icon').addEventListener ("click", function(){
+      document.querySelector('.banner_video_modal').style.display = "block";
+      document.querySelector('.banner_video_modal iframe').src = "https://www.youtube.com/watch?v=BIDQy8FBCaY";
+    });
+    
+  </script>
 
   <script type="deferjs">
     {% if section.settings.show_popup %}
@@ -267,8 +343,8 @@
   </script>
 {% schema %}
   {
-    "name": "Custom hero Slideshow",
-    "class": "bootstrap-carousel",
+    "name": "Experts on boAt",
+    "class": "bootstrap-carousel expert_reviews",
     "max_blocks": 5,
     "settings": [
       {
@@ -461,7 +537,7 @@
     ],
     "presets": [
       {
-        "name": "Custom hero Slideshow",
+        "name": "Experts on boAt",
         "category": "image",
         "settings": {}
       }
