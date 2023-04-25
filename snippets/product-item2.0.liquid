@@ -99,15 +99,7 @@
           </span>
         {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              fill="currentColor"
-              class="bi bi-lightning-fill"
-              viewBox="0 0 16 16">
-              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
-            </svg>
+            😎
             {{ settings.flash_products_label }}
           </span>
         {%- elsif tag contains 'meta-label-Bestseller' -%}
@@ -159,12 +151,12 @@
         href="{{ product.url }}"
         class="product-item__aspect-ratio aspect-ratio"
         style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}">
-      {% if product.metafields.custom.product_cards_placeholder %}
+      {% if product.metafields.custom.product_cards_placeholder1 %}
         <img
           class="product-item__primary-image"
           loading="lazy"
-          {% render 'image-attributes', image: product.metafields.custom.product_cards_placeholder, sizes: '200,300' -%}>
-        {% else %}
+          src="{{ product.metafields.custom.product_cards_placeholder1 }}">
+      {% else %}
             {% if product.variants.size > 1 %}
               <img
                 class="product-item__primary-image old"
@@ -272,9 +264,9 @@
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
-                  {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant_discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant_discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               {%- endcapture -%}
 
@@ -283,9 +275,9 @@
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
                 {% comment %} 
@@ -306,10 +298,10 @@
                     {{-
                         cheapest_variant.compare_at_price
                       | money_with_currency
-                      | remove: '.00'
+                      | remove: '.00' | remove: ' ' 
                       | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                    {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
 
@@ -324,9 +316,9 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
               {% comment %} 
@@ -344,9 +336,9 @@
               <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- product.compare_at_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- product.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- product.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
 
@@ -361,9 +353,9 @@
 
               {%- capture price_max -%}
                 {%- if settings.currency_code_enabled -%}
-                  {{- product.price_max | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- product.price_max | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- product.price_max | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- product.price_max | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               {%- endcapture -%}
 
@@ -378,10 +370,10 @@
                   {{-
                       cheapest_variant.compare_at_price
                     | money_with_currency
-                    | remove: '.00'
+                    | remove: '.00' | remove: ' ' 
                     | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- else -%}
@@ -389,9 +381,9 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
               <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
@@ -401,10 +393,10 @@
                   {{-
                       cheapest_variant.compare_at_price
                     | money_with_currency
-                    | remove: '.00'
+                    | remove: '.00' | remove: ' ' 
                     | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- endif -%}
