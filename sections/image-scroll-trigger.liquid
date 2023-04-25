@@ -15,11 +15,12 @@
       {% for block in section.blocks %}
         {% if block.settings.image %}
           <div class="image_scroll_image loop-img">
-            <img
-              src="{{ block.settings.image | img_url: 'master' }}"
-              alt="{{ block.settings.image.alt }}"
-              width="{{ block.settings.image.width }}"
-              height="auto">
+            <picture>
+              {% if block.settings.desktop_image %}
+                <source media="(min-width: 769px)" {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}>
+              {% endif %}
+              <img {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600' %}alt="{{block.settings.image.alt}}"width="{{ block.settings.image.width }}">
+            </picture>
           </div>
         {% endif %}
       {% endfor %}
@@ -95,9 +96,7 @@
               element.style.opacity = 0;
             }
           }
-        },
-
-//             opacity: 1,
+        }
       });
       scrollInterval = scrollInterval + 5;
       i++;
@@ -137,6 +136,10 @@
             "type": "image_picker",
             "id": "image",
             "label": "Image"
+          }, {
+            "type": "image_picker",
+            "id": "desktop_image",
+            "label": "Desktop image"
           }
         ]
       }
