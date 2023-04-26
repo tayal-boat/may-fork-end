@@ -10,8 +10,6 @@
   .expert_reviews .bot_experts_slider_dots li.active:after{background: #fff;}
 
   @media (max-width: 767px){
-    .shop_by_category_section_2_0 .single_collection .collection_title{margin-top: 8px;}
-    .shop_by_category_section_2_0 .img_container:after{bottom: 12px !important;}
     .expert_reviews .expert_image_wrapper {position: relative;background: transparent !important;padding: 0px !important;}
     .expert_reviews .expert_image_wrapper img{border-radius: 0px;}
     .expert_image_wrapper .rating_section {position: absolute;bottom: 10px; left: 50%; transform: translateX(-50%);}
@@ -21,9 +19,14 @@
     .expert_text_container h2{font-size: 44px;font-weight: normal;margin-bottom: 6px;line-height: 1.05;}
     .expert_text_container p{font-size: 16px;}
   }
+
+  @media (min-width: 767px){
+    .expert_slider .expert_slider_row .item{display: flex !important;}
+    .expert_reviews .expert_image_wrapper picture img{width: 653px;}
+  }
 </style>
 
-<div class="container MultiCarousel_container slider-2.0">
+<div class="expert_slider container MultiCarousel_container slider-2.0">
   <div class="row">
     <div class="text_container expert_text_container">
       <h2>The experts <br><strong>are on boAt</strong></h2>
@@ -32,7 +35,7 @@
 </div>
 	<div class="row">
 		<div class="MultiCarousel {{ section.id }}" id="MultiCarousel_{{ section.id }}" {% render 'carousel-js' %}>
-      <div class="MultiCarousel-inner {{ section.id }} draggable" draggable="true">
+      <div class="expert_slider_row MultiCarousel-inner {{ section.id }} draggable" draggable="true">
         {% for block in section.blocks %}
           <div class="item slide_{{forloop.index}}">
             {% if block.settings.mobile_image != blank %}
@@ -42,7 +45,7 @@
                     media="(min-width: 769px)"
                     {% render 'image-attributes', image: block.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
                   >
-                  <img width="91%" 
+                  <img width="100%" 
                     class="image-overlay__image_"
                     {% render 'image-attributes', image: block.settings.mobile_image, sizes: '200,300,400,500,600' %}
                     alt="{{block.settings.desktop_image.alt}}" {% if forloop.first %}loading="eager" fetchpriority="high"{% endif %}
@@ -84,7 +87,9 @@
                 </div>
               </div>
 
-              <p class="expert_review">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et</p>
+              <div class="expert_header_container">
+                <p class="expert_review">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et</p>
+              </div>
             {% endif %}
           </div>
         {% endfor %}
