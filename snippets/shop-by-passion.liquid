@@ -1,17 +1,23 @@
-<div class="shop_passion_list">
-  {% for block in section.blocks %}
-    <div class="shop_passion_item">
-      <div class="shop_passion_item-image-container">
-        {% if block.settings.image != blank %}
-          <div class="shop_passion_item-image">
-            <img class="custom_lazy" data-src="{{ block.settings.image | img_url: 'master' }}">
+{% assign collection_list = object.metafields.custom.shop_by_passion.value %}
+{% if collection_list %}
+  <div class="shop_passion_list_container">
+    <h2>Shop by passion</h2>
+    <div class="shop_passion_list">
+      {% for collection in collection_list %}
+        <div class="shop_passion_item">
+          <div class="shop_passion_item-image-container">
+            {% if collection.featured_image %}
+              <div class="shop_passion_item-image">
+                <img class="custom_lazy" data-src="{{ collection.featured_image | img_url: 'master' }}">
+              </div>
+            {% endif %}
           </div>
-        {% endif %}
-      </div>
-      <div class="shop_passion_item_label">
-        <span>{{ block.settings.suggestion }}
-        </span>
-      </div>
+          <div class="shop_passion_item_label">
+            <span>{{ collection.title }}
+            </span>
+          </div>
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-</div>
+  </div>
+{% endif %}
