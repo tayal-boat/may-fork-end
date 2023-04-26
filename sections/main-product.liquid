@@ -46,6 +46,9 @@
       --secondary-button-background: {{ secondary_button_background.red }}, {{ secondary_button_background.green }}, {{ secondary_button_background.blue }};
       --secondary-button-text-color: {{ secondary_button_text_color.red }}, {{ secondary_button_text_color.green }}, {{ secondary_button_text_color.blue }};
     }
+
+    .row.myIconRow .promis_icon_text{color: #212529 !important;}
+
     {% if product.tags contains 'Coming-Soon' %}
       #gokwik-buy-now, #AddToCart, .stock-label, .restocking, .current-in-cart {display: none!important;}
     {% endif %}
@@ -67,29 +70,30 @@
           <li class="breadcrumb__item">
             <a class="breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
           </li>
-          {% comment %} {% assign bc_collection = product.metafields.custom.breadcrumbs.value %}
+          {% assign bc_collection = product.metafields.custom.breadcrumbs.value %}
           {% if bc_collection !=  blank %}
             {% for coll in bc_collection %}
               <li class="breadcrumb__item">
                 <a class="breadcrumb__link" href="{{ coll.url }}">{{ coll.title }}</a>
               </li>
             {% endfor %} 
-          {% endif %} {% endcomment %}
-          {%- if collection -%}
+          {% else %}
+            {%- if collection -%}
+              <li class="breadcrumb__item">
+                <a class="breadcrumb__link" href="{{ collection.url }}">{{- collection.title -}}</a>
+              </li>
+            {%- endif -%}
             <li class="breadcrumb__item">
-              <a class="breadcrumb__link" href="{{ collection.url }}">{{- collection.title -}}</a>
+              <span class="breadcrumb__link" aria-current="page">All Collection</span>
             </li>
-          {%- endif -%}
-          <li class="breadcrumb__item">
-            <span class="breadcrumb__link" aria-current="page">All Collection</span>
-          </li>
+          {% endif %}
           <li class="breadcrumb__item">
             <span class="breadcrumb__link" aria-current="page">{{- product.title  | split: '|' | first | split: 'boAt' | last -}}</span>
           </li>
           
         </ol>
       </nav>
-
+  {% unless product.tags contains "no-product-banner" %}
     {% if product.metafields.custom.productbanner_url != blank %}
       <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ product.metafields.custom.productbanner_url | split: "," | last }}" class="banner_link">
     <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
@@ -101,7 +105,7 @@
         style="border-radius:10px;">
       </a>
     {% endif %}
-
+  {% endunless %}
 <!-- PRODUCT TOP PART -->
   <div
     class="product py-lg-2 {% if product.metafields.custom.productbanner_url != blank or section.settings.banners_url != blank  %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}"
@@ -154,7 +158,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-1b_6c0c5f7d-a48c-40f5-946d-ea50fb1a9b82_small.png?v=1661243559">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">1 Year <br>Warranty</p>
+              <p class="mb-0 promis_icon_text">1 Year <br>Warranty</p>
             </div>
           </div>
         </div>
@@ -165,7 +169,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-3b_b82496cc-51ed-47ad-b27a-a195b646bea1_small.png?v=1661244593">
             </div>
             <div class="col-md-8 myText">
-               <p class="mb-0">7 Days <br>Replacement</p>
+               <p class="mb-0 promis_icon_text">7 Days <br>Replacement</p>
             </div>
           </div>
         </div>
@@ -176,7 +180,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-2b_dc921406-33cc-4867-846b-293610d69a41_small.png?v=1661244611">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">Free <br>Shipping</p>
+              <p class="mb-0 promis_icon_text">Free <br>Shipping</p>
             </div>
           </div>
         </div>
@@ -187,7 +191,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-4b_1d19c7fb-8da7-407e-8612-946e106cc508_small.png?v=1661244611">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">Secure <br>Checkout</p>
+              <p class="mb-0 promis_icon_text">Secure <br>Checkout</p>
             </div>
           </div>
         </div>
@@ -198,7 +202,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-black-v1_small.png?v=1661245767">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0">GST <br>Billing</p>
+              <p class="mb-0 promis_icon_text">GST <br>Billing</p>
             </div>
           </div>
         </div>
@@ -216,11 +220,12 @@ End automatically added Judge.me widget{% endcomment %}
       {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
 
       {%- if template.suffix == 'quick-buy-drawer' -%}
-        <img loading="lazy" sizes="114px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '114,228,342' %}>
+        <img loading="lazy" sizes="150px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '150,300,600' %}>
       {%- else -%}
         <img loading="lazy" sizes="85px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '65,130,195' %}>
-      {%- endif -%}
-
+      {%- endif -%} 
+    </div>
+    <span  class="product-item-meta__title">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</span>
       <div class="quick-buy-product__info {% if template.suffix == 'quick-buy-popover' %}text--small{% endif %}">
         <product-meta form-id="product-form-{{ section.id }}-{{ product.id }}" unit-price-class="text--xsmall" class="product-item-meta" >
           {%- if section.settings.show_vendor -%}
@@ -233,8 +238,6 @@ End automatically added Judge.me widget{% endcomment %}
               <a href="{{ product.vendor | url_for_vendor }}" class="product-item-meta__vendor heading {% if template.suffix == 'quick-buy-drawer' %}heading--small{% else %}heading--xsmall{% endif %}">{{ product.vendor }}</a>
             {%- endunless -%}
           {%- endif -%}
-
-          <a href="{{ product.url }}" class="product-item-meta__title">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</a>
 
             {% capture fixed_discount %}
               {% render 'fixed-discount-by-tag', product: product %}
@@ -254,26 +257,25 @@ End automatically added Judge.me widget{% endcomment %}
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-                {% if product.compare_at_price > discounted_price %}
-                <p class="custom-saved-price">{{
-                  product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-                  round
-                  | append: '% Off' }} </p>
-                {% endif %}
                 <span class="price price--compare line-through">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: '.00' | remove: ' '| replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money | replace: 'Rs.', '₹' -}}
+                    {{- product.selected_or_first_available_variant.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
+                {% if product.compare_at_price > discounted_price %}
+                  <p class="custom-saved-price">
+                    {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |round | append: '% Off' }}
+                  </p>
+                  {% endif %}
               {%- else -%}
                 <span class="price quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -301,44 +303,41 @@ End automatically added Judge.me widget{% endcomment %}
                 </div>
               {%- endif -%}
             </div>
-            {%- if product.metafields.benefits.usp1 -%}
-              <div class="product-feature" style="line-height: normal;margin-top:12px;">
-                <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-                <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-                <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-              </div>
-            {%- endif -%}
-            {%- if template.suffix == 'quick-buy-popover' -%}
-              <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
-            {%- endif -%}
+           <p class="inc-tax">Inclusive of all Taxes</p>
           </div>
           
         </product-meta>
-        
       </div>
-      
-    </div>
-
+      {%- if product.metafields.benefits.usp1 -%}
+        <div class="product-feature">
+          <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
+          <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
+          <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+        </div>
+      {%- endif -%}
   {%- endcapture -%}
 
   {%- if template.suffix == 'quick-buy-drawer' -%}
+
     <quick-buy-drawer class="drawer drawer--large drawer--quick-buy">
-      <cart-notification hidden class="cart-notification cart-notification--drawer"></cart-notification>
-
       <span class="drawer__overlay"></span>
-
+    {% comment %}  
+      <cart-notification hidden class="cart-notification cart-notification--drawer"></cart-notification>
       <header class="drawer__header">
         <p class="drawer__title heading h6">{{ 'product.form.choose_options' | t }}</p>
-
+      </header> 
+    {% endcomment %}
+    <div class="new-drawer-buy">
         <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
           {%- render 'icon' with 'close' -%}
         </button>
-      </header>
+
 
       <div class="drawer__content">
         {{- quick_buy_product_info -}}
         {%- render 'product-form', product: product -%}
       </div>
+    </div>
     </quick-buy-drawer>
   {%- elsif template.suffix == 'quick-buy-popover' -%}
     <quick-buy-popover class="popover popover--quick-buy">
@@ -587,7 +586,7 @@ End automatically added Judge.me widget{% endcomment %}
               "label": "Variant image"
             }
           ],
-          "default": "variant_image"
+          "default": "color"
         },
         {
           "type": "page",
@@ -832,6 +831,12 @@ End automatically added Judge.me widget{% endcomment %}
     }
   ],
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_rush_plus",
+      "label": "Enable Rush Plus",
+      "default": true
+    },
     {
       "type": "text",
       "id": "banners_url",

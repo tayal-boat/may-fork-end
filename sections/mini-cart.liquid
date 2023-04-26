@@ -142,7 +142,7 @@
                     {%- endif -%}
 
                     <a href="{{ line_item.url }}" data-product_id="{{line_item.product.id}}" data-product_type="{{line_item.product.type}}" class="product-item-meta__title text--small">
-                      {{ line_item.product.title | split: "|" | first | split: "," | first }}</a>
+                      {{ line_item.product.title | split: "|" | first | split: "," | first | remove: 'boAt' }}</a>
 
                     {%- capture line_item_properties -%}
                       {%- unless line_item.product.has_only_default_variant -%}
@@ -540,7 +540,7 @@
 
 
     {%- if section.settings.show_checkout_button -%}
-          {% if cart.total_price <= 4900000 %}
+          {% if cart.total_price <= 4999000 %}
               {%- assign magic_ok = true -%}
               {%- assign only_gk = false -%}
               {%- assign is_validation_ok = true -%}
@@ -627,7 +627,7 @@
           <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
               {% endif %}
           {%- else -%}
-          <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.49000/-!</strong> Modify your cart to proceed.</p>
+          <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.49990/-!</strong> Modify your cart to proceed.</p>
           {% endif %}
         {%- else -%}
           <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
@@ -659,23 +659,27 @@ $(window).on("load", function(){
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
 let custumisedvariant_ids = [];
 let giftId = "{{ gift-product_variant }}";
-let onloadfreeqnty, onloadcustomisedqnt = 0;
+let onloadfreeqnty = 0;
+let onloadcustomisedqnt = 0;
 jQuery.getJSON('/cart.js', function(cart) {
   let cartItem = cart.items;
   let onloadfreeItems = cartItem.filter(item => item.properties && item.properties.Free);
-  let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
   $(onloadfreeItems).each(function(ind, el){
     onloadfreeqnty += el.quantity;
   })
-  $(onloadcustomised).each(function(ind, el){
-    onloadcustomisedqnt += el.quantity;
-    if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
-  })
-  console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
+  {% comment %} info: for product customisation
+    let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
+    $(onloadcustomised).each(function(ind, el){
+      onloadcustomisedqnt += el.quantity;
+      if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
+    }) 
+  {% endcomment %}
   if (onloadcustomisedqnt > 0){customized_added() }
+  console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
 })
 
-   let updatedcustomisedqnt = 0;
+{% comment %}  info: for product customisation
+  let updatedcustomisedqnt = 0;
   document.addEventListener('cart:updated', function(event) {
     console.log("old",updatedcustomisedqnt);
     let newupdatedcustomisedqnt  = 0;
@@ -705,36 +709,29 @@ jQuery.getJSON('/cart.js', function(cart) {
     console.log("new",updatedcustomisedqnt, newupdatedcustomisedqnt );
   });
 
-document.addEventListener('variant:changed', function(event) {
-  if (custumisedvariant_ids.length > 0){
-    console.log(custumisedvariant_ids);
-    let variant = event.detail.variant; // Gives you access to the whole variant details
-    if (custumisedvariant_ids.includes(variant.id)){ customized_added()
-    }else{
-      customized_removed()
+
+  document.addEventListener('variant:changed', function(event) {
+    if (custumisedvariant_ids.length > 0){
+      console.log(custumisedvariant_ids);
+      let variant = event.detail.variant; // Gives you access to the whole variant details
+      if (custumisedvariant_ids.includes(variant.id)){ customized_added()
+      }else{
+        customized_removed()
+      }
     }
-  }
-});
-function customized_added(){
-  $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
-  $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
-}
-function customized_removed(){
-  $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
-  $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
-}
-
-  {% comment %} $('#mini-cart').on('click', '.add-customization', function(event){
-  event.preventDefault();debugger;
-  $(this).parents('.line-item__info').find('.line-item_quantity a[aria-label="Decrease quantity"]')[0].click();
-
-  setTimeout(function(){
- 
   });
-  let redirection_link = "https://www.boat-lifestyle.com" + $(this).attr('href');
-  window.location.href=redirection_link;
-  }) {% endcomment %}
+  function customized_added(){
+    $(".cutomized-btn .loader-button__text").html('Only one unit per order allowed');
+    $(".cutomized-btn, .button.custom-prebook").addClass('signle-unit');
+  }
+  function customized_removed(){
+    $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
+    $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
+  }
+{% endcomment %}
 
+const checkbox = document.querySelector(".check_container input");
+const message = document.querySelector(".message-container .message");
 const targNode = document.getElementById('mini-cart');
 const config_ = { attributes: false, childList: true, subtree: false };
 const callback_ = (mutationList, observer) => {
@@ -746,13 +743,6 @@ jQuery.getJSON('/cart.js', function(cart) {
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
    })
-   checkbox.addEventListener('change', () => {
-    if (checkbox.checked) {
-      message.textContent = 'Billing address will be PPOB address as per GST portal'
-    } else {
-      message.textContent = '{{ section.settings.cart_announcement }}'
-    }
-  })
    console.log("onloadfreeqnty", onloadfreeqnty, "updatedqnty",updatedqnty)
    if(updatedqnty > onloadfreeqnty) {
    console.log("add free product");  $('.custom-gift-button')[0].click();  onloadfreeqnty += 1;
@@ -762,7 +752,7 @@ jQuery.getJSON('/cart.js', function(cart) {
     $('#mini-cart-form .line-item').each(function() {
      let dataItemId = $(this).data('item-id');
      if (dataItemId == giftId){
-       $(`.line-item[data-item-id="${dataItemId}"] a.line-item__remove-button`)[0].click();
+       $(`.line-item[data-item-id="${dataItemId}"] a[aria-label="Decrease quantity"]`)[0].click();
      }
     });
     onloadfreeqnty -= 1;
@@ -787,6 +777,16 @@ jQuery.getJSON('/cart.js', function(cart) {
 };
 const observer_ = new MutationObserver(callback_);
 observer_.observe(targNode, config_);
+
+if(checkbox) {
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      message.textContent = 'Billing address will be PPOB address as per GST portal'
+    } else {
+      message.textContent = '{{ section.settings.cart_announcement }}'
+    }
+  })
+}
 
 {% comment %}
 const customer_id = "{{customer.id}}"

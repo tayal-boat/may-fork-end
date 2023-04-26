@@ -1,4 +1,3 @@
-console.log('hii 11');
 {% comment %}
 /**
  * DEVELOPER DOCUMENTATION
@@ -138,7 +137,7 @@ console.log('hii 11');
  *
  */
 {% endcomment %}
-console.log('hii 1');
+
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 
 
@@ -164,7 +163,7 @@ $(document).on("click", ".custom-search-cta", function(e) {
       }
   })
 });
-console.log('hii 2');
+
 document.addEventListener("readystatechange", (event) => {
   if (event.target.readyState === "complete") {
   function lazyloaded_sections() {
@@ -183,7 +182,7 @@ document.addEventListener("readystatechange", (event) => {
   sessionStorage.setItem("lazyloaded_sections", "false"), document.addEventListener("touchmove", lazyloaded_sections, !0), document.addEventListener("scroll", lazyloaded_sections, !0)
   }
 });
-console.log('hii 3');
+
 function isIOSMobile() {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent)
 };
@@ -247,7 +246,8 @@ if(varient_swatches_input[i].checked){
       $('.product-item__quick-form.quick-buy-notify-me').show();
       $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
-    $('.d-lg-none.restocking, .desktop.restocking').show();
+      $('.d-lg-none.restocking, .desktop.restocking').show();
+      $('.pincode_checker_container').hide();
     if($('#BIS_trigger.custom-notify-btn').length > 0){
       $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
     } 
@@ -262,6 +262,7 @@ if(varient_swatches_input[i].checked){
     $('.product-item__quick-form.quick-buy-notify-me').hide();
     $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
+    $('.pincode_checker_container').show();
     var variant_personalization = sessionStorage.getItem('variant_personalization');
     variant_personalization = JSON.parse(variant_personalization);
     for (var key in variant_personalization) {
@@ -1687,5 +1688,39 @@ for(let i = 0; i < slider_Selector.length; i++){
   //  console.dir(document.querySelector(itemsDiv));
   var itemsMainDiv = ('.MultiCarousel.' + Slider_section_id);
   var selector = 'MultiCarousel_' + Slider_section_id;
-    Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
+  Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
 }
+
+$(document).ready(function(){
+  // $('.mobile_hamburger_btn').on('click', function(e){
+  //   e.preventDefault();
+  //   if( $(this).attr('aria-expanded') == 'false' ){
+  //     $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+  //   }else{
+  //     // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
+  //     $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110');
+  //     $(this).find('.mobile_hamburger_icon').css('height', 'auto');
+  //   }
+  //   return false;
+  // })
+
+  $('.mobile_hamburger_btn, #data-hamburger').on('click', function(e){
+    e.preventDefault();
+    if( $('.mobile_hamburger_btn').attr('aria-expanded') == 'false' ){
+      $('.mobile_hamburger_btn').find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+    }else{
+      // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
+     $('.mobile_hamburger_btn').find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110');
+      $('.mobile_hamburger_btn').find('.mobile_hamburger_icon').css('height', 'auto');
+    }
+    return false;
+  })
+
+$('store-header').on('click', function(){
+ 
+ $(this).find(".mobile_hamburger_btn").click();
+ $(this).find(".mobile_hamburger_btn").attr('aria-expanded', 'false');
+ $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+})
+
+});
