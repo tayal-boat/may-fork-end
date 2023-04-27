@@ -1727,21 +1727,22 @@ $('store-header').on('click', function(){
 
 $('.collection_menu_item').on('click', function(e){
   e.preventDefault();
-   $(this).children('.collection_item_drawer').addClass('open');
+   var URL = $(this).children('a').attr('href');
    $.ajax({
-    url: "/collections/true-wireless-earbuds?view=nav-subMenu",
+    url: URL + "?view=nav-subMenu",
     type: "GET",
     dataType: "html",
     success: function(e) {
         $(".collection_item_drawer_inner").html(e);
     }
-  })
+  });
+  $('.collection_item-nav__link .menu_drawer_nav_link').html($(this).text());
+  $('.collection_item_drawer').addClass('open');
 });
 $('.collection_item-nav__link').on('click', function(e){
   e.preventDefault();
-  if($(this).parent().hasClass('open')){
-    $(this).parent().removeClass('open');
-  }
+   $('.collection_item_drawer').removeClass('open');
+   $(".collection_item_drawer_inner").html('');
 });
 });
 
