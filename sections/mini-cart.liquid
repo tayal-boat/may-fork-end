@@ -370,7 +370,8 @@
           <style>.gift-box {display: block !important}</style>
          {% else %}
           <style>.gift-box {display: none !important}</style>
-         {% endif %}  
+         {% endif %} 
+
         <div class="payment_offers">
           <div class="offer_text">
             <span>₹15 off on All UPI Payments</span>
@@ -381,8 +382,11 @@
             <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
           </div>
         </div>
+
           <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
             {%- assign acceptable_recommendations_count = 0 -%}
+
+            <p class="frequently_bought_heading">Frequently Bought Together</p>
 
             {%- for product in recommendations.products -%}
        
@@ -612,32 +616,34 @@
                   {% endif %}
               {% endfor %}
               <div class="mini-cart_footer d-flex justify-content-between">
-            <div style="padding-right: 4%;border-right: 1px solid #dbdbdb;">
-                <div class="d-flex align-items-baseline" style="gap:6%">
+            <div>
+              <div class=" align-items-baseline" style="gap:6%">
                 <div class="d-flex flex-column" >
                   <span class="cart-total"> <b>Total</b></span>
                 </div>
-                <div>
-                <span class="gst-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" version="1" width="12" height="12" viewBox="0 0 20 20">
-                   <path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z" />
-                  </svg>
-                 <span class="gst-icon-detail total">
-                   <p> Shipping: <b>FREE</b></p>
-                   <p> Total: <b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></p>
-                 </span>
-               </span>
+
+                <div class="d-none">
+                  <span class="gst-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1" width="12" height="12" viewBox="0 0 20 20">
+                      <path fill="black" d="M10 0C4.483 0 0 4.483 0 10s4.483 10 10 10 10-4.483 10-10S15.517 0 10 0zm0 18c-4.417 0-8-3.583-8-8s3.583-8 8-8 8 3.583 8 8-3.583 8-8 8zM9.833 5.75c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm0 1.067l.983 1v6.1H12.3v2H9.8l-.983-.967V8.817H7.483v-2h2.35z" />
+                    </svg>
+                    <span class="gst-icon-detail total">
+                      <p> Shipping: <b>FREE</b></p>
+                      <p> Total: <b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></p>
+                    </span>
+                  </span>
                 </div>
+
                 <div class="test">
-            <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
+                  <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
                   <span class="cart-total-text total-price"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></span>
-            </div>
-            
+                </div>
               </div>
-            <div>
-            <small>Inclusive of all taxes</small>
+
+              <div class="d-none">
+                <small>Inclusive of all taxes</small>
+              </div>
             </div>
-                   </div>
               {% if is_validation_ok == true and product_limit_ok == true and only_gk == true %}
                   <div class=" checkout-buttons-div">
                     {% render 'only-gokwik' %}
