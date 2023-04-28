@@ -12,8 +12,8 @@
     overflow: auto;
    }
    #desktop-menu-1 .nav-dropdown__item {
-    width: 16rem;    margin-block: 12px;
-    }
+    width: 18vw;min-height: 4rem;
+   }
    #desktop-menu-1 a.nav-dropdown__link.link--faded.test {
     align-items: center;
     font-size: 12px;
@@ -204,10 +204,10 @@
               class="nav-dropdown {% if link.levels == 1 %}nav-dropdown--restrict{% endif %} list--unstyled"
               role="list"
             >
-              {%- for sub_link in link.links -%}
-                {% if forloop.index == 1 and section.settings.desk_menu_banner %}
-                  <div style="width: 60%;display: flex;flex-wrap: wrap;">
-                {% endif %}
+        {% if forloop.index == 1 and section.settings.desk_menu_banner %}
+          <div style="width: 60%;display: flex;flex-wrap: wrap;">
+        {% endif %}
+              {%- for sub_link in link.links limit: 18 -%}
                 <li
                   class="nav-dropdown__item lazyhtml {% if sub_link.links.size > 0 %}has-dropdown{% endif %}"
                   data-lazyhtml
@@ -257,7 +257,8 @@
                   {%- endif -%}
                 </li>
               {%- endfor -%}
-              {% if forloop.index == 1 and section.settings.desk_menu_banner  %}
+              {% if forloop.index == 1 and section.settings.desk_menu_banner %}
+                <a href="/collections" class="d-block m-auto"><b style="font-size: 12px;font-weight: 700;color: #2F5B96;letter-spacing: -0.48px;">View All {%- render 'icon' with 'right-arrow-blue' -%}</b></a>
               </div>
                 <div style="width: 40%;">
                   <a href="{% if section.settings.desk_menu_bannerurl %}{{ section.settings.desk_menu_bannerurl }}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.desk_menu_bannerurl == blank %} data-attr-pointers_none {% endif %}>
