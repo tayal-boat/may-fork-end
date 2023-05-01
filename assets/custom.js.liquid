@@ -1730,24 +1730,31 @@ $('store-header').on('click', function(){
 $('.collection_menu_item').on('click', function(e){
   e.preventDefault();
    var URL = $(this).children('a').attr('href');
+   var collection_menu_navLink = $(this).text();
    $.ajax({
     url: URL + "?view=nav-subMenu",
     type: "GET",
     dataType: "html",
     success: function(e) {
+      if($(e)[0].children.length > 0){
         $(".collection_item_drawer_inner").html(e);
+        $('.collection_item-nav__link .menu_drawer_nav_link').html(collection_menu_navLink);
+        $('.collection_item-nav_viewAll a').attr('href', URL);
+        setTimeout(function(){
+        $('.collection_item_drawer').addClass('open');
+       },300); 
+      }else{
+       location.href = URL;
+      }
     }
   });
-  $('.collection_item-nav__link .menu_drawer_nav_link').html($(this).text());
-  $('.collection_item-nav_viewAll a').attr('href', URL);
-  setTimeout(function(){
-  $('.collection_item_drawer').addClass('open');
- },300);
 });
 $('.collection_item-nav__link').on('click', function(e){
   e.preventDefault();
    $('.collection_item_drawer').removeClass('open');
+   setTimeout(function(){
    $(".collection_item_drawer_inner").html('');
+  },1000); 
 });
 
 $('.sub_link_expand_container').click(function(){
