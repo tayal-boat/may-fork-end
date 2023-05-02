@@ -98,14 +98,69 @@
     width: 40px;
     border-radius: 12px !important;
   }
+  .press-list .custom_press_slider.MultiCarousel-inner {margin-left:0!important;padding-bottom:70px;}
+  .press-list .item{font-size:20px;color: #4e5358;line-height:26px;}
+  .press-list .leftLst,.press-list .rightLst{display:block!important;width: 32px;height: 32px;background: #d0d9de;border-radius: 50% !important;z-index: 9;border: 0;color: transparent;top:unset;bottom:21px;visibility:visible;}
+  .press-list .leftLst{left: 43%;transform: translateX(-40%);}
+  .press-list .rightLst{right: 33%;transform: translateX(-40%);}
+  .press-list .leftLst:before, .press-list .rightLst:before {
+    visibility: visible;
+    font-size: 32px!important;
+    color: #1e1e1e;
+    font-weight: normal;
+    line-height: 32px;
+    width: 32px;
+    height: 32px;
+    z-index: 999;
+    display: block;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+}
+.press-list .leftLst:focus, .press-list .rightLst:focus,
+.press-list .leftLst:active, .press-list .rightLst:active {background: #d0d9de!important;border: 0!important;color: transparent!important;box-shadow:none!important;}
+  
+  .press_section .section__color-wrapper > .container .MultiCarousel_container{background: #f7f9fa;padding-left: 24px;padding-right: 24px;}
+  .MultiCarousel .MultiCarousel-inner .item>div{background:transparent;}
+
+@media screen and (min-width:1099px){
+.press_section .section__color-wrapper > .container{padding:0!important;}
+.press_section h3{margin-bottom:1rem;}
+.press-list .item{display: flex!important;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;}
+.press-content{width: 60%;
+  height: 100%;margin-top: -4rem;}
+  .press-content p{max-width:450px;margin:auto;font-size: 30px;line-height: 36px;}
+  .MultiCarousel .MultiCarousel-inner .item>div.press-logos{width: 40%;
+  height: 280px;
+  background: #d0d9de;
+  display: flex;
+  align-items: center;
+  justify-content: center;}
+  .MultiCarousel .MultiCarousel-inner .item>div.press-content{background:transparent;padding-inline:1rem;}
+  .MultiCarousel.press-list{margin-left:-24px;padding:0;}
+  .press-list .custom_press_slider.MultiCarousel-inner{margin-top:0;padding-bottom:0;}
+  .press-list .rightLst {
+    right: 28%;
+  }
+  .press-list .leftLst {
+    left: 67%;
+  }
+  .press-list .leftLst:before, .press-list .rightLst:before{width:32px;height:32px;line-height:32px;font-size:32px!important;}
+  .press-list .leftLst, .press-list .rightLst{width:32px;height:32px;}
+}
 </style>
 
 <section class="press_section {% unless blends_with_background %}section--flush{% endunless %}">
   <div class="section__color-wrapper">
     <div class="container px-lg-0">
-      <h3 class=" heading h2 text-white">
-        In the Press</h3>
-      <press-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="press-list only-desktop">
+      <h3 class="ui2-heading">In the <span><b>Press</b></span></h3>
+      {% comment %} <press-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="press-list only-desktop">
         <div class="press-list__wrapper">
 
           {%- for block in section.blocks -%}
@@ -142,24 +197,31 @@
             {%- endfor -%}
           </page-dots>
         </div>
-      </press-list>
+      </press-list> {% endcomment %}
       <div class="container MultiCarousel_container">
         <div class="row">
-          <div class="press-list mobile-only MultiCarousel {{ section.id }}" id="MultiCarousel_press" {% render 'carousel-js' %}>
+          <div class="press-list MultiCarousel {{ section.id }}" id="MultiCarousel_press" {% render 'carousel-js' %}>
             <div class="custom_press_slider MultiCarousel-inner {{ section.id }} draggable" draggable="true">
               {%- for block in section.blocks -%}
                 <div class="item">
-                  <p>{{ block.settings.content | escape }}</p>
-                  {%- if block.settings.logo != blank -%}
-                    {%- capture image_sizes -%}
-                      {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
-                    <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
-                    <img
-                      class="press-list__logo-image"
-                      loading="lazy"
-                      style="max-width: 160px"
-                      sizes="160px"
-                      {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+                  <div class="press-content">
+                    <div class="quote-icon">
+                      {%- render 'icon' with 'quote' -%}
+                    </div>
+                    <p>{{ block.settings.content | escape }}</p>
+                    {%- if block.settings.logo != blank -%}
+                      {%- capture image_sizes -%}
+                        {{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 }}, {{ block.settings.logo_width | times: 3 }}{%- endcapture -%}
+                      <span class="visually-hidden">{{ 'general.accessibility.go_to_slide' | t: num: forloop.index }}</span>
+                  </div>
+                    <div class="press-logos">
+                      <img
+                        class="press-list__logo-image"
+                        loading="lazy"
+                        style="max-width: 160px"
+                        sizes="160px"
+                        {% render 'image-attributes', image: block.settings.logo, sizes: image_sizes %}>
+                    </div>
                   {%- else -%}
                     <span class="heading h6">Logo {{ forloop.index }}</span>
                   {%- endif -%}
