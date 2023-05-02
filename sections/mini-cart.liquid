@@ -10,7 +10,7 @@
     </header>
   <p class="drawer__title heading h6" style="padding: 12px 12px;color: #2B2B2B;font-weight: 600;font-size: 14px;">
     <img width="20" height="20" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Cart_7e68f099-c0bf-4966-a9ef-14d1a3af07ad.png?v=1673260730">&nbsp;
-    <span style="padding:6px 0 0 6px;">Your Cart • {% if cart.item_count > 0 %} {{cart.item_count}} {% else %}No item{% endif %}</span>
+    <span style="padding:6px 0 0 6px;">Your Cart • {% if cart.item_count > 0 %} {{cart.item_count}} Items {% else %}No item{% endif %}</span>
 
    {% comment %} <span class="ms-3">{%- if cart.item_count == 0 -%}
     {%- else -%}
@@ -356,8 +356,10 @@
         </div> 
       {% endcomment %}
 
-      <button type="button" class="drawer__close-button tap-area visually-hidden" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
-        click
+      <button type="button" class="drawer__close-button tap-area minicart_custom_close_btn" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
+        <svg focusable="false" width="14" height="14" class="icon icon--close" viewBox="0 0 10 10">
+          <path d="M13 13L1 1M13 1L1 13" stroke="currentColor" stroke-width="2" fill="none"></path>
+        </svg>
       </button>
       {% render 'freebie-cart_gift' %}
         {%- if section.settings.show_recommendations -%}
@@ -619,7 +621,7 @@
             <div>
               <div class=" align-items-baseline" style="gap:6%">
                 <div class="d-flex flex-column" >
-                  <span class="cart-total"> <b>Total</b></span>
+                  <span class="cart-total"> <b>Total Amount</b></span>
                 </div>
 
                 <div class="d-none">
@@ -634,9 +636,10 @@
                   </span>
                 </div>
 
-                <div class="test">
+                <div class="cart_total_wrapper">
                   <input class="cart-total" value="{{cart.total_price | divided_by: 100}}" type="hidden">
                   <span class="cart-total-text total-price"><b>{{- cart.total_price | money_with_currency | replace: 'Rs.', '₹' | replace: '.00', '' -}}</b></span>
+                  <span class="cart_tax_info">Inclusive of all taxes</span>
                 </div>
               </div>
 
