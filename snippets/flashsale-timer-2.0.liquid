@@ -1,0 +1,116 @@
+<div class="flashtimer ui2">
+    {% if title != blank -%}
+      <h4 class="timer__title m-0">{{ title }}</h4>
+    {%- endif %}
+    <div class="timer-display">
+        <div class="timer-block days-timer" style="display:none;">
+          <span class="timer-block__num js-timer-days" >00</span>
+        </div>
+      <div class="timer-block">
+        <span class="timer-block__num js-timer-hours">00</span>
+        <span class="timer-block__text">Hours</span>
+      </div>
+      <div class="timer-block">
+        <span class="timer-block__num js-timer-minutes">00</span>
+        <span class="timer-block__text">Mins</span>
+      </div>
+      <div class="timer-block">
+        <span class="timer-block__num js-timer-seconds">00</span>
+        <span class="timer-block__text">Sec</span>
+      </div>
+      {% comment %} <div class="timer-block milliseconds">
+        <span class="timer-block__num js-timer-ms">00</span>
+      </div> {% endcomment %}
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+    var second = 1000,
+      minute = second * 60,
+      hour = minute * 60,
+      _day = hour * 24;
+    {% if end_date != blank %}
+    var countDown = new Date('{{- end_date -}}').getTime(),
+      x = setInterval(function () {
+        var now = new Date().getTime(),
+          distance = countDown - now;
+        if (distance < 1) {
+        var hr = 23;
+    var min = 59;
+    var sec = 60;
+    var distance = 1;
+    x = setInterval(function () {
+      var curr = new Date();
+      //document.querySelector('.flashtimer .js-timer-days').innerText = Math.floor(distance / (_day)) + 'd',
+        document.querySelector('.flashtimer .js-timer-hours').innerText = pad2(hr - curr.getHours()),
+        document.querySelector('.flashtimer .js-timer-minutes').innerText = pad2(min - curr.getMinutes()),
+        document.querySelector('.flashtimer .js-timer-seconds').innerText = pad2(sec - curr.getSeconds());
+    }, second);
+        } else {
+          document.querySelector('.flashtimer .timer-block.days-timer').style.display = "block",
+          document.querySelector('.flashtimer .js-timer-days').innerText = pad2(Math.floor(distance / (_day))),
+          document.querySelector('.flashtimer .js-timer-hours').innerText = pad2(Math.floor((distance % (_day)) / (hour))),
+          document.querySelector('.flashtimer .js-timer-minutes').innerText = pad2(Math.floor((distance % (hour)) / (minute))),
+          document.querySelector('.flashtimer .js-timer-seconds').innerText = pad2(Math.floor((distance % (minute)) / second));
+        }
+      }, second);
+    var now = new Date().getTime(),
+      distance = countDown - now;
+    {% else %}
+    var hr = 23;
+    var min = 59;
+    var sec = 60;
+    var distance = 1;
+    x = setInterval(function () {
+      var curr = new Date();
+     // document.querySelector('.flashtimer .js-timer-days').innerText = Math.floor(distance / (_day)) + 'd',
+     document.querySelector('.flashtimer .js-timer-hours').innerText = pad2(hr - curr.getHours()),
+     document.querySelector('.flashtimer .js-timer-minutes').innerText = pad2(min - curr.getMinutes()),
+     document.querySelector('.flashtimer .js-timer-seconds').innerText = pad2(sec - curr.getSeconds());
+    }, second);
+    {% endif %}
+  
+   {% comment %}
+     // if (distance > 0) {
+        const printNumbersForEvery2Sec = (n) => {
+        for (let i = 1; i <= n; i++) {
+          var y = setInterval(() => {
+            document.querySelector('.flashtimer .js-timer-ms').innerText = i;
+          }, i * 100)
+        }
+      }
+      printNumbersForEvery2Sec(10); 
+     // }
+    {% endcomment %}
+    function pad2(number) {
+      return (number < 10 ? '0' : '') + number
+    }
+  </script>
+  <style>
+    .flashtimer .timer--expired {display: none;}
+    .flashtimer .timer-display { display: -webkit-box; display: -ms-flexbox;display: flex;}
+    .flashtimer .timer-block {position: relative; font-size: 16px;}
+    .flashtimer .timer-block__num, .flashtimer .timer-block__unit {display: block;}
+    .ui2.flash_sale{position: absolute;top: 30%;color: white;display: flex;align-items: center;}
+     span.timer-block__text {position: relative;font-size: 8px;top: -6px;}
+     .ui2.flashtimer .timer-block, .two-pt-o .flashtimer .timer__title{color: white;}
+     .ui2.flashtimer{line-height: normal;display:block;position:relative}
+     .ui2.flashtimer::before{content: "";display: block;width: 1px;height: 80%;background: #4e5358;position: absolute;bottom: 4px;left: -0.3rem;}
+     .ui2.flashtimer .timer__title{font-size: 10px!important;}
+     .ui2.flashtimer .timer-block__num{font-size: 20px;font-weight: 600;}
+     .ui2.flashtimer .timer-block{width: 48px !important;}
+     .ui2.flashtimer .timer-block__num:not(.js-timer-hours)::before{content: ":";display: block;position: absolute;left: -0.3rem;font-weight:400;}
+     @media(min-width:992px){
+     .ui2.flashtimer::before{content:none}
+     .ui2.flashtimer {line-height: unset;display: flex; margin-left: 3rem;align-items: center;}
+     .ui2.flashtimer .timer__title {font-size: 15px!important;letter-spacing: -0.6px;width: max-content;}
+     .ui2.flashtimer .timer-block__num{ display: inline-flex; font-size: 55px;}
+     .ui2.flashtimer .timer-block {width: 170px !important;}
+     span.timer-block__text {font-size: 21px;font-weight: 500;}
+     .ui2.flash_sale { top:20%;align-items: center;padding-left:46px;}
+     .ui2.flashtimer .timer-block__num:not(.js-timer-hours)::before{opacity:0.4}
+     }
+  </style>
+  
+  
+  
