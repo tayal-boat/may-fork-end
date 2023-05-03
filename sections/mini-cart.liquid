@@ -444,7 +444,7 @@
  </div>
 </div>
 </div>
-      <div class="mini-cart-message">
+      <div class="mini-cart-message visually-hidden">
         <div class="message-container">
           <div class="message" style="font-size: 10px;line-height: 13px;padding-right: 16px;">{{section.settings.cart_announcement}}</div>
         </div>
@@ -654,8 +654,18 @@
 {% assign gift-product_variant = gift-product.variants[0].id %}
 
 <script>
+  document.addEventListener('cart:updated', function(event) {
+    var cart = event.detail.cart; // Get the updated content of the cart
+    
+  });
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
+  var cartPrice = {{cart.total_price}}
+  if(cartPrice > 50000) {
+      $('.mini-cart-message').removeClass('visually-hidden')
+  } else {
+      $('.mini-cart-message').addClass('visually-hidden')
+  }
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
 let custumisedvariant_ids = [];
 let giftId = "{{ gift-product_variant }}";
@@ -739,6 +749,12 @@ for (const mutation of mutationList) {
 let updatedqnty = 0;
 jQuery.getJSON('/cart.js', function(cart) {
    cartI = cart.items;
+   var cartPrice = cart.total_price
+    if(cartPrice > 50000) {
+      $('.mini-cart-message').removeClass('visually-hidden')
+    } else {
+      $('.mini-cart-message').addClass('visually-hidden')
+    }
    let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
