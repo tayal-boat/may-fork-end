@@ -308,13 +308,14 @@ End automatically added Judge.me widget{% endcomment %}
           
         </product-meta>
       </div>
-      {%- if product.metafields.benefits.usp1 -%}
+      {% if product.metafields.custom.product_card_features %}
+        {% assign features = product.metafields.custom.product_card_features | split: '|' %}
         <div class="product-feature">
-          <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-          <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-          <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+          {% for feature in features %}
+            <span>{{ feature }}</span>
+          {% endfor %}
         </div>
-      {%- endif -%}
+      {% endif %}
   {%- endcapture -%}
 
   {%- if template.suffix == 'quick-buy-drawer' -%}
