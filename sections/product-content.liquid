@@ -6,19 +6,17 @@
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'description' -%}
-            {%- if product.description != blank -%}
-              <a  class="tabs-nav__item heading heading--small" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}" {{ block.shopify_attributes }}>
+              <button  class="tabs-nav__item heading heading--small" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" {{ block.shopify_attributes }}>
                 {{- 'product.general.description' | t -}}
-              </a>
+              </button>
 
               {%- assign processed_blocks = processed_blocks | plus: 1 -%}
-            {%- endif -%}
 
           {%- when 'reviews' -%}
-            <a type="" id="btn-reviews" class="tabs-nav__item heading heading--small anchor" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}" {{ block.shopify_attributes }}>
+            <span type="" id="btn-reviews" class="tabs-nav__item heading heading--small anchor"  {{ block.shopify_attributes }}>
               {%- assign rating_count = product.metafields.reviews.rating_count.value | default: 0 -%}
               {{- 'product.general.reviews' | t: rating_count: rating_count }}
-            </a>
+            </span>
 
             {%- assign processed_blocks = processed_blocks | plus: 1 -%}
 
@@ -41,9 +39,10 @@
 
           {%- when 'liquid' -%}
             {%- if block.settings.title != blank and block.settings.liquid != blank -%}
-              <a type="" id="btn-specifications"  id="specs{{increment}}" class="tabs-nav__item heading heading--small" aria-expanded="{% if processed_blocks == 0 %}true{% else %}false{% endif %}" aria-controls="block-{{ section.id }}-{{ block.id }}" {{ block.shopify_attributes }}>
+              <span type="" id="btn-specifications" class="tabs-nav__item heading heading--small"
+                 {{ block.shopify_attributes }}>
                 {{- block.settings.title | escape -}}
-              </a>
+              </span>
 
               {%- assign processed_blocks = processed_blocks | plus: 1 -%}
             {%- endif -%}
@@ -335,7 +334,7 @@
 {%- endcapture -%}
 
 {%- if product_content != blank -%}
-  <section class="container">
+  <section class="container 123123123">
     <div id="product-{{ product.id }}-content" class="product-content anchor {{product.handle}}">
       {{- product_content -}}
     </div>
@@ -358,6 +357,15 @@ document.addEventListener("touchmove", productDis);
 document.addEventListener("touchstart", productDis);
 document.addEventListener("touchend", productDis);
 document.addEventListener("scroll", productDis);
+</script>
+
+
+<script>
+  $(document).ready(function(){
+    setTimeout(function(){
+      $('.custom_section_1 .custom_pdp_para').prepend($('#quinn-cards-2'))
+    }, 500);
+  })
 </script>
 
 {% schema %}

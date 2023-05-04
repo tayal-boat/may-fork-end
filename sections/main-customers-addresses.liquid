@@ -1,16 +1,17 @@
 <section>
-  <div class="link-bar hidden-phone">
+  {% comment %} <div class="link-bar hidden-phone ">
     <div class="container">
       <div class="link-bar__wrapper">
         <ul class="link-bar__linklist list--unstyled" role="list">
-          <li class="link-bar__link-item">
+          <li class="link-bar__link-item visually-hidden">
             <a href="{{ routes.account_url }}" class="link-bar__link link--animated">{{ 'customer.orders.title' | t }}</a>
           </li>
-
           <li class="link-bar__link-item">
             <a href="{{ routes.account_addresses_url }}" class="link-bar__link link--animated text--underlined">{{ 'customer.addresses.title' | t }}</a>
           </li>
-
+          <li class="link-bar__link-item">
+            <a href="/apps/ret" target="_blank" class="link-bar__link link--animated">Manage Your Orders</a>
+          </li>
           <li class="link-bar__link-item">
             <a href="{{ routes.account_logout_url }}" class="link-bar__link link--animated text--subdued" data-no-instant>{{ 'customer.logout.title' | t }}</a>
           </li>
@@ -20,7 +21,7 @@
   </div>
 
   <div class="mobile-toolbar hidden-tablet-and-up">
-    <button is="toggle-button" class="mobile-toolbar__item" aria-expanded="false" aria-controls="account-links-popover">{{- 'customer.addresses.title' | t -}} {%- render 'icon' with 'chevron' -%}</button>
+    <button is="toggle-button" class="mobile-toolbar__item" aria-expanded="false" aria-controls="account-links-popover">My Account {%- render 'icon' with 'chevron' -%}</button>
   </div>
 
   <popover-content id="account-links-popover" class="popover">
@@ -36,27 +37,52 @@
 
     <div class="popover__content">
       <div class="popover__choice-list">
-        <a href="{{ routes.account_url }}" class="popover__choice-item">
+        <a href="{{ routes.account_url }}" class="popover__choice-item visually-hidden">
           <span class="popover__choice-label">{{ 'customer.orders.title' | t }}</span>
         </a>
-
+        <a href="/apps/ret" target="_blank" class="popover__choice-item">
+          <span class="popover__choice-label">Manage Your Orders</span>
+        </a>
         <a href="{{ routes.account_addresses_url }}" class="popover__choice-item">
           <span class="popover__choice-label" aria-current="true">{{ 'customer.addresses.title' | t }}</span>
         </a>
 
-        <a href="{{ routes.account_logout_url }}" class="popover__choice-item text--subdued" data-no-instant>
+        <a href="{{ routes.account_logout_url }}" class="popover__choice-item text--subdued logout" data-no-instant>
           <span class="popover__choice-label">{{ 'customer.logout.title' | t }}</span>
         </a>
       </div>
     </div>
-  </popover-content>
+  </popover-content> {% endcomment %}
 
   <div class="account account--addresses">
     <div class="container container--small">
       <div class="page-header page-header--small">
-        <div class="page-header__text-wrapper text-container">
-          <h1 class="heading h4">{{ 'customer.addresses.title' | t }} <span class="bubble-count bubble-count--top">{{ customer.addresses_count }}</span></h1>
+        <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb breadcrumb--floating text--xsmall">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item">
+              <a class="breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+            </li>
 
+            <li class="breadcrumb__item">
+                <a class="breadcrumb__link" href="/account"> My account</a>
+            </li>
+
+              <li class="breadcrumb__item">
+                <span class="breadcrumb__link" aria-current="page">Manage Address</span>
+              </li>
+
+          </ol>
+        </nav>
+        <div class="page-header__text-wrapper text-container">
+          <a href="/account">
+          <img style="transform: rotate(180deg);" width="24" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/a75f0873ab4096af18a048b560845614.png?v=1679903157">
+          </a>
+          <h1 style="font-size: 20px;line-height: 1.3;letter-spacing: normal;" class="heading h4 m-0">Manage Address
+           {% comment %} <span class="bubble-count bubble-count--top">{{ customer.addresses_count }}</span> {% endcomment %}
+          </h1>
+          <button is="toggle-button" class="account__address account__address--empty link text--subdued mt-0" aria-controls="drawer-new-address" aria-expanded="false">
+            + Add Address
+          </button>
           {%- if customer.addresses_count == 0 -%}
             <p class="text--subdued">{{ 'customer.addresses.no_address' | t }}</p>
           {%- endif -%}
@@ -75,36 +101,44 @@
                   {{- block.settings.liquid -}}
 
                 {%- when 'addresses' -%}
+                  {% assign company_array = "" %}
+                  {% capture company_array %} {%- for address in customer.addresses -%}{% if address.company != blank %}{{- company_array | append: address.company | strip -}}{% unless forloop.last %},{% endunless %}  {% endif %}    {%- endfor -%}{% endcapture %}
                   {%- paginate customer.addresses by 8 -%}
                     <div class="account__addresses-list">
                       {%- for address in customer.addresses -%}
-                        <div class="account__address">
+                        <div class="account__address{% if address.id == customer.default_address.id %} active {% endif %}">
+                         <div class="d-flex" style="gap:16px;"> 
+                          <div>
+                            <input type="checkbox" id="check-{{ address.id }}" {%- if address.id == customer.default_address.id -%} checked {% endif %}>
+                          </div>
+                          <div>
                           {%- if address.id == customer.default_address.id -%}
-                            <span class="account__address-title heading heading--small">{{ 'customer.addresses.default_address' | t }}</span>
+                            <span class="account__address-title heading heading--small">{{ address.company }}({{ 'customer.addresses.default_address' | t }})</span>
                           {%- else -%}
                             {%- assign address_index = forloop.index | plus: paginate.current_offset -%}
-                            <span class="account__address-title heading heading--small">{{ 'customer.addresses.address_count' | t: count: address_index }}</span>
+                            <span class="account__address-title heading heading--small">{% if address.company != blank %}{{ address.company | append: '--' }}{% endif %}{{ 'customer.addresses.address_count' | t: count: address_index }}</span>
                           {%- endif -%}
 
-                          <div class="account__address-details">
-                            {{- address | format_address -}}
+                          <div class="account__address-details" style="font-size: 12px;color: rgba(27, 27, 27, 0.4);">
+                            {{- address.address1 | append: ', ' -}}
+                            {{- address.address2 | append: ', ' -}}
+                            {{- address.city | append: ', ' -}}
+                            {{- address. province | append: ', ' -}}
+                            {{- address.zip -}}
                           </div>
-
+                        </div>
+                      </div>
                           <div class="account__address-actions">
                             <button class="link text--subdued" is="toggle-button" aria-controls="drawer-address-{{ address.id }}" aria-expanded="false">{{ 'customer.addresses.edit' | t }}</button>
 
                             <form method="post" action="{{ address.url }}">
                               <input type="hidden" name="_method" value="delete">
-                              <button class="link text--subdued" is="confirm-button" data-message="{{ 'customer.addresses.delete_confirm' | t | escape }}">{{ 'customer.addresses.delete' | t }}</button>
+                              <button class="link text--subdued" is="confirm-button" data-message="{{ 'customer.addresses.delete_confirm' | t | escape }}"><img width="12px;" 
+                                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></button>
                             </form>
                           </div>
                         </div>
                       {%- endfor -%}
-
-                      <button is="toggle-button" class="account__address account__address--empty link text--subdued" aria-controls="drawer-new-address" aria-expanded="false">
-                        {%- render 'icon' with 'picto-address-pin' -%}
-                        {{- 'customer.addresses.add_new' | t -}}
-                      </button>
                     </div>
 
                     {%- render 'pagination', paginate: paginate -%}
@@ -123,14 +157,14 @@
     <span class="drawer__overlay"></span>
 
     <header class="drawer__header">
-      <h3 class="drawer__title heading h6">{{ 'customer.addresses.add_new' | t }}</h3>
-      
       <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
-        {%- render 'icon' with 'close' -%}
+        <img style="transform: rotate(180deg);" width="24" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/a75f0873ab4096af18a048b560845614.png?v=1679903157">
       </button>
+      <h3 class="drawer__title heading h6" style="font-size: 20px;line-height: 1.3;letter-spacing: normal;">{{ 'customer.addresses.add_new' | t }}</h3>
+      
     </header>
 
-    <div class="drawer__content drawer__content--padded-start">
+    <div class="drawer__content ">
       {%- form 'customer_address', customer.new_address, class: 'form' -%}
         {%- if form.errors -%}
           <script type="text/javascript">
@@ -146,7 +180,7 @@
             </div>
           </div>
         {%- else -%}
-          <p class="form__info">{{ 'customer.addresses.fill_address' | t }}</p>
+
         {%- endif -%}
         
         {%- if request.locale.iso_code == 'ja' -%}
@@ -210,7 +244,7 @@
             <label for="address-new[phone]" class="input__label">{{ 'customer.addresses.phone' | t }}</label>
           </div>
         {%- else -%}
-          <div class="input-row">
+          <div class="input d-none">
             <div class="input">
               <input id="address-new[first_name]" type="text" class="input__field input__field--text {% if form.first_name != blank %}is-filled{% endif %}" name="address[first_name]" value="{{ form.first_name }}">
               <label for="address-new[first_name]" class="input__label">{{ 'customer.addresses.first_name' | t }}</label>
@@ -220,7 +254,6 @@
               <input id="address-new[last_name]" type="text" class="input__field input__field--text {% if form.last_name != blank %}is-filled{% endif %}" name="address[last_name]" value="{{ form.last_name }}">
               <label for="address-new[last_name]" class="input__label">{{ 'customer.addresses.last_name' | t }}</label>
             </div>
-          </div>
 
           <div class="input">
             <input id="address-new[company]" type="text" class="input__field input__field--text {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{ form.company }}">
@@ -231,30 +264,52 @@
             <input id="address-new[phone]" type="text" class="input__field input__field--text {% if form.phone != blank %}is-filled{% endif %}" name="address[phone]" value="{{ form.phone }}">
             <label for="address-new[phone]" class="input__label">{{ 'customer.addresses.phone' | t }}</label>
           </div>
+        </div>
 
           <div class="input">
             <input id="address-new[address1]" type="text" class="input__field input__field--text {% if form.address1 != blank %}is-filled{% endif %}" name="address[address1]" value="{{ form.address1 }}">
-            <label for="address-new[address1]" class="input__label">{{ 'customer.addresses.address1' | t }}</label>
+            <label for="address-new[address1]" class="input__label">House no, Building Name</label>
           </div>
 
           <div class="input">
             <input id="address-new[address2]" type="text" class="input__field input__field--text {% if form.address2 != blank %}is-filled{% endif %}" name="address[address2]" value="{{ form.address2 }}">
-            <label for="address-new[address2]" class="input__label">{{ 'customer.addresses.address2' | t }}</label>
+            <label for="address-new[address2]" class="input__label">Location, Town, Etc.</label>
           </div>
 
-          <div class="input-row">
-            <div class="input">
+          <div class="input">
+            <input id="address-new[zip]" type="text" class="input__field input__field--text {% if form.zip != blank %}is-filled{% endif %}" name="address[zip]" value="{{ form.zip }}">
+            <label for="address-new[zip]" class="input__label">Pin Code</label>
+          </div>
+
+          <div class="input d-flex align-items-center justify-content-around">
+            <div class="mr-3 w-46" >
               <input id="address-new[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
               <label for="address-new[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
             </div>
 
-            <div class="input">
-              <input id="address-new[zip]" type="text" class="input__field input__field--text {% if form.zip != blank %}is-filled{% endif %}" name="address[zip]" value="{{ form.zip }}">
-              <label for="address-new[zip]" class="input__label">{{ 'customer.addresses.zip' | t }}</label>
+            <div id="address-new-province-container" class="input province-container m-0 w-46"  hidden>
+              <div class="select-wrapper is-filled">
+                <select class="select address-new-province" name="address[province]" id="address-new[province]"></select>
+                {%- render 'icon', icon: 'chevron' -%}
+              </div>
+              <label for="address-new[province]" class="input__label">State</label>
             </div>
+
           </div>
 
-          <div class="input">
+          <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
+            <p ><b>Address Type </b>(optional)</p>
+            <div class="types_">
+              <div class="ad_type" {% if company_array contains "Home" %}disabled {% endif%}> Home </div>
+              <div class="ad_type" {% if company_array contains "Work" %}disabled {% endif%}> Work </div>
+              <div class="ad_type"> Custom </div>
+            </div>
+            <div class="input">
+            <input id="address-new[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" >
+            </div>
+        </div>
+
+          <div class="input d-none">
             <div class="select-wrapper is-filled">
               <select is="country-selector" class="select" name="address[country]" id="address-new[country]" aria-owns="address-new-province-container">{{ all_country_option_tags }}</select>
               {%- render 'icon' with 'chevron' -%}
@@ -263,24 +318,21 @@
             <label for="address-new[country]" class="input__label">{{ 'customer.addresses.country' | t }}</label>
           </div>
 
-          <div id="address-new-province-container" class="input" hidden>
-            <div class="select-wrapper is-filled">
-              <select class="select" name="address[province]" id="address-new[province]"></select>
-              {%- render 'icon' with 'chevron' -%}
-            </div>
 
-            <label for="address-new[province]" class="input__label">{{ 'customer.addresses.province' | t }}</label>
-          </div>
         {%- endif -%}
 
-        <div class="input input--checkbox">
+        <div class="input input--checkbox d-none">
           <div class="checkbox-container">
             <input type="checkbox" class="checkbox" name="address[default]" id="address-new[default]" value="0">
             <label for="address-new[default]" class="text--subdued">{{ 'customer.addresses.set_default' | t }}</label>
           </div>
         </div>
-
-        <button type="submit" is="loader-button" class="form__submit button button--primary button--full">{{ 'customer.addresses.add_new' | t }}</button>
+        <div class="d-flex justify-content-around">
+          <button type="button" class="drawer__close-button tap-area button button--primary button--full" data-action="close" title="Close">
+          cancel
+          </button>
+          <button type="submit"  class="form__submit button button--primary button--full m-0">Add Address</button>
+        </div>
       {%- endform -%}
     </div>
   </drawer-content>
@@ -291,16 +343,14 @@
         <span class="drawer__overlay"></span>
 
         <header class="drawer__header">
-          <h3 class="drawer__title heading h6">{{ 'customer.addresses.edit' | t }}</h3>
-
           <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
-            {%- render 'icon' with 'close' -%}
+            <img style="transform: rotate(180deg);" width="24" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/a75f0873ab4096af18a048b560845614.png?v=1679903157">
           </button>
+          <h3 class="drawer__title heading h6" style="font-size: 20px;line-height: 1.3;letter-spacing: normal;">{{ 'customer.addresses.edit' | t }}</h3>
         </header>
 
-        <div class="drawer__content drawer__content--padded-start">
+        <div class="drawer__content ">
           {% form 'customer_address', address, class: 'form' %}
-            <p class="form__info">{{ 'customer.addresses.fill_address' | t }}</p>
 
             {%- if request.locale.iso_code == 'ja' -%}
               <div class="input-row">
@@ -363,7 +413,7 @@
                 <label for="address-{{ address.id }}[phone]" class="input__label">{{ 'customer.addresses.phone' | t }}</label>
               </div>
             {%- else -%}
-              <div class="input-row">
+              <div class="input d-none">
                 <div class="input">
                   <input id="address-{{ address.id }}[first_name]" type="text" class="input__field input__field--text {% if form.first_name != blank %}is-filled{% endif %}" name="address[first_name]" value="{{ form.first_name }}">
                   <label for="address-{{ address.id }}[first_name]" class="input__label">{{ 'customer.addresses.first_name' | t }}</label>
@@ -373,7 +423,6 @@
                   <input id="address-{{ address.id }}[last_name]" type="text" class="input__field input__field--text {% if form.last_name != blank %}is-filled{% endif %}" name="address[last_name]" value="{{ form.last_name }}">
                   <label for="address-{{ address.id }}[last_name]" class="input__label">{{ 'customer.addresses.last_name' | t }}</label>
                 </div>
-              </div>
 
               <div class="input">
                 <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{ form.company }}">
@@ -384,30 +433,29 @@
                 <input id="address-{{ address.id }}[phone]" type="text" class="input__field input__field--text {% if form.phone != blank %}is-filled{% endif %}" name="address[phone]" value="{{ form.phone }}">
                 <label for="address-{{ address.id }}[phone]" class="input__label">{{ 'customer.addresses.phone' | t }}</label>
               </div>
+            </div>
 
               <div class="input">
                 <input id="address-{{ address.id }}[address1]" type="text" class="input__field input__field--text {% if form.address1 != blank %}is-filled{% endif %}" name="address[address1]" value="{{ form.address1 }}">
-                <label for="address-{{ address.id }}[address1]" class="input__label">{{ 'customer.addresses.address1' | t }}</label>
+                <label for="address-{{ address.id }}[address1]" class="input__label">House no, Building Name</label>
               </div>
 
               <div class="input">
                 <input id="address-{{ address.id }}[address2]" type="text" class="input__field input__field--text {% if form.address2 != blank %}is-filled{% endif %}" name="address[address2]" value="{{ form.address2 }}">
-                <label for="address-{{ address.id }}[address2]" class="input__label">{{ 'customer.addresses.address2' | t }}</label>
+                <label for="address-{{ address.id }}[address2]" class="input__label">Location, Town, Etc.</label>
               </div>
+ 
 
-              <div class="input-row">
-                <div class="input">
-                  <input id="address-{{ address.id }}[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
-                  <label for="address-{{ address.id }}[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
-                </div>
+              <div class="input ">
 
                 <div class="input">
                   <input id="address-{{ address.id }}[zip]" type="text" class="input__field input__field--text {% if form.zip != blank %}is-filled{% endif %}" name="address[zip]" value="{{ form.zip }}">
                   <label for="address-{{ address.id }}[zip]" class="input__label">{{ 'customer.addresses.zip' | t }}</label>
                 </div>
+
               </div>
 
-              <div class="input">
+              <div class="input d-none">
                 <div class="select-wrapper is-filled">
                   <select is="country-selector" class="select" name="address[country]" id="address-{{ address.id }}[country]" data-default="{{ form.country }}" aria-owns="address-{{ address.id }}-province-container">{{ all_country_option_tags }}</select>
                   {%- render 'icon', icon: 'chevron' -%}
@@ -416,14 +464,34 @@
                 <label for="address-{{ address.id }}[country]" class="input__label">{{ 'customer.addresses.country' | t }}</label>
               </div>
 
-              <div id="address-{{ address.id }}-province-container" class="input" hidden>
-                <div class="select-wrapper is-filled">
-                  <select class="select" name="address[province]" id="address-{{ address.id }}[province]" data-default="{{ form.province }}"></select>
-                  {%- render 'icon', icon: 'chevron' -%}
+              <div class="input d-flex align-items-center justify-content-around">
+                <div class="w-46" >
+                  <input id="address-{{ address.id }}[city]" type="text" class="input__field input__field--text {% if form.city != blank %}is-filled{% endif %}" name="address[city]" value="{{ form.city }}">
+                  <label for="address-{{ address.id }}[city]" class="input__label">{{ 'customer.addresses.city' | t }}</label>
                 </div>
 
-                <label for="address-{{ address.id }}[province]" class="input__label">{{ 'customer.addresses.province' | t }}</label>
+                <div id="address-{{ address.id }}-province-container" class="input province-container m-0 w-46"  hidden>
+                  <div class="select-wrapper is-filled">
+                    <select class="select" name="address[province]" id="address-{{ address.id }}[province]" data-default="{{ form.province }}"></select>
+                    {%- render 'icon', icon: 'chevron' -%}
+                  </div>
+                  <label for="address-{{ address.id }}[province]" class="input__label">State</label>
+                </div>
+    
               </div>
+
+              <div class="input address-type pt-3" style="border-top: 1px solid rgba(27, 27, 27, 0.3);">
+                <p ><b>Address Type </b>(optional)</p>
+                {%- assign name_company = form.company | strip -%}
+                <div class="types_">
+                  <div class="ad_type {% if name_company == 'Home' %}selected{% endif %}" {% if company_array contains "Home" %}disabled {% endif %}> Home </div>
+                  <div class="ad_type {% if name_company == 'Work' %}selected{% endif %}"  {% if company_array contains "Work" %}disabled {% endif %}> Work </div>
+                  <div class="ad_type "> Custom </div>
+                </div>
+                <div class="input">
+                <input id="address-{{ address.id }}[company]" type="text" class="input__field input__field--text address_type_field {% if form.company != blank %}is-filled{% endif %}" name="address[company]" value="{{- form.company | strip -}}" >
+                </div>
+            </div>
             {%- endif -%}
 
             <div class="input input--checkbox">
@@ -432,15 +500,52 @@
                 <label for="address-{{ address.id }}[default]" class="text--subdued">{{ 'customer.addresses.set_default' | t }}</label>
               </div>
             </div>
+            <div class="d-flex justify-content-around">
+              <button type="button" class="drawer__close-button tap-area button button--primary button--full" data-action="close" title="Close">
+              cancel
+              </button>
+              <button type="submit" is="loader-button" class="form__submit button button--primary button--full m-0">{{ 'customer.addresses.save' | t }}</button>
+            </div>
 
-            <button type="submit" is="loader-button" class="form__submit button button--primary button--full">{{ 'customer.addresses.save' | t }}</button>
           {% endform %}
         </div>
       </drawer-content>
     {%- endfor -%}
   {%- endpaginate -%}
 </section>
-
+<script>
+ $(".account__address.account__address--empty").one("click", function(e){
+  $("select.address-new-province").prepend(`<option class="dummy_select" value>Select</option>`);
+  $("select.address-new-province option.dummy_select").prop("selected", true);
+ })
+ $('.ad_type').each(function() {
+    $(this).click(function() {
+      let text = $(this).text();
+      text = text.trim();
+      $(this).addClass('selected')
+      $(this).siblings('.ad_type').removeClass('selected')
+      if (text === 'Custom'){
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').val("");
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').focus();
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').attr("placeholder",  "type");
+      }else{
+        $(this).parents(".input.address-type.pt-3").find('.address_type_field').val(text)
+      }
+    })
+ });
+  
+{%- for address in customer.addresses -%}
+  $("#check-{{ address.id }}").change(function() {
+    $("input[id^='check-']").each(function(){
+      $(this).attr("checked", false);
+    })
+    if($(this).prop('checked')) {
+        $("#address_form_{{ address.id }} .checkbox").click();
+        $("#address_form_{{ address.id }}").submit();
+    }
+  });
+  {%- endfor -%}
+</script>
 {% schema %}
 {
   "name": "Customer addresses",

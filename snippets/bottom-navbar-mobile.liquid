@@ -6,7 +6,8 @@
     left: 0;
     right: 0;
     height: 60px;
-    background: #f1efef;
+    box-shadow: 0 0 18px 0 rgba(0, 0, 0, 0.09);
+    background-color: #fff;
     padding-bottom: 4px;
     text-align: center;
     z-index: 9;
@@ -29,8 +30,14 @@
   .fixed_nav--link.active_url {
     opacity: 1;
   }
-  .fixed_nav--link svg {
-    min-height: 32px !important;
+  .fixed_nav--link.active_url:after{
+    content: "";
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #D83333;
+    position: absolute;
+    bottom: 0.5px;
   }
   .fixed_nav--link:hover,
   .fixed_nav--link:focus {
@@ -49,17 +56,8 @@
     line-height: 15px;
     font-size: 10px;
   }
-  .fixed_nav_mobile span.icon_name {
-    font-size: 12px !important;
-    margin-top: 6px !important;
-    font-weight: 500;
-    color: #000;
-  }
   .fixed_nav_mobile .active_url span.icon_name {
-    font-weight: 700;
-  }
-  .fixed_nav_mobile .fixed_nav--link img {
-    max-height: 19px;
+    font-weight: 700!important;
   }
   .boat_icon_footer {
     position: relative;
@@ -73,82 +71,108 @@
     min-width: auto;
   }
 
-  img.footer_nav_icon {
+  .footer_nav_icon {
     display: block;
   }
-  .active_url img.footer_nav_icon {
+  .active_url .footer_nav_icon {
     display: none;
   }
-  img.footer_nav_icon_filled {
+  .footer_nav_icon_filled {
     display: none;
   }
-  .active_url img.footer_nav_icon_filled {
+  .active_url .footer_nav_icon_filled {
     display: block;
   }
+  {% if template contains 'product' %}
+  .fixed_nav:not(.search-nav) {padding-top: 60px;height: 116px;}
+  .row.row-nav.justify-content-around {border-top: 1px solid #dadada;}
+  {% endif %}
 </style>
 <div class="fixed_nav fixed_nav_mobile hidden-tablet-and-up">
-  <div class="row row-nav justify-content-around">
+  <div class="row row-nav" style="justify-content: space-evenly;">
     <div class="col-2 fixed-nav-item">
       <div class="item--box boat_icon_footer">
-        <a
-          class="fixed_nav--link {% if template contains 'index' %} active_url{% endif %}"
-          href="{% if template contains 'index' %}javascript:void(0){% else %}https://www.boat-lifestyle.com/{% endif %}"
-        >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/home-1.png?v=1663762988"
-            class="footer_nav_icon" width="19px" 
-          >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/home_36ea08b0-7453-45c8-a1d0-211afa0e8b3b.png?v=1663762989"
-            class="footer_nav_icon_filled" width="19px" 
-          >
-          <span class="icon_name"> Home </span>
-        </a>
-      </div>
-    </div>
-    <div class="col-2 fixed-nav-item">
-      <div class="item--box"> 
-        <a
-          class="fixed_nav--link {% if collection.handle == 'daily-deals' %} active_url{% endif %}"
-          href="{% if collection.handle == 'daily-deals' %}javascript:void(0){% else %}/collections/daily-deals{% endif %}"
-        >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Sale-1.png?v=1663762989"
-            class="footer_nav_icon" width="19px" 
-          >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Sale_6ac48500-24af-470d-8054-41e905056300.png?v=1663762989"
-            class="footer_nav_icon_filled" width="19px" 
-          >
-          <span class="icon_name"> Sale </span>
+        <a class="fixed_nav--link {% if template contains 'index' %} active_url{% endif %}" href="https://www.boat-lifestyle.com/" {% if template contains 'index' %}data-attr-pointers_none{% endif %}>
+         <svg  {% comment %}class="footer_nav_icon"{% endcomment %} xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+          <g id="Group_334291" data-name="Group 334291" transform="translate(7969 572)">
+            <rect id="Rectangle_114322" data-name="Rectangle 114322" width="28" height="28" transform="translate(-7969 -572)" fill="none"/>
+            <path id="Path_341257" data-name="Path 341257" d="M1110.25,237.25V231a1.25,1.25,0,0,0-1.25-1.25h-2a1.25,1.25,0,0,0-1.25,1.25v6.25Zm6.5-11.959,1.809,1.316a.75.75,0,1,0,.882-1.213l-9.824-7.145a2.749,2.749,0,0,0-3.234,0l-9.824,7.145a.75.75,0,1,0,.882,1.213l1.809-1.316V236a2.75,2.75,0,0,0,2.75,2.75h12a2.75,2.75,0,0,0,2.75-2.75Zm-8.015-5.829a1.249,1.249,0,0,0-1.47,0l-6.515,4.738V236a1.25,1.25,0,0,0,1.25,1.25h2.25V231a2.75,2.75,0,0,1,2.75-2.75h2a2.75,2.75,0,0,1,2.75,2.75v6.25H1114a1.25,1.25,0,0,0,1.25-1.25V224.2Z" transform="translate(-9063.25 -786.736)" fill="#1a2024" fill-rule="evenodd"/>
+          </g>
+        </svg>
+
+        {% comment %} <svg  class="footer_nav_icon_filled" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+          <g id="Group_334293" data-name="Group 334293" transform="translate(7969 572)">
+            <rect id="Rectangle_114322" data-name="Rectangle 114322" width="28" height="28" transform="translate(-7969 -572)" fill="none"/>
+            <path id="Path_341257" data-name="Path 341257" d="M1110.25,237.25V231a1.25,1.25,0,0,0-1.25-1.25h-2a1.25,1.25,0,0,0-1.25,1.25v6.25Zm6.5-11.959,1.809,1.316a.75.75,0,1,0,.882-1.213l-9.824-7.145a2.749,2.749,0,0,0-3.234,0l-9.824,7.145a.75.75,0,1,0,.882,1.213l1.809-1.316V236a2.75,2.75,0,0,0,2.75,2.75h12a2.75,2.75,0,0,0,2.75-2.75Zm-8.015-5.829a1.249,1.249,0,0,0-1.47,0l-6.515,4.738V236a1.25,1.25,0,0,0,1.25,1.25h2.25V231a2.75,2.75,0,0,1,2.75-2.75h2a2.75,2.75,0,0,1,2.75,2.75v6.25H1114a1.25,1.25,0,0,0,1.25-1.25V224.2Z" transform="translate(-9063.25 -786.736)" fill="#d83333" fill-rule="evenodd"/>
+          </g>
+        </svg> {% endcomment %}
+        
+          <span style="font-size: 10px !important;letter-spacing: -0.4px;color: #1a2024;margin-top: 4px !important;font-weight: 500;" class="icon_name"> Home </span>
         </a>
       </div>
     </div>
     <div class="col-2 fixed-nav-item">
       <div class="item--box">
-        <a
-          class="fixed_nav--link"
-          id="data-hamburger"
-        >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Category-1.png?v=1663762989"
-            class="footer_nav_icon" width="19px" 
-          >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Category_02405e70-c288-4c41-b265-e9fdc4dbdca7.png?v=1663762988"
-            class="footer_nav_icon_filled" width="19px" 
-          >
-          <span class="icon_name"> Categories </span>
+        <a class="fixed_nav--link {% if collection.handle == 'daily-deals' %} active_url{% endif %}" href="{% if collection.handle == 'daily-deals' %}javascript:void(0){% else %}/collections/daily-deals{% endif %}">
+         <svg  {% comment %}class="footer_nav_icon"{% endcomment %} xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> 
+            <g id="Group_334290" data-name="Group 334290" transform="translate(7899 572)">
+              <rect id="Rectangle_114329" data-name="Rectangle 114329" width="28" height="28" transform="translate(-7899 -572)" fill="none"/>
+              <path id="Union_39" data-name="Union 39" d="M1254.15-20139.615l-.511-.6a1.267,1.267,0,0,0-1.245-.4l-.764.182a2.748,2.748,0,0,1-3.38-2.453l-.061-.785a1.243,1.243,0,0,0-.769-1.053l-.724-.3a2.748,2.748,0,0,1-1.29-3.973l.41-.674a1.259,1.259,0,0,0,0-1.3l-.41-.668a2.747,2.747,0,0,1,1.29-3.973l.724-.3a1.244,1.244,0,0,0,.769-1.059l.061-.783a2.755,2.755,0,0,1,3.38-2.455l.764.182a1.256,1.256,0,0,0,1.245-.4l.511-.6a2.747,2.747,0,0,1,4.18,0l.506.6a1.259,1.259,0,0,0,1.245.4l.764-.182a2.755,2.755,0,0,1,3.38,2.455l.061.783a1.244,1.244,0,0,0,.769,1.059l.724.3a2.747,2.747,0,0,1,1.29,3.973l-.41.668a1.259,1.259,0,0,0,0,1.3l.41.674a2.748,2.748,0,0,1-1.29,3.973l-.724.3a1.243,1.243,0,0,0-.769,1.053l-.061.785a2.748,2.748,0,0,1-3.38,2.453l-.764-.182a1.271,1.271,0,0,0-1.245.4l-.506.6a2.735,2.735,0,0,1-2.09.963A2.736,2.736,0,0,1,1254.15-20139.615Zm.627-1.574.511.6a1.244,1.244,0,0,0,1.9,0l.511-.6a2.756,2.756,0,0,1,2.732-.885l.764.182a1.245,1.245,0,0,0,1.533-1.113l.066-.785a2.738,2.738,0,0,1,1.685-2.322l.724-.3a1.246,1.246,0,0,0,.587-1.807l-.41-.668a2.759,2.759,0,0,1,0-2.869l.41-.674a1.248,1.248,0,0,0-.587-1.807l-.724-.3a2.753,2.753,0,0,1-1.685-2.324l-.066-.783a1.252,1.252,0,0,0-1.533-1.119l-.764.188a2.759,2.759,0,0,1-2.732-.891l-.511-.6a1.249,1.249,0,0,0-1.9,0l-.511.6a2.754,2.754,0,0,1-2.727.891l-.764-.187a1.254,1.254,0,0,0-1.538,1.119l-.061.783a2.777,2.777,0,0,1-1.69,2.324l-.724.3a1.251,1.251,0,0,0-.587,1.807l.41.674a2.759,2.759,0,0,1,0,2.869l-.41.668a1.25,1.25,0,0,0,.587,1.807l.724.3a2.761,2.761,0,0,1,1.69,2.322l.061.785a1.247,1.247,0,0,0,1.538,1.113l.764-.182a2.733,2.733,0,0,1,.638-.076A2.752,2.752,0,0,1,1254.777-20141.189Zm-2.07-5.607a.744.744,0,0,1,0-1.057l6-6a.746.746,0,0,1,1.058,0,.746.746,0,0,1,0,1.059l-6,6a.73.73,0,0,1-.527.221A.742.742,0,0,1,1252.708-20146.8Zm5.677-1.031a1,1,0,0,1,1-1,1,1,0,0,1,1,1,1,1,0,0,1-1,1A1,1,0,0,1,1258.385-20147.828Zm-6-5a1,1,0,0,1,1-1,1,1,0,0,1,1,1,1,1,0,0,1-1,1A1,1,0,0,1,1252.384-20152.828Z" transform="translate(-9141.001 19591.826)" fill="#1a2024" stroke="rgba(0,0,0,0)" stroke-miterlimit="10" stroke-width="1"/>
+            </g>
+          </svg>
+         
+          {% comment %} <svg class="footer_nav_icon_filled" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <g id="Group_334294" data-name="Group 334294" transform="translate(7899 572)">
+              <rect id="Rectangle_114329" data-name="Rectangle 114329" width="28" height="28" transform="translate(-7899 -572)" fill="none"/>
+              <path id="Union_39" data-name="Union 39" d="M1254.15-20139.615l-.511-.6a1.267,1.267,0,0,0-1.245-.4l-.764.182a2.748,2.748,0,0,1-3.38-2.453l-.061-.785a1.243,1.243,0,0,0-.769-1.053l-.724-.3a2.748,2.748,0,0,1-1.29-3.973l.41-.674a1.259,1.259,0,0,0,0-1.3l-.41-.668a2.747,2.747,0,0,1,1.29-3.973l.724-.3a1.244,1.244,0,0,0,.769-1.059l.061-.783a2.755,2.755,0,0,1,3.38-2.455l.764.182a1.256,1.256,0,0,0,1.245-.4l.511-.6a2.747,2.747,0,0,1,4.18,0l.506.6a1.259,1.259,0,0,0,1.245.4l.764-.182a2.755,2.755,0,0,1,3.38,2.455l.061.783a1.244,1.244,0,0,0,.769,1.059l.724.3a2.747,2.747,0,0,1,1.29,3.973l-.41.668a1.259,1.259,0,0,0,0,1.3l.41.674a2.748,2.748,0,0,1-1.29,3.973l-.724.3a1.243,1.243,0,0,0-.769,1.053l-.061.785a2.748,2.748,0,0,1-3.38,2.453l-.764-.182a1.271,1.271,0,0,0-1.245.4l-.506.6a2.735,2.735,0,0,1-2.09.963A2.736,2.736,0,0,1,1254.15-20139.615Zm.627-1.574.511.6a1.244,1.244,0,0,0,1.9,0l.511-.6a2.756,2.756,0,0,1,2.732-.885l.764.182a1.245,1.245,0,0,0,1.533-1.113l.066-.785a2.738,2.738,0,0,1,1.685-2.322l.724-.3a1.246,1.246,0,0,0,.587-1.807l-.41-.668a2.759,2.759,0,0,1,0-2.869l.41-.674a1.248,1.248,0,0,0-.587-1.807l-.724-.3a2.753,2.753,0,0,1-1.685-2.324l-.066-.783a1.252,1.252,0,0,0-1.533-1.119l-.764.188a2.759,2.759,0,0,1-2.732-.891l-.511-.6a1.249,1.249,0,0,0-1.9,0l-.511.6a2.754,2.754,0,0,1-2.727.891l-.764-.187a1.254,1.254,0,0,0-1.538,1.119l-.061.783a2.777,2.777,0,0,1-1.69,2.324l-.724.3a1.251,1.251,0,0,0-.587,1.807l.41.674a2.759,2.759,0,0,1,0,2.869l-.41.668a1.25,1.25,0,0,0,.587,1.807l.724.3a2.761,2.761,0,0,1,1.69,2.322l.061.785a1.247,1.247,0,0,0,1.538,1.113l.764-.182a2.733,2.733,0,0,1,.638-.076A2.752,2.752,0,0,1,1254.777-20141.189Zm-2.07-5.607a.744.744,0,0,1,0-1.057l6-6a.746.746,0,0,1,1.058,0,.746.746,0,0,1,0,1.059l-6,6a.73.73,0,0,1-.527.221A.742.742,0,0,1,1252.708-20146.8Zm5.677-1.031a1,1,0,0,1,1-1,1,1,0,0,1,1,1,1,1,0,0,1-1,1A1,1,0,0,1,1258.385-20147.828Zm-6-5a1,1,0,0,1,1-1,1,1,0,0,1,1,1,1,1,0,0,1-1,1A1,1,0,0,1,1252.384-20152.828Z" transform="translate(-9141.001 19591.826)" fill="#d83333" stroke="rgba(0,0,0,0)" stroke-miterlimit="10" stroke-width="1"/>
+            </g>
+          </svg> {% endcomment %}
+          
+          <span style="font-size: 10px !important;letter-spacing: -0.4px;color: #1a2024;margin-top: 4px !important;font-weight: 500;" class="icon_name"> Sale </span>
         </a>
       </div>
     </div>
-
     <div class="col-2 fixed-nav-item">
-      <div class="item--box {% if request.page_type == 'account' %} active_url{% endif %}">
+      <div class="item--box">
+        <span class="fixed_nav--link" id="data-hamburger">
+          <svg  {% comment %}class="footer_nav_icon"{% endcomment %} xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <g id="Group_334289" data-name="Group 334289" transform="translate(7827 572)">
+              <rect id="Rectangle_114330" data-name="Rectangle 114330" width="28" height="28" transform="translate(-7827 -572)" fill="none"/>
+              <path id="Vector" d="M2.75,1.5h4V0h-4ZM8,2.75v4H9.5v-4ZM6.75,8h-4V9.5h4ZM1.5,6.75v-4H0v4ZM2.75,8A1.25,1.25,0,0,1,1.5,6.75H0A2.75,2.75,0,0,0,2.75,9.5ZM8,6.75A1.25,1.25,0,0,1,6.75,8V9.5A2.75,2.75,0,0,0,9.5,6.75ZM6.75,1.5A1.25,1.25,0,0,1,8,2.75H9.5A2.75,2.75,0,0,0,6.75,0ZM2.75,0A2.75,2.75,0,0,0,0,2.75H1.5A1.25,1.25,0,0,1,2.75,1.5ZM20,4.75A3.25,3.25,0,0,1,16.75,8V9.5A4.75,4.75,0,0,0,21.5,4.75ZM16.75,8A3.25,3.25,0,0,1,13.5,4.75H12A4.75,4.75,0,0,0,16.75,9.5ZM13.5,4.75A3.25,3.25,0,0,1,16.75,1.5V0A4.75,4.75,0,0,0,12,4.75ZM16.75,1.5A3.25,3.25,0,0,1,20,4.75h1.5A4.75,4.75,0,0,0,16.75,0ZM8,16.75A3.25,3.25,0,0,1,4.75,20v1.5A4.75,4.75,0,0,0,9.5,16.75ZM4.75,20A3.25,3.25,0,0,1,1.5,16.75H0A4.75,4.75,0,0,0,4.75,21.5ZM1.5,16.75A3.25,3.25,0,0,1,4.75,13.5V12A4.75,4.75,0,0,0,0,16.75ZM4.75,13.5A3.25,3.25,0,0,1,8,16.75H9.5A4.75,4.75,0,0,0,4.75,12Zm10,0h4V12h-4ZM20,14.75v4h1.5v-4ZM18.75,20h-4v1.5h4ZM13.5,18.75v-4H12v4ZM14.75,20a1.25,1.25,0,0,1-1.25-1.25H12a2.75,2.75,0,0,0,2.75,2.75ZM20,18.75A1.25,1.25,0,0,1,18.75,20v1.5a2.75,2.75,0,0,0,2.75-2.75ZM18.75,13.5A1.25,1.25,0,0,1,20,14.75h1.5A2.75,2.75,0,0,0,18.75,12Zm-4-1.5A2.75,2.75,0,0,0,12,14.75h1.5a1.25,1.25,0,0,1,1.25-1.25Z" transform="translate(-7824 -569.25)" fill="#1a2024"/>
+            </g>
+          </svg>
+          <span style="font-size: 10px !important;letter-spacing: -0.4px;color: #1a2024;margin-top: 4px !important;font-weight: 500;" class="icon_name"> Categories
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="col-2 fixed-nav-item">
+      <div class="item--box mobile-custom-account-icon {% if request.page_type == 'account' %} active_url{% endif %}">
         <a class="fixed_nav--link" href="/account">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile-1.png?v=1663762989" class="footer_nav_icon" width="19px" >
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Profile.png?v=1663762989" class="footer_nav_icon_filled"   width="19px" >
-            <span class="icon_name"> Me </span>
+          {% if customer %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+              <g id="Group_334288" data-name="Group 334288" transform="translate(7750 572)">
+                <rect id="Rectangle_114331" data-name="Rectangle 114331" width="28" height="28" transform="translate(-7750 -572)" fill="none"/>
+                <path id="Path_341258" data-name="Path 341258" d="M1492,852.75a9.25,9.25,0,0,0-9.2,8.325.132.132,0,0,0,.039.11.232.232,0,0,0,.165.065h18a.227.227,0,0,0,.164-.065.129.129,0,0,0,.04-.11A9.251,9.251,0,0,0,1492,852.75Zm3.244-1a5.75,5.75,0,1,0-6.488,0,10.76,10.76,0,0,0-7.453,9.179,1.678,1.678,0,0,0,1.7,1.823h18a1.678,1.678,0,0,0,1.7-1.823A10.76,10.76,0,0,0,1495.244,851.748Zm-3.244-9a4.25,4.25,0,1,0,4.25,4.25A4.25,4.25,0,0,0,1492,842.75Z" transform="translate(-9228.294 -1410.736)" fill="#1a2024" fill-rule="evenodd"/>
+              </g>
+            </svg>
+            <span style="font-size: 10px !important;letter-spacing: -0.4px;color: #1a2024;margin-top: 4px !important;font-weight: 500;" class="icon_name"     alt="account"> Me </span>
+          {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <g id="Group_334288" data-name="Group 334288" transform="translate(7750 572)">
+              <rect id="Rectangle_114331" data-name="Rectangle 114331" width="28" height="28" transform="translate(-7750 -572)" fill="none"/>
+              <path id="Path_341258" data-name="Path 341258" d="M1492,852.75a9.25,9.25,0,0,0-9.2,8.325.132.132,0,0,0,.039.11.232.232,0,0,0,.165.065h18a.227.227,0,0,0,.164-.065.129.129,0,0,0,.04-.11A9.251,9.251,0,0,0,1492,852.75Zm3.244-1a5.75,5.75,0,1,0-6.488,0,10.76,10.76,0,0,0-7.453,9.179,1.678,1.678,0,0,0,1.7,1.823h18a1.678,1.678,0,0,0,1.7-1.823A10.76,10.76,0,0,0,1495.244,851.748Zm-3.244-9a4.25,4.25,0,1,0,4.25,4.25A4.25,4.25,0,0,0,1492,842.75Z" transform="translate(-9228.294 -1410.736)" fill="#1a2024" fill-rule="evenodd"/>
+            </g>
+          </svg>
+          {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <g id="Group_334295" data-name="Group 334295" transform="translate(7750 572)">
+              <rect id="Rectangle_114331" data-name="Rectangle 114331" width="28" height="28" transform="translate(-7750 -572)" fill="none"/>
+              <path id="Path_341258" data-name="Path 341258" d="M1492,852.75a9.25,9.25,0,0,0-9.2,8.325.132.132,0,0,0,.039.11.232.232,0,0,0,.165.065h18a.227.227,0,0,0,.164-.065.129.129,0,0,0,.04-.11A9.251,9.251,0,0,0,1492,852.75Zm3.244-1a5.75,5.75,0,1,0-6.488,0,10.76,10.76,0,0,0-7.453,9.179,1.678,1.678,0,0,0,1.7,1.823h18a1.678,1.678,0,0,0,1.7-1.823A10.76,10.76,0,0,0,1495.244,851.748Zm-3.244-9a4.25,4.25,0,1,0,4.25,4.25A4.25,4.25,0,0,0,1492,842.75Z" transform="translate(-9228.294 -1410.736)" fill="#d83333" fill-rule="evenodd"/>
+            </g>
+          </svg> {% endcomment %}
+          
+          <span style="font-size: 10px !important;letter-spacing: -0.4px; color: #1a2024;margin-top: 4px !important;font-weight: 500;" class="icon_name" > Login </span>
+          {% endif %}
         </a>
       </div>
     </div>
@@ -156,15 +180,23 @@
     <div class="col-2 fixed-nav-item">
       <div class="item--box">
         <a class="fixed_nav--link" href="https://api.whatsapp.com/send?phone=919667700177&text=Hi">
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/whatsapp_1.png?v=1672658181" class="footer_nav_icon" width="19px" >
-          <span class="icon_name"> Chat </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+            <g id="Group_334287" data-name="Group 334287" transform="translate(7687 572)">
+              <rect id="Rectangle_114332" data-name="Rectangle 114332" width="28" height="28" transform="translate(-7687 -572)" fill="none"/>
+              <g id="Group_334286" data-name="Group 334286" transform="translate(-1493.774 -411)">
+                <path id="Digital_Inline_White" d="M11.581,0A11.49,11.49,0,0,0,1.629,17.225L0,23.176l6.088-1.6a11.474,11.474,0,0,0,5.488,1.4h0A11.489,11.489,0,0,0,11.581,0Zm0,21.038h0a9.528,9.528,0,0,1-4.858-1.331L6.37,19.5l-3.612.948.964-3.522-.227-.361a9.545,9.545,0,1,1,8.086,4.473Z" transform="translate(-6190.226 -159)" fill="#1a2024" stroke="#fff" stroke-width="0.5"/>
+                <path id="Digital_Inline_White-2" data-name="Digital_Inline_White" d="M17.547,14.507c-.3-.149-1.765-.871-2.039-.971s-.473-.149-.672.149-.771.971-.944,1.17-.348.224-.646.075a8.157,8.157,0,0,1-2.4-1.481,8.974,8.974,0,0,1-1.66-2.067c-.174-.3-.019-.46.131-.609.134-.133.3-.348.447-.523a2.017,2.017,0,0,0,.3-.5.55.55,0,0,0-.025-.523c-.075-.149-.672-1.618-.92-2.216-.242-.581-.488-.5-.672-.512s-.373-.01-.572-.01a1.1,1.1,0,0,0-.8.373A3.346,3.346,0,0,0,6.034,9.353,5.808,5.808,0,0,0,7.252,12.44a13.3,13.3,0,0,0,5.1,4.505,17.208,17.208,0,0,0,1.7.628,4.093,4.093,0,0,0,1.879.118,3.073,3.073,0,0,0,2.014-1.419,2.494,2.494,0,0,0,.174-1.419c-.075-.124-.274-.2-.572-.348Z" transform="translate(-6190.747 -159.527)" fill="#1a2024"/>
+              </g>
+            </g>
+          </svg>
+          <span style="font-size: 10px !important;letter-spacing: -0.4px;color: #1a2024;margin-top: 4px !important;font-weight: 500;" class="icon_name" > Chat </span>
         </a>
       </div>
     </div>
   </div>
 </div>
 <script>
-  $('#data-hamburger').click(function () {
+  $('#data-hamburger').click(function() {
     $('button.header__icon-wrapper.tap-area.hidden-desk').click();
   });
   $("input.search__input.predictive-search__input.predictive-search__input_mobile").focus(function(){
@@ -173,4 +205,11 @@
     $("input.search__input.predictive-search__input.predictive-search__input_mobile").blur(function(){
   $(".fixed_nav").fadeIn();
 });
+  $(document).ready(function () {
+    $('#data-hamburger').on('click', function (e) {
+      e.preventDefault();
+      $('.mobile_hamburger_btn').click()
+      $('.mobile_hamburger_btn ').attr('aria-expanded', 'true')
+    })
+  })
 </script>

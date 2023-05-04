@@ -21,7 +21,7 @@
     <meta charset="utf-8">
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=6.0" 
     >
     <meta name="theme-color" content="{{ settings.header_background }}">
     <meta name="facebook-domain-verification" content="qad1e3gldwmxjf6luncdygpvcpduub">
@@ -54,16 +54,17 @@
       used third-parties
     {%- endcomment -%}
     <link rel="preconnect" href="https://cdn.shopify.com">
-    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    {% comment %}
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     {%- unless settings.heading_font.system? and settings.text_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-    {% endunless %}
+    {% endunless %} {% endcomment %}
     <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
+    {% render 'speedsize' %}
     {%- if request.page_type == 'product' -%}
       {%- assign selected_media = product.selected_or_first_available_variant.image
         | default: product.selected_or_first_available_variant.image
@@ -74,14 +75,12 @@
       {%- endif -%}
     {%- elsif request.page_type == 'collection' and collection.image -%}
       <link
-        rel="preload"
         as="image"
         media="(max-width: 740px)"
         imagesizes="100vw"
         imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}"
       >
       <link
-        rel="preload"
         as="image"
         media="(min-width: 741px)"
         imagesizes="100vw"
@@ -136,12 +135,12 @@
       }
      {% endcapture %}
      <script>
+      Shopify.sold_out_threshold = {{ settings.sold_out_threshold | json }};
       Shopify.card_offers = `{{ card_offers }}`;
       Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
       Shopify.tag_selector = {{ settings.tag_selector | json }};
       Shopify.fixed_discount = function(tag){
         let tagArr = tag;
-        console.log(tagArr, 'tagArr');
         let pod_price = 0;
         for (let i = 0; i < tagArr.length; i++) {
           if(tagArr[i].includes('PoD Price|')){
@@ -192,8 +191,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){window.dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-6LGXJKGVE2');
+      gtag('config', 'G-6LGXJKGVE2',{ 'groups': 'GA4','debug_mode':false });
     </script>
     <!-- Global site tag (gtag.js) - Google Analytics Ends -->
     
@@ -244,8 +242,10 @@
     <link rel="stylesheet" href="{{ 'theme-min.css' | asset_url }}">
     {%- if template == 'index' -%}
       <link rel="stylesheet" href="{{ 'homepage.min.css' | asset_url }}">
+      {% render 'homepage-revamp-css' %}
     {%- endif %}
     {%- render 'wizrocket_variables_generator' -%}
+    {%- render 'ms-clarity' -%}
 
     {% if template contains 'product' %}
       {% render 'product-css' %}
@@ -256,6 +256,9 @@
     {% endif %}
     {% render 'gokwik' %}
     {% render 'clevertap' %}
+    {% if template contains 'product' or template contains 'collection' %}
+      <script src="https://robin.engagebud.io/sdk/script/v1/main.min.js?shop=boatlifestylein.myshopify.com" defer></script>
+    {% endif %}
   </head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
     <!-- @prettify-ignore -->
@@ -368,7 +371,9 @@
 
 
     <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
-    <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    {% unless page.handle == 'dwfyb' %}
+      <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    {% endunless %}
 
     {% if template contains 'product' or template contains 'index' %}
       {% render 'back-in-stock-helper' %}
@@ -380,9 +385,9 @@
     {% if template contains 'product' %}
       {%- render 'judgeme_core' -%}
     {% endif %}
-    {% unless template contains 'product' or template contains 'customers' %}
+
       {%- render 'bottom-navbar-mobile' -%}
-    {% endunless %}
+
     <!-- Magic Checkout Code Starts -->
     {%- comment -%} {% render 'magicCheckoutSnippet' %} {%- endcomment -%}
     <!-- Magic Checkout Code Ends -->
@@ -404,15 +409,19 @@
       <style>
         @media screen and (max-width: 767px) {
           #main, .footer {
-         background: url({{ settings.home_bg_image }}) !important;
-         background-repeat: repeat-y;
-         background-size: contain !important;
+            background: url({{ settings.home_bg_image }}) !important;
+            background-repeat: repeat-y;
+            background-size: contain !important;
+          }
         }
       </style>
     {% endif %}
-
-    
+    {% if template contains 'customers'%}
+      <style>
+        .mobile-toolbar{bottom:0 !important;}
+      </style>
+    {% endif %}
     {%- render 'auto_atoc_items' -%}
-  {{ '//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23' | script_tag }}
+    <script src="//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23" async></script>
 </body>
 </html>

@@ -15,7 +15,9 @@
 
   @media screen and (max-width: 767px) {
     .collection-mobile-banner-section .collection-image-slider{padding: 10px;}
-    .collection-image-slider .item img{border-radius: 10px;height:200px;}
+    .collection-image-slider .item img{border-radius: 10px;
+      {% comment %} height:200px; {% endcomment %}
+    }
     .collection_mobile_banner_section .mobile-only{padding: 0px 12px;}
   }
 </style>
@@ -33,14 +35,15 @@
         <li class="breadcrumb__item">
           <a class="breadcrumb__link" href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
         </li>
-
+        {% assign bc_collection = collection.metafields.custom.breadcrumbs.value %}
+        {% if bc_collection !=  blank %}
+          <li class="breadcrumb__item">
+            <a class="breadcrumb__link" href="{{ bc_collection.url }}">{{ bc_collection.title }}</a>
+          </li>
+        {% endif %}
         <li class="breadcrumb__item">
           <span class="breadcrumb__link" aria-current="page">
-            {%- if collection.handle == 'all' -%}
-              {{- 'collection.general.all_products' | t -}}
-            {%- else -%}
-              {{- collection.title -}}
-            {%- endif -%}
+            {{- collection.title -}}
           </span>
         </li>
       </ol>
@@ -56,11 +59,11 @@
       {%- if collection.metafields.custom.mobile_image_slider -%}
         {%- assign all_banners = collection.metafields.custom.mobile_image_slider | split: "," -%}
             <div class="mobile-only pt-3">
-              <div class="owl-carousel owl-theme collection-image-slider {{ section.id }}">
+              <div class="collection-image-slider {{ section.id }}">
                 {% for single_banner in all_banners %}
                   {% comment %} <a class="custom-collection-banner {%- if template contains 'notify-me-collection' -%}buttonbtnexplore{%- endif -%}"> {% endcomment %}
                     <div class="item">
-                      <img src="{{ single_banner }}" class="collection_single_image" />
+                      <img alt="collection-banner" src="{{ single_banner }}" class="collection_single_image" style="width:100%;" />
                     </div>
                   {% comment %} </a>     {% endcomment %}
                 {% endfor %}
@@ -100,7 +103,7 @@
   {%- endif -%}
 
 </section>
-<script>
+{% comment %} <script>
   $(document).ready(function() {
     $('.collection-image-slider').owlCarousel({
       loop: false,
@@ -126,7 +129,7 @@
       }
     })
   });
-</script>
+</script> {% endcomment %}
 {% schema %}
   {
     "name": "Collection banner",

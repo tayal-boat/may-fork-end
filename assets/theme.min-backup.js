@@ -6231,6 +6231,10 @@
             if (!e) return;
             let t = (e, t, i, s) => {
                 let n = "";
+                console.log(e);
+                console.log(t);
+                console.log(i);
+                console.log(s);
                 switch (e.getAttribute("data-selector-type")) {
                     case "color":
                         n = `.color-swatch:nth-child(${t+1})`;
@@ -6244,6 +6248,7 @@
                     case "dropdown":
                         n = `.combo-box__option-item:nth-child(${t+1})`
                 }
+                console.log(e.querySelector(n));
                 e.querySelector(n).toggleAttribute("hidden", !s), this.hideSoldOutVariants ? e.querySelector(n).toggleAttribute("hidden", !i) : e.querySelector(n).classList.toggle("is-disabled", !i)
             };
             this.optionSelectors && this.optionSelectors[0] && this.product.options[0].values.forEach(((i, s) => {
@@ -6445,7 +6450,7 @@
                 }
         }
     }, Shopify.cartGst = function() {
-        0 == $(".main-checkout-btn").length && ($(".mini-cart_footer").append('<button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="main-checkout-btn checkout-button hide button button--primary button--full" name="checkout">PLACE ORDER</button>'), document.querySelector(".gst-container input") && document.querySelector(".gst-container input").checked && ($(".mini-cart__gst_details").show(), $(".main-checkout-btn").show(), $(".checkout-buttons-div").hide()), Shopify.gst_added && ($(".mini-cart__gst").append(`<div class="mini-cart__gst_details"><p> ${sessionStorage.gst_billing_name} </p><p> ${sessionStorage.gst_billing_address} ${sessionStorage.gst_billing_city} ${sessionStorage.gst_billing_state} ${sessionStorage.gst_billing_pincode} </p></div>`), document.querySelector(".gst-container input").checked = !0, $(".mini-cart__gst_details").show(), $(".main-checkout-btn").show(), $(".checkout-buttons-div").hide()), $(".gst-container input").click((function() {
+        0 == $(".main-checkout-btn").length && ($(".mini-cart_footer").append('<button is="loader-button" onclick="shopifyCheckout()" form="mini-cart-form" type="submit" class="main-checkout-btn checkout-button hide button button--primary button--full" name="checkout">PLACE ORDER</button>'), document.querySelector(".gst-container input") && document.querySelector(".gst-container input").checked && ($(".mini-cart__gst_details").show(), $(".main-checkout-btn").show(), $(".checkout-buttons-div").hide()), Shopify.gst_added && ($(".mini-cart__gst").append(`<div class="mini-cart__gst_details"><p> ${sessionStorage.gst_billing_name} </p><p> ${sessionStorage.gst_billing_address} ${sessionStorage.gst_billing_city} ${sessionStorage.gst_billing_state} ${sessionStorage.gst_billing_pincode} </p></div>`), document.querySelector(".gst-container input").checked = !0, $(".message-container .message").text('Billing address will be PPOB address as per GST portal') $(".mini-cart__gst_details").show(), $(".main-checkout-btn").show(), $(".checkout-buttons-div").hide()), $(".gst-container input").click((function() {
             this.checked ? ($(".main-checkout-btn").show(), $(".checkout-buttons-div").hide(), Shopify.gst_added && $(".mini-cart__gst_details").show()) : ($(".main-checkout-btn").hide(), $(".checkout-buttons-div").show(), Shopify.gst_added && $(".mini-cart__gst_details").hide())
         })))
     };
