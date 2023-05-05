@@ -444,7 +444,7 @@
  </div>
 </div>
 </div>
-      <div class="mini-cart-message">
+      <div class="mini-cart-message visually-hidden">
         <div class="message-container">
           <div class="message" style="font-size: 10px;line-height: 13px;padding-right: 16px;">{{section.settings.cart_announcement}}</div>
         </div>
@@ -540,7 +540,7 @@
 
 
     {%- if section.settings.show_checkout_button -%}
-          {% if cart.total_price <= 4900000 %}
+          {% if cart.total_price <= 4999000 %}
               {%- assign magic_ok = true -%}
               {%- assign only_gk = false -%}
               {%- assign is_validation_ok = true -%}
@@ -627,7 +627,7 @@
           <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
               {% endif %}
           {%- else -%}
-          <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.49000/-!</strong> Modify your cart to proceed.</p>
+          <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.49990/-!</strong> Modify your cart to proceed.</p>
           {% endif %}
         {%- else -%}
           <a href="{{ routes.cart_url }}" class="button button--primary button--full" data-no-instant>{{ 'cart.general.go_to_cart' | t }}</a>
@@ -656,6 +656,12 @@
 <script>
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
+  var cartPrice = {{cart.total_price}}
+  if(cartPrice > 50000) {
+      $('.mini-cart-message').removeClass('visually-hidden')
+  } else {
+      $('.mini-cart-message').addClass('visually-hidden')
+  }
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
 let custumisedvariant_ids = [];
 let giftId = "{{ gift-product_variant }}";
@@ -739,6 +745,12 @@ for (const mutation of mutationList) {
 let updatedqnty = 0;
 jQuery.getJSON('/cart.js', function(cart) {
    cartI = cart.items;
+   var cartPrice = cart.total_price
+    if(cartPrice > 50000) {
+      $('.mini-cart-message').removeClass('visually-hidden')
+    } else {
+      $('.mini-cart-message').addClass('visually-hidden')
+    }
    let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
@@ -809,6 +821,7 @@ $('#mini-cart-form .line-item').each(function() {
 });
 
 Shopify.cartMessage = `{{section.settings.cart_announcement}}`
+
 {% comment %} const checkbox = document.querySelector(".check_container input");
 const message = document.querySelector(".message-container .message");
 
