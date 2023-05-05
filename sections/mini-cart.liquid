@@ -21,29 +21,6 @@
     <input class="cart--count" value="{{cart.item_count}}" type="hidden"> 
   </p>
 
-  {%- if section.settings.show_promise_strip -%}
-    <div class="container c-new mini-cart-icons p-0" style="background:#f7f9fa;">
-      <div class="section__color-wrapper promise-icons">
-          <div class="mySect py-2">
-              <div class="img-row text-center row justify-content-around pb-1 pb-lg-0" style="max-width: 100%;margin: auto;">
-                  {% for block in section.blocks %}
-                      <div class="col-2 pipe p-0">
-                          <div class="row myIconRow">
-                              <div class="col-md-6 myIcon">
-                                  <img alt="" loading="lazy" src="{{block.settings.image | img_url }}">
-                              </div>
-                              <div class="col-md-6 myText">
-                                  <p class="mb-0">{{ block.settings.collection_Title }}</p>
-                              </div>
-                          </div>
-                      </div>
-                  {% endfor %}
-              </div>
-          </div>
-      </div>
-    </div>
-    {%- endif -%}
-
     {%- if cart.item_count == 0 -%}
       <div class="drawer__content drawer__content--center">
         <p>{{ 'cart.general.empty' | t }}</p>
@@ -91,6 +68,30 @@
         {%- endif -%}
 
         <form id="mini-cart-form" action="{{ routes.cart_url }}" novalidate method="post"  data-cart_items="{{ line_item.product }}">
+
+          {%- if section.settings.show_promise_strip -%}
+            <div class="container c-new mini-cart-icons p-0" style="background:#f7f9fa;">
+              <div class="section__color-wrapper promise-icons">
+                  <div class="mySect py-2">
+                      <div class="img-row text-center row justify-content-around pb-1 pb-lg-0" style="max-width: 100%;margin: auto;">
+                          {% for block in section.blocks %}
+                              <div class="col-2 pipe p-0">
+                                  <div class="row myIconRow">
+                                      <div class="col-md-6 myIcon">
+                                          <img alt="" loading="lazy" src="{{block.settings.image | img_url }}">
+                                      </div>
+                                      <div class="col-md-6 myText">
+                                          <p class="mb-0">{{ block.settings.collection_Title }}</p>
+                                      </div>
+                                  </div>
+                              </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+              </div>
+            </div>
+          {%- endif -%}
+
           <input type="hidden" name="checkout">
 
           {%- for line_item in cart.items -%}
@@ -176,8 +177,8 @@
 
                     {%- capture line_item_properties -%}
                       {%- unless line_item.product.has_only_default_variant -%}
-                        {% comment %} info: Commented on 2.0 Internal UI {% endcomment %}
-                        {% comment %} <span class="cart_line_item_variant_color" style="background: {{ line_item.variant.metafields.my_fields.variantcolorcode }};"></span> {% endcomment %}
+                        {% comment %} info: Removed variant color circle in boat-2.0-internal {% endcomment %}
+                        <span class="cart_line_item_variant_color" style="background: {{ line_item.variant.metafields.my_fields.variantcolorcode }};"></span>
                         
                         <span class="product-item-meta__property text--subdued text--xsmall cart_line_item_variant_name">
                           {{ line_item.variant.option1 | camelcase  }}
@@ -230,6 +231,8 @@
                     {% endfor %}
                   </select>
                 </div>
+
+                <div class="product_item-meta_wrapper">
                   {%- if line_item_properties != blank -%}
                     <div class="product-item-meta__property-list">
                       {{- line_item_properties -}}
@@ -310,6 +313,9 @@
                     </div>
                   {% comment %} <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a> {% endcomment %}
                   </line-item-quantity>
+
+                </div>
+
                   {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
                       <small class="qty-error-msg text-red mt-2">Not more than 1 unit are allowed for this item.</small>
                   {% elsif line_item.product.metafields.set.quantity_limit == 2 and line_item.quantity > 2 %}
