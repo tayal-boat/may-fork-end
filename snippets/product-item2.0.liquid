@@ -222,6 +222,7 @@
       {%- if settings.show_product_rating and reduced_content != true -%}
         <span class="product-item-meta__reviews-badge text--small">
           {%- render 'product-rating', product: product -%}
+          {% capture swatch_btn %}
           {% if available_variants >= 1 and has_color_code %}
             {% unless product.tags contains 'customized' %}
             <button
@@ -239,8 +240,10 @@
               class="variants-list hidden-phone">
               {{ swatch_list }}
             </button>
-          {% endunless %}
+            {% endunless %}
           {% endif %}
+          {% endcapture%}
+         {% unless template contains 'collection' %}  {{ swatch_btn }}  {% endunless %}
         </span>
       {%- endif -%}
       <div class="position-relative">
@@ -421,7 +424,7 @@
                 </div>
               </div>
             {%- endif -%}
-            
+            {% if template contains 'collection' %}  {{ swatch_btn }}  {% endif %}
           </div>
           {% comment %} 
             info: ui2.0
@@ -442,7 +445,7 @@
         -%}
 
           {% if product_soldout == false %}
-          <div class="d-flex align-items-center" style="position: absolute;top: 0;right: 0;">
+          <div class="d-flex align-items-center product-item_atc">
             {%- if available_variants == 1 -%}
             {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
             <div class="product-item__quick-form">
@@ -519,7 +522,11 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {% if template contains 'collection' %}
+                     {{- 'product.form.add_to_cart' | t -}}  
+                    {% else %}
+                     {%- render 'icon' with 'header-tote-bag' -%}
+                    {% endif %}
                   {% endif %}
                 </button>
                 <button
@@ -531,7 +538,11 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {% if template contains 'collection' %}
+                     {{- 'product.form.add_to_cart' | t -}}  
+                    {% else %}
+                     {%- render 'icon' with 'header-tote-bag' -%}
+                    {% endif %}
                   {% endif %}
                 </button>
 
@@ -544,7 +555,11 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {% if template contains 'collection' %}
+                      {{- 'product.form.add_to_cart' | t -}}  
+                    {% else %}
+                      {%- render 'icon' with 'header-tote-bag' -%}
+                    {% endif%}
                   {% endif %}
                 </button>
               {% endif %}
