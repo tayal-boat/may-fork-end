@@ -250,23 +250,12 @@
               {%- endif -%}
             </span>
             {% if product.compare_at_price > discounted_price %}
-            <p class="custom-saved-price">{{
-              product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-              round
-              | append: '% Off' }} </p>
-              {% endif %}
-            
-              <span class="price price--compare line-through">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-              
-                {%- if settings.currency_code_enabled -%}
-                {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
-                replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
-                -}}
-                {%- endif -%}
-              </span>
+              <p class="custom-saved-price">{{
+                product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
+                round
+                | append: '% Off' }} </p>
+            {% endif %}
+          
               {%- else -%}
               <span class="price price--large">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -296,12 +285,22 @@
                 </div>
               {%- endif -%}
             </div>
+            <div class="strike-price">
+              <span class="price price--compare line-through">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
+                replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+                -}}
+                {%- endif -%}
+              </span>
+              <span class="inclusive-text">Inclusive of all Taxes</span>
+            </div>
             {%- if product.available -%}
              {% render 'product-offers' %}{%- endif -%}
             </div>
-            
-            <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
-
             </div>
 
   {% endunless %}
