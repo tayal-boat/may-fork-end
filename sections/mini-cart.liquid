@@ -670,19 +670,25 @@
 {% assign gift-product_variant = gift-product.variants[0].id %}
 
 <script>
-  const cartDiscountCustom = document.querySelector('.discount-info')
-  const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
-  
-  if(cartDiscountCustom) {
-    clickAndApplyCode(cartDiscountCustom)
+  function runDiscount() {
+    const cartDiscountCustom = document.querySelector('.discount-info')
+    const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
+
+    if(cartDiscountCustom) {
+      clickAndApplyCode(cartDiscountCustom)
+    }
+    if(cartDiscountHomeAudio) {
+      clickAndApplyCode(cartDiscountHomeAudio)
+    }
   }
-  if(cartDiscountHomeAudio) {
-    clickAndApplyCode(cartDiscountHomeAudio)
-  }
+  runDiscount()
 
   function clickAndApplyCode(element) {
     element.addEventListener('click', function() {
+      console.log(element)
       const cartDiscountCode = element.querySelector('.cart-code').textContent;
+      const discountField = document.querySelector('#af_kd_custom_coupon_text')
+      const discountApplyBtn = document.querySelector('#af_kd_custom_apply_coupon_trigger')
       const applyMsg = element.querySelector('.apply-msg')
       const current_date = new Date();
       current_date.setTime(current_date.getTime());
@@ -694,6 +700,8 @@
       document.cookie = "discount_code=" + cartDiscountCode + ";expires=" + next_day;
       applyMsg.textContent = 'Applied!'
       copyToClipboard(cartDiscountCode);
+      discountField.value = cartDiscountCode
+      $('#af_kd_custom_apply_coupon_trigger')[0].click()
     })
   }
 
@@ -703,6 +711,9 @@
     $temp.val($(element).text()).select();
     document.execCommand("copy");
     $temp.remove();
+  }
+  Shopify.cartUpdate = function(cartJson){
+    runDiscount()  
   }
   
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
