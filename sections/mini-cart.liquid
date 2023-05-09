@@ -295,6 +295,22 @@
                   {% endif %}
                 </div>
               </div>
+              {% if line_item.product.tags contains 'cart-discount' %}
+                {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
+                {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
+                {% assign discount_amount = line_price | minus: floor_price %}
+                <small class="discount-info" style="margin-top: 8px;display: block;color: green;cursor:pointer;">
+                  You unlocked <b>₹{{ discount_amount }} OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>BOATCUSTOM</b></span></span>
+                </small>
+              {% endif %}
+              {% if line_item.product.type == 'Home Audio' %}
+                {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
+                {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
+                {% assign discount_amount = line_price | minus: floor_price %}
+                <small class="discount-info-home" style="margin-top: 8px;display: block;color:green;cursor:pointer;">
+                  You unlocked <b>₹100 OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>FLAT100</b></span></span>
+                </small>
+              {% endif %}
             {% assign data-loop = forloop.index %}
       
               {% for p in line_item.properties %}
@@ -654,6 +670,41 @@
 {% assign gift-product_variant = gift-product.variants[0].id %}
 
 <script>
+  const cartDiscountCustom = document.querySelector('.discount-info')
+  const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
+  
+  if(cartDiscountCustom) {
+    clickAndApplyCode(cartDiscountCustom)
+  }
+  if(cartDiscountHomeAudio) {
+    clickAndApplyCode(cartDiscountHomeAudio)
+  }
+
+  function clickAndApplyCode(element) {
+    element.addEventListener('click', function() {
+      const cartDiscountCode = element.querySelector('.cart-code').textContent;
+      const applyMsg = element.querySelector('.apply-msg')
+      const current_date = new Date();
+      current_date.setTime(current_date.getTime());
+      const current_time = current_date.toUTCString();
+      document.cookie = "discount_code='';expires=" + current_time;
+  
+      // Seeting cookie for 24 hrs
+      let next_day = current_date.setTime(current_date.getTime() + (1 * 24 * 60 * 60 * 1000));
+      document.cookie = "discount_code=" + cartDiscountCode + ";expires=" + next_day;
+      applyMsg.textContent = 'Applied!'
+      copyToClipboard(cartDiscountCode);
+    })
+  }
+
+  function copyToClipboard(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+  }
+  
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
   var cartPrice = {{cart.total_price}}
