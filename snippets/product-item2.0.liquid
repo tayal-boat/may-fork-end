@@ -278,22 +278,11 @@
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-                {% comment %} 
-                info: ui2.0
-                <p class="m-0 pr-2 off">
-                  {{-
-                      product.compare_at_price
-                    | minus: discounted_price
-                    | times: 100.0
-                    | divided_by: product.compare_at_price
-                    | round
-                    | append: '% off' -}}
-                </p> {% endcomment %}
                 <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -307,7 +296,15 @@
                     {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-
+                <p class="m-0 pr-2 off">
+                  {{-
+                      product.compare_at_price
+                    | minus: discounted_price
+                    | times: 100.0
+                    | divided_by: product.compare_at_price
+                    | round
+                    | append: '% off' -}}
+                </p>
               {%- else -%}
                 <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -324,8 +321,14 @@
                   {{- discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-              {% comment %} 
-             info: ui2.0
+              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                  {{- product.compare_at_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- product.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
               <p class="m-0 pr-2 off">
                 {{-
                     product.compare_at_price
@@ -335,15 +338,6 @@
                   | round
                   | append: '% off' -}}
               </p> 
-            {% endcomment %}
-              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
 
             {%- elsif product.price_varies -%}
               {%- capture price_min -%}
@@ -436,6 +430,15 @@
             {% endif %}
           </p> 
         {% endcomment %}
+        {% if template contains 'collection' and product.metafields.custom.product_card_features %}
+          {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+          <div class="features-list only-horizontal">
+            {% for feature in features %}
+              <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+            {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+            {% endfor %}
+          </div>
+        {% endif %}
         {% endunless %}
       </div>
       {%- if request.page_type != 'password'
@@ -638,15 +641,6 @@
         {%- endfor -%}
       {%- endif -%}
 
-      {% comment %}
-      {%- if product.metafields.benefits.usp1 -%}
-      <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
-      <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-      <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-      <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-      </div>
-      {%- endif -%}
-      {% endcomment %}
     </div>
 
     {%- if product.available and reduced_content or show_cta -%}
@@ -712,7 +706,7 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-    {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+
     {% comment %} {% unless template contains 'collection' %}
     {% if product.metafields.custom.product_card_features %}
       <div class="features-list only-vertical">
@@ -725,12 +719,4 @@
     {% endunless %} {% endcomment %}
   </div>
   </div>
-  {% if template contains 'collection' and product.metafields.custom.product_card_features %}
-    <div class="features-list only-horizontal">
-      {% for feature in features %}
-        <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-      {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
-      {% endfor %}
-    </div>
-  {% endif %}
 </product-item>
