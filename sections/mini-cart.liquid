@@ -724,10 +724,10 @@
 {% assign gift-product_variant = gift-product.variants[0].id %}
 
 <script>
-  const cartDiscountCustom = document.querySelector('.discount-info')
-  const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
-  
   function runDiscount() {
+    const cartDiscountCustom = document.querySelector('.discount-info')
+    const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
+
     if(cartDiscountCustom) {
       clickAndApplyCode(cartDiscountCustom)
     }
@@ -739,6 +739,7 @@
 
   function clickAndApplyCode(element) {
     element.addEventListener('click', function() {
+      console.log(element)
       const cartDiscountCode = element.querySelector('.cart-code').textContent;
       const discountField = document.querySelector('#af_kd_custom_coupon_text')
       const discountApplyBtn = document.querySelector('#af_kd_custom_apply_coupon_trigger')
@@ -766,9 +767,7 @@
     $temp.remove();
   }
   Shopify.cartUpdate = function(cartJson){
-    console.log(cartJson);
-    runDiscount()
-    console.log('running');
+    runDiscount()  
   }
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
