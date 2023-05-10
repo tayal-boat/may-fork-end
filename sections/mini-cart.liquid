@@ -335,22 +335,24 @@
                   {% endif %}
                 </div>
               </div>
-              {% if line_item.product.tags contains 'cart-discount' %}
-                {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
-                {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
-                {% assign discount_amount = line_price | minus: floor_price %}
-                <small class="discount-info" style="margin-top: 8px;display: block;color: green;cursor:pointer;">
-                  You unlocked <b>₹{{ discount_amount }} OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>BOATCUSTOM</b></span></span>
-                </small>
-              {% endif %}
-              {% if line_item.product.type == 'Home Audio' %}
-                {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
-                {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
-                {% assign discount_amount = line_price | minus: floor_price %}
-                <small class="discount-info-home" style="margin-top: 8px;display: block;color:green;cursor:pointer;">
-                  You unlocked <b>₹100 OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>FLAT100</b></span></span>
-                </small>
-              {% endif %}
+              {%- if section.settings.show_discount_msg -%}
+                {% if line_item.product.tags contains 'cart-discount' %}
+                  {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
+                  {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
+                  {% assign discount_amount = line_price | minus: floor_price %}
+                  <small class="discount-info" style="margin-top: 8px;display: block;color: green;cursor:pointer;">
+                    You unlocked <b>₹{{ discount_amount }} OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>FLAT500</b></span></span>
+                  </small>
+                {% endif %}
+                {% comment %} {% if line_item.product.type == 'Home Audio' %}
+                  {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
+                  {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
+                  {% assign discount_amount = line_price | minus: floor_price %}
+                  <small class="discount-info-home" style="margin-top: 8px;display: block;color:green;cursor:pointer;">
+                    You unlocked <b>₹100 OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>FLAT100</b></span></span>
+                  </small>
+                {% endif %} {% endcomment %}
+              {%- endif -%}
             {% assign data-loop = forloop.index %}
       
               {% for p in line_item.properties %}
@@ -956,6 +958,12 @@ document.addEventListener('cart:updated', (event) => {
         "id": "cart_announcement",
         "label": "announcement",
         "default": "Free Shipping, COD Available"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_discount_msg",
+        "label": "Show Discount Message",
+        "default": true
       },
       {
         "type": "checkbox",
