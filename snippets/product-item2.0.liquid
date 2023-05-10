@@ -99,7 +99,7 @@
           </span>
         {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
-            😎
+            🔥
             {{ settings.flash_products_label }}
           </span>
         {%- elsif tag contains 'meta-label-Bestseller' -%}
@@ -430,16 +430,16 @@
             {% endif %}
           </p> 
         {% endcomment %}
-        {% if template contains 'collection' and product.metafields.custom.product_card_features %}
-          {% assign features = product.metafields.custom.product_card_features | split: '|' %}
-          <div class="features-list only-horizontal">
-            {% for feature in features %}
-              <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-            {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
-            {% endfor %}
-          </div>
-        {% endif %}
-        {% endunless %}
+        <div class="features-list only-horizontal">
+          {% if template contains 'collection' and product.metafields.custom.product_card_features %}
+            {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+              {% for feature in features %}
+                <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+              {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+              {% endfor %}
+          {% endif %}
+          {% endunless %}
+        </div>
       </div>
       {%- if request.page_type != 'password'
         and settings.product_add_to_cart
@@ -488,7 +488,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
                 <button type="submit"
@@ -497,7 +497,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
               {%- endform -%}
@@ -525,11 +525,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {% if template contains 'collection' %}
                      {{- 'product.form.add_to_cart' | t -}}  
-                    {% else %}
-                     {%- render 'icon' with 'header-tote-bag' -%}
-                    {% endif %}
                   {% endif %}
                 </button>
                 <button
@@ -541,11 +537,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {% if template contains 'collection' %}
                      {{- 'product.form.add_to_cart' | t -}}  
-                    {% else %}
-                     {%- render 'icon' with 'header-tote-bag' -%}
-                    {% endif %}
                   {% endif %}
                 </button>
 
@@ -558,11 +550,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {% if template contains 'collection' %}
                       {{- 'product.form.add_to_cart' | t -}}  
-                    {% else %}
-                      {%- render 'icon' with 'header-tote-bag' -%}
-                    {% endif%}
                   {% endif %}
                 </button>
               {% endif %}
