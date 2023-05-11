@@ -689,6 +689,7 @@
     element.addEventListener('click', function() {
       console.log(element)
       const cartDiscountCode = element.querySelector('.cart-code').textContent;
+      const cartDiscountCodeEl = element.querySelector('.cart-code');
       const discountField = document.querySelector('#af_kd_custom_coupon_text')
       const discountApplyBtn = document.querySelector('#af_kd_custom_apply_coupon_trigger')
       const applyMsg = element.querySelector('.apply-msg')
@@ -701,7 +702,7 @@
       let next_day = current_date.setTime(current_date.getTime() + (1 * 24 * 60 * 60 * 1000));
       document.cookie = "discount_code=" + cartDiscountCode + ";expires=" + next_day;
       applyMsg.textContent = 'Applied!'
-      copyToClipboard(cartDiscountCode);
+      copyToClipboard(cartDiscountCodeEl);
       discountField.value = cartDiscountCode
       $('#af_kd_custom_apply_coupon_trigger')[0].click()
     })
@@ -710,7 +711,7 @@
   function copyToClipboard(element) {
     var $temp = $("<input>");
     $("body").append($temp);
-    $temp.val($(element)).select();
+    $temp.val($(element).text()).select();
     document.execCommand("copy");
     $temp.remove();
   }
