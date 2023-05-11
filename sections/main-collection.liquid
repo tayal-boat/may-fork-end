@@ -143,17 +143,34 @@ sort-by-popover button.popover__close-button.tap-area.tap-area--large {backgroun
 @media(min-width:1200px){
   sort-by-popover .popover__header {display: none;}
   .product-horizontal {width: 70%;margin-bottom: 14px;}
+  nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone {display: none;}
 }
 @media(min-width:1400px){
   .product-horizontal {width: 60%;}
 }
+
+{% comment %}info: collection page ui2.0 {% endcomment %}
+
 </style>
 
 <section>
   <div class="container">
-    <h1 class="heading h1">
-    	<split-lines>{{ collection.title }}</split-lines>
-    </h1>
+    {% if product.metafields.custom.productbanner_url != blank %}
+      <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ product.metafields.custom.productbanner_url | split: "," | last }}" class="banner_link">
+    <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
+      style="border-radius:10px;">
+    </a>
+    {% elsif section.settings.banners_url != blank %}
+    <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ section.settings.banners_url | split: "," | last }}" class="banner_link">
+      <img src="{{ section.settings.banners_url | split: "," | first }}"
+        style="border-radius:10px;">
+      </a>
+    {% endif %}
+    {% comment %} info:ui2.0
+      <h1 class="heading h1">
+        <split-lines>{{ collection.title }}</split-lines>
+      </h1> 
+    {% endcomment %}
     {%- if template contains 'flash' and settings.enable_flash_sale -%}
       <div class="flash_sale">
         <p class="m-0 text-uppercase flash_text">
