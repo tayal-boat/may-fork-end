@@ -33,7 +33,7 @@
   {{ product.variants.size | minus: 2 }}
 {% endcapture %}
 {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
-{% assign total_swatches_to_show = 2 %}
+{% assign total_swatches_to_show = 3 %}
 {% capture swatch_list %}
   {% for variant in product.variants limit: total_swatches_to_show %}
     {% if variant.metafields.my_fields.variantcolorcode %}
@@ -41,9 +41,12 @@
     {% endif %}
     <span class='swatch-circle' style="background:{{ variant.metafields.my_fields.variantcolorcode }}"></span>
   {% endfor %}
-  {% if remaining_variants_number >= 1 %}
+  {% comment %}
+    info:
+     {% if remaining_variants_number >= 1 %}
     &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
   {% endif %}
+ {% endcomment %}
 {% endcapture %}
 {% comment %} info: Code for Swatch List ends {% endcomment %}
 
@@ -75,12 +78,12 @@
 {% endfor %}
 
 <product-item
-  class="product-item{% comment %}{% unless product.available %}product-item--sold-out{% endunless %}{% endcomment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
+  class="product-item two-point-o {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
   {% if reveal %}reveal{% endif %}>
   <div class="product__wrapper">
   <div class="labels-wrapper {% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
     {% if product.metafields.product_labels.label %}
-    <span class="metafeild-label label--highlight custom-label label bg-black">
+    <span class="metafeild-label label--highlight custom-label label ui-2">
        {{- product.metafields.product_labels.label -}}
     </span>
   {% endif %}
@@ -96,15 +99,7 @@
           </span>
         {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              fill="currentColor"
-              class="bi bi-lightning-fill"
-              viewBox="0 0 16 16">
-              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
-            </svg>
+            😎
             {{ settings.flash_products_label }}
           </span>
         {%- elsif tag contains 'meta-label-Bestseller' -%}
@@ -113,15 +108,15 @@
           </span>
         {%- elsif tag contains 'meta-label-trending' -%}
           <span class="priority label z-6 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> TRENDING
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> Trending
           </span>
         {%- elsif tag contains 'meta-label-exclusive' -%}
           <span class="priority label z-5 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-            💝 LIMITED EDITION
+            💝 Limited Edition
           </span>
         {%- elsif tag contains 'meta-label-just launched' -%}
           <span class="priority label z-4 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
-            🎉 NEW LAUNCH
+            🎉 New Launch
           </span>
         {%- elsif tag contains 'Feature|' -%}
           <span class="priority label z-3 label--highlight custom-label bg-black {{ tag }}">
@@ -140,7 +135,7 @@
         </span>
       {% else %}
         <span class="label label--highlight custom-label q -out-click-to-notify">
-          <span>SOLD OUT</span>
+          <span>Sold Out</span>
         </span>
       {%- endif -%}
     {%- endif -%}
@@ -154,67 +149,59 @@
 
       <a
         href="{{ product.url }}"
-        class="product-item__aspect-ratio aspect-ratio {% if settings.product_image_size != 'natural' %}aspect-ratio--{{ settings.product_image_size }}{% endif %}"
+        class="product-item__aspect-ratio aspect-ratio"
         style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}">
-        {% if product.variants.size > 1 %}
-          <img
-            class="product-item__primary-image"
-            loading="lazy"
-            data-media-id="{{ product.featured_media.id | escape }}"
-            sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
-        {% else %}
-          <img
-            class="product-item__primary-image"
-            loading="lazy"
-            data-media-id="{{ product.featured_media.id | escape }}"
-            sizes="{{ sizes_attribute }}"
-            {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
-        {% endif %}
+      {% if product.metafields.custom.product_cards_placeholder1 %}
+        <img
+          class="product-item__primary-image"
+          loading="lazy"
+          src="{{ product.metafields.custom.product_cards_placeholder1 }}">
+      {% else %}
+            {% if product.variants.size > 1 %}
+              <img
+                class="product-item__primary-image old"
+                loading="lazy"
+                data-media-id="{{ product.featured_media.id | escape }}"
+                {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}>
+            {% else %}
+              <img
+                class="product-item__primary-image old"
+                loading="lazy"
+                data-media-id="{{ product.featured_media.id | escape }}"
+                {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}>
+            {% endif %}
+
         {%- if settings.product_color_display == 'swatch' -%}
           {%- assign featured_media = product.variants | map: 'featured_media' -%}
 
           {%- for media in featured_media -%}
             {%- unless media == product.featured_media -%}
               <img
-                class="product-item__primary-image"
+                class="product-item__primary-image old"
                 hidden
                 data-media-id="{{ media.id | escape }}"
                 loading="lazy"
-                sizes="{{ sizes_attribute }}"
                 {% render 'image-attributes', image: media, sizes: '200,300' %}>
             {%- endunless -%}
           {%- endfor -%}
         {%- endif -%}
 
         {%- if settings.show_secondary_image and product.media.size > 1 and hide_secondary_image != true -%}
-          {%- assign next_media_pos = product.media[product_varient.image.position] 
-            | plus: 1 -%}
-          {%- assign next_media = product.media[product_varient.image.position] 
-            | default: product.media[next_media_pos] -%}
+          {%- assign next_media_pos = product.media[product_varient.image.position] | plus: 1 -%}
+          {%- assign next_media = product.media[product_varient.image.position] | default: product.media[next_media_pos] -%}
           <img
             class="product-item__secondary-image"
             loading="lazy"
-            sizes="{{ sizes_attribute }}"
             {% render 'image-attributes', image: next_media, sizes: '200,300' %}>
         {%- endif -%}
+      {% endif %}
       </a>
       {% comment %} {% unless template contains 'collection' or section.settings.horizontal_ui %}
         {% if product.available and product.tags contains 'flash-sale' -%}
           {%- render 'inventory-bar' with product -%}
         {%- endif -%}
       {%- endunless -%} {% endcomment %}
-      {% comment %} {% if product.tags contains 'Super Quick Delivery' and template contains 'index' %}
-        <div class="quick-delivery-lable">
-          {% render 'icon' with 'quick-delivery' %}<span>Super Quick Delivery</span>
-        </div>
-      {% endif %} {% endcomment %}
     </div>
-    {% comment %} {% if product.tags contains 'Super Quick Delivery' and template contains 'collection' %}
-      <div class="quick-delivery-lable">
-        {% render 'icon' with 'quick-delivery' %}<span>Super Quick Delivery</span>
-      </div>
-    {% endif %} {% endcomment %}
   </div>
   <div class="product-item__info {% if show_cta %}product-item__info--with-button{% endif %} {% if reduced_font_size %}text--small{% endif %}">
     <div class="product-item-meta">
@@ -232,7 +219,31 @@
           </a>
         {%- endunless -%}
       {%- endif -%}
-      <div class="d-flex position-relative">
+      {%- if settings.show_product_rating and reduced_content != true -%}
+        <span class="product-item-meta__reviews-badge text--small">
+          {%- render 'product-rating', product: product -%}
+          {% if available_variants >= 1 and has_color_code %}
+            {% unless product.tags contains 'customized' %}
+            <button
+              is="toggle-button"
+              aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
+              aria-expanded="false"
+              class="variants-list hidden-tablet-and-up custom_atoc_btn ">
+                {{ swatch_list }}
+            </button>
+
+            <button
+              is="toggle-button"
+              aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
+              aria-expanded="false"
+              class="variants-list hidden-phone">
+              {{ swatch_list }}
+            </button>
+          {% endunless %}
+          {% endif %}
+        </span>
+      {%- endif -%}
+      <div class="position-relative">
       <a href="{{ product.url }}" class="product-item-meta__title tile-title">
         {{- product.title | split: '|' | first | split: 'boAt' | last -}}
       </a>
@@ -241,7 +252,7 @@
          {%- render 'inventory-bar' with product -%}
         {%- endif %}
       {%- endif %} {% endcomment %}
-      </div>
+
       {% comment %}
       Start automatically added Judge.me widget
       {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
@@ -253,9 +264,9 @@
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
-                  {{- cheapest_variant_discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant_discounted_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant_discounted_price | money | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant_discounted_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               {%- endcapture -%}
 
@@ -264,11 +275,13 @@
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
+                {% comment %} 
+                info: ui2.0
                 <p class="m-0 pr-2 off">
                   {{-
                       product.compare_at_price
@@ -277,7 +290,7 @@
                     | divided_by: product.compare_at_price
                     | round
                     | append: '% off' -}}
-                </p>
+                </p> {% endcomment %}
                 <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
@@ -285,9 +298,10 @@
                     {{-
                         cheapest_variant.compare_at_price
                       | money_with_currency
+                      | remove: ' ' 
                       | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- cheapest_variant.compare_at_price | money | replace: 'Rs.', '₹' -}}
+                    {{- cheapest_variant.compare_at_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
 
@@ -302,11 +316,13 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
+              {% comment %} 
+             info: ui2.0
               <p class="m-0 pr-2 off">
                 {{-
                     product.compare_at_price
@@ -315,13 +331,14 @@
                   | divided_by: product.compare_at_price
                   | round
                   | append: '% off' -}}
-              </p>
+              </p> 
+            {% endcomment %}
               <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                  {{- product.compare_at_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- product.compare_at_price | money | replace: 'Rs.', '₹' -}}
+                  {{- product.compare_at_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
 
@@ -336,9 +353,9 @@
 
               {%- capture price_max -%}
                 {%- if settings.currency_code_enabled -%}
-                  {{- product.price_max | money_with_currency | replace: 'Rs.', '₹' -}}
+                  {{- product.price_max | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- product.price_max | money | replace: 'Rs.', '₹' -}}
+                  {{- product.price_max | money | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               {%- endcapture -%}
 
@@ -346,14 +363,40 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
               </span>
+              <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                {%- if settings.currency_code_enabled -%}
+                  {{-
+                      cheapest_variant.compare_at_price
+                    | money_with_currency
+                    | remove: ' ' 
+                    | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- cheapest_variant.compare_at_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
             {%- else -%}
-              <span class="price product-card-price sur4" data-price="{{ product.price }}">
+              <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
                   {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
                   {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
+              <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                {%- if settings.currency_code_enabled -%}
+                  {{-
+                      cheapest_variant.compare_at_price
+                    | money_with_currency
+                    | remove: ' ' 
+                    | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- cheapest_variant.compare_at_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- endif -%}
@@ -380,54 +423,26 @@
             {%- endif -%}
             
           </div>
-          {%- if settings.show_product_rating and reduced_content != true -%}
-            <span class="product-item-meta__reviews-badge text--small">
-              {%- render 'product-rating', product: product -%}
-              {% if available_variants >= 1 and has_color_code %}
-                {% unless product.tags contains 'customized' %}
-                <button
-                  is="toggle-button"
-                  aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
-                  aria-expanded="false"
-                  class="variants-list hidden-tablet-and-up custom_atoc_btn ">
-                    {{ swatch_list }}
-                </button>
-
-                <button
-                  is="toggle-button"
-                  aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
-                  aria-expanded="false"
-                  class="variants-list hidden-phone">
-                  {{ swatch_list }}
-                </button>
-              {% endunless %}
-              {% endif %}
-            </span>
-          {%- endif -%}
-          <p class="custom-save-price" style="font-size: 11px;margin:0;font-weight: 500;color: black;display: none;">
+          {% comment %} 
+            info: ui2.0
+          <p class="custom-save-price" style="font-size: 11px;margin:0;font-weight: 500;color: black;">
             {% if product.price >= 50000 %}
             {{ settings.card_offers | split: ',' | first }}
             {% else %}
             {{ settings.card_offers | split: ',' | last }} 
             {% endif %}
-          </p>
-          {% if product.selected_or_first_available_variant.metafields.custom.delivery != blank %}
-            {% assign delivery_date = product.selected_or_first_available_variant.metafields.custom.delivery %}
-          {% else %}
-            {% assign delivery_date = '2 days' %}
-          {% endif %}
-          {% comment %} <div class="pincode_details">
-            <h6>Fastest delivery in {{delivery_date}}</h6>
-          </div> {% endcomment %}
+          </p> 
+        {% endcomment %}
         {% endunless %}
-        {%- if request.page_type != 'password'
+      </div>
+      {%- if request.page_type != 'password'
         and settings.product_add_to_cart
         and reduced_content != true
         and show_cta != true
         -%}
 
           {% if product_soldout == false %}
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center" style="position: absolute;top: 0;right: 0;">
             {%- if available_variants == 1 -%}
             {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
             <div class="product-item__quick-form">
@@ -467,7 +482,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {{- 'product.form.add_to_cart' | t -}}
+                    {%- render 'icon' with 'header-tote-bag' -%}
                   {% endif %}
                 </button>
                 <button type="submit"
@@ -476,7 +491,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {{- 'product.form.add_to_cart' | t -}}
+                    {%- render 'icon' with 'header-tote-bag' -%}
                   {% endif %}
                 </button>
               {%- endform -%}
@@ -504,7 +519,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {{- 'product.form.add_to_cart' | t -}}
+                    {%- render 'icon' with 'header-tote-bag' -%}
                   {% endif %}
                 </button>
                 <button
@@ -516,7 +531,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {{- 'product.form.add_to_cart' | t -}}
+                    {%- render 'icon' with 'header-tote-bag' -%}
                   {% endif %}
                 </button>
 
@@ -529,7 +544,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {{- 'product.form.add_to_cart' | t -}}
+                    {%- render 'icon' with 'header-tote-bag' -%}
                   {% endif %}
                 </button>
               {% endif %}
@@ -556,10 +571,7 @@
           </div>
           {% endif %}
         {%- endif -%}
-
-
-      </div>
-
+    </div>
       {%- if settings.product_color_display != 'hide' and reduced_content != true -%}
         {%- for color_label in color_label_list -%}
           {%- if product.options_by_name[color_label] != blank -%}

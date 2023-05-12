@@ -1,11 +1,30 @@
-
+<style>
+span.explore_now_collection_title{
+  display:block;
+  font-size: 28px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 0.96;
+  letter-spacing: -1.12px;
+  text-align: center;
+  color: #1a2024;
+  margin-bottom: 0.5rem;
+}
+.collection_info{
+  background: #eff4f7;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 1.5rem 0 1rem;
+}
+</style>
 <!-- Shop by section starts here -->
 <div class="explore_now_section container">
   <div class="container MultiCarousel_container">
     {%- if section.settings.sectionHeading != blank -%}
         <div class="row">
           <div class="col-md-12 section__header text-container d-flex justify-content-between">
-            <h3 class="heading h3">{{- section.settings.sectionHeading -}}</h3>
+            <h3 class="ui2-heading">{{- section.settings.sectionHeading -}}</h3>
           </div>
         </div>
     {%- endif -%}
@@ -24,9 +43,11 @@
               {%- endif -%} 
             </div>
             <a href="{{- block.settings.image_url -}}" class="explore_now_btn_link">
-              <img src="{{- block.settings.image | img_url: '' -}}" alt="{{ block.settings.image.alt }}">
-            
-              <span class="explore_now_link">{{- block.settings.label -}}</span>
+              <img src="{{- block.settings.image | img_url: '' -}}" alt="{{ block.settings.collection_title }}">
+              <div class="collection_info">
+                <span class="explore_now_collection_title">{{- block.settings.collection_title -}}</span>
+                <span class="explore_now_link">View All <span class="right-arrow">{%- render 'icon' with 'right-arrow-blue' -%}</span></span>
+              </div>
             </a>
         </div>
       </div>
@@ -50,8 +71,13 @@
 {% schema %}
   {
     "name": "Explore Now",
-	"max_blocks": 28,
+	  "max_blocks": 28,
     "settings": [
+      {
+        "type": "text",
+        "id": "sectionHeading",
+        "label": "Section Heading"
+      },
       {
         "type": "number",
         "id": "slides_no",
@@ -158,9 +184,15 @@
               },
               {
                 "type": "text",
+                "id": "collection_title",
+                "label": "Collection Title",
+                "default": "Fitness Freak"
+              },
+              {
+                "type": "text",
                 "id": "label",
                 "label": "Button Label",
-                "default": "EXPLORE NOW"
+                "default": "View All"
               }
 			]
 		}
