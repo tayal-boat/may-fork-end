@@ -234,45 +234,75 @@
           <a href="{{ product.url }}" class="product-item-meta__title tile-title">
             {{- product.title | split: '|' | first | split: 'boAt' | last -}}
           </a>
-        {%- else -%}
-          <a class="product-item-meta__vendor heading heading--xsmall" href="{{ product.vendor | url_for_vendor }}">
-            {{- product.vendor -}}
-          </a>
-        {%- endunless -%}
-      {%- endif -%}
-      <div class="d-flex position-relative">
-      <a href="{{ product.url }}" class="product-item-meta__title tile-title">
-        {{- product.title | split: '|' | first | split: 'boAt' | last -}}
-      </a>
-      {% comment %} {% if template contains 'collection' %}
-        {% if product.available and product.tags contains 'flash-sale' -%}
-         {%- render 'inventory-bar' with product -%}
-        {%- endif %}
-      {%- endif %} {% endcomment %}
-      </div>
-      {% comment %}
-      Start automatically added Judge.me widget
-      {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
-      {% endcomment %}
-      
-      <div class="product-item-meta__price-list-container">
-        {% unless product.tags contains 'NO-PRICE' %}
-          <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
-            {%- if product.price_varies and product.compare_at_price -%}
-              {%- capture price_min -%}
-                {%- if settings.currency_code_enabled -%}
-                  {{- cheapest_variant_discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
+          {% comment %} {% if template contains 'collection' %}
+          {% if product.available and product.tags contains 'flash-sale' -%}
+          {%- render 'inventory-bar' with product -%}
+          {%- endif %}
+          {%- endif %} {% endcomment %}
+        </div>
+        {% comment %}
+        Start automatically added Judge.me widget
+        {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
+        {% endcomment %}
+
+        <div class="product-item-meta__price-list-container">
+          {% unless product.tags contains 'NO-PRICE' %}
+            <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
+              {%- if product.price_varies and product.compare_at_price -%}
+                {%- capture price_min -%}
+                  {%- if settings.currency_code_enabled -%}
+                    {{- cheapest_variant_discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                  {%- else -%}
+                    {{- cheapest_variant_discounted_price | money_without_trailing_zeros | replace: 'Rs.', '₹' -}}
+                  {%- endif -%}
+                {%- endcapture -%}
+
+                {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
+                  <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                    <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+
+                    {%- if settings.currency_code_enabled -%}
+                      {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {%- else -%}
+                      {{- discounted_price | money_without_trailing_zeros | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {%- endif -%}
+                  </span>
+                  <p class="m-0 pr-2 off">
+                    {{-
+                        product.compare_at_price
+                      | minus: discounted_price
+                      | times: 100.0
+                      | divided_by: product.compare_at_price
+                      | round
+                      | append: '% off' -}}
+                  </p>
+                  <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                    <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                    {%- if settings.currency_code_enabled -%}
+                      {{-
+                          cheapest_variant.compare_at_price
+                        | money_with_currency
+                        | replace: 'Rs.', '₹' -}}
+                    {%- else -%}
+                      {{- cheapest_variant.compare_at_price | money_without_trailing_zeros | replace: 'Rs.', '₹' -}}
+                    {%- endif -%}
+                  </span>
+
                 {%- else -%}
-                  {{- cheapest_variant_discounted_price | money | replace: 'Rs.', '₹' -}}
+                  <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
+                    <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                    {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
+                  </span>
                 {%- endif -%}
               {%- elsif product.price < product.compare_at_price -%}
                 <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_without_trailing_zeros | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
                 <p class="m-0 pr-2 off">
@@ -289,7 +319,7 @@
                   {%- if settings.currency_code_enabled -%}
                     {{- product.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- product.compare_at_price | money | replace: 'Rs.', '₹' -}}
+                    {{- product.compare_at_price | money_without_trailing_zeros | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
 
@@ -298,15 +328,15 @@
                   {%- if settings.currency_code_enabled -%}
                     {{ product.price_min | money_with_currency | replace: 'Rs.', '₹' }}
                   {%- else -%}
-                    {{ product.price_min | money | replace: 'Rs.', '₹' }}
+                    {{ product.price_min | money_without_trailing_zeros | replace: 'Rs.', '₹' }}
                   {%- endif -%}
                 {%- endcapture -%}
 
                 {%- capture price_max -%}
                   {%- if settings.currency_code_enabled -%}
-                    {{- product.price_max | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                    {{- product.price_max | money_with_currency | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- product.price_max | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                    {{- product.price_max | money_without_trailing_zeros | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 {%- endcapture -%}
 
@@ -319,81 +349,18 @@
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_without_trailing_zeros | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
               {%- endif -%}
 
-                {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
-              <p class="m-0 pr-2 off">
-                {{-
-                    product.compare_at_price
-                  | minus: discounted_price
-                  | times: 100.0
-                  | divided_by: product.compare_at_price
-                  | round
-                  | append: '% off' -}}
-              </p>
-              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.compare_at_price | money | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
-
-            {%- elsif product.price_varies -%}
-              {%- capture price_min -%}
-                {%- if settings.currency_code_enabled -%}
-                  {{ product.price_min | money_with_currency | replace: 'Rs.', '₹' }}
-                {%- else -%}
-                  {{ product.price_min | money | replace: 'Rs.', '₹' }}
-                {%- endif -%}
-              {%- endcapture -%}
-
-              {%- capture price_max -%}
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.price_max | money_with_currency | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.price_max | money | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              {%- endcapture -%}
-
-              <span class="price">
-                <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
-              </span>
-            {%- else -%}
-              <span class="price product-card-price sur4" data-price="{{ product.price }}">
-                <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-
-                {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
-            {%- endif -%}
-
-            {%- if product_varient.unit_price_measurement -%}
-              <div class="price price--block text--xsmall text--subdued">
-                <div class="unit-price-measurement">
-                  <span class="unit-price-measurement__price">
-                    {{- product_varient.unit_price | money -}}
-                  </span>
-                  <span class="unit-price-measurement__separator">/</span>
-
-                  {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
-                    <span class="unit-price-measurement__reference-value">
-                      {{- product_varient.unit_price_measurement.reference_value -}}
+              {%- if product_varient.unit_price_measurement -%}
+                <div class="price price--block text--xsmall text--subdued">
+                  <div class="unit-price-measurement">
+                    <span class="unit-price-measurement__price">
+                      {{- product_varient.unit_price | money_without_trailing_zeros -}}
                     </span>
                     <span class="unit-price-measurement__separator">/</span>
 
