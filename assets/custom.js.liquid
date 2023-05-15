@@ -1724,3 +1724,33 @@ $('store-header').on('click', function(){
 
 });
 
+
+$(document).ready(function() {
+  $.ajax({
+    type: "GET",
+    url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Service_Center_list.csv?v=1684157394",
+    dataType: "text",
+    success: function(data) {processData(data)}
+  });
+});
+
+function processData(allText) {
+  var allTextLines = allText.split(/\r\n|\n/);
+  var headers = allTextLines[0].split(',');
+  var lines = [];
+
+  for (var i=1; i<allTextLines.length; i++) {
+    var data = allTextLines[i].split(',');
+    console.log(data);
+    if (data.length == headers.length) {
+
+      var tarr = [];
+      for (var j=0; j<headers.length; j++) {
+        tarr.push(data[j]);
+      }
+      lines.push(tarr);
+    }
+  }
+  // alert(lines);
+  console.log(lines);
+}
