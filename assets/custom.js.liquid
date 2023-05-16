@@ -1725,32 +1725,65 @@ $('store-header').on('click', function(){
 });
 
 
-$(document).ready(function() {
-  $.ajax({
-    type: "GET",
-    url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Service_Center_list.csv?v=1684157394",
-    dataType: "text",
-    success: function(data) {processData(data)}
-  });
-});
+// $(document).ready(function() {
+//   $.ajax({
+//     type: "GET",
+//     url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Service_Center_list.csv?v=1684157394",
+//     dataType: "text",
+//     success: function(data) {processData(data)}
+//   });
+// });
 
-function processData(allText) {
-  var allTextLines = allText.split(/\r\n|\n/);
-  var headers = allTextLines[0].split(',');
-  var lines = [];
+// function processData(allText) {
+//   var allTextLines = allText.split(/\r\n|\n/);
+//   var headers = allTextLines[0].split(',');
+//   var lines = [];
 
-  for (var i=1; i<allTextLines.length; i++) {
-    var data = allTextLines[i].split(',');
-    console.log(data);
-    if (data.length == headers.length) {
+//   for (var i=1; i<allTextLines.length; i++) {
+//     var data = allTextLines[i].split(',');
+//     console.log(data);
+//     // if (data.length == headers.length) {
 
-      var tarr = [];
-      for (var j=0; j<headers.length; j++) {
-        tarr.push(data[j]);
-      }
-      lines.push(tarr);
-    }
-  }
-  // alert(lines);
-  console.log(lines);
-}
+//       var tarr = [];
+//       for (var j=0; j<headers.length; j++) {
+//         tarr.push(data[j]);
+//       }
+//       lines.push(tarr);
+//     // }
+//   }
+//   // alert(lines);
+//   console.log(lines);
+// }
+
+
+// The URL of the Excel sheet to be loaded
+const excelUrl = "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Service_Center_list.csv?v=1684157394";
+
+// Create an XHR object to load the Excel file
+const xhr = new XMLHttpRequest();
+xhr.open('GET', excelUrl, true);
+xhr.responseType = 'arraybuffer';
+
+// When the XHR object finishes loading the Excel file
+xhr.onload = function(e) {
+  // Convert the array buffer into a binary string
+  const data = new Uint8Array(xhr.response);
+  const binaryString = data.reduce((acc, curr) => acc + String.fromCharCode(curr), '');
+
+  // Parse the binary string as an XLSX workbook
+  const workbook = XLSX.read(binaryString, {type:'binary'});
+
+  // Get the first sheet of the workbook
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+
+  // Convert the sheet data to JSON format
+  const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+  // Do something with the JSON data
+  console.log(jsonData);
+};
+
+// Send the XHR request to load the Excel file
+xhr.send();
+
