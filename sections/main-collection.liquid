@@ -159,18 +159,23 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
 </style>
 
 <section>
-  <div class="container">
-    {% if product.metafields.custom.productbanner_url != blank %}
-      <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ product.metafields.custom.productbanner_url | split: "," | last }}" class="banner_link">
-    <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
-      style="border-radius:10px;">
-    </a>
-    {% elsif section.settings.banners_url != blank %}
-    <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ section.settings.banners_url | split: "," | last }}" class="banner_link">
-      <img src="{{ section.settings.banners_url | split: "," | first }}"
-        style="border-radius:10px;">
+  <div class="container p-0">
+    {% if collection.metafields.banner.web_banner != blank or collection.metafields.banner.mobile_banner != blank %}
+      <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ collection.metafields.custom.collection_banners_url }}" class="banner_link">
+          <picture>
+            <source 
+              media="(min-width: 769px)"
+              srcset="{{ collection.metafields.banner.web_banner }}">
+            <source 
+              media="(min-width: 320px)"
+              srcset="{{ collection.metafields.banner.mobile_banner }}">
+            <img src="{{ collection.metafields.banner.mobile_banner }}" 
+            alt="collection-banner" >
+        </picture>
       </a>
     {% endif %}
+  </div>
+  <div class="container">
     {% comment %} info:ui2.0
       <h1 class="heading h1">
         <split-lines>{{ collection.title }}</split-lines>
@@ -270,9 +275,9 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
             <span class="product-facet__meta-bar-item product-facet__meta-bar-item--count visually-hidden" role="status">{{ 'collection.general.products_count' | t: count: collection.products_count }}</span>
 
             {%- if section.settings.show_sort_by -%}
-              <div class="product-facet__meta-bar-item product-facet__meta-bar-item--sort">
+              <div class="product-facet__meta-bar-item product-facet__meta-bar-item--sort hidden-pocket">
                 <img alt="sort-by" width="12" height="12" class="icon mr-1" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/sort_2_1.png?v=1675078334">
-                <span class="product-facet__sort-by-title text--subdued hidden-pocket">
+                <span class="product-facet__sort-by-title text--subdued">
                   {{ 'collection.general.sort_by' | t }} :
                 </span>
 
@@ -346,11 +351,11 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
                     {%- render 'product-item2.0', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
                   {% endunless %}
                   
-                  {%- if product_rep == 6 -%}
+                  {%- if product_rep == 10 -%}
                     {%- if collection.metafields.custom.mobile_separator_image_slider -%}
                       {%- assign all_banners = collection.metafields.custom.mobile_separator_image_slider | split: "," -%}
-                      <div class="mobile-only collection_separator_banner">
-                        <div class="owl-carousel owl-theme collection-image-slider {{ section.id }} ">
+                      <div class="collection_separator_banner">
+                        <div class="owl-carousel owl-theme collection-image-slider {{ section.id }}">
                           {% for single_banner in all_banners %}
                             <div class="item">
                               <img alt="collection-banner" src="{{ single_banner }}" class="collection_single_image" />
