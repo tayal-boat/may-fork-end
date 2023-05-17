@@ -161,18 +161,17 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
 
 <section>
   <div class="container p-0">
-    {% if collection.metafields.banner.web_banner != blank or collection.metafields.banner.mobile_banner != blank %}
+    {% if collection.metafields.custom.banners_object != blank %}
+      {% assign banners_json = collection.metafields.custom.banners_object %}
+      {% assign banner_object = banners_json %}
+      {{ banner_object.url }}
       <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ collection.metafields.custom.collection_banners_url }}" class="banner_link">
           <picture>
             <source 
               media="(min-width: 769px)"
               srcset="{{ collection.metafields.banner.web_banner }}">
-            <source 
-              media="(min-width: 320px)"
-              srcset="{{ collection.metafields.banner.mobile_banner }}">
-            <img src="{{ collection.metafields.banner.mobile_banner }}" 
-            alt="collection-banner" >
-        </picture>
+            <img src="{{ collection.metafields.banner.mobile_banner }}" alt="collection-banner" >
+          </picture>
       </a>
     {% endif %}
   </div>
@@ -346,13 +345,12 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
                 {%- assign gap_width = 24.0 | divided_by: section.settings.desktop_products_per_row | times: desktop_number_of_products_minus_one -%}
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
 
-                {%- assign product_rep = 1 -%}
                 {%- for product in collection.products -%}
                   {% unless product.handle == 'membership' %}
                     {%- render 'product-item2.0', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
                   {% endunless %}
                   
-                  {%- if product_rep == 11 -%}
+                  {% if forloop.index == 11 and paginate.current_page == 1 %}
                     {%- if collection.metafields.custom.mobile_separator_image_slider -%}
                       {%- assign all_banners = collection.metafields.custom.mobile_separator_image_slider | split: "," -%}
                       <div class="collection_separator_banner " style="grid-row: span 2;">
@@ -366,8 +364,6 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
                       </div>
                     {%- endif -%}
                   {%- endif -%}
-
-                  {%- assign product_rep = product_rep | plus:1 -%}
                 {%- endfor -%}
               </div>
           {% if paginate.pages > 1 %}
