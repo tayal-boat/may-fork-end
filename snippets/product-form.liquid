@@ -2,7 +2,7 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
-{%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price | divided_by:100 -%}
+{%- assign selected_variant_price_on_btn = product.selected_variant.price | divided_by:100 -%}
 
 
 {% assign product_varient = product.selected_or_first_available_variant %}
@@ -120,7 +120,7 @@
 
             {%- when 'color' -%}
               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+                <span style="font-size:14px;color:#1a2024;font-weight:bold;">Chose your colour</span>
               {% endif %}
               <div class="color-swatch-list">
                 {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
@@ -226,11 +226,9 @@
         {% capture random_cart %} {% render 'random-carts' %}{% endcapture %}
         {%- endif -%}
 
-  <div class="product-meta__price-list-container custom-product-price-mobile d-lg-none" role="region" aria-live="polite">
+  <div class="product-meta__price-list-container custom-product-price-mobile " role="region" aria-live="polite">
     <div class="d-flex align-items-center justify-content-between price_offer_wrapper">
-      <div
-        class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}"
-        data-product-price-list>
+      <div class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list>
           {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
           {%- if product.tags contains settings.tag_selector -%}
           {% assign discount_price = fixed_discount | times: 100 %}
@@ -245,20 +243,12 @@
     
             <span class="price price--highlight price--large">
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-      
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
+              {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' | remove: '.00' -}}<sup>.00</sup>
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
+              {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' | remove: '.00' -}}<sup>.00</sup>
               {%- endif -%}
-      
             </span>
-            {% if product.compare_at_price > discounted_price %}
-            <p class="custom-saved-price">{{
-              product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-              round
-              | append: '% Off' }} </p>
-              {% endif %}
             
               <span class="price price--compare line-through">
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
@@ -271,13 +261,31 @@
                 -}}
                 {%- endif -%}
               </span>
+
+              {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
+                {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
+                  <div class="flash-sale-lable d-flex position-relative">
+                    <div class="flash_sale">
+                      <p class="m-0 text-uppercase flash_text">
+                        <span class="thunder">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                            <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
+                          </svg>
+                        </span>&nbsp;
+                      </p>
+                      {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
+                    </div>
+                  </div>
+                {%- endif -%}
+            {% endunless %}
+
               {%- else -%}
               <span class="price price--large">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
-                {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
+                {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
+                {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
               {%- endif -%}
@@ -299,17 +307,24 @@
                 </div>
                 </div>
               {%- endif -%}
+
+              {% comment %} info: added in 2.0 {% endcomment %}
+              
+
+            </div>
+            <div class="strike-price">
+              
+            {% if product.compare_at_price > discounted_price %}
+              <p class="custom-saved-price">{{
+                product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
+                round
+                | append: '% Off' }} </p>
+              {% endif %}
+              <span class="inclusive-text">Inclusive of all Taxes</span>
             </div>
             {%- if product.available -%}
              {% render 'product-offers' %}{%- endif -%}
-              
-            <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-              display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
-            </div>
-            
-            <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
-
             </div>
 
   {% endunless %}
@@ -319,70 +334,7 @@
   <!--  for desktop layout -->
   <div class="pdp-inner custom-product-price">
     <div class="new-pdp">
-      <div class="amazon custom-product-price">
-        <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
-          <div
-            class="price-list align-items-center {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom_product_pod_price {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}"
-            data-product-price-list data-pod="{{ fixed_pod_discount | strip }}">
-            {%- if product_varient.compare_at_price >
-            product_varient.price -%}
-            <span class="price price--highlight price--large">
-              <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-    
-              {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
-              {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
-              {%- endif -%}
-            </span>
-            {% if product.compare_at_price > discounted_price %}
-            <p class="custom-saved-price">{{
-              product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-              round
-              | append: '% Off' }} </p>
-            {% endif %}
-    
-            <span class="price price--compare line-through">
-              <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-    
-              {%- if settings.currency_code_enabled -%}
-              {{- product_varient.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
-              {%- else -%}
-              {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
-              -}}
-              {%- endif -%}
-            </span>
-            {%- else -%}
-            <span class="price price--large">
-              <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-              {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
-              {%- else -%}
-              {{- discounted_price | money | replace: 'Rs.', '₹' -}}
-              {%- endif -%}
-            </span>
-            {%- endif -%}
-    
-            {%- if product_varient.unit_price_measurement -%}
-            <div class="price text--subdued">
-              <div class="unit-price-measurement">
-                <span class="unit-price-measurement__price">{{ product_varient.unit_price |
-                  money
-                  }}</span>
-                <span class="unit-price-measurement__separator">/</span>
-                {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
-                <span class="unit-price-measurement__reference-value">{{
-                  product_varient.unit_price_measurement.reference_value }}</span>
-                {%- endif -%}
-          
-                <span class="unit-price-measurement__reference-unit">{{
-                  product_varient.unit_price_measurement.reference_unit }}</span>
-                </div>
-                </div>
-                {%- endif -%}
-                </div>
-                </div>
-                <p class="tax_info">Inclusive of all taxes</p>
+      <div class="custom-product-price">
              <div class="desktop"> {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}</div>
               {% if product.tags contains 'customized' %}
                 <div class="desktop current-in-cart free-personalised" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
@@ -395,12 +347,6 @@
                   {{ random_cart }}
                 </div> {% endcomment %}
               {% endif %}
-                <div class="desktop restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-               display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
-            </div>
-    
-
-
         {% endif %}
         
         {%- comment -%}
@@ -514,35 +460,6 @@
           {{- block.settings.liquid -}}
         </div>
         {%- endif -%}
-
-        {%- comment -%}
-        ----------------------------------------------------------------------------------------------------------------
-        QUANTITY SELECTOR
-        ----------------------------------------------------------------------------------------------------------------
-        {%- endcomment -%}
-        {%- when 'quantity_selector' -%}
-        {%- if request.page_type != 'password' and product.available -%}
-          {% unless product.tags contains 'customized' or product.metafields.set.quantity_limit %}
-        <div class="product-form__quantity my-2" {{ block.shopify_attributes }}>
-          <quantity-selector class="quantity-selector">
-            <button type="button" class="quantity-selector__button">
-              <span class="visually-hidden">{{ 'cart.general.decrease_quantity' | t }}</span>
-              {%- render 'icon' with 'minus-big' -%}
-            </button>
-
-            <input type="text" form="{{ product_form_id }}" is="input-number" class="quantity-selector__input" inputmode="numeric"
-              name="quantity" autocomplete="off" min="1" max="777" value="1" size="1" readonly
-              aria-label="{{ 'product.form.quantity' | t | escape }}">
-
-            <button type="button" class="quantity-selector__button">
-              <span class="visually-hidden">{{ 'cart.general.increase_quantity' | t }}</span>
-              {%- render 'icon' with 'plus-big' -%}
-            </button>
-            </quantity-selector>
-            <span class="product-form__quantity-label">{{ 'product.form.quantity' | t }}</span>
-            </div>
-          {% endunless %}
-          {%- endif -%}
 
         {%- comment -%}
         ----------------------------------------------------------------------------------------------------------------
@@ -775,42 +692,47 @@
 
     </product-payment-container>
     {%- endform -%}
+    
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
-    <div class="d-flex flex-column" data-role="additonal-info">
-      {% if product.available %}
-        {% if product.metafields.custom.product_highlights %}
-          <div class="price-container product-highlight my-3 desktop">
-            <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
-              Highlights
-            </h6>
-            {{ product.metafields.custom.product_highlights }}
+      <div class="d-flex flex-column pincode_checker_box" data-role="additonal-info">
+        {% if product.available %}
+          {% if product.metafields.custom.product_highlights %}
+            <div class="price-container product-highlight my-3 desktop">
+              <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
+                Highlights
+              </h6>
+              {{ product.metafields.custom.product_highlights }}
+            </div>
+          {%- endif -%}
+          {% comment %} <div class="price-container p-lg-0 mb-2">
+            {% render 'product-payment-partner' %}
+          </div> {% endcomment %}
+        {% endif %}
+
+        {% if product.tags contains 'customized' %}
+          {%- render 'personalised-modal' -%}
+        {% endif %}
+
+        {%- if section.settings.enable_rush_plus and product.available -%}
+          <h2 class="pincode_checker_heading">Check Delivery</h2>
+          <div class="pincode_checker_container">
+            <div class="pincode_checker">
+              <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
+              <button type="button" class="pincode_checker_btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18.135" height="14.805" viewBox="0 0 18.135 14.805">
+                  <path id="_MFYDIAMONDS" data-name="#MFYDIAMONDS" d="M20.625-7.051a.885.885,0,0,0-.293-.654L13.857-14.16a1.02,1.02,0,0,0-.317-.225.854.854,0,0,0-.337-.068.831.831,0,0,0-.605.239.806.806,0,0,0-.244.6.978.978,0,0,0,.059.337.751.751,0,0,0,.176.278l2.188,2.227,3.877,3.535.2-.488L15.7-7.92H3.35a.83.83,0,0,0-.62.244.856.856,0,0,0-.239.625.856.856,0,0,0,.239.625.83.83,0,0,0,.62.244H15.7l3.145-.2-.2-.479L14.775-3.33,12.588-1.1a.751.751,0,0,0-.176.278.978.978,0,0,0-.059.337.806.806,0,0,0,.244.6A.831.831,0,0,0,13.2.352a.893.893,0,0,0,.635-.273L20.332-6.4A.885.885,0,0,0,20.625-7.051Z" transform="translate(-2.49 14.453)" fill="#fff"/>
+                </svg>
+              </button>
+            </div>
+            <div class="pincode_details">
+              <h3 class="pincode_info">Enter PIN code for exact delivery date</h3>
+              <h6>Fastest delivery in {{delivery_date}}</h6>
+              <p>Enter pincode for exact delivery dates</p>
+            </div>
+            <div class="pincode_error"></div>
           </div>
         {%- endif -%}
-       {% comment %} <div class="price-container p-lg-0 mb-2">
-         {% render 'product-payment-partner' %}
-       </div> {% endcomment %}
-      {% endif %}
-      {% if product.tags contains 'customized' %}
-        {%- render 'personalised-modal' -%}
-      {% endif %}
-      {%- if section.settings.enable_rush_plus and product.available -%}
-      <div class="pincode_checker_container">
-        <h5 class="pincode_heading">Delivery:</h5>
-        <div class="pincode_checker">
-          <div class="quick-delivery-icon">{% render 'icon' with 'location' %}</div>
-          <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
-          <button type="button" class="pincode_checker_btn">Check</button>
-        </div>
-        <div class="pincode_details">
-          <h6>Fastest delivery in {{delivery_date}}</h6>
-          <p>Enter pincode for exact delivery dates</p>
-        </div>
-        <div class="pincode_error"></div>
       </div>
-      {%- endif -%}
-    </div>
-
-    
     </div>
     {% endif %}
   </div>
