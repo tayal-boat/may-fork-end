@@ -2,6 +2,8 @@
 
   <div class="product__info">
     <!-- PRODUCT META -->
+  
+    {% capture product_meta %}
     <product-meta form-id="{{ product_form_id }}" price-class="price--large" class="product-meta">
       {%- if section.settings.show_vendor -%}
       <h2 class="product-meta__vendor heading heading--small">
@@ -93,13 +95,15 @@
         {%- endform -%}
         </product-payment-terms>
       </product-meta>
+ {% endcapture %}
+      <div class="d-lg-none">{{ product_meta }}</div>
+      {% if template contains 'product' %} {%- render 'product-media', product: product -%}{% endif %}
 
-      
-      
       {%- assign help_page = section.settings.help_page -%}
       
       {%- if section.settings.show_share_buttons or help_page != blank -%}
-    <div class="product-meta__aside">
+    
+        <div class="product-meta__aside">
       {%- if section.settings.show_share_buttons -%}
       <div class="product-meta__share text--subdued">
         {%- assign share_url = shop.url | append: product.url -%}
@@ -225,3 +229,4 @@
     </popover-content>
     {%- endif -%}
     </div>
+    <div class="d-none d-lg-block product-meta">{{ product_meta }}</div>
