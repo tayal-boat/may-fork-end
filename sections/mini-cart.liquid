@@ -118,7 +118,7 @@
           {%- endif -%}
 
           <input type="hidden" name="checkout">
-
+          {% assign total_discount_amount = 0 %}
           {%- for line_item in cart.items -%}
             
             <line-item class="line-item" data-item-id="{{ line_item.id }}" data-itemkey="{{ line_item.key }}">
@@ -361,22 +361,15 @@
                 </div>
               </div>
               {%- if section.settings.show_discount_msg -%}
-                {% if line_item.product.tags contains 'cart-discount' %}
-                  {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
+              {% for tag in line_item.product.tags %}
+                {% if tag contains 'minPrice__' %}
+                {% assign floor_price = tag | remove: 'minPrice__'  | plus: 0 %}
                   {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
                   {% assign discount_amount = line_price | minus: floor_price %}
-                  <small class="discount-info">
-                    Get flat <b>₹{{ discount_amount }}</b> Off by using <span class="cart-code" style="font-weight:bold">NINETOFIVE</span>
-                  </small>
-                {% endif %}
-                {% comment %} {% if line_item.product.type == 'Home Audio' %}
-                  {% assign floor_price = line_item.product.metafields.custom.floor_price | plus: 0 %}
-                  {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
-                  {% assign discount_amount = line_price | minus: floor_price %}
-                  <small class="discount-info-home" style="margin-top: 8px;display: block;color:green;cursor:pointer;">
-                    You unlocked <b>₹100 OFF</b>! <span class="apply-msg">Apply Code: <span class="cart-code"><b>FLAT100</b></span></span>
-                  </small>
-                {% endif %} {% endcomment %}
+                 {% comment %} <p class="discount_amount">{{ discount_amount }}</p>  {% endcomment %}
+                  {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
+               {% endif %}
+               {% endfor %}                 
               {%- endif -%}
             {% assign data-loop = forloop.index %}
       
@@ -426,18 +419,24 @@
          {% else %}
           <style>.gift-box {display: none !important}</style>
          {% endif %} 
-
-        <div class="payment_offers">
-          <div class="offer_text">
-            <span>₹15 off on All UPI Payments</span>
+         {% if total_discount_amount > 0 %}
+         {% if section.settings.show_discount_msg %}
+          <small class="discount-info">
+            Get flat <b>₹{{ total_discount_amount }}</b> Off by using <span class="cart-code" style="font-weight:bold">NINETOFIVE</span>
+          </small>
+        {% endif %}
+        {% else %}
+          <div class="payment_offers">
+            <div class="offer_text">
+              <span>₹15 off on All UPI Payments</span>
+            </div>
+            <div class="payment_icons">
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
+              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
+            </div>
           </div>
-          <div class="payment_icons">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
-          </div>
-        </div>
-
+      {% endif %}
           <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
             {%- assign acceptable_recommendations_count = 0 -%}
 
