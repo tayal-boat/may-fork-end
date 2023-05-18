@@ -2,6 +2,8 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
+{%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price | divided_by:100 -%}
+
 
 {% assign product_varient = product.selected_or_first_available_variant %}
 {%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
@@ -63,11 +65,11 @@
       data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
       <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
         <div>
-          <span class="text-capitalize product-form__option-name">{{ option.name | capitilize }} :</span>
+          <span class="text-capitalize product-form__option-name">Chose your colour</span>
 
-          {%- if selector_type != 'dropdown' -%}
+          {% comment %} {%- if selector_type != 'dropdown' -%}
           <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
-          {%- endif -%}
+          {%- endif -%} {% endcomment %}
 
           {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
           {%- assign found_size_option = true -%}
@@ -117,7 +119,9 @@
             </div>
 
             {%- when 'color' -%}
-              <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+              {% endif %}
               <div class="color-swatch-list">
                 {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
                 {%- assign option_position0 = option.position | minus: 1 -%}
@@ -135,7 +139,7 @@
                     style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
                     <span class="visually-hidden">{{ value }}</span>
                   </label>
-                  <span class="variant-name">{{ value | remove: ' ' | escape }}</span>
+                  <span class="variant-name">{{ value | escape }}</span>
                   </div>
                   {%- break -%}
                 {% endif %}
@@ -243,9 +247,9 @@
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
       
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
               {%- endif -%}
       
             </span>
@@ -260,10 +264,10 @@
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
               
                 {%- if settings.currency_code_enabled -%}
-                {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
+                {{- product_varient.compare_at_price | money_with_currency |
                 replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+                {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
                 -}}
                 {%- endif -%}
               </span>
@@ -271,9 +275,9 @@
               <span class="price price--large">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
-                {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
                 {%- else -%}
-                {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
                 {%- endif -%}
               </span>
               {%- endif -%}
@@ -342,11 +346,9 @@
               <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
     
               {%- if settings.currency_code_enabled -%}
-              {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
-              replace:
-              'Rs.', '₹' -}}
+              {{- product_varient.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+              {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
               -}}
               {%- endif -%}
             </span>
@@ -354,9 +356,9 @@
             <span class="price price--large">
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
             {%- endif -%}
@@ -529,7 +531,7 @@
             </button>
 
             <input type="text" form="{{ product_form_id }}" is="input-number" class="quantity-selector__input" inputmode="numeric"
-              name="quantity" autocomplete="off" min="1" max="7" value="1" size="1" readonly
+              name="quantity" autocomplete="off" min="1" max="777" value="1" size="1" readonly
               aria-label="{{ 'product.form.quantity' | t | escape }}">
 
             <button type="button" class="quantity-selector__button">
@@ -675,7 +677,7 @@
                 class="product-form__add-button button {% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %} button--full">
                 {{- 'product.form.add_to_cart' | t -}}
                 {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                  <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                 {% endif %}
               </button>
             {% else %}
@@ -691,10 +693,10 @@
                       Only one unit per order allowed
                       {% else %}
                     {{- 'product.form.pre_order' | t -}} 
-                  <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                 {% endif %}
                 </span>
-                <span class="loader-button__loader" hidden="">        <div class="spinner">          <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
+                <span class="loader-button__loader" hidden="">  <div class="spinner"> <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
                 </a>
                 <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
@@ -706,7 +708,7 @@
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
                     {{- 'product.form.add_to_cart' | t -}}
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
@@ -723,7 +725,7 @@
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
                     {{- 'product.form.add_to_cart' | t -}}
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
@@ -734,23 +736,22 @@
 
           {%- endif -%}
 
-          {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+        {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
           {% unless product.tags contains settings.products_offering_freebie %}
-          <div class="amazon-c d-flex align-items-baseline justify-content-between">
-              <button id="BIS_trigger" type="button" class="custom-notify-btn"
-              data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
-              Notify me
-              </button>
-              <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+              <div class="amazon-c d-flex align-items-baseline justify-content-between">
+                <button id="BIS_trigger" type="button" class="custom-notify-btn"
+                data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+                Notify me
+                </button>
+                <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
+                </div>
               </div>
-              </div>
-              {% endunless %}
+          {% endunless %}
 
-          </div>
-
+        </div>
     </div>
 
     {%- endif -%}
@@ -763,6 +764,9 @@
         Notify Me
       </a>
     </div>
+    <a href="{{ product.url }}" class="text-center" style="font-size: 16px;font-weight: 600;line-height: normal;color: #2f5b96; margin: 20px 0 0;">
+      View Product  {%- render 'icon' with 'right-arrow-blue' -%}
+    </a>
     {% endunless %}
     {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix !=
     'quick-buy-drawer' -%}
@@ -782,9 +786,9 @@
             {{ product.metafields.custom.product_highlights }}
           </div>
         {%- endif -%}
-       <div class="price-container p-lg-0 mb-2">
+       {% comment %} <div class="price-container p-lg-0 mb-2">
          {% render 'product-payment-partner' %}
-       </div>
+       </div> {% endcomment %}
       {% endif %}
       {% if product.tags contains 'customized' %}
         {%- render 'personalised-modal' -%}
@@ -836,12 +840,6 @@ one
 {%- endform -%}
 {%- endif -%}
 
-
-{%- if template.suffix == 'quick-buy-drawer' -%}
-<div class="product-form__view-details">
-  <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
-</div>
-{%- endif -%}
 
 {%- comment -%}
 IMPLEMENTATION NOTE: if during the iteration of the options we have found an option matching a size chart, we add it
