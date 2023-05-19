@@ -11,8 +11,9 @@ li.footer-features-filter-item,li.footer-price-filter-item{list-style:none;paddi
 }
 </style>
 
-<div class="footer-additional-block">
+{% comment %} <div class="footer-additional-block">
     {%- for collection in collections reversed -%}
+        <script>console.log('{{ collection.title}}, {{ forloop.length}}')</script>
         {%- if collection.metafields.custom.footer_collection == true -%}
             <div class="footer-collection-block">
                 <p class="footer-collection-title">{{collection.title}}</p>
@@ -45,5 +46,43 @@ li.footer-features-filter-item,li.footer-price-filter-item{list-style:none;paddi
             </div>
         {%- endif -%}
     {%- endfor -%}
+</div> {% endcomment %}
+
+<div class="footer-additional-block">
+    {%- for block in section.blocks -%}
+        {%- assign filter_menu = block.settings.filter_menu -%}
+            <div class="footer-collection-block">
+                {%- for link in filter_menu.links -%}
+                    <p class="footer-collection-title">{{link.title}}</p>
+                {% endfor %}
+            </div>
+                {% comment %} {% assign features_collection = collection.metafields.custom.shop_by_feature.value %}
+                {%- if features_collection != blank -%}
+                    <div class="features-wrapper">
+                        <p class="footer-collection-subtitle">Shop by Features</p>
+                        <ul class="footer-features-filter-list">
+                            {% for coll in features_collection %}
+                                <li class="footer-features-filter-item">
+                                    <a class="footer-features-filter-link" href="{{ coll.url }}">{{ coll.title }}</a>
+                                </li>
+                            {% endfor %} 
+                        </ul>
+                    </div>
+                {%- endif -%}
+                {% assign price_collection = collection.metafields.custom.shop_by_price.value %}
+                {%- if price_collection != blank -%}
+                    <div class="price-wrapper">
+                        <p class="footer-collection-subtitle">Shop by Price</p>
+                        <ul class="footer-price-filter-list">
+                            {% for coll in price_collection %}
+                                <li class="footer-price-filter-item">
+                                    <a class="footer-price-filter-link" href="{{ coll.url }}">{{ coll.title }}</a>
+                                </li>
+                            {% endfor %} 
+                        </ul>
+                    </div>
+                {%- endif -%}
+            </div>
+        {%- endif -%} {% endcomment %}
+    {%- endfor -%}
 </div>
-  
