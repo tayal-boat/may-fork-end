@@ -59,16 +59,11 @@
   .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
   [dir=ltr] .tabs-nav__position{left: 0;}
     button.tabs-nav__item.heading.heading--small:focus{outline: none;}
-
-
   .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
   .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
-  .featured-collections{min-height: 377px !important;}
   .featured-collections.updated_featured_items .product-item .features-list{display: none;}
   .custom_loading_icon{position: absolute;left: 50%; transform: translateX(-50%);top: 50%;z-index: 99;}
-
   .updated_featured_items .product-item__image-wrapper{margin-top: 0px !important;padding-top: 24px;padding-bottom: 20px;}
-  .updated_featured_items .label--highlight.custom-label{bottom: -6px;border-radius: 8px 8px 0 0!important;justify-content: flex-start!important;width: 96%!important;left: 50%;transform: translate(-50%);height: 25px;line-height: 20px;padding: 0 12px 4px!important;z-index: 0;align-items: center;}
 
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
@@ -80,7 +75,6 @@
 
   @media screen and (min-width: 1000px) {
       .flash-desk{width:80%;}
-      .product-list__inner--scroller { margin-left:0; }
       #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }}; }
     }
   @media screen and (min-width: 1200px) {
@@ -131,7 +125,7 @@
       >
         {%- if section.settings.title != blank -%}
           <div class="text-container">
-            <a href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%- else -%} javascript:void(0){%- endif -%}">
+            <a href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}https://www.boat-lifestyle.com/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
               <h3 class="heading h2">{{ section.settings.title }}</h3>
             </a>
 
@@ -299,24 +293,6 @@
 </section>
 
 <script>
-  window.addEventListener("load", function(){
-    // For Loading homepage ajax tabs content when page loads
-
-    /* $('#shopify-section-{{ section.id }} .tabs-nav__item-list button').each(function( index ){
-      if(index > 0){
-        
-        let tab_collection_handle = $(this).attr('data-collection-handle');
-        let tab_content_id = $(this).attr('aria-controls');
-
-        let tab_html = load_ajax_tab_content(tab_collection_handle, tab_content_id);
-        
-        $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_content_id+'.product-list .product-list__inner').html(tab_html);
-
-      }
-    }); */
-
-  });
-
   function load_ajax_tab_content(collection_handle, collection_tab_id){
 
     let html_response = "";

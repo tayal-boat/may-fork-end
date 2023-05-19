@@ -2,6 +2,8 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
+{%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price | divided_by:100 -%}
+
 
 {% assign product_varient = product.selected_or_first_available_variant %}
 {%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
@@ -63,11 +65,11 @@
       data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
       <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
         <div>
-          <span class="text-capitalize product-form__option-name">{{ option.name | capitilize }} :</span>
+          <span class="text-capitalize product-form__option-name">Chose your colour</span>
 
-          {%- if selector_type != 'dropdown' -%}
+          {% comment %} {%- if selector_type != 'dropdown' -%}
           <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
-          {%- endif -%}
+          {%- endif -%} {% endcomment %}
 
           {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
           {%- assign found_size_option = true -%}
@@ -117,7 +119,9 @@
             </div>
 
             {%- when 'color' -%}
-              <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
+              {% endif %}
               <div class="color-swatch-list">
                 {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
                 {%- assign option_position0 = option.position | minus: 1 -%}
@@ -135,7 +139,7 @@
                     style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
                     <span class="visually-hidden">{{ value }}</span>
                   </label>
-                  <span class="variant-name">{{ value | remove: ' ' | escape }}</span>
+                  <span class="variant-name">{{ value | escape }}</span>
                   </div>
                   {%- break -%}
                 {% endif %}
@@ -243,9 +247,9 @@
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
       
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
               {%- endif -%}
       
             </span>
@@ -260,10 +264,10 @@
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
               
                 {%- if settings.currency_code_enabled -%}
-                {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
+                {{- product_varient.compare_at_price | money_with_currency |
                 replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+                {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
                 -}}
                 {%- endif -%}
               </span>
@@ -271,9 +275,9 @@
               <span class="price price--large">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
-                {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
                 {%- else -%}
-                {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
                 {%- endif -%}
               </span>
               {%- endif -%}
@@ -299,7 +303,7 @@
             {%- if product.available -%}
              {% render 'product-offers' %}{%- endif -%}
               
-            <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity > settings.sold_out_threshold %}
+            <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
               display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
             </div>
@@ -342,11 +346,9 @@
               <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
     
               {%- if settings.currency_code_enabled -%}
-              {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
-              replace:
-              'Rs.', '₹' -}}
+              {{- product_varient.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+              {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
               -}}
               {%- endif -%}
             </span>
@@ -354,9 +356,9 @@
             <span class="price price--large">
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
             {%- endif -%}
@@ -393,7 +395,7 @@
                   {{ random_cart }}
                 </div> {% endcomment %}
               {% endif %}
-                <div class="desktop restocking" style="{% if product_varient.inventory_quantity > settings.sold_out_threshold %}
+                <div class="desktop restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
                display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
     
@@ -520,7 +522,7 @@
         {%- endcomment -%}
         {%- when 'quantity_selector' -%}
         {%- if request.page_type != 'password' and product.available -%}
-          {% unless product.tags contains 'customized' %}
+          {% unless product.tags contains 'customized' or product.metafields.set.quantity_limit %}
         <div class="product-form__quantity my-2" {{ block.shopify_attributes }}>
           <quantity-selector class="quantity-selector">
             <button type="button" class="quantity-selector__button">
@@ -529,7 +531,7 @@
             </button>
 
             <input type="text" form="{{ product_form_id }}" is="input-number" class="quantity-selector__input" inputmode="numeric"
-              name="quantity" autocomplete="off" min="1" max="7" value="1" size="1" readonly
+              name="quantity" autocomplete="off" min="1" max="777" value="1" size="1" readonly
               aria-label="{{ 'product.form.quantity' | t | escape }}">
 
             <button type="button" class="quantity-selector__button">
@@ -634,6 +636,15 @@
       {%- endcomment -%}
       {%- when 'buy_buttons' -%}
       {%- if request.page_type != 'password' -%}
+        {% for variant in product.variants %}
+          {% if variant.id == product.selected_or_first_available_variant.id %}
+            {% if variant.metafields.custom.delivery != blank %}
+              {% assign delivery_date = variant.metafields.custom.delivery %}
+            {% else %}
+              {% assign delivery_date = '2 days' %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
       <div class="product-form__buy-buttons" {{ block.shopify_attributes }}>
         {%- form 'product', product, is: 'product-form', id: product_form_id -%}
         <input type="hidden" disabled name="id" value="{{ product_varient.id }}">
@@ -665,6 +676,9 @@
                 data-product-add-to-cart-button data-button-content="{{ 'product.form.add_to_cart' | t | escape }} "
                 class="product-form__add-button button {% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %} button--full">
                 {{- 'product.form.add_to_cart' | t -}}
+                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
+                {% endif %}
               </button>
             {% else %}
               {%- if product.tags contains 'customized' and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
@@ -679,10 +693,10 @@
                       Only one unit per order allowed
                       {% else %}
                     {{- 'product.form.pre_order' | t -}} 
-                  <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                 {% endif %}
                 </span>
-                <span class="loader-button__loader" hidden="">        <div class="spinner">          <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
+                <span class="loader-button__loader" hidden="">  <div class="spinner"> <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
                 </a>
                 <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
@@ -694,14 +708,15 @@
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
                     {{- 'product.form.add_to_cart' | t -}}
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
                {% else %}
-                <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <button id="AddToCart" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
                   data-product-add-to-cart-button
                   data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
@@ -711,18 +726,37 @@
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
                     {{- 'product.form.add_to_cart' | t -}}
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
+               {%- else -%}
+               <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+                block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+                data-product-add-to-cart-button
+                data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
+                class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+                {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
+                data-price="{{ product.price }}">
+                {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
+                  {{- 'product.form.add_to_cart' | t -}}
+                  {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                    <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
+                  {% endif %}
+                {%- else -%}
+                  {{- 'product.form.sold_out' | t -}}
+                {%- endif -%}
+              </button>
+               {% endif %}
+                
               {%- endif -%}
             {%- endif -%}
 
           {%- endif -%}
 
-          {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+        {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
           {% unless product.tags contains settings.products_offering_freebie  %}
           <div class="amazon-c d-flex align-items-baseline justify-content-between custom_notifyMe_btn">
@@ -733,12 +767,11 @@
               <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
+                </div>
               </div>
-              </div>
-              {% endunless %}
+          {% endunless %}
 
-          </div>
-
+        </div>
     </div>
 
     {%- endif -%}
@@ -751,6 +784,9 @@
         Notify Me
       </a>
     </div>
+    <a href="{{ product.url }}" class="text-center" style="font-size: 16px;font-weight: 600;line-height: normal;color: #2f5b96; margin: 20px 0 0;">
+      View Product  {%- render 'icon' with 'right-arrow-blue' -%}
+    </a>
     {% endunless %}
     {%- if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' and template.suffix !=
     'quick-buy-drawer' -%}
@@ -760,20 +796,41 @@
     </product-payment-container>
     {%- endform -%}
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
-    <div class="d-flex flex-column" aria-role="additonal-info">
-      <div class="price-container p-lg-0 mb-2">{% render 'product-payment-partner' %}</div>
+    <div class="d-flex flex-column" data-role="additonal-info">
+      {% if product.available %}
+        {% if product.metafields.custom.product_highlights %}
+          <div class="price-container product-highlight my-3 desktop">
+            <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
+              Highlights
+            </h6>
+            {{ product.metafields.custom.product_highlights }}
+          </div>
+        {%- endif -%}
+       {% comment %} <div class="price-container p-lg-0 mb-2">
+         {% render 'product-payment-partner' %}
+       </div> {% endcomment %}
+      {% endif %}
       {% if product.tags contains 'customized' %}
         {%- render 'personalised-modal' -%}
       {% endif %}
-      {% if product.metafields.custom.product_highlights %}
-      <div class="price-container product-highlight mt-3 desktop">
-        <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
-          Highlights
-        </h6>
-        {{ product.metafields.custom.product_highlights }}
+      {%- if section.settings.enable_rush_plus and product.available -%}
+      <div class="pincode_checker_container">
+        <h5 class="pincode_heading">Delivery:</h5>
+        <div class="pincode_checker">
+          <div class="quick-delivery-icon">{% render 'icon' with 'location' %}</div>
+          <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
+          <button type="button" class="pincode_checker_btn">Check</button>
+        </div>
+        <div class="pincode_details">
+          <h6>Fastest delivery in {{delivery_date}}</h6>
+          <p>Enter pincode for exact delivery dates</p>
+        </div>
+        <div class="pincode_error"></div>
       </div>
-    {%- endif -%}
+      {%- endif -%}
     </div>
+
+    
     </div>
     {% endif %}
   </div>
@@ -803,12 +860,6 @@ one
 {%- endform -%}
 {%- endif -%}
 
-
-{%- if template.suffix == 'quick-buy-drawer' -%}
-<div class="product-form__view-details">
-  <a href="{{ product.url }}" class="link text--subdued">{{ 'product.general.view_details' | t }}</a>
-</div>
-{%- endif -%}
 
 {%- comment -%}
 IMPLEMENTATION NOTE: if during the iteration of the options we have found an option matching a size chart, we add it
@@ -856,4 +907,23 @@ here
     </div>
   </div>
   </popover-content>
+{%- endif -%}
+{% capture variantDelivery %}
+  {% for variant in product.variants %}
+    "{{ variant.id }}":"{{ variant.metafields.custom.delivery }}"
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{%- endcapture -%}
+{%- if section.settings.enable_rush_plus -%}
+<script>
+  let variantDelivery = {{ variantDelivery }};
+  Shopify.variantDelivery = function(varientID){
+  let variantDeliveryTime = variantDelivery[varientID];
+  if((!sessionStorage.pincode_delivery_text || sessionStorage.pincode_delivery_text == '') && (!sessionStorage.pincode_error || sessionStorage.pincode_error == '')){
+  if(variantDeliveryTime !== ''){
+  $('.pincode_details h6').html('Fastest delivery in ' + variantDeliveryTime );
+  }else{$('.pincode_details h6').html('Fastest delivery in 2 days');}
+  }
+  }
+</script>
 {%- endif -%}
