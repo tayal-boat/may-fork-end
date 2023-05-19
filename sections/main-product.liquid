@@ -158,7 +158,7 @@ End automatically added Judge.me widget{% endcomment %}
               <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-1b_6c0c5f7d-a48c-40f5-946d-ea50fb1a9b82_small.png?v=1661243559">
             </div>
             <div class="col-md-8 myText">
-              <p class="mb-0 promis_icon_text">1 Year <br>Warranty</p>
+              <p class="mb-0 promis_icon_text">{% if product.tags contains "two year warranty" %} 2 {% else %}1{% endif %} Year <br>Warranty</p>
             </div>
           </div>
         </div>
@@ -257,7 +257,7 @@ End automatically added Judge.me widget{% endcomment %}
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
                     {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
@@ -266,9 +266,9 @@ End automatically added Judge.me widget{% endcomment %}
                   <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: '.00' | remove: ' '| replace: 'Rs.', '₹' -}}
+                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: ' '| replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                    {{- product.selected_or_first_available_variant.compare_at_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
                 {% if product.compare_at_price > discounted_price %}
@@ -308,13 +308,14 @@ End automatically added Judge.me widget{% endcomment %}
           
         </product-meta>
       </div>
-      {%- if product.metafields.benefits.usp1 -%}
+      {% if product.metafields.custom.product_card_features %}
+        {% assign features = product.metafields.custom.product_card_features | split: '|' %}
         <div class="product-feature">
-          <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-          <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-          <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
+          {% for feature in features %}
+            <span>{{ feature }}</span>
+          {% endfor %}
         </div>
-      {%- endif -%}
+      {% endif %}
   {%- endcapture -%}
 
   {%- if template.suffix == 'quick-buy-drawer' -%}
