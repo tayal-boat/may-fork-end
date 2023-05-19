@@ -1,0 +1,78 @@
+<style>
+    .footer-additional-block {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top:2.5rem;
+    }
+    .footer-collection-block {
+        margin-bottom: 50px;
+        width:100%;
+    }
+    p.footer-collection-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #1a2024;
+        margin-bottom: 18px;
+    }
+    p.footer-collection-subtitle {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a2024;
+        margin-bottom: 5px;
+    }
+    .features-wrapper {
+        margin-bottom: 18px;
+    }
+    ul.footer-price-filter-list, ul.footer-features-filter-list {
+        padding: 0;
+    }
+    li.footer-price-filter-item, li.footer-features-filter-item {
+        list-style: none;
+        padding: 0;
+        font-size: 12px;
+        font-weight: normal;
+        color: #868c91;
+    }
+    @media (min-width:769px) {
+        .footer-collection-block {
+            width:25%;
+        }
+    }
+</style>
+
+<div class="footer-additional-block">
+    {%- for collection in collections reversed -%}
+        {%- if collection.metafields.custom.footer_collection == true -%}
+            <div class="footer-collection-block">
+                <p class="footer-collection-title">{{collection.title}}</p>
+                {% assign features_collection = collection.metafields.custom.shop_by_feature.value %}
+                {%- if features_collection != blank -%}
+                    <div class="features-wrapper">
+                        <p class="footer-collection-subtitle">Shop by Features</p>
+                        <ul class="footer-features-filter-list">
+                            {% for coll in features_collection %}
+                                <li class="footer-features-filter-item">
+                                    <a class="footer-features-filter-link" href="{{ coll.url }}">{{ coll.title }}</a>
+                                </li>
+                            {% endfor %} 
+                        </ul>
+                    </div>
+                {%- endif -%}
+                {% assign price_collection = collection.metafields.custom.shop_by_price.value %}
+                {%- if price_collection != blank -%}
+                    <div class="price-wrapper">
+                        <p class="footer-collection-subtitle">Shop by Price</p>
+                        <ul class="footer-price-filter-list">
+                            {% for coll in price_collection %}
+                                <li class="footer-price-filter-item">
+                                    <a class="footer-price-filter-link" href="{{ coll.url }}">{{ coll.title }}</a>
+                                </li>
+                            {% endfor %} 
+                        </ul>
+                    </div>
+                {%- endif -%}
+            </div>
+        {%- endif -%}
+    {%- endfor -%}
+</div>
+  
