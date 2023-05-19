@@ -330,9 +330,9 @@
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
     
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- discounted_price | money | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
             {% if product.compare_at_price > discounted_price %}
