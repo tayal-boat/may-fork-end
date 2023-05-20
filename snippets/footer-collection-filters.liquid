@@ -49,14 +49,14 @@ li.footer-features-filter-item,li.footer-price-filter-item{list-style:none;paddi
 </div> {% endcomment %}
 
 <div class="footer-additional-block">
-    {%- for block in section.blocks -%}
-        {%- assign filter_menu = block.settings.filter_menu -%}
-            <div class="footer-collection-block">
-                {%- for link in filter_menu.links -%}
-                    <p class="footer-collection-title">{{link.title}}</p>
-                {% endfor %}
-            </div>
-                {% comment %} {% assign features_collection = collection.metafields.custom.shop_by_feature.value %}
+    {%- assign filter_menu = section.settings.filter_menu -%}
+    {%- for link in filter_menu.links -%}
+        <div class="footer-collection-block">
+            {% assign collectionHandle = link.url | split: '/' | last %}
+            {% assign collection = collections[collectionHandle] %}
+            <div class="footer-collection-block-inner">
+                <p class="footer-collection-title">{{link.title}}</p>
+                {% assign features_collection = collection.metafields.custom.shop_by_feature.value %}
                 {%- if features_collection != blank -%}
                     <div class="features-wrapper">
                         <p class="footer-collection-subtitle">Shop by Features</p>
@@ -83,6 +83,6 @@ li.footer-features-filter-item,li.footer-price-filter-item{list-style:none;paddi
                     </div>
                 {%- endif -%}
             </div>
-        {%- endif -%} {% endcomment %}
-    {%- endfor -%}
+        </div>
+    {% endfor %}            
 </div>
