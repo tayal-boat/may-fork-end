@@ -656,12 +656,6 @@
 <script>
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
-  var cartPrice = {{cart.total_price}}
-  if(cartPrice > 50000) {
-      $('.mini-cart-message').removeClass('visually-hidden')
-  } else {
-      $('.mini-cart-message').addClass('visually-hidden')
-  }
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
 {% if settings.products_offering_freebie != blank %}
 let custumisedvariant_ids = [];
@@ -746,12 +740,6 @@ for (const mutation of mutationList) {
 let updatedqnty = 0;
 jQuery.getJSON('/cart.js', function(cart) {
    cartI = cart.items;
-   var cartPrice = cart.total_price
-    if(cartPrice > 50000) {
-      $('.mini-cart-message').removeClass('visually-hidden')
-    } else {
-      $('.mini-cart-message').addClass('visually-hidden')
-    }
    let updatedfreeitems = cartI.filter(item => item.properties && item.properties.Free);
    $(updatedfreeitems).each(function(ind, el){
     updatedqnty += el.quantity;
@@ -791,6 +779,8 @@ jQuery.getJSON('/cart.js', function(cart) {
 const observer_ = new MutationObserver(callback_);
 observer_.observe(targNode, config_);
 
+{% endif %}
+
 if(checkbox) {
   checkbox.addEventListener('change', () => {
     if (checkbox.checked) {
@@ -819,7 +809,7 @@ $('#mini-cart-form .line-item').each(function() {
     "Amount": cart_total_price
   });
 }); */
-{% endif %}
+
 });
 
 Shopify.cartMessage = `{{section.settings.cart_announcement}}`
