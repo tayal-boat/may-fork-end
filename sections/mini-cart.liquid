@@ -361,15 +361,19 @@
                 </div>
               </div>
               {%- if section.settings.show_discount_msg -%}
-              {% for tag in line_item.product.tags %}
-                {% if tag contains 'minPrice__' %}
-                {% assign floor_price = tag | remove: 'minPrice__'  | plus: 0 %}
-                  {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
-                  {% assign discount_amount = line_price | minus: floor_price %}
-                 {% comment %} <p class="discount_amount">{{ discount_amount }}</p>  {% endcomment %}
-                  {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
-               {% endif %}
-               {% endfor %}                 
+                {% for tag in line_item.product.tags %}
+                  {% if tag contains 'gokwik_min_price_' %}
+                    {% assign floor_price = tag | remove: 'gokwik_min_price_'  | plus: 0 %}
+                    {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
+                    {% assign discount_amount = line_price | minus: floor_price %}
+                    {% assign line_item_quantity = line_item.quantity %}
+                    {% if line_item_quantity > 0 %}
+                    {% assign discount_amount = discount_amount | times: line_item_quantity %}
+                  {% endif %}
+                  {% comment %} <p class="discount_amount">{{ discount_amount }}</p>  {% endcomment %}
+                    {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
+                {% endif %}
+                {% endfor %}                 
               {%- endif -%}
             {% assign data-loop = forloop.index %}
       
@@ -390,6 +394,24 @@
                       {% endfor %}
             </line-item>
           {%- endfor -%}
+          {% if total_discount_amount > 0 %}
+          {% if section.settings.show_discount_msg %}
+           <small class="discount-info">
+            Get flat <b>₹{% if total_discount_amount < section.settings.discount_code_max_amount %}{{- total_discount_amount -}}{% else %}{{- section.settings.discount_code_max_amount -}}{% endif %}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
+           </small>
+         {% endif %}
+         {% else %}
+           <div class="payment_offers">
+             <div class="offer_text">
+               <span>₹15 off on All UPI Payments</span>
+             </div>
+             <div class="payment_icons">
+               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
+               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
+               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
+             </div>
+           </div>
+       {% endif %}
         </form>
 
       {% comment %} info: No more required on 2.0 {% endcomment %}
@@ -419,24 +441,7 @@
          {% else %}
           <style>.gift-box {display: none !important}</style>
          {% endif %} 
-         {% if total_discount_amount > 0 %}
-         {% if section.settings.show_discount_msg %}
-          <small class="discount-info">
-            Get flat <b>₹{{ total_discount_amount }}</b> Off by using <span class="cart-code" style="font-weight:bold">FLAT200</span>
-          </small>
-        {% endif %}
-        {% else %}
-          <div class="payment_offers">
-            <div class="offer_text">
-              <span>₹15 off on All UPI Payments</span>
-            </div>
-            <div class="payment_icons">
-              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
-              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
-              <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
-            </div>
-          </div>
-      {% endif %}
+
           <cart-drawer-recommendations section-id="{{ section.id }}" product-id="{{ cart.items.first.product_id }}" class="mini-cart__recommendations">
             {%- assign acceptable_recommendations_count = 0 -%}
 
@@ -990,6 +995,18 @@ document.addEventListener('cart:updated', (event) => {
         "id": "show_discount_msg",
         "label": "Show Discount Message",
         "default": false
+      },
+      {
+        "type": "text",
+        "id": "discount_code",
+        "label": "Code used for discount message",
+        "default": "ONLYFORYOU"
+      },
+      {
+        "type": "number",
+        "id": "discount_code_max_amount",
+        "label": "Max amount for discount code in message",
+        "default": 300
       },
       {
         "type": "checkbox",
