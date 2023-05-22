@@ -654,10 +654,6 @@
 {% assign gift-product_variant = gift-product.variants[0].id %}
 
 <script>
-  document.addEventListener('cart:updated', function(event) {
-    var cart = event.detail.cart; // Get the updated content of the cart
-    
-  });
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
   var cartPrice = {{cart.total_price}}
@@ -667,6 +663,7 @@ $(window).on("load", function(){
       $('.mini-cart-message').addClass('visually-hidden')
   }
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
+{% if settings.products_offering_freebie != blank %}
 let custumisedvariant_ids = [];
 let giftId = "{{ gift-product_variant }}";
 let onloadfreeqnty = 0;
@@ -822,6 +819,7 @@ $('#mini-cart-form .line-item').each(function() {
     "Amount": cart_total_price
   });
 }); */
+{% endif %}
 });
 
 Shopify.cartMessage = `{{section.settings.cart_announcement}}`
