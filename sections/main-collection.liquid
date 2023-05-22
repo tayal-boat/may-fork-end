@@ -158,7 +158,8 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
 @media(min-width:1400px){
   .product-horizontal {width: 60%;}
 }
-
+.carousel-indicators li {width: 8px;height: 8px; border-radius: 50%;border:none;}
+.carousel-indicators {width: max-content;margin-left:unset;left: 50%;transform: translateX(-50%);padding: 4px;background: #FFFFFF52 0% 0% no-repeat padding-box;border-radius: 20px;}
 {% comment %}info: collection page ui2.0 {% endcomment %}
 .tabs-nav__item {margin: 0 2vw;}
 </style>
@@ -343,12 +344,20 @@ span#sort-by-selected-value{font-size: 14px; font-weight: 300;color: #1a2024;}
                     {%- if collection.metafields.custom.mobile_separator_image_slider -%}
                       {%- assign all_banners = collection.metafields.custom.mobile_separator_image_slider | split: "," -%}
                       <div class="collection_separator_banner " style="grid-row: span 2;">
-                        <div class="owl-carousel owl-theme collection-image-slider {{ section.id }}">
-                          {% for single_banner in all_banners %}
-                            <div class="item">
-                              <img alt="collection-banner" src="{{ single_banner }}" class="collection_single_image" />
-                            </div>
-                          {% endfor %}
+                        <div id="carouselExampleSlidesOnly" class="carousel slide h-100" data-ride="carousel">
+                          <ol class="carousel-indicators">
+                            {% for single_banner in all_banners %}
+                              {% assign dots_num = forloop.index | minus: 1 %}
+                            <li data-target="#carouselExampleIndicators" data-slide-to="{{dots_num}}" class="{% if forloop.first %}active{% endif %}"></li>
+                            {% endfor %}
+                          </ol>
+                          <div class="carousel-inner h-100">
+                            {% for single_banner in all_banners %}
+                              <div class="carousel-item h-100 {% if forloop.first %}active{% endif %}">
+                                <img alt="collection-banner" src="{{ single_banner }}" class="collection_single_image d-block" style="border-radius: 10px;"/>
+                              </div>
+                            {% endfor %}
+                         </div>
                         </div>
                       </div>
                     {%- endif -%}
