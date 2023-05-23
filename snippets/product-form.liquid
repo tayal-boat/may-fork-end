@@ -641,19 +641,23 @@
                   {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
                   data-price="{{ product.price }}">
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
-                    <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
-                      <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
-                      <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
-                    </svg>                    
-                    {{- 'product.form.add_to_cart' | t -}}
+                    <span class="atc_btn">
+                      <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
+                        <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
+                        <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
+                      </svg>                    
+                      {{- 'product.form.add_to_cart' | t -}}
+                    </span>
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
                       <span class="pdp-btn-price d-lg-none ">
                         <span class="custom_price_wrapper">
                           <span class="inclusive_text_content">Inclusive of all Taxes</span>
-                          ₹{{ selected_variant_price_on_btn }}
-                        </span>
-                        <span class="saved_price">
-                          {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                          <span class="mobile_atc_btn">
+                            <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                            <span class="saved_price">
+                              {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                            </span>
+                          </span>
                         </span>
                       </span>
                     {% endif %}
@@ -730,7 +734,7 @@
           <h2 class="pincode_checker_heading">Check Delivery</h2>
           <div class="pincode_checker_container">
             <div class="pincode_checker">
-              <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
+              <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter PIN code for exact delivery date">
               <button type="button" class="pincode_checker_btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18.135" height="14.805" viewBox="0 0 18.135 14.805">
                   <path id="_MFYDIAMONDS" data-name="#MFYDIAMONDS" d="M20.625-7.051a.885.885,0,0,0-.293-.654L13.857-14.16a1.02,1.02,0,0,0-.317-.225.854.854,0,0,0-.337-.068.831.831,0,0,0-.605.239.806.806,0,0,0-.244.6.978.978,0,0,0,.059.337.751.751,0,0,0,.176.278l2.188,2.227,3.877,3.535.2-.488L15.7-7.92H3.35a.83.83,0,0,0-.62.244.856.856,0,0,0-.239.625.856.856,0,0,0,.239.625.83.83,0,0,0,.62.244H15.7l3.145-.2-.2-.479L14.775-3.33,12.588-1.1a.751.751,0,0,0-.176.278.978.978,0,0,0-.059.337.806.806,0,0,0,.244.6A.831.831,0,0,0,13.2.352a.893.893,0,0,0,.635-.273L20.332-6.4A.885.885,0,0,0,20.625-7.051Z" transform="translate(-2.49 14.453)" fill="#fff"/>
@@ -738,7 +742,7 @@
               </button>
             </div>
             <div class="pincode_details">
-              <h3 class="pincode_info">Enter PIN code for exact delivery date</h3>
+              {% comment %} <h3 class="pincode_info">Enter PIN code for exact delivery date</h3> {% endcomment %}
               <h6></h6>
               <p></p>
             </div>
