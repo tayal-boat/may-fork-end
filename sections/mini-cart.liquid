@@ -887,6 +887,17 @@ $('#mini-cart-form .line-item').each(function() {
 
 Shopify.cartMessage = `{{section.settings.cart_announcement}}`
 
+
+var kdDom = document.querySelector('body');
+ console.log('hii cart discount');     
+kdDom.addEventListener('KD_validDiscountApplied',(e)=>{
+  let discountCode = e.detail;
+  console.log('Discount code going to apply is ' + e);
+  setInterval(()=>{
+    document.querySelector('.af_discount_response .af_money').innerHTML = 200;
+  },1000);
+});
+
 {% comment %} const checkbox = document.querySelector(".check_container input");
 const message = document.querySelector(".message-container .message");
 
@@ -904,6 +915,14 @@ document.addEventListener('cart:updated', (event) => {
     message.textContent = '{{ section.settings.cart_announcement }}'
   }
 }) {% endcomment %}
+
+
+window.KDHooks = window.KDHooks || {};
+window.KDHooks.__handleHTMLCreations_af = function(htmlElem,cartSelectorObj) {
+  return htmlElem;
+}
+
+
 </script>
 {% schema %}
   {
