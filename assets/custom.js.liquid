@@ -232,10 +232,38 @@ Shopify.variantChange = function(e){
   $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
   // console.log(e);
 
-function swatches_change(varient_swatches_input){
+  function swatches_change(varient_swatches_input) {
 for (let i = 0; i < varient_swatches_input.length; i++) {
-if(varient_swatches_input[i].checked){
-  if(JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
+
+          if (varient_swatches_input[i].checked) {
+              $.ajax({
+                  url: location.pathname + "?variant=" + e.id + "&section_id=main-product",
+                  type: "GET",
+                  dataType: "html",
+                  success: function(e) {
+                      var product_media = $(e).find('product-media').html();
+                      $("product-media").html(product_media);
+                      setTimeout(function() {
+                          var product_itemsDiv = '.product_media_section .MultiCarousel-inner';
+                          var product_itemsMainDiv = ('.product_media_section .MultiCarousel');
+                          var product_selector = 'MultiCarousel_product';
+                          Shopify.product_slider(product_itemsDiv, product_itemsMainDiv, product_selector);
+                          if ($('.MultiCarousel_loaded.MultiCarousel-inner .product__media-item').length < 2) {
+                              $(product_itemsMainDiv).addClass('hide_dots');
+                            } else {
+                              $(product_itemsMainDiv).removeClass('hide_dots');
+                            }
+                          $('.product__media-image-wrapper img').click(function () {
+                            $('.product__zoom-button').click();
+                          });
+                          $('button.product__thumbnail-item.hidden-pocket').hover(function() {
+                              $(this).trigger('click');
+                          });
+                      }, 500);
+                  }
+              })
+              if (JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
+                  // image swatch selector
       $('.custom-notify-btn').show();
       $('.product__info button#AddToCart').hide();
       $('#AddToCart, .cutomized-btn, .button.custom-prebook').addClass('hide_cTA');
@@ -320,13 +348,11 @@ Shopify.homepageLazyload = function(){
   // Shopify.custom_slider(e);
 
   var press_itemsDiv = '.press_section .MultiCarousel-inner';
-  // console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
  var press_itemsMainDiv = ('.press_section .MultiCarousel');
  var press_selector = 'MultiCarousel_press';
 Shopify.custom_slider(press_itemsDiv, press_itemsMainDiv, press_selector);
 
 var explore_itemsDiv = '.explore_now_section .MultiCarousel-inner';
-// console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
 var explore_itemsMainDiv = ('.explore_now_section .MultiCarousel');
 var explore_selector = 'MultiCarousel_explore';
 Shopify.custom_slider(explore_itemsDiv, explore_itemsMainDiv, explore_selector);
