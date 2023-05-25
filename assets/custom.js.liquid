@@ -249,8 +249,21 @@ $(document).ready(function(){
 });
 
 Shopify.variantChange = function(e){
-  $('.pdp-btn-price').remove()
-  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
+  $('.pdp-btn-price').remove();
+  //let compare_price =  ( ${e.price / 100} *100 ) / ${e.compare_at_price / 100} ;
+
+  let regular_price = e.compare_at_price / 100;
+  let sale_price = e.price / 100;
+
+  let discount_percentage = Math.floor( ( sale_price * 100 ) / regular_price );
+
+  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price custom_price_wrapper">
+  <span class="inclusive_text_content">Inclusive of all Taxes</span>
+  <span class="mobile_atc_btn">
+    <span class="mobile_atc_price">₹${e.price / 100}</span>
+    <span class="saved_price">${discount_percentage} % Off</span>
+  </span>
+  </span>`)
   // console.log(e);
 
 function swatches_change(varient_swatches_input){
