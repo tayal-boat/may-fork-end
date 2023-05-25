@@ -633,7 +633,8 @@
                   {%- endif -%}
                 </button>
                {% else %}
-                <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <button id="AddToCart" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
                   data-product-add-to-cart-button
                   data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
@@ -665,6 +666,25 @@
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
+               {%- else -%}
+               <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+                block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+                data-product-add-to-cart-button
+                data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
+                class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+                {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
+                data-price="{{ product.price }}">
+                {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
+                  {{- 'product.form.add_to_cart' | t -}}
+                  {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                    <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
+                  {% endif %}
+                {%- else -%}
+                  {{- 'product.form.sold_out' | t -}}
+                {%- endif -%}
+              </button>
+               {% endif %}
+                
               {%- endif -%}
             {%- endif -%}
 
