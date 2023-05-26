@@ -299,16 +299,15 @@
                 </div>
                 </div>
               {%- endif -%}
+              <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
             </div>
-            {%- if product.available -%}
-             {% render 'product-offers' %}{%- endif -%}
+            {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
               
             <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
               display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
             </div>
             
-            <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
 
             </div>
 
@@ -330,9 +329,9 @@
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
     
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
             {% if product.compare_at_price > discounted_price %}
