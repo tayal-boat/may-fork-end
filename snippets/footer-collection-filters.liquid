@@ -10,10 +10,16 @@ li.footer-features-filter-item,li.footer-price-filter-item{list-style:none;paddi
 .footer-collection-block{width:25%}
 }
 @media (max-width:768px){
-.footer-additional-block{padding:0 18px;}
+.footer-additional-block{padding:2.5rem 18px 0;margin-top:0;background:#f7fafc;}
 .footer-collection-block{margin-bottom:0;}
 .features-wrapper,.price-wrapper{display:none;}
-p.footer-collection-title{font-size: 14px;font-weight:500;border-bottom:1px solid #cad6dd;padding-bottom:10px;}
+.price-wrapper{margin-bottom:40px;}
+p.footer-collection-title{font-size:14px;font-weight:500;padding-bottom:10px;position:relative;color:#4e5358;}
+p.footer-collection-subtitle{font-size:13px;}
+li.footer-features-filter-item,li.footer-price-filter-item{font-size:14px;}
+.filter_icon{font-size:18px;position:absolute;top:50%;transform:translateY(-50%);right:10px;color:#b2b9bf;font-weight:500;padding-bottom:10px;}
+.expand_filter:before{content:'+'}
+.collapse_filter:before{content:'-'}
 }
 </style>
 
@@ -61,7 +67,9 @@ p.footer-collection-title{font-size: 14px;font-weight:500;border-bottom:1px soli
             {% assign collectionHandle = link.url | split: '/' | last %}
             {% assign collection = collections[collectionHandle] %}
             <div class="footer-collection-block-inner">
-                <p class="footer-collection-title">{{link.title}}</p>
+                <p class="footer-collection-title">{{ link.title }}
+                    <span class="expand_filter filter_icon d-lg-none"></span>
+                </p>
                 {% assign features_collection = collection.metafields.custom.shop_by_feature.value %}
                 {%- if features_collection != blank -%}
                     <div class="features-wrapper">
@@ -92,3 +100,14 @@ p.footer-collection-title{font-size: 14px;font-weight:500;border-bottom:1px soli
         </div>
     {% endfor %}            
 </div>
+
+<script>
+$('.footer-collection-block').each(function() {
+    $(this).find('.footer-collection-title').click(function() {
+        $(this).find('span').toggleClass('expand_filter');
+        $(this).find('span').toggleClass('collapse_filter');
+        $(this).siblings('.features-wrapper').slideToggle()
+        $(this).siblings('.price-wrapper').slideToggle()
+    })
+})
+</script>
