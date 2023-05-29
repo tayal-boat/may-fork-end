@@ -524,12 +524,13 @@
 
 <div id="af_cart_page" class="cdThemeSetupV2">
   <div class="af_cd_setup custom_kartdiscount_container">
-    <div class="parentFirstBox af_heading_holder">
-      <span class="af_cd_title">Discount Code</span>
-    </div>
     <div style="display: flex;flex-direction:row;align-items: flex-start;" class="af_txtbtn_holder">
       <div style="-webkit-flex: 2 0 0;flex: 2 0 0;" class="af_txtbx_holder">
-        <input type="text" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Coupon" id="af_custom_coupon_text" class="af_custom_coupon_text input-full trbrbr0" style="margin: 0px; width: 100%; max-height: 42px; min-height: 42px; border-color: rgb(204, 204, 204);">
+        <div>
+          <p class="discountCode_details">Save Rs {{ total_discount_amount }} more on this order</p>
+          <span class="discountCode">Code: <span class="af_coupon_text af_coupon_code">ONLYFORYOU</span></span>
+        </div>
+        <input type="hidden" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Coupon" id="af_custom_coupon_text" class="af_custom_coupon_text input-full trbrbr0" style="margin: 0px; width: 100%; max-height: 42px; min-height: 42px; border-color: rgb(204, 204, 204);">
       </div>
       <div style="-webkit-flex:1 0 0;flex:1 0 0;" class="af_btn_holder">
         <button type="button" class="af_custom_apply_coupon_trigger btn btn--regular btn--color btn--fill tlblbr0" id="af_custom_apply_coupon_trigger" onclick="CDSetupInit.couponApplyClick(this)" style="margin:0;width:100%;max-height:42px;min-height:42px;padding: 8px 31px;">
@@ -545,7 +546,7 @@
           <span class="af_loading_dots__dot"></span>
         </span>
       </span>
-      <span class="af_opens_popup">Need a Discount?</span>
+      <span class="af_opens_popup">View all coupons  &rarr;</span>
     </div>
   </div>
   <div id="af_tagged_discounts" class="af_tagged_discounts">
@@ -1035,8 +1036,14 @@ var kdDom = document.querySelector('body');
 kdDom.addEventListener('KD_validDiscountApplied',(e)=>{
   let discountCode = e.detail;
   console.log('Discount code going to apply is ' + e);
+  var total_discount_amount = {{ total_discount_amount }};
+  var discount_amount = document.querySelector('.af_discount_response .af_money').innerHTML;
+  discount_amount = discount_amount.replace('Rs ','');
+  discount_amount = parseInt(discount_amount);
   setInterval(()=>{
-    document.querySelector('.af_discount_response .af_money').innerHTML = 'Rs ' + {{total_discount_amount}};
+    if(total_discount_amount > 0){
+    document.querySelector('.af_discount_response .af_money').innerHTML = 'Rs ' + total_discount_amount;
+    }
   },1000);
 });
 {% comment %} const checkbox = document.querySelector(".check_container input");
