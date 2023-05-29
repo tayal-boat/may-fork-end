@@ -8,6 +8,14 @@
         {%- render 'icon' with 'close' -%}
       </button>
     </header>
+    {% for line_item in cart.items %}
+      {% assign purple_msg_check = false %}
+        {% if line_item.product.tags contains 'IPurpleU' %}
+          {% assign purple_msg_check = true %}
+          
+          {% break %}
+        {%- endif -%}
+    {% endfor %}
   <p class="drawer__title heading h6" style="padding: 12px 12px;color: #2B2B2B;font-weight: 600;font-size: 20px;">
     {% comment %} info: Removed cart icon in 2.0 {% endcomment %}
     {% comment %} <img width="20" height="20" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Cart_7e68f099-c0bf-4966-a9ef-14d1a3af07ad.png?v=1673260730">&nbsp; {% endcomment %}
@@ -361,20 +369,21 @@
                 </div>
               </div>
               {%- if section.settings.show_discount_msg -%}
-              {% for tag in line_item.product.tags %}
-                {% if tag contains 'gokwik_min_price_' %}
-                {% assign floor_price = tag | remove: 'gokwik_min_price_'  | plus: 0 %}
-                {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
-                {% assign discount_amount = line_price | minus: floor_price %}
-                {% assign line_item_quantity = line_item.quantity %}
-                {% if line_item_quantity > 0 %}
-                {% assign discount_amount = discount_amount | times: line_item_quantity %}
-              {% endif %}
-            {% comment %} <p class="discount_amount">{{ discount_amount }}</p>  {% endcomment %}
-                  {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
-               {% endif %}
-               {% endfor %}                 
+                {% for tag in line_item.product.tags %}
+                  {% if tag contains 'gokwik_min_price_' %}
+                    {% assign floor_price = tag | remove: 'gokwik_min_price_'  | plus: 0 %}
+                    {% assign line_price = line_item.final_price | plus: 0 | divided_by: 100 %}
+                    {% assign discount_amount = line_price | minus: floor_price %}
+                    {% assign line_item_quantity = line_item.quantity %}
+                    {% if line_item_quantity > 0 %}
+                      {% assign discount_amount = discount_amount | times: line_item_quantity %}
+                    {% endif %}
+                    {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
+                  {% endif %}
+                  
+                {% endfor %}                 
               {%- endif -%}
+              
             {% assign data-loop = forloop.index %}
       
               {% for p in line_item.properties %}
@@ -401,6 +410,9 @@
               </small>
             {% endif %}
          {% else %}
+          {%- if purple_msg_check == true -%}
+                <small class="discount-info" style="background:#4c218c;">Get flat <b>₹500</b> off by using <b>IPURPLEYOU</b></small>
+          {% else %}
            <div class="payment_offers">
              <div class="offer_text">
                <span>₹15 off on All UPI Payments</span>
@@ -411,7 +423,9 @@
                <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
              </div>
            </div>
+          {% endif %}
        {% endif %}
+       
         </form>
 
       {% comment %} info: No more required on 2.0 {% endcomment %}
@@ -996,6 +1010,12 @@ document.addEventListener('cart:updated', (event) => {
         "type": "checkbox",
         "id": "show_discount_msg",
         "label": "Show Discount Message",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_purple_msg",
+        "label": "Show Purple Message",
         "default": true
       },
       {
