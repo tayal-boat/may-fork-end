@@ -250,12 +250,12 @@ if(varient_swatches_input[i].checked){
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
       $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      $('.product-item__quick-form.quick-buy-notify-me #notifyMe_trigger').attr('data-variant-id',e.id);
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
       $('.d-lg-none.restocking, .desktop.restocking').show();
       $('.pincode_checker_container').hide();
-    if($('#BIS_trigger.custom-notify-btn').length > 0){
-      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+    if($('#notifyMe_trigger.custom-notify-btn').length > 0){
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-variant-id',e.id);
     } 
       
   }else{
@@ -1787,6 +1787,96 @@ for(let i = 0; i < slider_Selector.length; i++){
   Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
 }
 
+
+Shopify.notifyMe = function(){
+  event.preventDefault();
+  document.querySelector('body').classList.add('overflow-hidden');
+  // console.log("custom notify me");
+  // console.log(event.target.dataset);
+  var dataSet =  event.target.dataset;
+  var productJson = dataSet["productData"];
+  productJson = JSON.parse(productJson);
+  var varientID = dataSet["variantId"];
+  varientID = parseInt(varientID);
+  // console.log(productJson);
+  var varientSelector = '';
+  for (let i = 0; i < productJson.variants.length; i++) {
+    if(!productJson.variants[i].available || productJson.variants[i].available == "false"){
+      varientSelector = varientSelector + `<option value="${productJson.variants[i].id}" data-title="${productJson.variants[i].title}">${productJson.variants[i].title}</option>`;
+    if(productJson.variants[i].id == varientID){
+      $('.product-varient-title').text(productJson.variants[i].title);
+      }
+  }
+  }
+  $('.product-name').text(productJson.title);
+  $('#variants_select').html(varientSelector);
+  $('#variants_select option[value="'+ varientID +'"]').attr('selected','true');
+  $('.notifyMe_popup__main_container').addClass('show');
+}
+
+$('#variants_select').change(function(){
+  $('.product-varient-title').html($(this).children('[value="'+ this.value +'"]').attr('data-title'));
+});
+
+
+$('.notifyMe_form-horizontal').submit(function () {
+  event.preventDefault();
+  var varient_id = $(this).find('#variants_select').val();
+  var mobile_number = $(this).find('#mobile_number').val();
+  var title = $(this).siblings('.notifyMe_popup_title').text().trim();
+  var notifyMe_arr = [];
+  var notifyMe_data = '';
+  var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
+ 
+  if(mobile_number.length < 1){
+    $('#message_holder').html('Phone number is required.');
+  }else if(mobile_number.length < 10){
+    $('#message_holder').html('Invalid phone number.');
+  }else {
+  function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+  if (isJson(sessionStorage.notifyMe_data)) {
+    notifyMe_data = JSON.parse(sessionStorage.notifyMe_data);
+ console.log(notifyMe_data);
+    notifyMe_arr = notifyMe_data;
+  }
+  notifyMe_arr.push(notifyMe_varient);
+  notifyMe_arr = JSON.stringify(notifyMe_arr);
+  sessionStorage.setItem('notifyMe_data', notifyMe_arr);
+  document.querySelector('.completed_message').style.display = 'block';
+  var custom_popup_body = this.closest('.custom_popup');
+  setTimeout(function() {
+  custom_popup_body.classList.remove('show'); 
+  document.querySelector('body').classList.remove('overflow-hidden');
+  $('#mobile_number').val('');
+  document.querySelector('.completed_message').removeAttribute('style');
+  },3000);
+}
+});
+
+
+  //Function to allow only numbers
+  function _isNumberCheck(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    console.log(evt.target.value);
+    if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
+    return false;
+    return true;
+ }
+ // Not allow 0 as first digit on input
+ $(document).on("input", "#mobile_number", (e) => {
+    $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+    $('#message_holder').html('');
+ })
+ $(document).on("keypress", "#mobile_number", (e) => {
+    return _isNumberCheck(e);
+ })
 $(document).ready(function(){
   // $('.mobile_hamburger_btn').on('click', function(e){
   //   e.preventDefault();
