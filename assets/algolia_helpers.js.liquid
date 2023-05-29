@@ -132,22 +132,19 @@
 
       return escapeHtml(res);
     },
-    // youSavePrice: function inventory() {
-    //   let res = '';
-    //   let response = '';
-    //   let res_class = '';
-    //   let product_card_feat = this.meta.custom.product_card_features;
-    //   if (product_card_feat) {
-    //     var features = product_card_feat[0].split('|');
-    //      for (i=0;i<features.length; i++){
-    //        res+=`<span class='feature feature'>${features[i]}</span>`;
-    //       }
-    //     res_class = 'metafeild-label';
-    //     response = `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
-    //     debugger;
-    //   }
-    //   return response;
-    // },
+    youSavePrice: function inventory() {
+      let res = '';
+      let response = '';
+      let product_card_feat = this.meta && this.meta.custom && this.meta.custom.product_card_features;
+      if (product_card_feat) {
+        let features = product_card_feat[0].split('|');
+         for (let i = 0; i < features.length; i++){
+           res+=`<span class='feature'>${features[i]}</span>`;
+          }
+          response = `<div class="features-list only-horizontal"> ${res} </div>`;
+      }
+      return response;
+    },
     inventory: function inventory() {
       var res = this.inventory_available;
       var flashSale = '';
@@ -315,7 +312,7 @@
           response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
         }
         for (let i = 0; i < tags.length; i++) {
-      if (tags[i].includes('Free-')) {
+         if (tags[i].includes('Free-')) {
             res = `🎁 ${tags[i].replace('-',' ')}`;
             res_class = 'free-label label bg-black z-10';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
