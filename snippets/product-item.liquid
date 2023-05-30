@@ -291,6 +291,23 @@
                   {%- endif -%}
                 </span>
 
+              {%- elsif product.price_varies -%}
+                {%- capture price_min -%}
+                  {%- if settings.currency_code_enabled -%}
+                    {{ product.price_min | money_with_currency | replace: 'Rs.', '₹' }}
+                  {%- else -%}
+                    {{ product.price_min | money_without_trailing_zeros | replace: 'Rs.', '₹' }}
+                  {%- endif -%}
+                {%- endcapture -%}
+                    {{- product.price_max | money_with_currency | replace: 'Rs.', '₹' -}}
+                    {{- product.price_max | money_without_trailing_zeros | replace: 'Rs.', '₹' -}}
+                  {%- endif -%}
+                {%- endcapture -%}
+
+                <span class="price">
+                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                  {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
+                </span>
               {%- else -%}
                 <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -383,7 +400,7 @@
           {%- if settings.show_product_rating and reduced_content != true -%}
             <span class="product-item-meta__reviews-badge text--small">
               {%- render 'product-rating', product: product -%}
-              {% if available_variants >= 1 and has_color_code %}
+              {% if available_variants > 1 and has_color_code %}
                 {% unless product.tags contains 'customized' %}
                 <button
                   is="toggle-button"

@@ -30,7 +30,7 @@
 {% comment %} info: Code for Swatch List begins {% endcomment %}
 {% assign has_color_code = false %}
 {% capture remaining_variants_string %}
-  {{ product.variants.size | minus: 2 }}
+  {{ product.variants.size | minus: 3 }}
 {% endcapture %}
 {% assign remaining_variants_number = remaining_variants_string | plus: 0 %}
 {% assign total_swatches_to_show = 3 %}
@@ -41,12 +41,9 @@
     {% endif %}
     <span class='swatch-circle' style="background:{{ variant.metafields.my_fields.variantcolorcode }}"></span>
   {% endfor %}
-  {% comment %}
-    info:
      {% if remaining_variants_number >= 1 %}
-    &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
-  {% endif %}
- {% endcomment %}
+       &nbsp;<span class="more-colors">+{{- remaining_variants_number -}}</span>
+     {% endif %}
 {% endcapture %}
 {% comment %} info: Code for Swatch List ends {% endcomment %}
 
@@ -99,7 +96,7 @@
           </span>
         {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
-            😎
+            ⚡
             {{ settings.flash_products_label }}
           </span>
         {%- elsif tag contains 'meta-label-Bestseller' -%}
@@ -108,7 +105,7 @@
           </span>
         {%- elsif tag contains 'meta-label-trending' -%}
           <span class="priority label z-6 label--highlight custom-label bg-orange {{ tag | remove: 'meta-label-' }}">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/fire_icon_5b106718-91ee-4406-961e-33b11cbae6e5.png?v=1666348762" style="width: 15px;" /> Trending
+            ✨Trending
           </span>
         {%- elsif tag contains 'meta-label-exclusive' -%}
           <span class="priority label z-5 label--highlight custom-label bg-purple {{ tag | remove: 'meta-label-' }}">
@@ -130,11 +127,11 @@
       {%- endfor -%}
     {%- else -%}
       {% if product.tags contains 'Coming-soon' %}
-        <span class="label label--highlight custom-label q -out-click-to-notify">
+        <span class="priority label z-2 label--highlight custom-label -out-click-to-notify">
           <span>Coming-soon</span>
         </span>
       {% else %}
-        <span class="label label--highlight custom-label q -out-click-to-notify">
+        <span class="priority label z-2 label--highlight custom-label -out-click-to-notify">
           <span>Sold Out</span>
         </span>
       {%- endif -%}
@@ -155,6 +152,7 @@
         <img
           class="product-item__primary-image"
           loading="lazy"
+          alt="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"
           src="{{ product.metafields.custom.product_cards_placeholder1 }}">
       {% else %}
             {% if product.variants.size > 1 %}
@@ -222,7 +220,8 @@
       {%- if settings.show_product_rating and reduced_content != true -%}
         <span class="product-item-meta__reviews-badge text--small">
           {%- render 'product-rating', product: product -%}
-          {% if available_variants >= 1 and has_color_code %}
+          {% capture swatch_btn %}
+          {% if available_variants > 1 and has_color_code %}
             {% unless product.tags contains 'customized' %}
             <button
               is="toggle-button"
@@ -239,8 +238,10 @@
               class="variants-list hidden-phone">
               {{ swatch_list }}
             </button>
-          {% endunless %}
+            {% endunless %}
           {% endif %}
+          {% endcapture%}
+         {% unless template contains 'collection' %}  {{ swatch_btn }}  {% endunless %}
         </span>
       {%- endif -%}
       <div class="position-relative">
@@ -259,14 +260,14 @@
       {% endcomment %}
       
       <div class="product-item-meta__price-list-container">
-        {% unless product.tags contains 'NO-PRICE' %}
+      {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
                 {%- if settings.currency_code_enabled -%}
-                  {{- cheapest_variant_discounted_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant_discounted_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant_discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               {%- endcapture -%}
 
@@ -275,13 +276,24 @@
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                   {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- else -%}
-                    {{- discounted_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
+                    {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                   {%- endif -%}
                 </span>
-                {% comment %} 
-                info: ui2.0
+                <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                  <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                  {%- if settings.currency_code_enabled -%}
+                    {{-
+                        cheapest_variant.compare_at_price
+                      | money_with_currency
+                      | remove: '.00' | remove: ' ' 
+                      | replace: 'Rs.', '₹' -}}
+                  {%- else -%}
+                    {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                  {%- endif -%}
+                </span>
                 <p class="m-0 pr-2 off">
                   {{-
                       product.compare_at_price
@@ -290,21 +302,7 @@
                     | divided_by: product.compare_at_price
                     | round
                     | append: '% off' -}}
-                </p> {% endcomment %}
-                <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
-                  <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-
-                  {%- if settings.currency_code_enabled -%}
-                    {{-
-                        cheapest_variant.compare_at_price
-                      | money_with_currency
-                      | remove: ' ' 
-                      | replace: 'Rs.', '₹' -}}
-                  {%- else -%}
-                    {{- cheapest_variant.compare_at_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
-                  {%- endif -%}
-                </span>
-
+                </p>
               {%- else -%}
                 <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -316,13 +314,19 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- discounted_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
-              {% comment %} 
-             info: ui2.0
+              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                {%- if settings.currency_code_enabled -%}
+                  {{- product.compare_at_price | money_with_currency | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                {%- else -%}
+                  {{- product.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
+                {%- endif -%}
+              </span>
               <p class="m-0 pr-2 off">
                 {{-
                     product.compare_at_price
@@ -332,15 +336,6 @@
                   | round
                   | append: '% off' -}}
               </p> 
-            {% endcomment %}
-              <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                  {{- product.compare_at_price | money_with_currency | remove: ' '  | replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                  {{- product.compare_at_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
-                {%- endif -%}
-              </span>
 
             {%- elsif product.price_varies -%}
               {%- capture price_min -%}
@@ -353,9 +348,9 @@
 
               {%- capture price_max -%}
                 {%- if settings.currency_code_enabled -%}
-                  {{- product.price_max | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- product.price_max | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- product.price_max | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- product.price_max | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               {%- endcapture -%}
 
@@ -370,10 +365,10 @@
                   {{-
                       cheapest_variant.compare_at_price
                     | money_with_currency
-                    | remove: ' ' 
+                    | remove: '.00' | remove: ' ' 
                     | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant.compare_at_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- else -%}
@@ -381,9 +376,9 @@
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                 {%- if settings.currency_code_enabled -%}
-                  {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
               <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
@@ -393,10 +388,10 @@
                   {{-
                       cheapest_variant.compare_at_price
                     | money_with_currency
-                    | remove: ' ' 
+                    | remove: '.00' | remove: ' ' 
                     | replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                  {{- cheapest_variant.compare_at_price | money | remove: ' '  | replace: 'Rs.', '₹' -}}
+                  {{- cheapest_variant.compare_at_price | money | remove: '.00' | remove: ' '  | replace: 'Rs.', '₹' -}}
                 {%- endif -%}
               </span>
             {%- endif -%}
@@ -421,19 +416,19 @@
                 </div>
               </div>
             {%- endif -%}
-            
+            {% if template contains 'collection' %}  {{ swatch_btn }}  {% endif %}
           </div>
-          {% comment %} 
-            info: ui2.0
-          <p class="custom-save-price" style="font-size: 11px;margin:0;font-weight: 500;color: black;">
-            {% if product.price >= 50000 %}
-            {{ settings.card_offers | split: ',' | first }}
-            {% else %}
-            {{ settings.card_offers | split: ',' | last }} 
-            {% endif %}
-          </p> 
-        {% endcomment %}
-        {% endunless %}
+
+        {% if template contains 'collection' and product.metafields.custom.product_card_features %}
+          <div class="features-list only-horizontal">
+              {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+                {% for feature in features %}
+                  <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+                {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+                {% endfor %}
+          </div>
+        {% endif %}
+      {% endunless %}
       </div>
       {%- if request.page_type != 'password'
         and settings.product_add_to_cart
@@ -442,7 +437,7 @@
         -%}
 
           {% if product_soldout == false %}
-          <div class="d-flex align-items-center" style="position: absolute;top: 0;right: 0;">
+          <div class="d-flex align-items-center product-item_atc">
             {%- if available_variants == 1 -%}
             {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
             <div class="product-item__quick-form">
@@ -482,7 +477,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
                 <button type="submit"
@@ -491,7 +486,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                    {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
               {%- endform -%}
@@ -519,7 +514,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                     {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
                 <button
@@ -531,7 +526,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                     {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
 
@@ -544,7 +539,7 @@
                   {%- if product.tags contains 'prebooking' -%}
                     {{- 'product.form.pre_order' | t -}}
                   {% else %}
-                    {%- render 'icon' with 'header-tote-bag' -%}
+                      {{- 'product.form.add_to_cart' | t -}}  
                   {% endif %}
                 </button>
               {% endif %}
@@ -623,15 +618,6 @@
         {%- endfor -%}
       {%- endif -%}
 
-      {% comment %}
-      {%- if product.metafields.benefits.usp1 -%}
-      <div class="product-feature d-none d-lg-block" style="line-height: normal;margin-top:10px;">
-      <span style="display:block;">{{ product.metafields.benefits.usp1 | remove: '✓' }}</span>
-      <span style="display:block;">{{ product.metafields.benefits.usp2 | remove: '✓' }}</span>
-      <span style="display:block;">{{ product.metafields.benefits.usp3 | remove: '✓' }}</span>
-      </div>
-      {%- endif -%}
-      {% endcomment %}
     </div>
 
     {%- if product.available and reduced_content or show_cta -%}
@@ -697,25 +683,7 @@
         <span class="product-item__link text--subdued">{{ 'collection.product.sold_out' | t }}</span>
       </div>
     {%- endif -%}
-    {% assign features = product.metafields.custom.product_card_features | split: '|' %}
-    {% comment %} {% unless template contains 'collection' %}
-    {% if product.metafields.custom.product_card_features %}
-      <div class="features-list only-vertical">
-        {% for feature in features %}
-          <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
 
-        {% endfor %}
-      </div>
-    {% endif %}
-    {% endunless %} {% endcomment %}
   </div>
   </div>
-  {% if template contains 'collection' and product.metafields.custom.product_card_features %}
-    <div class="features-list only-horizontal">
-      {% for feature in features %}
-        <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-      {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
-      {% endfor %}
-    </div>
-  {% endif %}
 </product-item>
