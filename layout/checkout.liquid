@@ -821,6 +821,7 @@ li.mobile-nav__item.open collapsible-content {
 }
       </style>
       <!-- Single Checkout Page Styling Engs -->
+      {% comment %} {%- render 'mfilterit' -%} {% endcomment %}
     </head>
   
     <body>
@@ -872,27 +873,17 @@ li.mobile-nav__item.open collapsible-content {
       </div>
       {{ tracking_code }}
       <script type="text/javascript">
-        var clevertap = {
-          event: [],
-          profile: [],
-          account: [],
-          onUserLogin: [],
-          notifications: [],
-          privacy: [],
-        };
-        clevertap.account.push({ id: '8W4-9WW-Z85Z' });
-        clevertap.privacy.push({ optOut: false });
-        clevertap.privacy.push({ useIP: false });
+        var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
+        clevertap.account.push({"id": "8W4-9WW-Z85Z"});
+        clevertap.privacy.push({optOut: false}); //set the flag to true, if the user of the device opts out of sharing their data
+        clevertap.privacy.push({useIP: false}); //set the flag to true, if the user agrees to share their IP data
         (function () {
-          var wzrk = document.createElement('script');
-          wzrk.type = 'text/javascript';
-          wzrk.async = true;
-          wzrk.src =
-            ('https:' == document.location.protocol
-              ? 'https://d2r1yp2w7bby2u.cloudfront.net'
-              : 'http://static.clevertap.com') + '/js/a.js?v=0';
-          var s = document.getElementsByTagName('script')[0];
-          s.parentNode.insertBefore(wzrk, s);
+            var wzrk = document.createElement('script');
+            wzrk.type = 'text/javascript';
+            wzrk.async = true;
+            wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/clevertap.min.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wzrk, s);
         })();
       </script>
       <script>
@@ -1623,7 +1614,7 @@ li.mobile-nav__item.open collapsible-content {
             </div><div class="gst-popup-details"></div> <p class="gst_error"></p></div>
               `);
              function gstDetail(gst_buttom, gstIn, gstInVal) {
-               if (sessionStorage.gstin && sessionStorage.gstin !== '') {
+               if (localStorage.gstin && localStorage.gstin !== '') {
                  gst_buttom.text('Change');
                  gstIn.css('pointer-events', 'none');
                  gst_buttom.attr('gstadded', 'true');
@@ -1637,7 +1628,7 @@ li.mobile-nav__item.open collapsible-content {
   
              let gst_buttom = $('.gst-button');
              let gstIn = $('.gstin_input');
-             let gstInVal = sessionStorage.getItem('gstin');
+             let gstInVal = localStorage.getItem('gstin');
              gstDetail(gst_buttom, gstIn, gstInVal);
              gstIn.val(gstInVal);
              $('.gstin_container .gst-button').click(function (e) {
@@ -1661,7 +1652,7 @@ li.mobile-nav__item.open collapsible-content {
                        console.log(data, 'data');
                        if (data.message == 'The provided GST number is valid and here are the details') {
                          console.log('GST no valid');
-                         sessionStorage.setItem('gstin', gstInput);
+                         localStorage.setItem('gstin', gstInput);
                          let res = data.response;
                          let address = res.pradr.addr;
                          $('.gstin_container details').attr('open', 'true');

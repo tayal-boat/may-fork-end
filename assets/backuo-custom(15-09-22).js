@@ -79,7 +79,7 @@ function quickATC() {
 let currentURL = location.href,
     cartStr = "/cart",
     cartHashStr = "/#cart";
--1 != currentURL.indexOf(cartStr) && (location.href = "https://www.boat-lifestyle.com/#cart"),
+-1 != currentURL.indexOf(cartStr) && (location.href = "/#cart"),
     -1 != currentURL.indexOf(cartHashStr) && $(".header__cart").attr("aria-expanded", !0),
     (function (b, a) {
         "object" == typeof exports && "object" == typeof module ? (module.exports = a()) : "function" == typeof define && define.amd ? define([], a) : "object" == typeof exports ? (exports.AOS = a()) : (b.AOS = a());

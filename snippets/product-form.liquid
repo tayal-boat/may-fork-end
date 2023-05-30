@@ -2,6 +2,8 @@
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
+{%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price | divided_by:100 -%}
+
 
 {% assign product_varient = product.selected_or_first_available_variant %}
 {%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
@@ -137,7 +139,7 @@
                     style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
                     <span class="visually-hidden">{{ value }}</span>
                   </label>
-                  <span class="variant-name">{{ value | remove: ' ' | escape }}</span>
+                  <span class="variant-name">{{ value | escape }}</span>
                   </div>
                   {%- break -%}
                 {% endif %}
@@ -245,9 +247,9 @@
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
       
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
               {%- endif -%}
       
             </span>
@@ -262,10 +264,10 @@
                 <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
               
                 {%- if settings.currency_code_enabled -%}
-                {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
+                {{- product_varient.compare_at_price | money_with_currency |
                 replace: 'Rs.', '₹' -}}
                 {%- else -%}
-                {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+                {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
                 -}}
                 {%- endif -%}
               </span>
@@ -273,9 +275,9 @@
               <span class="price price--large">
                 <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
                 {%- if settings.currency_code_enabled -%}
-                {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
                 {%- else -%}
-                {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+                {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
                 {%- endif -%}
               </span>
               {%- endif -%}
@@ -297,16 +299,15 @@
                 </div>
                 </div>
               {%- endif -%}
+              <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
             </div>
-            {%- if product.available -%}
-             {% render 'product-offers' %}{%- endif -%}
+            {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
               
             <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
               display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
             </div>
             </div>
             
-            <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
 
             </div>
 
@@ -328,9 +329,9 @@
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
     
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
             {% if product.compare_at_price > discounted_price %}
@@ -344,11 +345,9 @@
               <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
     
               {%- if settings.currency_code_enabled -%}
-              {{- product_varient.compare_at_price | money_with_currency | remove: '.00' |
-              replace:
-              'Rs.', '₹' -}}
+              {{- product_varient.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- product_varient.compare_at_price | money | remove: '.00' | replace: 'Rs.', '₹'
+              {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
               -}}
               {%- endif -%}
             </span>
@@ -356,9 +355,9 @@
             <span class="price price--large">
               <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
               {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | replace: 'Rs.', '₹' -}}
+              {{- discounted_price | money | replace: 'Rs.', '₹' -}}
               {%- endif -%}
             </span>
             {%- endif -%}
@@ -677,7 +676,7 @@
                 class="product-form__add-button button {% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %} button--full">
                 {{- 'product.form.add_to_cart' | t -}}
                 {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                  <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                 {% endif %}
               </button>
             {% else %}
@@ -693,7 +692,7 @@
                       Only one unit per order allowed
                       {% else %}
                     {{- 'product.form.pre_order' | t -}} 
-                  <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                 {% endif %}
                 </span>
                 <span class="loader-button__loader" hidden="">  <div class="spinner"> <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
@@ -708,14 +707,15 @@
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
                     {{- 'product.form.add_to_cart' | t -}}
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
                {% else %}
-                <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+               {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <button id="AddToCart" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
                   data-product-add-to-cart-button
                   data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
@@ -725,12 +725,31 @@
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
                     {{- 'product.form.add_to_cart' | t -}}
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>
+                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
                   {%- endif -%}
                 </button>
+               {%- else -%}
+               <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+                block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+                data-product-add-to-cart-button
+                data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
+                class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+                {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
+                data-price="{{ product.price }}">
+                {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
+                  {{- 'product.form.add_to_cart' | t -}}
+                  {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                    <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
+                  {% endif %}
+                {%- else -%}
+                  {{- 'product.form.sold_out' | t -}}
+                {%- endif -%}
+              </button>
+               {% endif %}
+                
               {%- endif -%}
             {%- endif -%}
 
