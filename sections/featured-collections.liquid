@@ -5,147 +5,80 @@
 {%- endif -%}
 
 <style>
-    #shopify-section-{{ section.id }} { 
-      {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
-        {%- assign section_background = settings.background -%}
-      {%- else -%}
-        {%- assign section_background = section.settings.background -%}
-      {%- endif -%}
-
-      {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
-        {%- assign heading_color = settings.heading_color -%}
-        {%- assign text_color = settings.text_color -%}
-      {%- else -%}
-        {%- assign heading_color = section.settings.text_color -%}
-        {%- assign text_color = section.settings.text_color -%}
-      {%- endif -%}
-
-      {%- if section.settings.button_background == 'rgba(0,0,0,0)' -%}
-        {%- assign button_background = settings.primary_button_background -%}
-      {%- else -%}
-        {%- assign button_background = section.settings.button_background -%}
-      {%- endif -%}
-
-      {%- if section.settings.button_text_color == 'rgba(0,0,0,0)' -%}
-        {%- assign button_text_color = settings.primary_button_text_color -%}
-      {%- else -%}
-        {%- assign button_text_color = section.settings.button_text_color -%}
-      {%- endif -%}
-
-      --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
-      --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-      --primary-button-background: {{ button_background.red }}, {{ button_background.green }}, {{ button_background.blue }};
-      --primary-button-text-color: {{ button_text_color.red }}, {{ button_text_color.green }}, {{ button_text_color.blue }};
-
-      --prev-next-button-background: {{ settings.background.red }}, {{ settings.background.green }}, {{ settings.background.blue }};
-      --prev-next-button-color: {{ settings.text_color.red }}, {{ settings.text_color.green }}, {{ settings.text_color.blue }};
-
-      background: rgb({{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }});
-    --section-products-per-row:   {% if section.settings.horizontal_ui %}1 {% else %} 2{% endif %};
-      margin: {{ section.settings.padding }};
-    }
-    .tabs-nav__item-list button {
-      text-transform: unset !important;font-weight:700 !important;color: black;border: 0px;
-      padding-bottom:0px; padding-inline: 10px; padding-block:2px;border-top-left-radius: 16px !important;
-      border-bottom-left-radius: 16px !important;border-top-right-radius: 16px !important; border-bottom-right-radius: 16px !important;
-    }
-    .tabs-nav__item-list {box-shadow: none;}
-    .tabs-nav--center .tabs-nav__scroller-inner {margin-left: 0;}
-    button.tabs-nav__item.heading.heading--small{color:black;margin-right: 4vw;padding: 0.2rem 1rem;}
-    button.tabs-nav__item.heading.heading--small[aria-expanded="false"]{
-      background-color: #e3e3e3;color:black;opacity:1;font-weight: 500 !important;
-    }
-  button.tabs-nav__item.heading.heading--small[aria-expanded="true"]{ background-color: #000;color: #fff;}
-  .tabs-nav__scroller-inner .tabs-nav__position {--translate: 0;--scale: 0;}
-  [dir=ltr] .tabs-nav__position{left: 0;}
-    button.tabs-nav__item.heading.heading--small:focus{outline: none;}
-  .updated_featured_items .product-item-meta div[role="progressbar"]{bottom: 32px;right: -10px;}
-  .updated_featured_items .product-item-meta .product-item-meta__price-list-container .variants-list{display: none;}
-  .featured-collections.updated_featured_items .product-item .features-list{display: none;}
-  .custom_loading_icon{position: absolute;left: 50%; transform: translateX(-50%);top: 50%;z-index: 99;}
-  .updated_featured_items .product-item__image-wrapper{margin-top: 0px !important;padding-top: 24px;padding-bottom: 20px;}
+  .featured_collection_container{position: relative;}
+  .view_all_items{display: block;text-align: right;margin-bottom: 1rem;}
 
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
-     .tabs-nav--edge2edge {margin-top: 12px!important;}
     }
   @media screen and (min-width: 741px) {
       #shopify-section-{{ section.id }} { --section-products-per-row: {{ section.settings.products_per_row | at_most: 3 }};}
     }
-
   @media screen and (min-width: 1000px) {
       .flash-desk{width:80%;}
       #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.products_per_row | at_most: 4 }}; }
     }
   @media screen and (min-width: 1200px) {
       #shopify-section-{{ section.id }} {
-        --section-products-per-row: {{ section.settings.products_per_row }}; margin: {{ section.settings.padding_desktop }};
+        --section-products-per-row: {{ section.settings.products_per_row }};
+        overflow-y: hidden;
       }
-     .product-item-meta__color-count {margin-bottom: 5px;} 
    }
-  {% if section.settings.horizontal_ui %}
-    .price-list {border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;}
-     .item-horizontal .product-item {flex-direction: row;}
-     .item-horizontal .product-item{flex-direction: column!important;}
-     .item-horizontal .product__wrapper{display:flex;min-height:170px;}
-     .product-list__inner.item-horizontal .product-item__info{border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 8px;border-bottom-right-radius: 8px;margin: 0 ;padding: 10px 12px 8px 16px;}
-     .product-list__inner.item-horizontal .product-item__info .product-item-meta__reviews-badge{padding: 0 8px;border-radius: 15px;border: solid 0.5px #adadad;background-color: #f1efef;margin: 8px 2px;    line-height: 1.8rem;display: flex;justify-content: space-between;}
-     .item-horizontal .product-item{border-radius: 8px; border: 1px solid #E7E7E7;background: #e7e7e7;}
-     .product-horizontal {width: 60%;}
-     .features-list.only-horizontal{margin: 0;border-top: 1px solid #e7e7e7;padding:0.8rem 0.5rem;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;background-color:white;}  
-     .features-list.only-horizontal span.feature{font-weight: 500;}
-  {% endif %}
-{% if section.settings.header_ui %}
- #shopify-section-{{ section.id }} .tabs-nav__item-list {justify-content: center;}
- #shopify-section-{{ section.id }} .tabs-nav--center .tabs-nav__scroller-inner {margin-left: auto;}
- #shopify-section-{{ section.id }} p.view-all {display: none;}
- #shopify-section-{{ section.id }} h3.heading {font-weight: 500;padding: 0 20px 20px;position: relative;}
-@media(max-width: 768px){
-  #shopify-section-{{ section.id }} .tabs-nav__item-list {flex-wrap: wrap;justify-content: center!important;width: 88vw;gap: 20px;}
-  #shopify-section-{{ section.id }}  header.section__header {padding: 5vw 0;background: #e3e3e3;border-radius: 8px;}
-  #shopify-section-{{ section.id }}  button.tabs-nav__item.heading.heading--small {border: 1px solid;padding: 2px 20px;}
-  #shopify-section-{{ section.id }} button.tabs-nav__item.heading.heading--small {margin-right: 0;}
-  #shopify-section-{{ section.id }} h3.heading.h2::before {
-   content: url(https://cdn.shopify.com/s/files/1/0057/8938/4802/files/star_5ca1e219-08c4-4c35-91a7-7f02ab050315.png?v=1671790648);
-   position: absolute; top: -28px; left: -8px;
-}
-  
-}
-{% endif %}
-
-    
 </style>
 
 <section class="section section--flush">
   <div class="section__color-wrapper">
-    <div class="container ">
-      <header
-        style="gap:42px"
-        class="section__header{% if section.settings.content != blank %} section__header--tight{% endif %}"
-      >
+    {% capture featured_image %} 
+      <picture>
+        <source
+          media="(min-width: 769px)"
+          {% render 'image-attributes', image: section.settings.web_banner, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}
+        >
+        <img alt="featured_section_img" width="100%"
+          {% render 'image-attributes', image: section.settings.mobile_banner, sizes: '200,300,400,500,600' %}
+        >
+      </picture>
+     {% endcapture %}
+    {% capture featured_header %} 
+        <a class="{% if section.settings.enable_featured_img %}featured_header {% else %}d-flex justify-content-between align-items-center{% endif %}" href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
+          <h3 class="ui2-heading">{{ section.settings.title }}</h3>
+          {%- unless section.blocks.size > 1 -%}   <b class="view-all">View All {%- render 'icon' with 'right-arrow-blue' -%}</b>{% endunless %}
+        </a>
+     {% endcapture %}
+    {% if section.settings.enable_featured_img %}
+      <div class="mobile-only">{{ featured_image }}</div>
+    {% endif %}
+
+    <div class="featured_collection_container container {% if section.settings.enable_featured_img %}featured_img {% endif %}">
+      <header class="section__header {% if section.settings.enable_featured_img %}featured_img {% endif %}">
         {%- if section.settings.title != blank -%}
-          <div class="text-container">
-            <a href="{%- if section.settings.title-url !=blank -%}{{section.settings.title-url}}{%else%}/{%- endif -%}" {% if section.settings.title-url == blank %} data-attr-pointers_none {% endif %}>
-              <h3 class="heading h2">{{ section.settings.title }}</h3>
-            </a>
+          <div class="{% if section.settings.enable_featured_img %}mobile-only{% endif %}">{{ featured_header }}</div>
+        {% endif %}
 
-            {%- if section.settings.content != blank -%}
-              {{- section.settings.content -}}
-            {%- endif -%}
-          </div>
-        {%- endif -%}
-        {% if section.settings['title-url'] and settings.enable_flash_sale %}
-          <a style="display:flex;flex-direction: column;justify-content: left;" href="{{section.settings.title-url}}" class="align-items-lg-center flash-desk flex-lg-row-reverse">
-            <div class="flash_sale">
-              <p class="m-0 text-uppercase flash_text">
-                <span class="thunder"
-                  ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-                    <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"></path>
-                    </svg></span
-                >&nbsp;
+        {% if section.settings.enable_flash_sale %}
+          <a class="d-flex position-relative" href="{{section.settings.title-url}}">
+            <picture>
+              <source
+                media="(min-width: 769px)"
+                {% render 'image-attributes',
+                  image: section.settings.Flash_web_banner,
+                  sizes: '700,800,900,1000,1200,1400,1600',
+                  ignore_src: true
+                %}
+              >
+              <img
+                alt="flash_timer"
+                width="100%"
+                {% render 'image-attributes',
+                  image: section.settings.Flash_mobile_banner,
+                  sizes: '200,300,400,500,600'
+                %}
+              >
+            </picture>
 
-              </p>
-              {% render 'flashsale-timer', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
+            <div class="flash_sale ui2">
+              <p class="my-0 ml-3 text-left">{{ section.settings.flash_sale_title }}</p>
+              {% render 'flashsale-timer-2.0', title: {{settings.flash_timer_text}}, end_date: settings.flash_end_date %}
             </div>
           </a>
         {% endif %}
@@ -156,9 +89,9 @@
                 <div class="tabs-nav__item-list">
                   {%- for block in section.blocks -%}
                     {%- capture on_boarding_title -%}
-                      {{ 'general.onboarding.collection_title' | t }}
-                      {{ forloop.index }}
-                    {%- endcapture -%}
+                        {{ 'general.onboarding.collection_title' | t }}
+                        {{ forloop.index }}
+                      {%- endcapture -%}
 
                     <button
                       type="button"
@@ -181,8 +114,13 @@
           </tabs-nav>
         {%- endif -%}
       </header>
-
       <div class="featured-collections">
+        {% if section.settings.enable_featured_img %}
+          <div class="only-desktop">
+            {{ featured_image }}
+            {%- if section.settings.title != blank -%}{{ featured_header }}{%- endif -%}
+          </div>
+        {% endif %}
         {%- for block in section.blocks -%}
           {%- assign collection = block.settings.collection -%}
           {%- assign smallest_image_aspect_ratio = 0 -%}
@@ -195,57 +133,65 @@
               hidden
             {% endunless %}
             id="block-{{ section.id }}-{{ block.id }}"
-            class="product-list product-list--center" >
+            class="product-list product-list--center"
+          >
+            {% if section.blocks.size > 1 %}
+              <a href="{{ collection.url }}" class="view_all_items">
+                <b class="view-all"
+                  >View All
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
+                    <path id="Path_337386" data-name="Path 337386" d="M8.159,2.693a6.7,6.7,0,0,0,2.7-.551A7.172,7.172,0,0,0,13.095.625,7.133,7.133,0,0,0,14.608-1.6a6.735,6.735,0,0,0,.548-2.706,6.7,6.7,0,0,0-.551-2.7A7.216,7.216,0,0,0,13.087-9.25a7.041,7.041,0,0,0-2.234-1.513,6.781,6.781,0,0,0-2.7-.544,6.755,6.755,0,0,0-2.7.544A7.1,7.1,0,0,0,3.22-9.25,7.134,7.134,0,0,0,1.7-7.012a6.742,6.742,0,0,0-.548,2.7A6.7,6.7,0,0,0,1.706-1.6,7.184,7.184,0,0,0,3.223.625a7.184,7.184,0,0,0,2.23,1.517A6.7,6.7,0,0,0,8.159,2.693Zm0-1.283A5.609,5.609,0,0,1,5.932.968,5.741,5.741,0,0,1,4.109-.261,5.692,5.692,0,0,1,2.885-2.084a5.648,5.648,0,0,1-.44-2.226,5.648,5.648,0,0,1,.44-2.226A5.692,5.692,0,0,1,4.109-8.36,5.7,5.7,0,0,1,5.929-9.585a5.622,5.622,0,0,1,2.223-.44,5.675,5.675,0,0,1,2.23.44A5.681,5.681,0,0,1,12.208-8.36a5.692,5.692,0,0,1,1.225,1.823,5.648,5.648,0,0,1,.44,2.226,5.648,5.648,0,0,1-.44,2.226A5.692,5.692,0,0,1,12.208-.261,5.741,5.741,0,0,1,10.385.968,5.609,5.609,0,0,1,8.159,1.411Zm3.5-5.735a.637.637,0,0,0-.209-.44l-2.306-2.3a.541.541,0,0,0-.389-.144.5.5,0,0,0-.371.151.507.507,0,0,0-.148.367.526.526,0,0,0,.166.4l.843.821.793.648L8.62-4.887H5.183a.528.528,0,0,0-.4.162.557.557,0,0,0-.155.4.553.553,0,0,0,.155.4.535.535,0,0,0,.4.159H8.62l1.419-.058-.793.656L8.4-2.35a.5.5,0,0,0-.166.389.528.528,0,0,0,.148.378.491.491,0,0,0,.371.155.529.529,0,0,0,.389-.159l2.306-2.291A.627.627,0,0,0,11.661-4.325Z" transform="translate(-1.155 11.307)" fill="#2f5b96"></path>
+                  </svg>
+                </b>
+              </a>
+            {% endif %}
+
             <div
               {% unless section.settings.stack_products %}
                 class="scroller"
               {% endunless %}
             >
               <div
-                class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}">
-                {% if forloop.index == 1 %}
-                  {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
-                  {%- assign gap_width = 24.0
-                    | divided_by: section.settings.products_per_row
-                    | times: number_of_products_minus_one
+                class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}"
+              >
+                {% comment %} info:ajax-tabs  if forloop.index == 1  {% endcomment %}
+                {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
+                {%- assign gap_width = 24.0
+                  | divided_by: section.settings.products_per_row
+                  | times: number_of_products_minus_one
+                -%}
+                {%- capture sizes_attribute -%}
+                      (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
+                      {{ gap_width | ceil }}px)
+                    {%- endcapture -%}
+
+                {%- for product in collection.products limit: section.settings.products_count -%}
+                  {%- if product.featured_media -%}
+                    {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
+                      | at_least: product.featured_media.aspect_ratio
+                    -%}
+                  {%- endif -%}
+                  {%- render 'product-item2.0',
+                    product: product,
+                    collection: collection,
+                    show_cta: section.settings.show_cta,
+                    block: block,
+                    sizes_attribute: sizes_attribute,
+                    reveal: settings.stagger_products_apparition
                   -%}
-                  {%- capture sizes_attribute -%}
-                    (max-width: 740px) 52vw, calc(min(100vw - 80px, 1520px) / {{ section.settings.products_per_row }} -
-                    {{ gap_width | ceil }}px)
-                  {%- endcapture -%}
+                {%- else -%}
+                  {%- assign smallest_image_aspect_ratio = 1 -%}
 
-                  {%- for product in collection.products limit: section.settings.products_count -%}
-                    {%- if product.featured_media -%}
-                      {%- assign smallest_image_aspect_ratio = smallest_image_aspect_ratio
-                        | at_least: product.featured_media.aspect_ratio
-                      -%}
-                    {%- endif -%}
-
-                    {%- render 'product-item',
-                      product: product,
-                      collection: collection,
+                  {%- for i in (1..section.settings.products_count) -%}
+                    {%- capture product_image -%}product-{% cycle '1', '2', '3', '4', '5' %}{% endcapture %}
+                    {%- render 'product-item-placeholder',
+                      product_image: product_image,
                       show_cta: section.settings.show_cta,
-                      block: block,
-                      sizes_attribute: sizes_attribute,
                       reveal: settings.stagger_products_apparition
                     -%}
-                  {%- else -%}
-                    {%- assign smallest_image_aspect_ratio = 1 -%}
-
-                    {%- for i in (1..section.settings.products_count) -%}
-                      {%- capture product_image -%}product-{% cycle '1', '2', '3', '4', '5' %}{% endcapture %}
-                      {%- render 'product-item-placeholder',
-                        product_image: product_image,
-                        show_cta: section.settings.show_cta,
-                        reveal: settings.stagger_products_apparition
-                      -%}
-                    {%- endfor -%}
                   {%- endfor -%}
-                  <p style="position: absolute;top: -2rem; right: 0;" class="view-all">
-                    <a style="color:black;" href="{{collection.url}}"> <b>View All ></b> </a>
-                  </p>
-                {% endif %}
-
+                {%- endfor -%}
+                {% comment %}info:ajax-tabs {% endif %} {% endcomment %}
               </div>
             </div>
 
@@ -276,124 +222,116 @@
                 </prev-next-buttons>
               {%- endif -%}
             {%- endunless -%}
-
-            {%- if block.settings.button_text != blank -%}
-              <div class="section__footer">
-                <a class="button button--primary" href="{{ block.settings.button_url | default: collection.url }}">
-                  {{- block.settings.button_text -}}
-                </a>
-              </div>
-            {%- endif -%}
           </product-list>
-
         {%- endfor -%}
       </div>
     </div>
   </div>
 </section>
+{% comment %}
+  info:ajax-tabs
+  <script>
+    function load_ajax_tab_content(collection_handle, collection_tab_id){
 
-<script>
-  function load_ajax_tab_content(collection_handle, collection_tab_id){
+      let html_response = "";
 
-    let html_response = "";
-       
-    $.ajax({
-      url: '/collections/'+collection_handle+'?page=1',
-      method: "get",
-      type: "GET",
-      async: false,
-      dataType: "html",
-      success: function (result) {
-        
-        html_response = $(result).find("product-list.product-list .product-list__inner").html();
-      },
-      error: function (error) {
-          console.log(error);
-      }
-    });
+      $.ajax({
+        url: '/collections/'+collection_handle+'?page=1',
+        method: "get",
+        type: "GET",
+        async: false,
+        dataType: "html",
+        success: function (result) {
 
-    return html_response;
-  }
+          html_response = $(result).find("product-list.product-list .product-list__inner").html();
+        },
+        error: function (error) {
+            console.log(error);
+        }
+      });
+
+      return html_response;
+    }
 
 
-  
-  $(document).ready(function(){
-    // getting products cards on clicking of featured collection tabs
-    
-    $('body').on('click', '#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button', function(e){
-      e.preventDefault();
-      
-      let tab_id = $(this).attr('aria-controls');
 
-      // Checking the tab has content loaded already or not
+    $(document).ready(function(){
+      // getting products cards on clicking of featured collection tabs
 
-      if( $('#'+tab_id+' .product-list__inner').html().trim() == "" ){
-        $(this).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
-            
-        $(this).attr('aria-expanded', 'true');
-        
-        $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
-          
-        let collection_handle = $(this).data("collection-handle");
-        //let products_limit = {{ section.settings.products_count }};
+      $('body').on('click', '#shopify-section-{{ section.id }} tabs-nav .tabs-nav__item-list button', function(e){
+        e.preventDefault();
 
-        let self = this;
+        let tab_id = $(this).attr('aria-controls');
 
-        $.ajax({
-          url: '/collections/'+collection_handle+'?page=1',
-          method: "get",
-          type: "GET",
-          dataType: "html",
-          success: function (result) {
-            
-            let t = $(result).find("product-list.product-list .product-list__inner").html();
-            $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
-            $(self).parents('.shopify-section--featured-collections').find("product-list#"+tab_id+".product-list").removeAttr('hidden');
-            $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html(t);
-            $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
-            
-            var biggestNum = 0;
-            $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
-              let z_index_val = [];
+        // Checking the tab has content loaded already or not
 
-              $(this).find('.product-horizontal span').each(function(){
-                let all_classes = $(this).attr('class').split(' ');
-                let get_classname = filterItems('z-', all_classes);
-                if( get_classname.length > 0 ){
-                  z_index_val.push(get_classname[0].split('-')[1]);
-                }
-              })
+        if( $('#'+tab_id+' .product-list__inner').html().trim() == "" ){
+          $(this).parents('.shopify-section--featured-collections').find(".tabs-nav__item-list .tabs-nav__item").attr('aria-expanded', 'false');
 
-              let element_max_num = Math.max.apply(Math, z_index_val);
-              $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
-            });
-            
-            $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+          $(this).attr('aria-expanded', 'true');
 
-            $('.custom_loading_icon').remove();
+          $(this).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html('<button class="btn custom_loading_icon"><span class="load-icon" loader=""><img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;"></span></button>');
 
-          },
-          error: function (error) {
-              console.log(error);
-          },
-        });
-      }
+          let collection_handle = $(this).data("collection-handle");
+          //let products_limit = {{ section.settings.products_count }};
 
-    
-      function filterItems (needle, itemStack) {
-        let query = needle.toLowerCase();
-        return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
-      }
+          let self = this;
 
+          $.ajax({
+            url: '/collections/'+collection_handle+'?page=1',
+            method: "get",
+            type: "GET",
+            dataType: "html",
+            success: function (result) {
+
+              let t = $(result).find("product-list.product-list .product-list__inner").html();
+              $(self).parents('.shopify-section--featured-collections').find("product-list.product-list").attr('hidden');
+              $(self).parents('.shopify-section--featured-collections').find("product-list#"+tab_id+".product-list").removeAttr('hidden');
+              $(self).parents('.shopify-section--featured-collections').find('.featured-collections product-list#'+tab_id+'.product-list .product-list__inner').html(t);
+              $(self).parents('.shopify-section--featured-collections').find('.featured-collections').addClass('updated_featured_items')
+
+              var biggestNum = 0;
+              $(self).parents('.shopify-section--featured-collections').find('.updated_featured_items .product-item').each(function(index){
+                let z_index_val = [];
+
+                $(this).find('.product-horizontal span').each(function(){
+                  let all_classes = $(this).attr('class').split(' ');
+                  let get_classname = filterItems('z-', all_classes);
+                  if( get_classname.length > 0 ){
+                    z_index_val.push(get_classname[0].split('-')[1]);
+                  }
+                })
+
+                let element_max_num = Math.max.apply(Math, z_index_val);
+                $(this).find('.product-horizontal span.z-'+ element_max_num ).css('display', 'flex');
+              });
+
+            //  $(self).parents('.shopify-section--featured-collections').find('product-list#'+tab_id+'.product-list .product-list__inner').append('<p style="position: absolute;top: -2rem; right: 0;" class="view-all"><a style="color:black;" href="/collections/'+collection_handle+'"> <b>View All &gt;</b> </a></p>')
+
+              $('.custom_loading_icon').remove();
+
+            },
+            error: function (error) {
+                console.log(error);
+            },
+          });
+        }
+
+
+        function filterItems (needle, itemStack) {
+          let query = needle.toLowerCase();
+          return itemStack.filter(item => item.toLowerCase().indexOf(query) >= 0);
+        }
+
+      })
     })
-  })
-</script>
-
+  </script>
+{% endcomment %}
 {% schema %}
 {
   "name": "Featured collections",
-  "class": "shopify-section--featured-collections",
-  "max_blocks": 5,
+  "class": "shopify-section--featured-collections two-pt-o",
+  "max_blocks": 4,
   "blocks": [
     {
       "type": "collection",
@@ -409,44 +347,15 @@
           "id": "label",
           "label": "Tab label",
           "info": "Shown when more than 1 collection is featured. Collection title is used if none is set."
-        },
-        {
-          "type": "text",
-          "id": "button_text",
-          "label": "Button text"
-        },
-        {
-          "type": "url",
-          "id": "button_url",
-          "label": "Button link",
-          "info": "If empty, the collection URL is used."
         }
       ]
     }
   ],
   "settings": [
     {
-      "type": "text",
-      "id": "padding",
-      "label": "margin",
-      "default": "0"
-    },
-    {
-      "type": "text",
-      "id": "padding_desktop",
-      "label": "margin-desktop",
-      "default": "input"
-    },
-    {
-      "type": "checkbox",
-      "id": "header_ui",
-      "label": "festive header_ui",
-      "default": false
-    },
-    {
       "type": "url",
       "id": "title-url",
-      "label": "required-input-for-flash-sale"
+      "label": "required-input-for-view-all"
     },
     {
       "type": "text",
@@ -455,31 +364,55 @@
       "default": "Collection"
     },
     {
-      "type": "richtext",
-      "id": "content",
-      "label": "Content"
+      "type": "checkbox",
+      "id": "enable_flash_sale",
+      "label": "enable flash sale countdown"
+    },
+    {
+      "type": "image_picker",
+      "id": "Flash_web_banner",
+      "label": "Flash Desktop Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "Flash_mobile_banner",
+      "label": "Flash Mobile Image"
+    },
+    {
+      "type": "text",
+      "id": "flash_sale_title",
+      "label": "flash sale title"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_featured_img",
+      "label": "enable featured-image for section"
+    },
+    {
+      "type": "image_picker",
+      "id": "web_banner",
+      "label": "Featured Desktop Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_banner",
+      "label": "Featured Mobile Image"
     },
     {
       "type": "range",
       "id": "products_count",
       "label": "Products to show",
-      "min": 4,
-      "max": 50,
+      "min": 2,
+      "max": 4,
       "step": 1,
-      "default": 8
+      "default": 4
     },
-    {
-      "type": "checkbox",
-      "id": "horizontal_ui",
-      "label": "horizontal-ui",
-      "default": false
-      },
       {
       "type": "range",
       "id": "products_per_row",
       "label": "Products per row (desktop)",
-      "min": 2,
-      "max": 6,
+      "min": 4,
+      "max": 4,
       "step": 1,
       "default": 4
     },
@@ -495,34 +428,6 @@
       "label": "Show add to cart below info",
       "info": "If enabled, we recommend using 4 products per row at maximum.",
       "default": false
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "background",
-      "label": "Background",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "button_background",
-      "label": "Button background",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Button text",
-      "default": "rgba(0,0,0,0)"
     }
   ],
   "presets": [
