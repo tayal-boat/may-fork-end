@@ -11,9 +11,9 @@
     var discount_ratio = 1.0 - price_ratio;
     var res = '<b>' + formatPrice(price) + '</b>';
     if (comparing) {
-      res = ' <span class="ais-hit--price-percent">' + Math.floor(discount_ratio * 100) + '% off </span>' +
-        '<span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> ' +
-        '<b style="padding-left:8px;">' + formatPrice(price) + '</b>' 
+      res = ' <span style="color:#05A143;font-size:14px;">' + Math.floor(discount_ratio * 100) + '% off </span>' +
+        '<b style="padding-left:8px;">' + formatPrice(price) + '</b>' +
+        ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
     }
 
     return res;
@@ -101,8 +101,8 @@
         if (comparing) {
           var algolia_price = '₹'+ Math.floor(price)
           res = '<b class="algolia_price">' + algolia_price + '</b>'
-          + ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
-          +  ' <span class="ais-hit--price-percent">' + Math.floor(discount_ratio * 100) + '% off </span>'
+          +  ' <span style="color:#05A143;font-size:14px;font-weight:500;">' + Math.floor(discount_ratio * 100) + '% off </span>'
+            + ' <span class="ais-hit--price-striked">' + formatPrice(compare_at_price) + '</span> '
         }
     
         return res;
@@ -133,17 +133,22 @@
       return escapeHtml(res);
     },
     youSavePrice: function inventory() {
-      let res = '';
-      let response = '';
-      let product_card_feat = this.meta && this.meta.custom && this.meta.custom.product_card_features;
-      if (product_card_feat) {
-        let features = product_card_feat[0].split('|');
-         for (let i = 0; i < features.length; i++){
-           res+=`<span class='feature'>${features[i]}</span>`;
-          }
-          response = `<div class="features-list only-horizontal"> ${res} </div>`;
+      var res = '';
+      var compare_at_price = this.compare_at_price;
+      var price = this.price;
+      var price_ratio = this.price_ratio;
+      var discount_ratio = 1.0 - price_ratio;
+      let card_offers = JSON.parse(Shopify.card_offers);
+      if (price >= 500) {
+        /* res += ' <p class="ais-hit--price-discount">Save ₹15 more on UPI payment</p>'; */
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_1}</p>`;
+      } else {
+        res += ` <p class="ais-hit--price-discount">${card_offers.offer_2}</p>`;
       }
-      return response;
+      // res += ' <p class="ais-hit--price-discount"> You Save: ' + formatPrice(compare_at_price - price ) + ' (' +
+      //   Math.floor(discount_ratio * 100) +
+      //   '%)</p>';
+      return res;
     },
     inventory: function inventory() {
       var res = this.inventory_available;
@@ -226,28 +231,12 @@
         rating_value = Math.round(rating_value * 10) / 10;
         var rating_count = reviews.rating_count;
         res = `<div class="rating"><div class="rating__stars" role="img" aria-label="${rating_value} out of 5.0 stars">
-            <span style="font-size: 16px!important;color: #f4c730!important;padding-bottom: 3px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 22 22">
-                <g id="Group_334346" data-name="Group 334346" transform="translate(17150 -5434)">
-                  <rect id="Rectangle_114376" data-name="Rectangle 114376" width="22" height="22" transform="translate(-17150 5434)" fill="transparent"></rect>
-                  <g id="Group_334341" data-name="Group 334341" transform="translate(-17149 5435)">
-                    <path id="Path_332351" data-name="Path 332351" d="M1153.144,361.362a1.527,1.527,0,0,1,2.738,0l2.313,4.692,5.154.768a1.527,1.527,0,0,1,.848,2.6l-3.729,3.683.868,5.179a1.526,1.526,0,0,1-2.216,1.6l-4.606-2.424-4.607,2.424a1.526,1.526,0,0,1-2.216-1.6l.868-5.179-3.729-3.683a1.526,1.526,0,0,1,.848-2.6l5.154-.768Z" transform="translate(-1144.374 -360.511)" fill="#f4c730" fill-rule="evenodd"></path>
-                  </g>
-                </g>
-              </svg>
-            </span>${rating_value} </div> </div>`;
+            <span style="color:#05A143;">★</span>
+            ${rating_value} </div> <span class="rating__caption">${rating_count} reviews</span>
+            </div>`;
       } else {
         res = `<div class="rating"><div class="rating__stars" role="img" >
-        <span style="font-size: 16px!important;color: #f4c730!important;padding-bottom: 3px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 22 22">
-          <g id="Group_334346" data-name="Group 334346" transform="translate(17150 -5434)">
-            <rect id="Rectangle_114376" data-name="Rectangle 114376" width="22" height="22" transform="translate(-17150 5434)" fill="transparent"></rect>
-            <g id="Group_334341" data-name="Group 334341" transform="translate(-17149 5435)">
-              <path id="Path_332351" data-name="Path 332351" d="M1153.144,361.362a1.527,1.527,0,0,1,2.738,0l2.313,4.692,5.154.768a1.527,1.527,0,0,1,.848,2.6l-3.729,3.683.868,5.179a1.526,1.526,0,0,1-2.216,1.6l-4.606-2.424-4.607,2.424a1.526,1.526,0,0,1-2.216-1.6l.868-5.179-3.729-3.683a1.526,1.526,0,0,1,.848-2.6l5.154-.768Z" transform="translate(-1144.374 -360.511)" fill="#f4c730" fill-rule="evenodd"></path>
-            </g>
-          </g>
-        </svg> 
-        </span>
+               <span style="color:#05A143;font-size:16px;">★</span>
                Be the first to review
               </div></div>`
       }
@@ -308,37 +297,39 @@
         if (product_labelss) {
           var labelss = product_labelss.label[0];
           res = `${labelss}`;
-          res_class = 'metafeild-label label--highlight custom-label label';
+          res_class = 'metafeild-label label--highlight custom-label label bg-black';
           response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
         }
         for (let i = 0; i < tags.length; i++) {
-         if (tags[i].includes('Free-')) {
+      if (tags[i].includes('Free-')) {
             res = `🎁 ${tags[i].replace('-',' ')}`;
-            res_class = 'free-label label bg-black z-10';
+            res_class = 'free-label label bg-green z-10';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('Coupon-')) {
             res = `₹${tags[i].replace('Coupon-','').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
-            res_class = 'coupon-label label bg-black z-9';
+            res_class = 'coupon-label label bg-green z-9';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('flash-sale') && comparing) {
-            res = `⚡super saver`;
-            res_class = 'flash-sale-badge label bg-black z-8';
+            res = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill flash-sale-thunder pr-1" viewBox="0 0 16 16">
+              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+            </svg> SUPER SAVER`;
+            res_class = 'flash-sale-badge z-8';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-Bestseller')) {
             res = `🚀 ${tags[i].replace('meta-label-',' ')}`;
-            res_class = 'label bg-black z-7';
+            res_class = 'label bg-orange z-7';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-trending')) {
             res = ` ✨${tags[i].replace('meta-label-',' ')}`;
-            res_class = 'label bg-black z-6';
+            res_class = 'label bg-orange z-6';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-exclusive')) {
             res = `💝 LIMITED EDITION`;
-            res_class = 'label bg-black z-5';
+            res_class = 'label bg-purple z-5';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-just launched')) {
             res = `🎉 NEW LAUNCH`;
-            res_class = 'label bg-black z-4';
+            res_class = 'label bg-purple z-4';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('Feature|')) {
             res = `${tags[i].replace('Feature|',' ')}`;
@@ -346,11 +337,11 @@
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-')) {
             res = `${tags[i].replace('meta-label-',' ')}`;
-            res_class = ' label bg-black z-2';
+            res_class = ' label bg-green z-2';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-sold')) {
             res = 'sold-out';
-            res_class = ' label';
+            res_class = ' label bg-black';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           }
         }

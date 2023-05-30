@@ -96,7 +96,7 @@
           </span>
         {%- elsif tag contains 'flash-sale' and settings.enable_flash_sale -%}
           <span class="priority label z-8 label--highlight custom-label lowest-price flash">
-            ⚡
+            🔥
             {{ settings.flash_products_label }}
           </span>
         {%- elsif tag contains 'meta-label-Bestseller' -%}
@@ -260,7 +260,7 @@
       {% endcomment %}
       
       <div class="product-item-meta__price-list-container">
-      {% unless product.tags contains 'NO-PRICE' %}
+        {% unless product.tags contains 'NO-PRICE' %}
           <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}">
             {%- if product.price_varies and product.compare_at_price -%}
               {%- capture price_min -%}
@@ -418,17 +418,26 @@
             {%- endif -%}
             {% if template contains 'collection' %}  {{ swatch_btn }}  {% endif %}
           </div>
-
-        {% if template contains 'collection' and product.metafields.custom.product_card_features %}
-          <div class="features-list only-horizontal">
-              {% assign features = product.metafields.custom.product_card_features | split: '|' %}
-                {% for feature in features %}
-                  <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
-                {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
-                {% endfor %}
-          </div>
-        {% endif %}
-      {% endunless %}
+          {% comment %} 
+            info: ui2.0
+          <p class="custom-save-price" style="font-size: 11px;margin:0;font-weight: 500;color: black;">
+            {% if product.price >= 50000 %}
+            {{ settings.card_offers | split: ',' | first }}
+            {% else %}
+            {{ settings.card_offers | split: ',' | last }} 
+            {% endif %}
+          </p> 
+        {% endcomment %}
+        <div class="features-list only-horizontal">
+          {% if template contains 'collection' and product.metafields.custom.product_card_features %}
+            {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+              {% for feature in features %}
+                <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+              {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+              {% endfor %}
+          {% endif %}
+          {% endunless %}
+        </div>
       </div>
       {%- if request.page_type != 'password'
         and settings.product_add_to_cart
@@ -684,6 +693,16 @@
       </div>
     {%- endif -%}
 
+    {% comment %} {% unless template contains 'collection' %}
+    {% if product.metafields.custom.product_card_features %}
+      <div class="features-list only-vertical">
+        {% for feature in features %}
+          <span class='feature feature-{{ forloop.index }}'>{{ feature }}</span>
+
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endunless %} {% endcomment %}
   </div>
   </div>
 </product-item>
