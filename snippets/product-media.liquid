@@ -35,9 +35,18 @@
   {%- assign max_width = 0 -%}
   {%- assign largest_image_aspect_ratio = 999 -%}
 
+  {% assign varientCount = 0 %}
   {%- for media in product.media -%}
     {%- assign max_width = max_width | at_least: media.preview_image.width -%}
-    {%- assign largest_image_aspect_ratio = largest_image_aspect_ratio | at_most: media.preview_image.aspect_ratio -%}
+    {%- assign largest_image_aspect_ratio = largest_image_aspect_ratio | at_most: media.preview_image.aspect_ratio -%}  
+    {%- assign is_media_filtered = false -%}
+    {%- assign media_id_as_string = media.id | append: '' -%}
+    {%- if filtered_media_ids contains media_id_as_string -%}
+      {%- assign is_media_filtered = true -%}
+    {%- endif -%}
+    {%  unless is_media_filtered %} 
+      {% assign varientCount = varientCount | plus: 1  %}
+    {% endunless %}
   {%- endfor -%}
 
   <product-media form-id="product-form-{{ section.id }}-{{ product.id }}" {% if section.settings.enable_video_autoplay
