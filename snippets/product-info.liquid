@@ -6,6 +6,7 @@
       <div class="desktop_reviews_wrapper">
         {%- if section.settings.show_product_rating -%}
           {%- render 'product-rating', product: product -%}
+          {% comment %} {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %} {% endcomment %}
         {% endif %}
         {%- if product.available -%}
           {% render 'product-offers' %}
@@ -33,6 +34,7 @@
           </h1>
           {%- if section.settings.show_product_rating -%}
             {%- render 'product-rating', product: product -%}
+            {% comment %} {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %} {% endcomment %}
           {% endif %}
         </div>
         {% if product.title contains '|' %}
@@ -45,21 +47,6 @@
         <a href="{{ product.url }}">{{ product.title }}</a>
       </h2>
       {% endunless %}
-      {%- if section.settings.show_product_rating or section.settings.show_sku -%}
-      <div class="product-meta__reference">
-        {%- if section.settings.show_sku -%}
-        <span class="product-meta__sku text--subdued text--xxsmall" {% if product.selected_or_first_available_variant.sku==blank
-          %}style="display: none" {% endif %} data-product-sku-container>
-          {{- 'product.general.sku' | t }}
-          <span class="product-meta__sku-number" data-product-sku-number>{{
-            product.selected_or_first_available_variant.sku }}</span>
-          </span>
-        {%- endif -%}
-        {% comment %} {%- if product.tags contains 'customized' -%}
-          <span class="free-engraving" style="position:relative;font-size: 12px;font-weight: 600;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: left;color: #ae3939;margin-left: .5rem;padding-top: 2px;">FREE ENGRAVING</span>
-        {%- endif -%} {% endcomment %}
-      </div>
-      {%- endif -%}
       
       {% if product.tags contains "Coming-Soon" %}
       <div
