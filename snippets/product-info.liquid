@@ -3,6 +3,16 @@
   <div class="product__info">
     <!-- PRODUCT META -->
     <product-meta form-id="{{ product_form_id }}" price-class="price--large" class="product-meta">
+      <div class="desktop_reviews_wrapper">
+        {%- if section.settings.show_product_rating -%}
+          {%- render 'product-rating', product: product -%}
+          {% comment %} {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %} {% endcomment %}
+        {% endif %}
+        {%- if product.available -%}
+          {% render 'product-offers' %}
+        {%- endif -%}
+      </div>
+
       {%- if section.settings.show_vendor -%}
       <h2 class="product-meta__vendor heading heading--small">
         {%- assign vendor_handle = product.vendor | handle -%}
@@ -17,15 +27,21 @@
       {%- endif -%}
       
       {% unless featured %}
-      {% comment %} {% render 'product-subtitles' %} {% endcomment %}
-      <h1 class="product-meta__title heading h3">
-        {{ product.title | split: '|' | first }} 
+        {% comment %} {% render 'product-subtitles' %} {% endcomment %}
+        <div class="product-heading-container">
+          <h1 class="product-meta__title heading h3">
+            {{ product.title | split: '|' | first | split: 'boAt' | last }} 
+          </h1>
+          {%- if section.settings.show_product_rating -%}
+            {%- render 'product-rating', product: product -%}
+            {% comment %} {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %} {% endcomment %}
+          {% endif %}
+        </div>
         {% if product.title contains '|' %}
-        |&nbsp;<span class='pdp-title-extra-info'>
-                 <small>{{ product.title | split: '|' | last }}</small>
-               </span>
+          <span class='pdp-title-extra-info'>
+            <small>{{ product.title | split: '|' | last }}</small>
+          </span>
         {% endif %}
-      </h1>
       {% else %}
       <h2 class="product-meta__title heading h3">
         <a href="{{ product.url }}">{{ product.title }}</a>
@@ -33,25 +49,6 @@
       {% endunless %}
       {%- if section.settings.show_product_rating or section.settings.show_sku -%}
       <div class="product-meta__reference">
-        {%- if section.settings.show_product_rating -%}
-        {%- comment -%}
-        <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-reviews-pocket" is="review-link"
-          data-smooth-scroll class="product-meta__reviews-badge hidden-lap-and-up">{%- render 'product-rating', product:
-          product -%}</a>
-        <a href="{% if featured %}{{ product.url }}{% endif %}#product-{{ product.id }}-tabs" is="review-link"
-          data-smooth-scroll class="product-meta__reviews-badge hidden-pocket">{%- render 'product-rating', product:
-          product -%}</a>
-        {%- endcomment -%}
-        {% comment %}Start automatically added Judge.me widget {% endcomment %}
-        {% comment %} {%- render 'product-rating', product: product -%} {% endcomment %}
-        {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
-        {% comment %}End automatically added Judge.me widget{% endcomment %}
-        {%- endif -%}
-        {% comment %} {% if product.tags contains 'Super Quick Delivery' %}
-          <div class="quick-delivery-lable">
-            <span style="color:#252525;font-style:normal;">| &nbsp;</span>{% render 'icon' with 'quick-delivery-blue' %}<span class="quick-del-text">Super Quick Delivery</span>
-          </div>
-        {% endif %} {% endcomment %}
         {%- if section.settings.show_sku -%}
         <span class="product-meta__sku text--subdued text--xxsmall" {% if product.selected_or_first_available_variant.sku==blank
           %}style="display: none" {% endif %} data-product-sku-container>
