@@ -584,9 +584,26 @@
           <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
             block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
             data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}"
-            class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
-            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}>
-            {{- 'product.form.pre_order' | t -}}
+            class="prebook product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}
+            >
+              <span class="atc_btn">
+                <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
+              </span>
+              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <span class="pdp-btn-price d-lg-none ">
+                  <span class="custom_price_wrapper">
+                    <span class="inclusive_text_content">Inclusive of all Taxes</span>
+                    <span class="mobile_atc_btn">
+                      <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                      <span class="saved_price">
+                        {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              {% endif %}
+            
           </button>
           {% else %}
             {% if product.handle == 'gift-card' %}
@@ -639,7 +656,7 @@
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
                   data-product-add-to-cart-button
                   data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
-                  class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+                  class="a2c product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
                   {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
                   data-price="{{ product.price }}">
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
