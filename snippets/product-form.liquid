@@ -33,356 +33,313 @@
   ----------------------------------------------------------------------------------------------------------------
   {%- endcomment -%}
   {%- when 'variant_picker' -%}
-  {%- unless product.has_only_default_variant or block.settings.hide_sold_out_variants and product.available == false
-  -%}
-  {%- assign size_chart_page = block.settings.size_chart_page -%}
-  {%- assign found_size_option = false -%}
-  <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" {% if update_url %}update-url{% endif %}
-    {% if block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-form__variants" {{
-    block.shopify_attributes }}>
-    {%- for option in product.options_with_values -%}
-    {%- assign option_downcase = option.name | downcase -%}
-    {%- capture option_id -%}option-{{ section.id }}-{{ template.suffix }}-{{ product.id }}-{{ forloop.index }}{%-
-    endcapture -%}
 
-    {%- assign selector_type = block.settings.selector_mode -%}
-
-    {% if color_label_list contains option_downcase %}
-    {%- assign selector_type = block.settings.color_mode -%}
-
-    {%- if selector_type == 'variant_image' -%}
-    {%- comment -%}To use this mode every variant must have an attached media{%- endcomment -%}
-    {%- for variant in product.variants -%}
-    {%- unless variant.featured_media -%}
-    {%- assign selector_type = 'color' -%}
-    {%- break -%}
-    {%- endunless -%}
-    {%- endfor -%}
-    {%- endif -%}
-    {%- endif -%}
-
-    <div class="product-form__option-selector" data-selector-type="{{ selector_type | replace: '_', '-' | escape }}"
-      data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
-      <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
-        <div>
-          <span class="text-capitalize product-form__option-name">Chose your colour</span>
-
-          {% comment %} {%- if selector_type != 'dropdown' -%}
-          <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
-          {%- endif -%} {% endcomment %}
-
-          {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
-          {%- assign found_size_option = true -%}
-          <button type="button" is="toggle-button" class="product-form__option-link link text--subdued hidden-phone"
-            aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-drawer" aria-expanded="false">{{
-            'product.general.size_chart' | t }}</button>
-          <button type="button" is="toggle-button" class="product-form__option-link link text--subdued hidden-tablet-and-up"
-            aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-popover" aria-expanded="false">{{
-            'product.general.size_chart' | t }}</button>
-          {%- endif -%}
-          </div>
-          {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-        <img class="varnt-drop h-100"
-          src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1_968e75a2-9de8-4f80-9b47-1136ad3beb50.png?v=1654760428">
-        {% endif %}
-        </div>
-        {%- case selector_type -%}
-        {%- when 'variant_image' -%}
-        <div class="variant-swatch-list">
-
-        {%- for value in option.values -%}
-        {%- comment -%}We search for the first variant that has an image for this color{%- endcomment -%}
-        {%- for variant in product.variants -%}
-        {%- if variant.options[0] == value -%}
-          <div class="variant-swatch {% if variant.inventory_quantity < settings.sold_out_threshold %}is-disabled{% endif %}" {% if variant.metafields.custom.variant_url != blank %}data-var-url="{{variant.metafields.custom.variant_url}}"{% endif %} data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
-          <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
-            form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}"
-            data-bind-value="{{ option_id }}-value" {% if value==option.selected_value %}checked="checked" {% endif %}
-            aria-label="{{ value | escape }}" data-price="{{ variant.price }}"
-            data-compare-price="{{ variant.compare_at_price }}">
-          <div class="variant-swatch__item-div text-center">
-            <label class="variant-swatch__item" for="{{ option_id }}-{{ forloop.index }}">
-              <span class="visually-hidden">{{ value }}</span>
-              <img class="variant-swatch__image" loading="lazy" sizes="(max-width: 740px) 64px, 72px" {% render 'image-attributes' ,
-                image: variant.featured_media, sizes: '64,72,128,144,192,216' %}>
-              </label>
-              {%- unless product.tags contains 'prebooking' -%}
-            {% if variant.available %}<span class="stock-label hidden-lap-and-up">In Stock</span>{% else %} <span
-              class="stock-label hidden-lap-and-up">Out of Stock</span>{% endif %}
-            {% endunless %}
-            </div>
-            </div>
-            {%- break -%}
-            {%- endif -%}
-            {%- endfor -%}
-            {%- endfor -%}
-            </div>
-
-            {%- when 'color' -%}
-              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                <span style="font-size: 12px;color: #666565;margin-top:3px;"> Color: </span>
-              {% endif %}
-              <div class="color-swatch-list">
-                {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
-                {%- assign option_position0 = option.position | minus: 1 -%}
-                {%- for value in option.values -%}
-                {%- assign color_value_downcase = value | downcase -%}
-                {% for variant in product.variants %}
-                  {% comment %} {{ value }}
-                  {{ variant.options[option_position0] }} {% endcomment %}
-                  {%- if variant.options[0] == value -%}
-                <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
-                  <input class="color-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
-                    form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" {% if
-                    value==option.selected_value %}checked="checked" {% endif %} data-bind-value="{{ option_id }}-value">
-                  <label class="color-swatch__item" for="{{ option_id }}-{{ forloop.index }}" title="{{ value | remove: ' ' | escape }}"
-                    style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
-                    <span class="visually-hidden">{{ value }}</span>
-                  </label>
-                  <span class="variant-name">{{ value | escape }}</span>
-                  </div>
-                  {%- break -%}
-                {% endif %}
-                {%- endfor -%}
-                {%- endfor -%}
-                  </div>
-
-      {%- when 'block' -%}
-      <div class="block-swatch-list">
-        {%- for value in option.values -%}
-        <div class="block-swatch">
-          <input class="block-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
-            form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" {% if
-            value==option.selected_value %}checked="checked" {% endif %} data-bind-value="{{ option_id }}-value">
-          <label class="block-swatch__item" for="{{ option_id }}-{{ forloop.index }}">{{ value }}</label>
-          </div>
-          {%- endfor -%}
-          </div>
-
-      {%- when 'dropdown' -%}
-      <div class="select-wrapper">
-        <combo-box initial-focus-selector="[aria-selected='true']" id="{{ option_id }}-combo-box" class="combo-box">
-          <span class="combo-box__overlay"></span>
-
-          <header class="combo-box__header">
-            <p class="combo-box__title heading h6">{{ option.name }}</p>
-
-            <button type="button" class="combo-box__close-button tap-area" data-action="close"
-              title="{{ 'general.accessibility.close' | t | escape }}">
-              {%- render 'icon' with 'close' -%}
-            </button>
-            </header>
-
-          <div class="combo-box__option-list" role="listbox">
-            {%- for value in option.values -%}
-            <button type="button" role="option" class="combo-box__option-item" value="{{ value | escape }}"
-              aria-selected="{% if value == option.selected_value %}true{% else %}false{% endif %}">{{ value }}</button>
-            {%- endfor -%}
-            </div>
-
-          <select class="visually-hidden" name="option{{ option.position }}" form="{{ product_form_id }}"
-            data-bind-value="{{ option_id }}-value" aria-label="{{ option.name | escape }}">
-            {%- for value in option.values -%}
-            <option value="{{ value | escape }}" {% if value==option.selected_value %}selected{% endif %}>{{ value }}
-            </option>
-            {%- endfor -%}
-            </select>
-            </combo-box>
-
-        <button type="button" is="toggle-button" class="select" aria-expanded="false" aria-haspopup="listbox"
-          aria-controls="{{ option_id }}-combo-box">
-          <span id="{{ option_id }}-value" class="select__selected-value">{{ option.selected_value }}</span>
-          {%- render 'icon' with 'chevron' -%}
-        </button>
-        </div>
-        {%- endcase -%}
-        </div>
-        
-        
-        {%- endfor -%}
-
-    <noscript>
-      <label class="input__block-label" for="product-select-{{ section.id }}-{{ product.id }}">{{ 'product.form.variant' | t }}</label>
-
-      <div class="select-wrapper">
-        <select class="select" autocomplete="off" id="product-select-{{ section.id }}-{{ product.id }}" name="id"
-          form="{{ product_form_id }}">
-          {%- for variant in product.variants -%}
-          <option {% if variant == product_varient %}selected="selected" {% endif %} {% unless
-            variant.available %}disabled="disabled" {% endunless %} value="{{ variant.id }}" data-sku="{{ variant.sku }}">{{
-            variant.title }} - {{ variant.price | money }}</option>
-          {%- endfor -%}
-          </select>
-
-        {%- render 'icon' with 'chevron' -%}
-        </div>
-        </noscript>
-        </product-variants>
-        {%- endunless -%}
-        {%- if template.suffix != 'quick-buy-popover' -%}
-        {% unless product.tags contains 'NO-PRICE' %}
+    {%- if template.suffix != 'quick-buy-popover' -%}
+      {% unless product.tags contains 'NO-PRICE' %}
         {% capture fixed_pod_discount %}{% render 'fixed-discount-by-tag', product: product %}{% endcapture %}
         {% if product.available %}
-        {% capture random_cart %} {% render 'random-carts' %}{% endcapture %}
+          {% capture random_cart %} {% render 'random-carts' %}{% endcapture %}
         {%- endif -%}
 
-  <div class="product-meta__price-list-container custom-product-price-mobile d-lg-none" role="region" aria-live="polite">
-    <div class="d-flex align-items-center justify-content-between price_offer_wrapper">
-      <div
-        class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}"
-        data-product-price-list>
-          {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
-          {%- if product.tags contains settings.tag_selector -%}
-          {% assign discount_price = fixed_discount | times: 100 %}
-          {% assign discount_price = product_varient.price | minus: discount_price %}
-          {% assign discounted_price = product_varient.price | minus: discount_price |
-          divided_by: 100 | round | times: 100 %}
-          {%- else -%}
-          {% assign discounted_price = product_varient.price %}
-          {%- endif -%}
-          {%- if product_varient.compare_at_price >
-          product_varient.price -%}
-    
-            <span class="price price--highlight price--large">
-              <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-      
-              {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
+        <div class="product-meta__price-list-container custom-product-price-mobile " role="region" aria-live="polite">
+          <div class="d-flex align-items-center justify-content-between price_offer_wrapper">
+            <div class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %} {% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} pdp_flash_sale {% endif %}" data-product-price-list>
+              {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
+              {%- if product.tags contains settings.tag_selector -%}
+                {% assign discount_price = fixed_discount | times: 100 %}
+                {% assign discount_price = product_varient.price | minus: discount_price %}
+                {% assign discounted_price = product_varient.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
               {%- else -%}
-              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
+                {% assign discounted_price = product_varient.price %}
               {%- endif -%}
-      
-            </span>
-            {% if product.compare_at_price > discounted_price %}
-            <p class="custom-saved-price">{{
-              product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-              round
-              | append: '% Off' }} </p>
-              {% endif %}
-            
-              <span class="price price--compare line-through">
-                <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-              
-                {%- if settings.currency_code_enabled -%}
-                {{- product_varient.compare_at_price | money_with_currency |
-                replace: 'Rs.', '₹' -}}
-                {%- else -%}
-                {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
-                -}}
-                {%- endif -%}
-              </span>
+              {%- if product_varient.compare_at_price > product_varient.price -%}
+                <div class="pdp_price_wrapper">
+                  <div class="pdp_price_box">
+                    <span class="price price--highlight price--large">
+                      <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                      {%- if settings.currency_code_enabled -%}
+                        {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' | remove: '.00' -}}
+                      {%- else -%}
+                        {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' | remove: '.00' -}}
+                      {%- endif -%}
+                    </span>
+                    <span class="price price--compare line-through">
+                      <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                      {%- if settings.currency_code_enabled -%}
+                        {{- product_varient.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
+                      {%- else -%}
+                        {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹' -}}
+                      {%- endif -%}
+                    </span>
+                  </div>
+
+                  <div class="strike-price">
+                    {% if product.compare_at_price > discounted_price %}
+                      <p class="custom-saved-price">
+                        {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                      </p>
+                    {% endif %}
+                    {% comment %} <span class="inclusive-text">Inclusive of all Taxes</span> {% endcomment %}
+                  </div>
+                </div>
+
+                {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
+                  {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                    <div class="flash-sale-lable d-flex position-relative">
+                      <div class="flash_sale">
+                        <p class="m-0 text-uppercase flash_text">
+                          <span class="thunder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                              <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
+                            </svg>
+                          </span>&nbsp;
+                        </p>
+                        {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                {% endunless %}
+
               {%- else -%}
-              <span class="price price--large">
-                <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                {%- if settings.currency_code_enabled -%}
-                {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
-                {%- else -%}
-                {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}} 
-                {%- endif -%}
-              </span>
+                <span class="price price--large">
+                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                  {%- if settings.currency_code_enabled -%}
+                    {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {%- else -%}
+                    {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
+                  {%- endif -%}
+                </span>
               {%- endif -%}
-            
-              {%- if product_varient.unit_price_measurement -%}
-              <div class="price text--subdued">
-                <div class="unit-price-measurement">
-                <span class="unit-price-measurement__price">{{ product_varient.unit_price |
-                  money
-                  }}</span>
-                <span class="unit-price-measurement__separator">/</span>
                 
-                {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
-                <span class="unit-price-measurement__reference-value">{{
-                  product_varient.unit_price_measurement.reference_value }}</span>
-                {%- endif -%}
-                <span class="unit-price-measurement__reference-unit">{{
-                  product_varient.unit_price_measurement.reference_unit }}</span>
-                </div>
+              {%- if product_varient.unit_price_measurement -%}
+                <div class="price text--subdued">
+                  <div class="unit-price-measurement">
+                    <span class="unit-price-measurement__price">{{ product_varient.unit_price | money }}</span>
+                    <span class="unit-price-measurement__separator">/</span>
+                    
+                    {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
+                      <span class="unit-price-measurement__reference-value">{{ product_varient.unit_price_measurement.reference_value }}</span>
+                    {%- endif -%}
+                    <span class="unit-price-measurement__reference-unit">{{ product_varient.unit_price_measurement.reference_unit }}</span>
+                  </div>
                 </div>
               {%- endif -%}
-              <p class="tax_info mobile_tax_info">Inclusive of all taxes</p>
-            </div>
-            {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}
-              
-            <div class="d-lg-none restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-              display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
-            </div>
-            </div>
-            
 
+              {% comment %} info: added in 2.0 {% endcomment %}
             </div>
+          </div>
+        </div>
+      {% endunless %}
+    {% endif %}
+  
+    {%- unless product.has_only_default_variant or block.settings.hide_sold_out_variants and product.available == false -%}
+      {%- assign size_chart_page = block.settings.size_chart_page -%}
+      {%- assign found_size_option = false -%}
+      <product-variants handle="{{ product.handle }}" form-id="{{ product_form_id }}" {% if update_url %}update-url{% endif %}
+        {% if block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %} class="product-form__variants" {{ block.shopify_attributes }}>
+        {%- for option in product.options_with_values -%}
+          {%- assign option_downcase = option.name | downcase -%}
+          {%- capture option_id -%}option-{{ section.id }}-{{ template.suffix }}-{{ product.id }}-{{ forloop.index }}{%- endcapture -%}
 
-  {% endunless %}
-  {% endif %}
+          {%- assign selector_type = block.settings.selector_mode -%}
+
+          {% if color_label_list contains option_downcase %}
+            {%- assign selector_type = block.settings.color_mode -%}
+
+            {%- if selector_type == 'variant_image' -%}
+              {%- comment -%}To use this mode every variant must have an attached media{%- endcomment -%}
+              {%- for variant in product.variants -%}
+                {%- unless variant.featured_media -%}
+                  {%- assign selector_type = 'color' -%}
+                  {%- break -%}
+                {%- endunless -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          <div class="product-form__option-selector" data-selector-type="{{ selector_type | replace: '_', '-' | escape }}" data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
+            <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
+              <div>
+                <span class="text-capitalize product-form__option-name">Choose your colour</span>
+
+                {% comment %} {%- if selector_type != 'dropdown' -%}
+                <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
+                {%- endif -%} {% endcomment %}
+
+                {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
+                {%- assign found_size_option = true -%}
+                <button type="button" is="toggle-button" class="product-form__option-link link text--subdued hidden-phone"
+                  aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-drawer" aria-expanded="false">{{
+                  'product.general.size_chart' | t }}</button>
+                <button type="button" is="toggle-button" class="product-form__option-link link text--subdued hidden-tablet-and-up"
+                  aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-popover" aria-expanded="false">{{
+                  'product.general.size_chart' | t }}</button>
+                {%- endif -%}
+              </div>
+                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+              <img class="varnt-drop h-100"
+                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1_968e75a2-9de8-4f80-9b47-1136ad3beb50.png?v=1654760428">
+              {% endif %}
+            </div>
+            {%- case selector_type -%}
+              {%- when 'variant_image' -%}
+                <div class="variant-swatch-list">
+                  {%- for value in option.values -%}
+                    {%- comment -%}We search for the first variant that has an image for this color{%- endcomment -%}
+                    {%- for variant in product.variants -%}
+                      {%- if variant.options[0] == value -%}
+                        <div class="variant-swatch {% if variant.inventory_quantity < settings.sold_out_threshold %}is-disabled{% endif %}" 
+                          {% if variant.metafields.custom.variant_url != blank %}data-var-url="{{variant.metafields.custom.variant_url}}"{% endif %} 
+                          data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
+                          <input class="variant-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}" 
+                            form="{{ product_form_id }}" 
+                            id="{{ option_id }}-{{ forloop.index }}" 
+                            value="{{ value | escape }}" 
+                            data-bind-value="{{ option_id }}-value" {% if value==option.selected_value %}checked="checked" {% endif %}
+                            aria-label="{{ value | escape }}" data-price="{{ variant.price }}"
+                            data-compare-price="{{ variant.compare_at_price }}" />
+                          <div class="variant-swatch__item-div text-center">
+                            <label class="variant-swatch__item" for="{{ option_id }}-{{ forloop.index }}">
+                              <span class="visually-hidden">{{ value }}</span>
+                              <img class="variant-swatch__image" loading="lazy" sizes="(max-width: 740px) 64px, 72px" {% render 'image-attributes' ,
+                                image: variant.featured_media, sizes: '64,72,128,144,192,216' %}>
+                            </label>
+                            {%- unless product.tags contains 'prebooking' -%}
+                              {% if variant.available %}
+                                <span class="stock-label hidden-lap-and-up">In Stock</span>
+                              {% else %}
+                                <span class="stock-label hidden-lap-and-up">Out of Stock</span>
+                              {% endif %}
+                            {% endunless %}
+                          </div>
+                        </div>
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endfor -%}
+                </div>
+
+              {%- when 'color' -%}
+                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                  <span style="font-size:14px;color:#1a2024;font-weight:bold;">Choose your colour</span>
+                {% endif %}
+                <div class="color-swatch-list">
+                  {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
+                  {%- assign option_position0 = option.position | minus: 1 -%}
+                  {%- for value in option.values -%}
+                    {%- assign color_value_downcase = value | downcase -%}
+                    {% for variant in product.variants %}
+                      {% comment %} {{ value }}
+                      {{ variant.options[option_position0] }} {% endcomment %}
+                      {%- if variant.options[0] == value -%}
+                        <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
+                          <input class="color-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
+                            form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" 
+                            {% if value==option.selected_value %}checked="checked" {% endif %} 
+                            data-bind-value="{{ option_id }}-value" />
+                          <label class="color-swatch__item" for="{{ option_id }}-{{ forloop.index }}" 
+                            title="{{ value | remove: ' ' | escape }}"
+                            style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
+                            <span class="visually-hidden">{{ value }}</span>
+                          </label>
+                          <span class="variant-name">{{ value | escape }}</span>
+                        </div>
+                        {%- break -%}
+                      {% endif %}
+                    {%- endfor -%}
+                  {%- endfor -%}
+                </div>
+
+              {%- when 'block' -%}
+                <div class="block-swatch-list">
+                  {%- for value in option.values -%}
+                    <div class="block-swatch">
+                      <input class="block-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
+                        form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" {% if
+                        value==option.selected_value %}checked="checked" {% endif %} data-bind-value="{{ option_id }}-value">
+                      <label class="block-swatch__item" for="{{ option_id }}-{{ forloop.index }}">{{ value }}</label>
+                    </div>
+                  {%- endfor -%}
+                </div>
+
+              {%- when 'dropdown' -%}
+                <div class="select-wrapper">
+                  <combo-box initial-focus-selector="[aria-selected='true']" id="{{ option_id }}-combo-box" class="combo-box">
+                    <span class="combo-box__overlay"></span>
+
+                    <header class="combo-box__header">
+                      <p class="combo-box__title heading h6">{{ option.name }}</p>
+
+                      <button type="button" class="combo-box__close-button tap-area" data-action="close"
+                        title="{{ 'general.accessibility.close' | t | escape }}">
+                        {%- render 'icon' with 'close' -%}
+                      </button>
+                    </header>
+
+                    <div class="combo-box__option-list" role="listbox">
+                      {%- for value in option.values -%}
+                        <button type="button" role="option" class="combo-box__option-item" value="{{ value | escape }}"
+                        aria-selected="{% if value == option.selected_value %}true{% else %}false{% endif %}">{{ value }}</button>
+                      {%- endfor -%}
+                    </div>
+
+                    <select class="visually-hidden" name="option{{ option.position }}" form="{{ product_form_id }}"
+                      data-bind-value="{{ option_id }}-value" aria-label="{{ option.name | escape }}">
+                      {%- for value in option.values -%}
+                        <option value="{{ value | escape }}" {% if value==option.selected_value %}selected{% endif %}>{{ value }} </option>
+                      {%- endfor -%}
+                    </select>
+                  </combo-box>
+
+                  <button type="button" is="toggle-button" class="select" aria-expanded="false" aria-haspopup="listbox"
+                    aria-controls="{{ option_id }}-combo-box">
+                    <span id="{{ option_id }}-value" class="select__selected-value">{{ option.selected_value }}</span>
+                    {%- render 'icon' with 'chevron' -%}
+                  </button>
+                </div>
+
+            {%- endcase -%}
+          </div>
+        {%- endfor -%}
+
+        <noscript>
+          <label class="input__block-label" for="product-select-{{ section.id }}-{{ product.id }}">{{ 'product.form.variant' | t }}</label>
+
+          <div class="select-wrapper">
+            <select class="select" autocomplete="off" id="product-select-{{ section.id }}-{{ product.id }}" name="id"
+              form="{{ product_form_id }}">
+              {%- for variant in product.variants -%}
+                <option {% if variant == product_varient %}selected="selected" {% endif %} {% unless
+                  variant.available %}disabled="disabled" {% endunless %} value="{{ variant.id }}" data-sku="{{ variant.sku }}">{{
+                  variant.title }} - {{ variant.price | money }}</option>
+              {%- endfor -%}
+            </select>
+            {%- render 'icon' with 'chevron' -%}
+          </div>
+
+        </noscript>
+      </product-variants>
+    {%- endunless -%}
+          
+
+        
   {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-
+    {% if product.available %}
+      <div class="payment_offers">
+        <div class="offer_text">
+          <span>₹15 off on All UPI Payments</span>
+        </div>
+        <div class="payment_icons">
+          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
+          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
+          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
+        </div>
+      </div>  
+    {% endif %}
   <!--  for desktop layout -->
   <div class="pdp-inner custom-product-price">
     <div class="new-pdp">
-      <div class="amazon custom-product-price">
-        <div class="product-meta__price-list-container d-lg-block" role="region" aria-live="polite">
-          <div
-            class="price-list align-items-center {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom_product_pod_price {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}"
-            data-product-price-list data-pod="{{ fixed_pod_discount | strip }}">
-            {%- if product_varient.compare_at_price >
-            product_varient.price -%}
-            <span class="price price--highlight price--large">
-              <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-    
-              {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-              {%- else -%}
-              {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-              {%- endif -%}
-            </span>
-            {% if product.compare_at_price > discounted_price %}
-            <p class="custom-saved-price">{{
-              product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |
-              round
-              | append: '% Off' }} </p>
-            {% endif %}
-    
-            <span class="price price--compare line-through">
-              <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-    
-              {%- if settings.currency_code_enabled -%}
-              {{- product_varient.compare_at_price | money_with_currency | replace: 'Rs.', '₹' -}}
-              {%- else -%}
-              {{- product_varient.compare_at_price | money | replace: 'Rs.', '₹'
-              -}}
-              {%- endif -%}
-            </span>
-            {%- else -%}
-            <span class="price price--large">
-              <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-              {%- if settings.currency_code_enabled -%}
-              {{- discounted_price | money_with_currency | replace: 'Rs.', '₹' -}}
-              {%- else -%}
-              {{- discounted_price | money | replace: 'Rs.', '₹' -}}
-              {%- endif -%}
-            </span>
-            {%- endif -%}
-    
-            {%- if product_varient.unit_price_measurement -%}
-            <div class="price text--subdued">
-              <div class="unit-price-measurement">
-                <span class="unit-price-measurement__price">{{ product_varient.unit_price |
-                  money
-                  }}</span>
-                <span class="unit-price-measurement__separator">/</span>
-                {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
-                <span class="unit-price-measurement__reference-value">{{
-                  product_varient.unit_price_measurement.reference_value }}</span>
-                {%- endif -%}
-          
-                <span class="unit-price-measurement__reference-unit">{{
-                  product_varient.unit_price_measurement.reference_unit }}</span>
-                </div>
-                </div>
-                {%- endif -%}
-                </div>
-                </div>
-                <p class="tax_info">Inclusive of all taxes</p>
-             <div class="desktop"> {%- if product.available -%}{% render 'product-offers' %}{%- endif -%}</div>
+      <div class="custom-product-price">
               {% if product.tags contains 'customized' %}
                 <div class="desktop current-in-cart free-personalised" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                   style="display: none;" {% endunless %}>
@@ -394,12 +351,6 @@
                   {{ random_cart }}
                 </div> {% endcomment %}
               {% endif %}
-                <div class="desktop restocking" style="{% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-               display: none; {% endif %}background: #D6D6D6;padding-inline: 30px;border-radius: 5px;color: #FF0000;font-weight:600;"> Restocking Soon
-            </div>
-    
-
-
         {% endif %}
         
         {%- comment -%}
@@ -513,35 +464,6 @@
           {{- block.settings.liquid -}}
         </div>
         {%- endif -%}
-
-        {%- comment -%}
-        ----------------------------------------------------------------------------------------------------------------
-        QUANTITY SELECTOR
-        ----------------------------------------------------------------------------------------------------------------
-        {%- endcomment -%}
-        {%- when 'quantity_selector' -%}
-        {%- if request.page_type != 'password' and product.available -%}
-          {% unless product.tags contains 'customized' or product.metafields.set.quantity_limit %}
-        <div class="product-form__quantity my-2" {{ block.shopify_attributes }}>
-          <quantity-selector class="quantity-selector">
-            <button type="button" class="quantity-selector__button">
-              <span class="visually-hidden">{{ 'cart.general.decrease_quantity' | t }}</span>
-              {%- render 'icon' with 'minus-big' -%}
-            </button>
-
-            <input type="text" form="{{ product_form_id }}" is="input-number" class="quantity-selector__input" inputmode="numeric"
-              name="quantity" autocomplete="off" min="1" max="777" value="1" size="1" readonly
-              aria-label="{{ 'product.form.quantity' | t | escape }}">
-
-            <button type="button" class="quantity-selector__button">
-              <span class="visually-hidden">{{ 'cart.general.increase_quantity' | t }}</span>
-              {%- render 'icon' with 'plus-big' -%}
-            </button>
-            </quantity-selector>
-            <span class="product-form__quantity-label">{{ 'product.form.quantity' | t }}</span>
-            </div>
-          {% endunless %}
-          {%- endif -%}
 
         {%- comment -%}
         ----------------------------------------------------------------------------------------------------------------
@@ -664,9 +586,28 @@
           <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
             block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
             data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}"
-            class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
-            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}>
-            {{- 'product.form.pre_order' | t -}}
+            class="prebook product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}
+            >
+              <span class="atc_btn">
+                <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
+              </span>
+              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                <span class="pdp-btn-price d-lg-none ">
+                  <span class="custom_price_wrapper">
+                    <span class="inclusive_text_content">Inclusive of all Taxes</span>
+                    <span class="mobile_atc_btn">
+                      <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                      {% if product.compare_at_price > discounted_price %}
+                      <span class="saved_price">
+                        {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                      </span>
+                      {% endif %}
+                    </span>
+                  </span>
+                </span>
+              {% endif %}
+            
           </button>
           {% else %}
             {% if product.handle == 'gift-card' %}
@@ -691,7 +632,7 @@
                     {% if itemTags contains 'customized' %}
                       Only one unit per order allowed
                       {% else %}
-                    {{- 'product.form.pre_order' | t -}} 
+                    {{- 'product.form.pre_order' | t -}}
                   <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
                 {% endif %}
                 </span>
@@ -719,13 +660,31 @@
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
                   data-product-add-to-cart-button
                   data-button-content="{% if product.template_suffix == 'pre-order' or product.tags contains 'prebooking' %}{{ 'product.form.pre_order' | t | escape }}{% else %}{{ 'product.form.add_to_cart' | t | escape }}{% endif %}"
-                  class="product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+                  class="a2c product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
                   {% if product_varient.inventory_quantity < settings.sold_out_threshold %} disabled{% endif %}
                   data-price="{{ product.price }}">
                   {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
-                    {{- 'product.form.add_to_cart' | t -}}
+                    <span class="atc_btn">
+                      <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
+                        <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
+                        <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
+                      </svg>                    
+                      <span class="add_to_cart_btn">{{- 'product.form.add_to_cart' | t -}}</span>
+                    </span>
                     {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                      <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
+                      <span class="pdp-btn-price d-lg-none ">
+                        <span class="custom_price_wrapper">
+                          <span class="inclusive_text_content">Inclusive of all Taxes</span>
+                          <span class="mobile_atc_btn">
+                            <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                            {% if product.compare_at_price > discounted_price %}
+                            <span class="saved_price">
+                              {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                            </span>
+                          {% endif %}
+                          </span>
+                        </span>
+                      </span>
                     {% endif %}
                   {%- else -%}
                     {{- 'product.form.sold_out' | t -}}
@@ -758,6 +717,7 @@
         {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
 
           {% unless product.tags contains settings.products_offering_freebie %}
+              <h3 class="out_of_stock_msg" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}><span>Restocking soon</span></h3>
               <div class="amazon-c d-flex align-items-baseline justify-content-between">
                 <button id="BIS_trigger" type="button" class="custom-notify-btn"
                 data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
@@ -794,42 +754,50 @@
 
     </product-payment-container>
     {%- endform -%}
+    
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
-    <div class="d-flex flex-column" data-role="additonal-info">
-      {% if product.available %}
-        {% if product.metafields.custom.product_highlights %}
-          <div class="price-container product-highlight my-3 desktop">
-            <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
-              Highlights
-            </h6>
-            {{ product.metafields.custom.product_highlights }}
+      <div class="d-flex flex-column pincode_checker_box" data-role="additonal-info">
+        {% if product.available %}
+          {% if product.metafields.custom.product_highlights %}
+            <div class="price-container product-highlight my-3 desktop">
+              <h6 style="padding-bottom:8px;margin-bottom:16px;border-bottom: 1px solid #dadada; font-weight: 700;">Product
+                Highlights
+              </h6>
+              {{ product.metafields.custom.product_highlights }}
+            </div>
+          {%- endif -%}
+          {% comment %} <div class="price-container p-lg-0 mb-2">
+            {% render 'product-payment-partner' %}
+          </div> {% endcomment %}
+        {% endif %}
+
+        {% if product.tags contains 'customized' %}
+          {%- render 'personalised-modal' -%}
+        {% endif %}
+
+        {%- if section.settings.enable_rush_plus and product.available -%}
+          
+          {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
+            <h2 class="pincode_checker_heading">Check Delivery</h2>
+          {% endif %}
+          <div class="pincode_checker_container">
+            <div class="pincode_checker">
+              <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter PIN code for exact delivery date">
+              <button type="button" class="pincode_checker_btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18.135" height="14.805" viewBox="0 0 18.135 14.805">
+                  <path id="_MFYDIAMONDS" data-name="#MFYDIAMONDS" d="M20.625-7.051a.885.885,0,0,0-.293-.654L13.857-14.16a1.02,1.02,0,0,0-.317-.225.854.854,0,0,0-.337-.068.831.831,0,0,0-.605.239.806.806,0,0,0-.244.6.978.978,0,0,0,.059.337.751.751,0,0,0,.176.278l2.188,2.227,3.877,3.535.2-.488L15.7-7.92H3.35a.83.83,0,0,0-.62.244.856.856,0,0,0-.239.625.856.856,0,0,0,.239.625.83.83,0,0,0,.62.244H15.7l3.145-.2-.2-.479L14.775-3.33,12.588-1.1a.751.751,0,0,0-.176.278.978.978,0,0,0-.059.337.806.806,0,0,0,.244.6A.831.831,0,0,0,13.2.352a.893.893,0,0,0,.635-.273L20.332-6.4A.885.885,0,0,0,20.625-7.051Z" transform="translate(-2.49 14.453)" fill="#fff"/>
+                </svg>
+              </button>
+            </div>
+            <div class="pincode_details">
+              {% comment %} <h3 class="pincode_info">Enter PIN code for exact delivery date</h3> {% endcomment %}
+              <h6></h6>
+              <p></p>
+            </div>
+            <div class="pincode_error"></div>
           </div>
         {%- endif -%}
-       {% comment %} <div class="price-container p-lg-0 mb-2">
-         {% render 'product-payment-partner' %}
-       </div> {% endcomment %}
-      {% endif %}
-      {% if product.tags contains 'customized' %}
-        {%- render 'personalised-modal' -%}
-      {% endif %}
-      {%- if section.settings.enable_rush_plus and product.available -%}
-      <div class="pincode_checker_container">
-        <h5 class="pincode_heading">Delivery:</h5>
-        <div class="pincode_checker">
-          <div class="quick-delivery-icon">{% render 'icon' with 'location' %}</div>
-          <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter Delivery Pincode">
-          <button type="button" class="pincode_checker_btn">Check</button>
-        </div>
-        <div class="pincode_details">
-          <h6>Fastest delivery in {{delivery_date}}</h6>
-          <p>Enter pincode for exact delivery dates</p>
-        </div>
-        <div class="pincode_error"></div>
       </div>
-      {%- endif -%}
-    </div>
-
-    
     </div>
     {% endif %}
   </div>
