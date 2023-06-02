@@ -262,8 +262,13 @@ Shopify.variantChange = function(e){
 
   let regular_price = e.compare_at_price / 100;
   let sale_price = e.price / 100;
+  let discount_percentage;
   
-  let discount_percentage = Math.ceil( (( regular_price - sale_price)  / regular_price) * 100 );
+  if(regular_price > sale_price) {
+    discount_percentage = Math.round( (( regular_price - sale_price)  / regular_price) * 100 ) + '% Off';
+  } else {
+    discount_percentage = ''
+  }
   $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text, #AddToCart.prebook .loader-button__text").html('');
   $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text").append(`
   <span class="atc_btn">
@@ -277,7 +282,7 @@ Shopify.variantChange = function(e){
   <span class="inclusive_text_content">Inclusive of all Taxes</span>
   <span class="mobile_atc_btn">
     <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage}% Off</span>
+    <span class="saved_price">${discount_percentage}</span>
   </span>
   </span>`);
   
@@ -289,7 +294,7 @@ Shopify.variantChange = function(e){
   <span class="inclusive_text_content">Inclusive of all Taxes</span>
   <span class="mobile_atc_btn">
     <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage} % Off</span>
+    <span class="saved_price">${discount_percentage}</span>
   </span>
   </span>`);
   console.log(e);
