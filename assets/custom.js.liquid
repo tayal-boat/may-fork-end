@@ -246,27 +246,6 @@ const pincodeCheckerContainer = $('.pincode_checker_container');
 const personalizationImage = $('.personalization-image-wrapper img');
 const customProductOfDayPrice = $('.custom-product-of-the-day-price .current_price');
 
-/* Breaking line after 3rd comma in PDP features on desktop only */
-$(document).ready(function(){
-  let inputString = $('.pdp_right_section .product__info .pdp-title-extra-info small').text();
-  let splitArray = inputString.split(',');
-
-  // Check if there are at least 3 commas in the input string
-  if (splitArray.length > 3) {
-    // Get the index of the third comma
-    let thirdCommaIndex = inputString.indexOf(',', inputString.indexOf(',', inputString.indexOf(',') + 1) + 1);
-    
-    // Split the string at the third comma
-    let firstPart = inputString.substring(0, thirdCommaIndex + 1);
-    let secondPart = inputString.substring(thirdCommaIndex + 1);
-    
-    // Join the two parts with a line break
-    let resultString = firstPart + '<br>' + secondPart;
-    
-    $('.pdp_right_section .product__info .pdp-title-extra-info small').html(resultString);
-  }
-});
-
 Shopify.variantChange = function(e){
 
   $('.pdp-btn-price').remove();
@@ -274,10 +253,15 @@ Shopify.variantChange = function(e){
 
   let regular_price = e.compare_at_price / 100;
   let sale_price = e.price / 100;
-
-  let discount_percentage = Math.floor( ( sale_price * 100 ) / regular_price );
-  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").html('');
-  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`
+  let discount_percentage;
+  
+  if(regular_price > sale_price) {
+    discount_percentage = Math.round( (( regular_price - sale_price)  / regular_price) * 100 ) + '% Off';
+  } else {
+    discount_percentage = ''
+  }
+  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text, #AddToCart.prebook .loader-button__text").html('');
+  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text").append(`
   <span class="atc_btn">
   <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
     <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
@@ -289,11 +273,22 @@ Shopify.variantChange = function(e){
   <span class="inclusive_text_content">Inclusive of all Taxes</span>
   <span class="mobile_atc_btn">
     <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage} % Off</span>
+    <span class="saved_price">${discount_percentage}</span>
   </span>
   </span>`);
   
-  // console.log(e);
+  $("#AddToCart.prebook .loader-button__text").append(`
+  <span class="atc_btn">
+  <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
+ </span>
+  <span class="pdp-btn-price custom_price_wrapper">
+  <span class="inclusive_text_content">Inclusive of all Taxes</span>
+  <span class="mobile_atc_btn">
+    <span class="mobile_atc_price">₹${e.price / 100}</span>
+    <span class="saved_price">${discount_percentage}</span>
+  </span>
+  </span>`);
+  console.log(e);
 
 function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
