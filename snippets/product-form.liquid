@@ -221,7 +221,7 @@
 
               {%- when 'color' -%}
                 {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                  <span style="font-size:14px;color:#1a2024;font-weight:bold;">Choose your colour</span>
+                  <span style="font-size:14px;color:#1a2024;font-weight:bold;letter-spacing: -0.56px;">Choose your colour : <span id="{{ option_id }}-value" class="product-form__option-value" style="font-weight:normal">{{ option.selected_value }}</span></span> 
                 {% endif %}
                 <div class="color-swatch-list">
                   {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
@@ -242,7 +242,14 @@
                             style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
                             <span class="visually-hidden">{{ value }}</span>
                           </label>
-                          <span class="variant-name">{{ value | escape }}</span>
+                          <span class="variant-name">
+                            {% if value contains ' ' %}
+                              {{ value | escape | split: ' ' | first }}<br>
+                              {{ value | escape | split: ' ' | last }}
+                            {% else %}
+                              {{ value | escape }}
+                            {% endif %}
+                          </span>
                         </div>
                         {%- break -%}
                       {% endif %}
