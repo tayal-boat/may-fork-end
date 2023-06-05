@@ -715,9 +715,13 @@
           {%- endif -%}
 
         {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-
+          
           {% unless product.tags contains settings.products_offering_freebie %}
-              <h3 class="out_of_stock_msg" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}><span>Restocking soon</span></h3>
+            {% unless product.tags contains "Coming-Soon" %}
+              <h3 class="out_of_stock_msg" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+                <span>Restocking soon</span>
+              </h3>
+            {% endunless %}
               <div class="amazon-c d-flex align-items-baseline justify-content-between">
                 <button id="BIS_trigger" type="button" class="custom-notify-btn"
                 data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
