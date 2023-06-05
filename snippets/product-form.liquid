@@ -43,7 +43,7 @@
 
         <div class="product-meta__price-list-container custom-product-price-mobile " role="region" aria-live="polite">
           <div class="d-flex align-items-center justify-content-between price_offer_wrapper">
-            <div class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %} {% if product.tags contains 'flash-sale' and settings.enable_flash_sale %} pdp_flash_sale {% endif %}" data-product-price-list>
+            <div class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %} {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%} pdp_flash_sale {%- endif -%}" data-product-price-list>
               {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
               {%- if product.tags contains settings.tag_selector -%}
                 {% assign discount_price = fixed_discount | times: 100 %}
@@ -160,7 +160,7 @@
           <div class="product-form__option-selector" data-selector-type="{{ selector_type | replace: '_', '-' | escape }}" data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
             <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
               <div>
-                <span class="text-capitalize product-form__option-name">Choose your colour</span>
+                {% comment %} <span class="text-capitalize product-form__option-name">Choose your colour : <span id="{{ option_id }}-value" class="product-form__option-value" style="font-weight:normal">{{ option.selected_value }}</span></span> {% endcomment %}
 
                 {% comment %} {%- if selector_type != 'dropdown' -%}
                 <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
@@ -220,9 +220,7 @@
                 </div>
 
               {%- when 'color' -%}
-                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                  <span style="font-size:14px;color:#1a2024;font-weight:bold;">Choose your colour</span>
-                {% endif %}
+                <span style="font-size:14px;color:#1a2024;font-weight:bold;letter-spacing: -0.56px;">Choose your colour : <span id="{{ option_id }}-value" class="product-form__option-value" style="font-weight:normal">{{ option.selected_value }}</span></span> 
                 <div class="color-swatch-list">
                   {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
                   {%- assign option_position0 = option.position | minus: 1 -%}
@@ -242,7 +240,9 @@
                             style="{% if variant.metafields.my_fields.variantcolorcode %} background-color:{{ variant.metafields.my_fields.variantcolorcode }} {% else %} background:url({{ variant.featured_media | img_url: '20x'}}) {% endif %}">
                             <span class="visually-hidden">{{ value }}</span>
                           </label>
-                          <span class="variant-name">{{ value | escape }}</span>
+                          {% comment %} <span class="variant-name">
+                              {{ value | escape }}
+                          </span> {% endcomment %}
                         </div>
                         {%- break -%}
                       {% endif %}
