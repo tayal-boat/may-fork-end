@@ -715,6 +715,17 @@ $('a.banner_link').on('click', function() {
 /* clevertap code for clicking razor pay ends here */
 
 // OTP Login
+const date = new Date()
+options = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  hour12: true
+};
+const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-US", options).format(date);
+
 
   //Function to allow only numbers
      function _isNumberCheck(evt) {
@@ -1106,11 +1117,13 @@ function verifyotp(session_id, otp, url){
       localStorage.setItem('boatHead_input', response.Token);
       clevertap.event.push('Successful Login', {
         "Mobile Number": mobile_number,
-        "Session ID": session_id
+        "Session ID": session_id,
+        "Login Timestamp": LOGIN_TIMESTAMP
       })
       clevertap.profile.push({
         "Site": {
           "OTP Login Number": mobile_number,
+          "Login Timestamp": LOGIN_TIMESTAMP,
           "MSG-sms": "TRUE",
           "MSG-whatsapp": "TRUE"
         }
