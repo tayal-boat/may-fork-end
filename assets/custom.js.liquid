@@ -231,20 +231,8 @@ if (!isIOSMobile()) {
 //   }
 // });
 
-// Store references to commonly used elements
-const pdpBtnPrice = $('.pdp-btn-price');
-const customizedBtnText = $(".cutomized-btn .loader-button__text");
-const productInfoButton = $('.product__info button#AddToCart');
-const gokwikBuyNow = $("#gokwik-buy-now");
-const quickBuyDrawerAddToCart = $('quick-buy-drawer #AddToCart');
-const quickBuyPopoverAddToCart = $('quick-buy-popover #AddToCart');
-const quickBuyNotifyForm = $('.product-item__quick-form.quick-buy-notify-me');
-const bisTrigger = $('#BIS_trigger.custom-notify-btn');
-const currentInCart = $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper');
-const restocking = $('.d-lg-none.restocking, .desktop.restocking');
-const pincodeCheckerContainer = $('.pincode_checker_container');
-const personalizationImage = $('.personalization-image-wrapper img');
-const customProductOfDayPrice = $('.custom-product-of-the-day-price .current_price');
+let unitsLeft = '';
+let usual_price = '';
 
 Shopify.variantChange = function(e){
 
@@ -363,20 +351,42 @@ for (let i = 0; i < varient_swatches_input.length; i++) {
         break;
       }
     }
-    const variantPodUnit = parseInt(variantPodUnits[0]);
-    const offerPropertyVal = offerProperty[0];
+  }    
+}
+}
+}
+let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
+swatches_change(varient_swatches_input);
+let color_swatches_input = document.querySelectorAll('.color-swatch input') ;
+swatches_change(color_swatches_input)
 
-    let customPrice = 0;
-    if (variantPodUnit > 0 && offerPropertyVal === 'true') {
-      customPrice = parseInt(homePodPrice.dataset.pod);
-    } else {
-      customPrice = e.price / 100;
-    }
+let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
+if(home_pod_price){
+let custom_price = '';
+let offerVariantdata = sessionStorage.getItem('variantQtys');
+let OfferProperty= [];
+let varient_pod_units = [];
+offerVariantdata = JSON.parse(offerVariantdata);
+for (var key in offerVariantdata) {
+  if (offerVariantdata.hasOwnProperty(e.id)) {
+   let OfferPropertyArr = offerVariantdata[e.id];
+    OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+    varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+    break;
+   }
+ }
+ let varient_pod_unit = varient_pod_units[0];
+ varient_pod_unit = parseInt(varient_pod_unit);
+ OfferProperty = OfferProperty[0];
+ if(varient_pod_unit > 0 && OfferProperty == 'true'){  
+  custom_price = parseInt(home_pod_price.dataset.pod)
+ }else{
+  custom_price = e.price / 100;
+ }
 
-    homePodPrice.innerHTML = '₹ ' + customPrice;
-  }
-
-
+  home_pod_price.innerHTML = '₹ '+ custom_price;
+}
+}
 
 
 // Creating cleverTap push event
