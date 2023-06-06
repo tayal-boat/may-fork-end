@@ -14,8 +14,6 @@
   /*   cutomised by boat developers */
   /*   main-product.liquid contains quick buy popups */
   /*   product-item.liquid contains collection page cards */
-
-  #facet-filters a.drawer__header-action {color: white;}
   .page-header__text-wrapper.text-container{text-align: left!important;}
   .page-header__text-wrapper.text-container h2 {text-align: left!important; margin-bottom: 2rem;}
   #shopify-section-{{ section.id }} {--section-products-per-row: {{ section.settings.mobile_products_per_row | times: 1 }};}
@@ -166,22 +164,20 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 
 
 /* Collection Filter */
-
-.product-facet__filters .product-facet__filter-item {
-  width: 45%;
-}
 .product-facet__filters .product-facet__filter-list {
   position: relative;
 }
 .product-facet__filters collapsible-content {
   position: absolute;
   top: 0;
-  left: 50%;
-  background: #f3f3f3;
-  height: 80vh !important;
+  left: 40%;
+  background: #fff;
   overflow-y: auto !important;
-  margin: 15px 0 0 0;
-  width: 200px;
+  padding: 12px 0 0 0;
+  width: 60%;
+}
+.product-facet__filters .checkbox-input {
+  padding-right: 12px;
 }
 .product-facet__filters .drawer__content {
   padding: 0;
@@ -191,22 +187,23 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
   display: none;
 }
 .product-facet__filters {
-  background: #F3F3F3;
-  border-width: 0px 0px 1px 1px;
-  border-style: solid;
-  border-color: #000000;
-  box-shadow: 0px 4px 4px rgb(0 0 0 / 25%);
+  top: var(--mobilemenuHeight);
+  background: #f7f9fa;
+  border-width: 0;
 }
 .product-facet__filters .product-facet__filter-item {
   border: none !important;
   margin-bottom: 5px;
 }
 .product-facet__filters .collapsible-toggle {
-  background: #fff;
-  padding: 26px 0 26px 34px;
+  font-size: 14px!important;
+  font-weight: 500!important;
+  line-height: 1;
+  color: #1a2024;
+  padding: 12px 18px;    border-radius: 0!important;
 }
 .product-facet__filters .collapsible-toggle[aria-expanded="true"] {
-  background: transparent;
+  font-weight: 600!important;    border-left: 4px solid #399a7d;
 }
 .product-facet__filters .checkbox-color-swatch {
   width: 15px;
@@ -227,17 +224,15 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
   font-weight: 500;
   font-size: 14px;
   line-height: 17px;
-  color: #818181;
   margin: 0;
+}
+.checkbox-container:has(.checkbox:checked) label {
+  font-weight: 600!important;
 }
 .product-facet__filters .checkbox-lable .checkbox {
   background: #F8F8F8;
   border: 1px solid #BDBDBD;
   border-radius: 2px;
-}
-.product-facet__filters .collapsible__content {
-  margin-right: 10px;
-  padding: 0 !important;
 }
 .product-facet__filters .checkbox-input span {
   font-weight: 500;
@@ -259,6 +254,11 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 }
 #facet-filters {
   width: 100%;
+}
+#facet-filters .drawer__footer {
+  position: absolute;
+  width: 100%;
+  bottom: 12%;
 }
 .product-facet__filters .collapsible-toggle__selected-value {
   display: none;
@@ -285,12 +285,7 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 .product-facet__filters header.drawer__header {
   height: 56px !important;
 }
-.product-facet__filters .collapsible-toggle {
-  padding: 34px 0 34px 60px;
-  font-weight: 700 !important;
-  font-size: 20px !important;
-  line-height: 24px;
-}
+
 .product-facet__filters .checkbox-input span {
   font-weight: 600;
   font-size: 14px;
@@ -319,15 +314,7 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 .product-facet__filters .drawer__header_inner {
   width: calc(92% - 10px);
 }
-#facet-filters a.drawer__header-action {
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 17px;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  text-decoration: none;
-  margin-top: 5px;
-}
+
 .product-facet__active-list {
   display: flex !important;
 }
@@ -336,9 +323,6 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 }
 }
 @media screen and (max-width: 549px){
-.product-facet__filters collapsible-content {
-  width: 179px;
-}
 #facet-filters {
   max-width: 100%;
 }
@@ -379,6 +363,11 @@ display: none;
   margin-bottom: 15px;
   margin-left: 5px;
 }
+}
+#facet-filters .checkbox:checked {
+  border-color: #399a7d;
+  background-color: #399a7d;
+  border-radius: 4px;
 }
 </style>
 
@@ -505,15 +494,15 @@ display: none;
                     {% if section.settings.enable_price_slab %}
                       {% if forloop.index == 3 and paginate.current_page == 1 %}
                       <div class="price-tag-filter-container">
-                      <h3>Sort By Price Range</h3>
-                      <div class="price-tag-filter">
-                        {%- for block in section.blocks -%}
-                        {%- if block.type == 'filters' -%}
-                        <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
-                        {%- endif -%}
-                        {%- endfor -%}
-                      </div>
-                      </div>
+                        <h3>Sort By Price Range</h3>
+                        <div class="price-tag-filter">
+                          {%- for block in section.blocks -%}
+                          {%- if block.type == 'filters' -%}
+                          <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
+                          {%- endif -%}
+                          {%- endfor -%}
+                        </div>
+                      </div> 
                       {% endif %}
                       {% endif %}
                     {%- render 'product-item2.0', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
@@ -571,10 +560,6 @@ display: none;
             {%- else -%}
               <h3 class="heading h4">{{ 'collection.general.no_results_title' | t }}</h3>
               <p>{{ 'collection.general.no_results_label' | t }}</p>
-
-              <div class="button-wrapper">
-                <a href="{{ collection.url }}?sort_by={{ collection_sort_by }}" data-action="clear-filters" class="button button--primary">{{ 'collection.general.no_results_button' | t }}</a>
-              </div>
             {%- endif -%}
           </div>
         {%- endif -%}
