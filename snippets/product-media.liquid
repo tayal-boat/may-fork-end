@@ -35,33 +35,27 @@
   {%- assign max_width = 0 -%}
   {%- assign largest_image_aspect_ratio = 999 -%}
 
+  {% assign varientCount = 0 %}
   {%- for media in product.media -%}
     {%- assign max_width = max_width | at_least: media.preview_image.width -%}
-    {%- assign largest_image_aspect_ratio = largest_image_aspect_ratio | at_most: media.preview_image.aspect_ratio -%}
+    {%- assign largest_image_aspect_ratio = largest_image_aspect_ratio | at_most: media.preview_image.aspect_ratio -%}  
+    {%- assign is_media_filtered = false -%}
+    {%- assign media_id_as_string = media.id | append: '' -%}
+    {%- if filtered_media_ids contains media_id_as_string -%}
+      {%- assign is_media_filtered = true -%}
+    {%- endif -%}
+    {%  unless is_media_filtered %} 
+      {% assign varientCount = varientCount | plus: 1  %}
+    {% endunless %}
   {%- endfor -%}
 
   <product-media form-id="product-form-{{ section.id }}-{{ product.id }}" {% if section.settings.enable_video_autoplay
     %}autoplay-video{% endif %} thumbnails-position="{{ section.settings.desktop_thumbnails_position }}" {% if
     settings.reveal_product_media %}reveal-on-scroll{% endif %} product-handle="{{ product.handle }}"
-    class="product__media mb-3 mb-lg-0" style="--largest-image-aspect-ratio: {{ largest_image_aspect_ratio }}">
-    <div class="product__media-list-wrapper" style="max-width: {{ max_width }}px">
-      {%- capture flickity_config -%}
-      {
-        "adaptiveHeight": true,
-        "dragThreshold": 10,
-        "initialIndex": ".is-initial-selected",
-        "fade": {% if section.settings.transition_effect == 'fade' %}true{% else %}false{% endif %},
-        "draggable": ">1",
-        "contain": true,
-        "cellSelector": ".product__media-item:not(.is-filtered)",
-        "percentPosition": false,
-        "pageDots":false,
-        "prevNextButtons": false,
-      	"wrapAround": true
-      }
-      {%- endcapture -%}
+    class="product__media product_media_section MultiCarousel_container mb-3 mb-lg-0" style="--largest-image-aspect-ratio: {{ largest_image_aspect_ratio }}">
+    <div class="product__media-list-wrapper MultiCarousel {{ section.id }}" id="MultiCarousel_product" data-items="1" data-slide="1" data-last_item_padding="12">
 
-      <flickity-carousel click-nav flickity-config="{{ flickity_config | escape }}" id="product-{{ section.id }}-{{ product.id }}-media-list" class="product__media-list">
+      <div click-nav id="product-{{ section.id }}-{{ product.id }}-media-list" class="product__media-list MultiCarousel-inner {{ section.id }} draggable" draggable="true">
         {%- for media in product.media -%}
           {%- assign alt = media.alt -%}
           {%- assign is_media_filtered = false -%}
@@ -74,14 +68,25 @@
           {%- if filtered_media_ids contains media_id_as_string and media.alt != product.title -%}
             {%- assign is_media_filtered = true -%}
           {%- endif -%}
+          {%  unless is_media_filtered %}
 
-          <div id="product-{{ section.id }}-{{ media.id }}" class="product__media-item {% if is_media_filtered %}is-filtered{% endif %} {% if selected_media.id == media.id %}is-initial-selected is-selected{% endif %}" data-media-type="{{ media.media_type }}" data-media-id="{{ media.id }}" data-original-position="{{ forloop.index0 }}">
+          {% comment %} 
+          <div id="product-{{ section.id }}-{{ media.id }}" class="product__media-item " data-original-position="{{ forloop.index0 }}">
+            {% if product.metafields.custom.product_cards_placeholder1 %}
+              <div class="product__media-image-wrapper aspect-ratio aspect-ratio--natural" style="padding-bottom: {{ 100.0 | divided_by: media.aspect_ratio }}%; --aspect-ratio: {{ media.aspect_ratio }}">
+                <img {% if selected_media.id == media.id and settings.reveal_product_media %}reveal{% endif %} {% if selected_media.id != media.id or request.page_type != 'product' %}loading="lazy"{% endif %} sizes="(max-width: 999px) calc(100vw - 48px), 640px" {% render 'image-attributes', image: product.metafields.custom.product_cards_placeholder1, alt: alt, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800' %}>
+              </div>
+            {% endif %}
+          </div>
+          {% endcomment %}
+
+          <div id="product-{{ section.id }}-{{ media.id }}" class="product__media-item item {% if is_media_filtered %}is-filtered{% endif %} {% if selected_media.id == media.id %}is-initial-selected is-selected{% endif %}" data-media-type="{{ media.media_type }}" data-media-id="{{ media.id }}" data-original-position="{{ forloop.index0 }}">
+            
             {%- case media.media_type -%}
               {%- when 'image' -%}
                 <div class="product__media-image-wrapper aspect-ratio aspect-ratio--natural" style="padding-bottom: {{ 100.0 | divided_by: media.aspect_ratio }}%; --aspect-ratio: {{ media.aspect_ratio }}">
                   <img {% if selected_media.id == media.id and settings.reveal_product_media %}reveal{% endif %} {% if selected_media.id != media.id or request.page_type != 'product' %}loading="lazy"{% endif %} sizes="(max-width: 999px) calc(100vw - 48px), 640px" {% render 'image-attributes', image: media, alt: alt, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800' %}>
                 </div>
-
               {%- when 'video' -%}
                 <native-video class="video-wrapper video-wrapper--native" style="--aspect-ratio: {{ media.aspect_ratio }}">
                   {%- unless section.settings.enable_video_autoplay -%}
@@ -132,8 +137,28 @@
                 </model-media>
             {%- endcase -%}
           </div>
+        {% endunless %}
         {%- endfor -%}
-      </flickity-carousel>
+      </div>
+
+      {%- if product.media.size > 0 -%}
+      <button class="btn btn-primary leftLst {{ section.id }}"><</button>
+      <button class="btn btn-primary rightLst {{ section.id }}">></button>
+      <ul class="MultiCarousel_dots_container">
+        {% assign count = 1 %}
+        {%- for media in product.media -%}
+          {%- assign is_media_filtered = false -%}
+          {%- assign media_id_as_string = media.id | append: '' -%}
+          {%- if filtered_media_ids contains media_id_as_string -%}
+          {%- assign is_media_filtered = true -%}
+        {%- endif -%}
+        {%  unless is_media_filtered %} 
+         <li class="multiCarousel_dots" data-index="{{ count }}"><strong>{{ count }}</strong> / {{ varientCount }}</li> 
+         {% assign count = count | plus: 1 %}
+        {% endunless %}
+        {% endfor %} 
+        </ul>
+      {%- endif -%}
 
       {%- if section.settings.enable_image_zoom -%}
         <button {% if selected_media.media_type != 'image' %}hidden{% endif %} is="toggle-button" aria-controls="product-{{ section.id }}-{{ product.id }}-zoom" aria-expanded="false" class="d-none tap-area product__zoom-button">
@@ -151,8 +176,45 @@
         {%- render 'icon', icon: 'media-view-in-space' -%} {{- 'product.general.view_in_space' | t -}}
       </button>
     {%- endif -%}
-
     {%- if product.media.size > 0 -%}
+  <div class=" product__thumbnail-scroll-shadow {% unless section.settings.show_thumbnails_on_mobile %}hidden-pocket{% endunless %}">
+    <div class="product__thumbnail-list hide-scrollbar">
+      <div class="product__thumbnail-list-inner">
+        {% assign desk_count = 0 %}
+        {%- for media in product.media -%}
+          {%- assign alt = media.alt -%}
+          {%- assign is_media_filtered = false -%}
+          {%- assign media_id_as_string = media.id | append: '' -%}
+
+          {% if media.alt contains '#' %}
+            {%- assign alt = product.title -%}
+          {%- endif -%}
+
+          {%- if filtered_media_ids contains media_id_as_string and media.alt != product.title -%}
+            {%- assign is_media_filtered = true -%}
+          {%- endif -%}
+          {% unless is_media_filtered %}
+          <button type="button" tabindex="-1" {% if settings.reveal_product_media and is_media_filtered == false %}reveal{% endif %} class="product__thumbnail-item {% unless section.settings.show_thumbnails_on_mobile %}hidden-pocket{% endunless %}" {% if selected_media.id == media.id %}aria-current="true"{% endif %} aria-controls="product-{{ section.id }}-{{ media.id }}" data-media-id="{{ media.id }}" data-action="select" data-index="{{desk_count}}" data-class="product__thumbnail-item">
+            <div data-thumbnail-color="{{media.alt}}" class="product__thumbnail">
+              <img loading="lazy" sizes="(max-width: 999px) 72px, 60px" {% render 'image-attributes', image: media.preview_image, alt: alt, sizes: '60,72,120,144,180,216,240,288' %}>
+
+              {%- case media.media_type -%}
+                {%- when 'model' -%}
+                <span class="product__thumbnail-badge">{% render 'icon', icon: 'media-model-badge', width: 18, height: 18 %}</span>
+
+                {%- when 'video' or 'external_video' -%}
+                <span class="product__thumbnail-badge">{% render 'icon', icon: 'media-video-badge', width: 18, height: 18 %}</span>
+              {%- endcase -%}
+            </div>
+          </button>
+          {% assign desk_count = desk_count | plus: 1 %}
+        {% endunless %}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+    {% comment %} {%- if product.media.size > 0 -%}
       <flickity-controls controls="product-{{ section.id }}-{{ product.id }}-media-list" class="product__media-nav">
         <button class="product__media-prev-next {% if section.settings.show_thumbnails_on_mobile %}hidden-pocket{% endif %} hidden-lap-and-up tap-area tap-area--large" aria-label="{{ 'general.accessibility.previous' | t }}" data-action="prev">
           {%- render 'icon' with 'nav-arrow-left', direction_aware: true -%}
@@ -213,7 +275,7 @@
           {%- render 'icon' with 'nav-arrow-right', direction_aware: true -%}
         </button>
       </flickity-controls>
-    {%- endif -%}
+    {%- endif -%} {% endcomment %}
 
 
     {%- if section.settings.enable_image_zoom -%}
