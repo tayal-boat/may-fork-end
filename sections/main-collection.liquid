@@ -347,9 +347,9 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
   margin: 2px;
 }
 }
-.price-tag-filter-container{
+{% comment %} .price-tag-filter-container{
 display: none;
-}
+} {% endcomment %}
 @media screen and (max-width: 767px){
   .price-tag-filter {
     display: flex;
@@ -366,7 +366,6 @@ display: none;
 }
 .price-tag-filter-container{
   display: block;
-  grid-column: span 2;
   background: #DCDCDC;
   border-radius: 10px;
   padding: 12px;
@@ -419,57 +418,6 @@ display: none;
       {%- endif -%}
 	  
       <div id="facet-main" class="product-facet__main anchor" role="region" aria-live="polite">
-        {%- if section.blocks.size > 0 -%}
-          {% comment %} {%- capture promotion_blocks -%}
-            <div class="promotion-block-list promotion-block-list--{{ section.settings.promotion_position }}">
-              {%- for block in section.blocks -%}
-                {%- capture block_content -%}
-                  {%- if block.settings.image != blank -%}
-                    <img class="promotion-block__image"
-                         loading="lazy"
-                         sizes="(max-width: 740px) calc(100vw - 12px * 2), calc(min(100vw, 1560px) / {{ section.blocks.size }} - 20px * {{ section.blocks.size | minus: 1 }})"
-                         {% render 'image-attributes', image: block.settings.image, sizes: '200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600' %}>
-                  {%- endif -%}
-
-                  <div class="promotion-block__content-wrapper text-container" style="{% if block.settings.text_position contains 'center' %}text-align: center{% elsif block.settings.text_position contains 'right' %}text-align: end{% endif %}">
-                    {%- if block.settings.subheading != blank -%}
-                      <p class="heading heading--small">{{ block.settings.subheading | escape }}</p>
-                    {%- endif -%}
-
-                    {%- if block.settings.title != blank -%}
-                      <p class="heading h4">{{ block.settings.title | escape | newline_to_br }}</p>
-                    {%- endif -%}
-
-                    {%- if block.settings.link_text != blank -%}
-                      {%- if block.settings.link_style == 'link' -%}
-                        <span class="heading heading--small link">{{ block.settings.link_text | escape }}</span>
-                      {%- else -%}
-                        <div class="button-wrapper">
-                          <span class="button button--small button--primary">{{ block.settings.link_text | escape }}</span>
-                        </div>
-                      {%- endif -%}
-                    {%- endif -%}
-                  </div>
-                {%- endcapture -%}
-
-                {%- if block.settings.link_url != blank -%}
-                  <a id="block-{{ section.id }}-{{ block.id }}" href="{{ block.settings.link_url }}" class="promotion-block promotion-block--{{ section.settings.promotion_height }} promotion-block--expand image-zoom" {{ block.shopify_attributes }}>
-                    {{- block_content -}}
-                  </a>
-                {%- else -%}
-                  <div id="block-{{ section.id }}-{{ block.id }}" class="promotion-block promotion-block--{{ section.settings.promotion_height }} promotion-block--expand image-zoom" {{ block.shopify_attributes }}>
-                    {{- block_content -}}
-                  </div>
-                {%- endif -%}
-              {%- endfor -%}
-            </div>
-          {%- endcapture -%} {% endcomment %}
-        {%- endif -%}
-
-        {% comment %} {%- if section.settings.promotion_position == 'top' -%}
-          {{- promotion_blocks -}}
-        {%- endif -%} {% endcomment %}
-
         {%- if collection.products_count > 0 -%}
           <div class="product-facet__meta-bar anchor">
 
@@ -610,9 +558,7 @@ display: none;
           {%- comment -%}{%- render 'pagination', paginate: paginate, use_ajax: true -%}{%- endcomment -%}
           {%- endpaginate -%}
 
-          {%- if section.settings.promotion_position == 'bottom' -%}
-            {{- promotion_blocks -}}
-          {%- endif -%}
+
         {%- else -%}
           <div class="empty-state">
             {%- if collection.all_products_count == 0 -%}
@@ -688,125 +634,6 @@ display: none;
   "name": "Collection page",
   "class": "shopify-section--main-collection",
   "blocks": [
-    {
-      "type": "image",
-      "name": "Promotion block",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image",
-          "info": "1200 x 600px .jpg recommended (if two blocks), 2400 x 800px .jpg recommended (if one block)"
-        },
-        {
-          "type": "text",
-          "id": "subheading",
-          "label": "Subheading",
-          "default": "Your subheading"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Heading",
-          "default": "Your heading"
-        },
-        {
-          "type": "text",
-          "id": "link_text",
-          "label": "Link text"
-        },
-        {
-          "type": "url",
-          "id": "link_url",
-          "label": "Link URL"
-        },
-        {
-          "type": "select",
-          "id": "link_style",
-          "label": "Link style",
-          "options": [
-            {
-              "value": "link",
-              "label": "Link"
-            },
-            {
-              "value": "button",
-              "label": "Button"
-            }
-          ],
-          "default": "link"
-        },
-        {
-          "type": "select",
-          "id": "text_position",
-          "label": "Text position",
-          "options": [
-            {
-              "value": "top_left",
-              "label": "Top left"
-            },
-            {
-              "value": "top_center",
-              "label": "Top center"
-            },
-            {
-              "value": "top_right",
-              "label": "Top right"
-            },
-            {
-              "value": "middle_left",
-              "label": "Middle left"
-            },
-            {
-              "value": "middle_center",
-              "label": "Middle center"
-            },
-            {
-              "value": "middle_right",
-              "label": "Middle right"
-            },
-            {
-              "value": "bottom_left",
-              "label": "Bottom left"
-            },
-            {
-              "value": "bottom_center",
-              "label": "Bottom center"
-            },
-            {
-              "value": "bottom_right",
-              "label": "Bottom right"
-            }
-          ],
-          "default": "middle_left"
-        },
-        {
-          "type": "color",
-          "id": "background",
-          "label": "Background",
-          "default": "#f7f8fd",
-          "info": "Only used when no image is uploaded."
-        },
-        {
-          "type": "color",
-          "id": "text_color",
-          "label": "Text color",
-          "default": "#1e316a"
-        },
-        {
-          "type": "color",
-          "id": "button_background",
-          "label": "Button background",
-          "default": "#ffffff"
-        },
-        {
-          "type": "color",
-          "id": "button_text_color",
-          "label": "Button text color",
-          "default": "#1e316a"
-        }
-      ]
-    },
     {
       "type": "filters",
       "name": "price slab",
@@ -909,47 +736,6 @@ display: none;
         }
       ],
       "default": "always_visible"
-    },
-    {
-      "type": "header",
-      "content": "Promotion blocks",
-      "info": "Add extra information to push other collections or products."
-    },
-    {
-      "type": "select",
-      "id": "promotion_position",
-      "label": "Position",
-      "options": [
-        {
-          "value": "top",
-          "label": "Top"
-        },
-        {
-          "value": "bottom",
-          "label": "Bottom"
-        }
-      ],
-      "default": "top"
-    },
-    {
-      "type": "select",
-      "id": "promotion_height",
-      "label": "Block height",
-      "options": [
-        {
-          "value": "small",
-          "label": "Small"
-        },
-        {
-          "value": "medium",
-          "label": "Medium"
-        },
-        {
-          "value": "large",
-          "label": "Large"
-        }
-      ],
-      "default": "small"
     },
     {
       "type": "header",
