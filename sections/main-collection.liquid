@@ -170,11 +170,11 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 .product-facet__filters collapsible-content {
   position: absolute;
   top: 0;
-  left: 40%;
+  left: 36%;
   background: #fff;
   overflow-y: auto !important;
   padding: 12px 0 0 0;
-  width: 60%;
+  width: 64%;
 }
 .product-facet__filters .checkbox-input {
   padding-right: 12px;
@@ -246,8 +246,8 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 }
 .product-facet__filters .drawer__header_inner {
   display: flex;
-  width: calc(100% - 10px );
-  justify-content: space-between;
+  width: 100%;
+  justify-content: center;
 }
 .product-facet__filters .drawer__title svg {
   margin-right: 5px;
@@ -268,9 +268,6 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 }
 .product-facet__filters .drawer .product-facet__active-list {
   margin: 10px 10px 0;
-}
-.product-facet__filters .drawer__title {
-  text-transform: uppercase;
 }
 @media screen and (min-width: 550px){
  #facet-filters {
@@ -331,9 +328,6 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
   margin: 2px;
 }
 }
-{% comment %} .price-tag-filter-container{
-display: none;
-} {% endcomment %}
 @media screen and (max-width: 767px){
   .price-tag-filter {
     display: flex;
@@ -369,6 +363,23 @@ display: none;
   background-color: #399a7d;
   border-radius: 4px;
 }
+facet-filters header.drawer__header {
+  background: white;
+  color: black;
+}
+facet-filters p.drawer__title.heading.h6 {
+  font-weight: 500;
+  color: #1a2024;
+}
+facet-filters .drawer__header .drawer__close-button{
+  right: 10px;  color: #1a2024;
+}
+
+facet-filters a.drawer__header-action.link.text--subdued {
+  display: none;
+}
+
+
 </style>
 
 <section>
@@ -490,23 +501,23 @@ display: none;
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
 
                 {%- for product in collection.products -%}
-                  {% unless product.handle == 'membership' %}
-                    {% if section.settings.enable_price_slab %}
-                      {% if forloop.index == 3 and paginate.current_page == 1 %}
-                      <div class="price-tag-filter-container">
-                        <h3>Sort By Price Range</h3>
-                        <div class="price-tag-filter">
-                          {%- for block in section.blocks -%}
-                          {%- if block.type == 'filters' -%}
-                          <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
-                          {%- endif -%}
-                          {%- endfor -%}
-                        </div>
-                      </div> 
+                   {% unless product.handle == 'membership' %}
+                     {% if section.settings.enable_price_slab %}
+                        {% if forloop.index == 3 %}
+                          <div class="price-tag-filter-container">
+                            <h3>Sort By Price Range</h3>
+                            <div class="price-tag-filter">
+                              {%- for block in section.blocks -%}
+                                {%- if block.type == 'filters' -%}
+                                  <div class="tag" data-min="{{ block.settings.min_price }}" data-max="{{ block.settings.max_price }}" class="price-tag-filter-item">{{ block.settings.min_price | prepend: '₹' }} - {{ block.settings.max_price | prepend: '₹' }} </div>
+                                {%- endif -%}
+                              {%- endfor -%}
+                            </div>
+                          </div> 
+                        {% endif %}
                       {% endif %}
-                      {% endif %}
-                    {%- render 'product-item2.0', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
-                  {% endunless %}
+                      {%- render 'product-item2.0', product: product, collection: collection, block: block, sizes_attribute: sizes_attribute, reveal: settings.stagger_products_apparition -%}
+                   {% endunless %}
                   
 
                   {% if forloop.index == 11 and paginate.current_page == 1 %}
