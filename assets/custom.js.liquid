@@ -1121,6 +1121,7 @@ function verifyotp(session_id, otp, url){
       clevertap.profile.push({
         "Site": {
           "OTP Login Number": mobile_number,
+          "Login Timestamp": LOGIN_TIMESTAMP,
           "MSG-sms": "TRUE",
           "MSG-whatsapp": "TRUE",
           "Login Timestamp": LOGIN_TIMESTAMP
@@ -1701,8 +1702,20 @@ Shopify.product_slider = function(itemsDiv, itemsMainDiv, selector) {
                         }
                     }
                 }
+                var product_current_slide = $('.product__media-item.product_is-initial-selected').attr('data-index');
+                var product_slider_width = itemWidth * itemNumbers;
+                var product_itemsCondition = product_slider_width - $(window).width();
+                product_current_slide = parseInt(product_current_slide);
+                var Product_translateXval = parseInt(itemWidth * product_current_slide);
+                var Product_last_item_padding = 0;
+                if (window.innerWidth < 768) {
+                   Product_last_item_padding = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-last_item_padding'));
+                  if (Product_translateXval > product_itemsCondition - itemWidth / 2) {
+                    Product_translateXval = product_itemsCondition + Product_last_item_padding;
+                    }  
+                }
                 $(this).css({
-                    'transform': 'translateX(0px)',
+                    'transform': 'translateX('+ -Product_translateXval + 'px)',
                     'width': itemWidth * itemNumbers
                 });
                 $(this).find(itemClass).each(function() {
