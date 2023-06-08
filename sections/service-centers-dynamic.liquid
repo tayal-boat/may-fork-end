@@ -1,4 +1,4 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js" defer></script>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js" defer></script>
 <div class="container cf">
     <div class="page-header cf">
         <h1 class="majortitle">Service Center List</h1>
@@ -38,7 +38,7 @@
               <p class="accordion">Rajasthan</p>
               <div class="panel"></div>
             </div>
-            <div class="faq-block" id="jammu">
+            <div class="faq-block" id="jk">
               <p class="accordion">Jammu & Kashmir</p>
               <div class="panel"></div>
             </div>
@@ -82,12 +82,12 @@
               <p class="accordion">Uttarakhand</p>
               <div class="panel"></div>
             </div>
-            <div class="faq-block" id="chandigarh">
+            {% comment %} <div class="faq-block" id="chandigarh">
               <p class="accordion">Chandigarh</p>
               <div class="panel"></div>
-            </div>
-            <div class="faq-block" id="chattisgarh">
-              <p class="accordion">Chattisgarh</p>
+            </div> {% endcomment %}
+            <div class="faq-block" id="chhattisgarh">
+              <p class="accordion">Chhattisgarh</p>
               <div class="panel"></div>
             </div>
           </div>
@@ -222,79 +222,83 @@
     });
   </script>
   <script>
+    function fetchDataAndDisplayCenters() {
     const fileUrl = '{{ page.metafields.page.service_center_list | file_url}}';
 
-    // Selecting Containers
-    const containers = {
-    punjab: '#punjab .panel',
-    up: '#up .panel',
-    delhi: '#delhi .panel',
-    wb: '#wb .panel',
-    haryana: '#haryana .panel',
-    bihar: '#bihar .panel',
-    gujarat: '#gujarat .panel',
-    rajasthan: '#rajasthan .panel',
-    jk: '#jk .panel',
-    maharashtra: '#maharashtra .panel',
-    telangana: '#telangana .panel',
-    karnataka: '#karnataka .panel',
-    tn: '#tn .panel',
-    kerala: '#kerala .panel',
-    jharkhand: '#jharkhand .panel',
-    odisha: '#odisha .panel',
-    mp: '#mp .panel',
-    ap: '#ap .panel',
-    uk: '#uk .panel',
-    chandigarh: '#chandigarh .panel',
-    chattisgarh: '#chattisgarh .panel'
+    // Define the state containers
+    const stateContainers = {
+      'punjab': '#punjab .panel',
+      'uttar pradesh': '#up .panel',
+      'delhi': '#delhi .panel',
+      'west bengal': '#wb .panel',
+      'haryana': '#haryana .panel',
+      'bihar': '#bihar .panel',
+      'gujarat': '#gujarat .panel',
+      'jammu&kashmir': '#jk .panel',
+      'maharashtra': '#maharashtra .panel',
+      'telangana': '#telangana .panel',
+      'karnataka': '#karnataka .panel',
+      'tamil nadu': '#tn .panel',
+      'kerala': '#kerala .panel',
+      'jharkhand': '#jharkhand .panel',
+      'odisha': '#odisha .panel',
+      'madhya pradesh': '#mp .panel',
+      'andhra pradesh': '#ap .panel',
+      'uttarakhand': '#uk .panel',
+      'chhattisgarh': '#chhattisgarh .panel',
+      'rajasthan': '#rajasthan .panel'
     };
-
+    
     // Fetching data from URL
     fetch(fileUrl)
-    .then(response => response.arrayBuffer())
-    .then(buffer => {
+      .then(response => response.arrayBuffer())
+      .then(buffer => {
         const data = new Uint8Array(buffer);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet);
         const centersList = jsonData;
-
-        // Function to filter data based on state
-        function filterCentersByState(state, centersList) {
-        return centersList.filter(center => center['State'].toLowerCase() === state);
-        }
-
-        // Function to show data on the page
-        function showData(state, centersList, container) {
-        centersList.forEach(center => {
+        console.log(centersList[1])
+        // Function to filter and show data for a state
+        function showDataForState(state, container) {
+          const filteredCenters = centersList.filter(center => center['Classification'].toLowerCase() === state);
+          filteredCenters.forEach(center => {
+            const classification = center['Classification'];
             const address = center['Address'];
             const pincode = center['Pincode'];
-            const centerName = center['SF/Vendor/Branch Name'];
+            const centerName = center['MSC name'];
             const city = center['City Name'];
-
+            const phone = center['Phone'];
+            const locationURL = center['Location URL'];
+    
             $(container).append(`
-            <section class="new_address">
-                <p>
-                <strong>${city}, ${state}</strong>
+              <section class="new_address">
+                <p style="text-transform:capitalize;">
+                  <strong>${city}, ${state}</strong>
                 </p>
                 <address>${centerName}, ${address} ${pincode}</address>
                 <p>
-                <strong>Customer Care:</strong> 9540525836
+                  <a href="${locationURL}" target="_blank" style="color: #ea2127; text-decoration: none; display:block; margin: 10px 0;" rel="noopener noreferrer">See Map</a>
+                  <strong>Customer Care:</strong> ${phone}
                 </p>
-            </section>
+              </section>
             `);
-        });
+          });
         }
-
-        // Iterate over containers and show data for each state
-        Object.entries(containers).forEach(([state, container]) => {
-        const filteredCenters = filterCentersByState(state, centersList);
-        showData(state, filteredCenters, container);
-        });
-    })
-    .catch(error => console.error('Error:', error));
+    
+        // Iterate over state containers and call showDataForState
+        for (const state in stateContainers) {
+          const container = stateContainers[state];
+          showDataForState(state, container);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+    // Call the function when the page is loaded
+    document.addEventListener('DOMContentLoaded', fetchDataAndDisplayCenters);
 </script>
   {% schema %} { "name": "Service Centers", "class": "service-centers",
   "settings": [] } {% endschema %} 
+  
   
