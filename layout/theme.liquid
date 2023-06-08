@@ -1,33 +1,37 @@
 {%- comment -%}
-  ------------------------------------------------------------------------------------------------------------------------
-  NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing
-  this theme as much as we did for developing it. We have put a lot of work to
-  make this theme as developer friendly as possible by offering you hooks to
-  integrate into critical parts of the theme. You will find the complete technical
-  documentation (including all events, dependencies...) in the "custom.js" file,
-  located in the Assets folder.
-  ------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+NOTE TO DEVELOPERS: welcome to Focal theme! We hope that you will enjoy editing
+this theme as much as we did for developing it. We have put a lot of work to
+make this theme as developer friendly as possible by offering you hooks to
+integrate into critical parts of the theme. You will find the complete technical
+documentation (including all events, dependencies...) in the "custom.js" file,
+located in the Assets folder.
+------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
 <!doctype html>
 {%- assign direction = 'ltr' -%}
 {%- case request.locale.iso_code -%}
   {%- when 'ar', 'arc', 'dv', 'fa', 'ha', 'he', 'kwh', 'ks', 'ku', 'ps', 'ur', 'yi' -%}
-    {%- assign direction = 'rtl' -%}
+  {%- assign direction = 'rtl' -%}
 {%- endcase -%}
 
-<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}" draggable="false">
+<html
+  class="no-js"
+  lang="{{ request.locale.iso_code }}"
+  dir="{{ direction }}"
+  draggable="false">
   <head>
     <meta charset="utf-8">
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=6.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=6.0">
     <meta name="theme-color" content="{{ settings.header_background }}">
     <meta name="facebook-domain-verification" content="qad1e3gldwmxjf6luncdygpvcpduub">
     <link rel="canonical" href="{{ canonical_url }}">
     {%- if settings.favicon -%}
-      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
+      <link
+        rel="shortcut icon"
+        href="{{ settings.favicon | img_url: '96x96' }}"
+        type="image/png">
     {%- endif -%}
     <title>
       {% if page_title == blank -%}
@@ -43,50 +47,60 @@
       <meta name="description" content="{{ page_description | escape }}">
     {%- endif -%}
     {%- comment -%}
-       IMPLEMENTATION NOTE: for improving performance,
-      Focal tries to preload images on known pages (such as blog page, product or
-      collection pages). In order to keep a main JS file size minimal, the theme
-      also lazyloads non-essential libraries (such as PhotoSwipe or Flickity) and
-      only loads them on demand.
+    IMPLEMENTATION NOTE: for improving performance,
+    Focal tries to preload images on known pages (such as blog page, product or
+    collection pages). In order to keep a main JS file size minimal, the theme
+    also lazyloads non-essential libraries (such as PhotoSwipe or Flickity) and
+    only loads them on demand.
     {%- endcomment -%}
     {%- comment -%}
-      Few prefech to increase performance on commonly
-      used third-parties
+    Few prefech to increase performance on commonly
+    used third-parties
     {%- endcomment -%}
     <link rel="preconnect" href="https://cdn.shopify.com">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     {% comment %}
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-      {%- unless settings.heading_font.system? and settings.text_font.system? -%}
-        <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-      {% endunless %}
+    {%- unless settings.heading_font.system? and settings.text_font.system? -%}
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {% endunless %}
     {% endcomment %}
-    <link rel="dns-prefetch" href="https://www.google.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
+    <link
+      rel="dns-prefetch"
+      href="https://www.google.com"
+      crossorigin>
+    <link
+      rel="dns-prefetch"
+      href="https://www.googletagmanager.com"
+      crossorigin>
     {% render 'speedsize' %}
     {%- if request.page_type == 'product' -%}
-      {%- assign selected_media = product.selected_or_first_available_variant.image
-        | default: product.selected_or_first_available_variant.image
-      -%}
-      <link rel="preload" as="fetch" href="{{ product.url }}.js" crossorigin>
+      {%- assign selected_media = product.selected_or_first_available_variant.image 
+        | default: product.selected_or_first_available_variant.image -%}
+      <link
+        rel="preload"
+        as="fetch"
+        href="{{ product.url }}.js"
+        crossorigin>
       {%- if product.media.size > 1 -%}
-        <link rel="preload" as="script" href="{{ 'flickity.js' | asset_url }}">
+        <link
+          rel="preload"
+          as="script"
+          href="{{ 'flickity.js' | asset_url }}">
       {%- endif -%}
     {%- elsif request.page_type == 'collection' and collection.image -%}
       <link
         as="image"
         media="(max-width: 740px)"
         imagesizes="100vw"
-        imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}"
-      >
+        imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '400,500,600,700,800,900,1000', height_constraint: 600, crop: 'center', sizes_only: true %}">
       <link
         as="image"
         media="(min-width: 741px)"
         imagesizes="100vw"
-        imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', sizes_only: true %}"
-      >
+        imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', sizes_only: true %}">
     {%- endif -%}
     {% render 'social-meta-tags' %}
     {% render 'microdata-schema' %}
@@ -95,32 +109,30 @@
     <script></script>
 
     <!-- content for header -->
-    {%- capture h_content -%}{{ content_for_header }}{%- endcapture -%}
+    {%- capture h_content -%}
+      {{ content_for_header }}{%- endcapture -%}
     {% case template %}
       {% when 'index' %}
-        {{-
-          h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
-          | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com'
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js'
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
-        -}}
+      {{-
+        h_content
+        | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
+        | remove: '\/\/app.backinstock.org\/bis\/widget\/28768_1652154839.js?v=6\u0026shop=boatlifestylein.myshopify.com'
+        | remove 'https: \/\/sc-events-sdk.sharechat.com\/web-sdk.js'
+        | remove 'https: \/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F' -}}
       {% when 'product' %}
-        {{-
-          h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js'
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
-        -}}
+      {{-
+        h_content
+        | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
+        | remove 'https: \/\/sc-events-sdk.sharechat.com\/web-sdk.js'
+        | remove 'https: \/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F' -}}
       {% when 'article', 'collection', 'blog' %}
-        {{-
-          h_content
-          | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
-          | remove 'https:\/\/sc-events-sdk.sharechat.com\/web-sdk.js'
-          | remove 'https:\/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F'
-        -}}
-      {% else %}
-        {{- content_for_header -}}
+      {{-
+        h_content
+        | remove: '\/\/social-login.oxiapps.com\/api\/init?vt=928362\u0026shop=boatlifestylein.myshopify.com'
+        | remove 'https: \/\/sc-events-sdk.sharechat.com\/web-sdk.js'
+        | remove 'https: \/\/q.quora.com\/_\/ad\/bea284573d0b4d19bf17e2ab45fb2c14\/pixel?tag=ViewContent&i=gtm&u=https%3A%2F%2Fwww.boat-lifestyle.com%2F' -}}
+    {% else %}
+      {{- content_for_header -}}
     {% endcase %}
     <!-- content for header -->
 
@@ -128,42 +140,41 @@
 
     {% capture card_offers %}
       {
-        "offer_1" : "{{ settings.card_offers | split: ',' | first }}",
-        "offer_2" : "{{ settings.card_offers | split: ',' | last }}"
+      "offer_1" : "{{ settings.card_offers | split: ',' | first }}",
+      "offer_2" : "{{ settings.card_offers | split: ',' | last }}"
       }
-     {% endcapture %}
+    {% endcapture %}
     <script>
-      
-      
-      
+
+
+
       Shopify.sold_out_threshold = {{ settings.sold_out_threshold | json }};
       Shopify.card_offers = `{{ card_offers }}`;
       Shopify.enable_fixed_discount = {{ settings.enable_fixed_discount | json }};
       Shopify.tag_selector = {{ settings.tag_selector | json }};
-      Shopify.fixed_discount = function(tag){
+      Shopify.fixed_discount = function(tag) {
         let tagArr = tag;
         let pod_price = 0;
         for (let i = 0; i < tagArr.length; i++) {
-          if(tagArr[i].includes('PoD Price|')){
+          if (tagArr[i].includes('PoD Price|')) {
             pod_price = tagArr[i].split('|').slice(1);
             pod_price = parseInt(pod_price);
-           }
+          }
         }
         return pod_price;
       }
-
-
-
     </script>
     <!-- Google Tag Manager -->
 
     <script>
-      (function (w, d, s, l, i) {
+      (function(w, d, s, l, i) {
         w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        w[l].push({"gtm.start": new Date().getTime(), event: "gtm.js"});
         var f = d.getElementsByTagName(s)[0],
           j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
+          dl = l != "dataLayer"
+            ? "&l=" + l
+            : "";
         j.async = true;
         j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
         f.parentNode.insertBefore(j, f);
@@ -171,22 +182,15 @@
     </script>
     <!-- Google Tag Manager Ends -->
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=AW-816285276"
-    ></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-816285276"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
-      gtag(
-        "config",
-        "AW-816285276",
-        { send_page_view: false }
-      );
-      gtag('config', 'AW-816285276', { ' allow_enhanced_conversions':true } ) ;
+      gtag("config", "AW-816285276", {send_page_view: false});
+      gtag('config', 'AW-816285276', {' allow_enhanced_conversions': true});
     </script>
     <!-- Global Site Tag (gtag.js) - Google AdWords: 816285276 Ends -->
 
@@ -194,9 +198,14 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6LGXJKGVE2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){window.dataLayer.push(arguments);}
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
       gtag('js', new Date());
-      gtag('config', 'G-6LGXJKGVE2',{ 'groups': 'GA4','debug_mode':false });
+      gtag('config', 'G-6LGXJKGVE2', {
+        'groups': 'GA4',
+        'debug_mode': false
+      });
     </script>
     <!-- Global site tag (gtag.js) - Google Analytics Ends -->
 
@@ -262,10 +271,7 @@
     {% render 'gokwik' %}
     {% render 'clevertap' %}
     {% if template contains 'product' or template contains 'collection' %}
-      <script
-        src="https://dev.influencerbit.com/sdk/script/v1/main.min.js?shop=boatlifestylein.myshopify.com"
-        defer
-      ></script>
+      <script src="https://dev.influencerbit.com/sdk/script/v1/main.min.js?shop=boatlifestylein.myshopify.com" defer></script>
     {% endif %}
     {% comment %} {%- render 'mfilterit' -%} {% endcomment %}
     {% comment %} {% include 'kart_discount' %} {% endcomment %}
@@ -283,13 +289,15 @@
       {%- section 'header' -%}
       {% render 'algolia-custom-js' %}
     {%- endif -%}
-    <div id="main" role="main" class="anchor">
+    <div id="main"
+      role="main"
+      class="anchor">
       {%- comment -%}
-         IMPLEMENTATION NOTE: on collection and search page, the
-        theme was designed to show on mobile the filter bar and/or sort by at the
-        very top of the page. However, due to the fact that sections are isolated,
-        I had to move the code here. Then, the collection section, based on the
-        selected settings, will eventually hide those elements in CSS
+      IMPLEMENTATION NOTE: on collection and search page, the
+      theme was designed to show on mobile the filter bar and/or sort by at the
+      very top of the page. However, due to the fact that sections are isolated,
+      I had to move the code here. Then, the collection section, based on the
+      selected settings, will eventually hide those elements in CSS
       {%- endcomment -%}
       {%- if request.page_type == 'collection' or request.page_type == 'search' -%}
         {%- assign active_filters_count = 0 -%}
@@ -315,21 +323,16 @@
             <stop
               offset="50%"
               stop-color="rgb(var(--product-star-rating))"
-              stop-opacity="0.4"
-            />
+              stop-opacity="0.4" />
           </linearGradient>
         </svg>
-        <div
-          id="mobile-facet-toolbar"
-          class="mobile-toolbar {% if is_toolbar_collapsed %}is-collapsed{% endif %} hidden-lap-and-up"
-        >
+        <div id="mobile-facet-toolbar" class="mobile-toolbar {% if is_toolbar_collapsed %}is-collapsed{% endif %} hidden-lap-and-up">
           <button
             is="toggle-button"
             class="mobile-toolbar__item mobile-toolbar__item--filters {% if active_filters_count > 0 %}has-filters{% endif %}"
             aria-expanded="false"
             aria-controls="facet-filters"
-            style="display: none"
-          >
+            style="display: none">
             {%- render 'icon' with 'filters' -%}
             <span class="mobile-toolbar__item-label">
               {{- 'collection.general.filters' | t -}}
@@ -341,8 +344,7 @@
             class="mobile-toolbar__item mobile-toolbar__item--sort"
             aria-expanded="false"
             aria-controls="sort-by-popover"
-            style="display: none"
-          >
+            style="display: none">
             <span class="mobile-toolbar__item-label">
               {{- 'collection.general.sort_by' | t -}}
             </span>
@@ -369,8 +371,7 @@
               class="lazyload"
               src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994"
               alt="Load More"
-              style="width: 50px;"
-            >
+              style="width: 50px;">
           </div>
         </div>
       {% endif %}
@@ -388,7 +389,7 @@
     {% if template contains 'product' or template contains 'index' %}
       {% render 'back-in-stock-helper' %}
     {% endif %}
-    {% render 'notifyMe-popup' %}
+    <div class="notifyMe_popup__main_container custom_popup"></div>
     <!-- google dynamic remarketing tag for theme.liquid -->
     {%- render 'google-adwords-remarketing' -%}
 
@@ -404,22 +405,22 @@
     {%- render 'custom-scripts' -%}
     {%- render 'invitereferrals' -%}
 
-    <script type="deferjs">
-      let isEligibleForFreebie = false;
+      <script type="deferjs"> let isEligibleForFreebie = false;
       {% if customer and customer.tags contains 'freebie-offer' %}
         isEligibleForFreebie = true;
       {% endif %}
       clevertap.onUserLogin.push({
-       "Site": {
-         "isEligibleForFreebie": isEligibleForFreebie
-       }
-      });
+      "Site": {
+               "isEligibleForFreebie": isEligibleForFreebie
+             }
+            });
     </script>
     {% if settings.enable_mob_bg and template == 'index' %}
       <style>
         @media screen and (max-width: 767px) {
-          #main, .footer {
-            background: url({{ settings.home_bg_image }}) !important;
+          #main,
+          .footer {
+            background: url('{{ settings.home_bg_image }}') !important;
             background-repeat: repeat-y;
             background-size: contain !important;
           }
@@ -428,13 +429,12 @@
     {% endif %}
     {% if template contains 'customers' %}
       <style>
-        .mobile-toolbar{bottom:0 !important;}
+        .mobile-toolbar {
+          bottom: 0 !important;
+        }
       </style>
     {% endif %}
     {%- render 'auto_atoc_items' -%}
-    <script
-      src="//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23"
-      async
-    ></script>
+    <script src="//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23" async></script>
   </body>
 </html>

@@ -1800,16 +1800,27 @@ Shopify.notifyMe = function(){
   varientID = parseInt(varientID);
   // console.log(productJson);
   var varientSelector = '';
-  for (let i = 0; i < productJson.variants.length; i++) {
-    if(!productJson.variants[i].available || productJson.variants[i].available == "false"){
-      varientSelector = varientSelector + `<option value="${productJson.variants[i].id}" data-title="${productJson.variants[i].title}">${productJson.variants[i].title}</option>`;
-    if(productJson.variants[i].id == varientID){
-      $('.product-varient-title').text(productJson.variants[i].title);
-      }
-  }
-  }
-  $('.product-name').text(productJson.title);
-  $('#variants_select').html(varientSelector);
+  // for (let i = 0; i < productJson.variants.length; i++) {
+  //   if(!productJson.variants[i].available || productJson.variants[i].available == "false"){
+  //     varientSelector = varientSelector + `<option value="${productJson.variants[i].id}" data-title="${productJson.variants[i].title}">${productJson.variants[i].title}</option>`;
+  //   if(productJson.variants[i].id == varientID){
+  //     $('.product-varient-title').text(productJson.variants[i].title);
+  //     }
+  // }
+  // }
+  // $('.product-name').text(productJson.title);
+
+  $.ajax({
+    url: "/products/airdopes-131?view=notifyMe-popup",
+    type: "GET",
+    dataType: "html",
+    success: function(e) {
+        // console.log(e);
+        $(".notifyMe_popup__main_container").html(e);
+    }
+})
+
+  // $('#variants_select').html(varientSelector);
   $('#variants_select option[value="'+ varientID +'"]').attr('selected','true');
   $('.notifyMe_popup__main_container').addClass('show');
 }
