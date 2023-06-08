@@ -1,4 +1,4 @@
-<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js" defer></script>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 <div class="container cf">
     <div class="page-header cf">
         <h1 class="majortitle">Service Center List</h1>
@@ -234,7 +234,7 @@
       'haryana': '#haryana .panel',
       'bihar': '#bihar .panel',
       'gujarat': '#gujarat .panel',
-      'jammu&kashmir': '#jk .panel',
+      'jammu & kashmir': '#jk .panel',
       'maharashtra': '#maharashtra .panel',
       'telangana': '#telangana .panel',
       'karnataka': '#karnataka .panel',
@@ -259,10 +259,10 @@
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet);
         const centersList = jsonData;
-        console.log(centersList[1])
         // Function to filter and show data for a state
         function showDataForState(state, container) {
-          const filteredCenters = centersList.filter(center => center['Classification'].toLowerCase() === state);
+          const filteredCenters = centersList.filter(center => center['Classification'].toLowerCase().replace(/\s/g, '') === state.replace(/\s/g, ''));
+          
           filteredCenters.forEach(center => {
             const classification = center['Classification'];
             const address = center['Address'];
@@ -289,6 +289,7 @@
     
         // Iterate over state containers and call showDataForState
         for (const state in stateContainers) {
+          console.log(state)
           const container = stateContainers[state];
           showDataForState(state, container);
         }
@@ -300,5 +301,4 @@
 </script>
   {% schema %} { "name": "Service Centers", "class": "service-centers",
   "settings": [] } {% endschema %} 
-  
   
