@@ -1,107 +1,3 @@
-
-{%- capture quick_buy_product_info -%}
-    <div class="quick-buy-product">
-      {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
-
-      {%- if template.suffix == 'quick-buy-drawer' -%}
-        <img loading="lazy" sizes="150px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '150,300,600' %}>
-      {%- else -%}
-        <img loading="lazy" sizes="85px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '65,130,195' %}>
-      {%- endif -%} 
-    </div>
-    <span  class="product-item-meta__title">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</span>
-      <div class="quick-buy-product__info {% if template.suffix == 'quick-buy-popover' %}text--small{% endif %}">
-        <product-meta form-id="product-form-{{ section.id }}-{{ product.id }}" unit-price-class="text--xsmall" class="product-item-meta" >
-          {%- if section.settings.show_vendor -%}
-            {%- assign vendor_handle = product.vendor | handle -%}
-            {%- assign collection_for_vendor = collections[vendor_handle] -%}
-
-            {%- unless collection_for_vendor.empty? -%}
-              <a href="{{ collection_for_vendor.url }}" class="product-item-meta__vendor heading {% if template.suffix == 'quick-buy-drawer' %}heading--small{% else %}heading--xsmall{% endif %}">{{ product.vendor }}</a>
-            {%- else -%}
-              <a href="{{ product.vendor | url_for_vendor }}" class="product-item-meta__vendor heading {% if template.suffix == 'quick-buy-drawer' %}heading--small{% else %}heading--xsmall{% endif %}">{{ product.vendor }}</a>
-            {%- endunless -%}
-          {%- endif -%}
-
-            {% capture fixed_discount %}
-              {% render 'fixed-discount-by-tag', product: product %}
-            {% endcapture %}
-            {%- if product.tags contains settings.tag_selector -%}
-            {% assign discount_price =  fixed_discount | times: 100 %}
-            {% assign discount_price =  product.selected_or_first_available_variant.price | minus: discount_price %}
-            {% assign discounted_price = product.selected_or_first_available_variant.price | minus: discount_price | divided_by: 100 | round | times: 100 %}
-            {%- else -%}
-            {% assign discounted_price = product.selected_or_first_available_variant.price %}
-            {%- endif -%}  
-
-          <div class="product-item-meta__price-list-container" role="region" aria-live="polite">
-            <div class="price-list{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom_product_pod_price {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %}" data-product-price-list data-pod="{{ fixed_discount | strip }}">
-              {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
-                <span class="price price--highlight quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
-                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-
-                  {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency | remove: ' ' | replace: 'Rs.', '₹' -}}
-                  {%- else -%}
-                    {{- discounted_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
-                  {%- endif -%}
-                </span>
-                <span class="price price--compare line-through">
-                  <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-
-                  {%- if settings.currency_code_enabled -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money_with_currency | remove: ' '| replace: 'Rs.', '₹' -}}
-                  {%- else -%}
-                    {{- product.selected_or_first_available_variant.compare_at_price | money | remove: ' ' | replace: 'Rs.', '₹' -}}
-                  {%- endif -%}
-                </span>
-                {% if product.compare_at_price > discounted_price %}
-                  <p class="custom-saved-price">
-                    {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price |round | append: '% Off' }}
-                  </p>
-                  {% endif %}
-              {%- else -%}
-                <span class="price quick_product-price" data-price="{{ product.selected_or_first_available_variant.price }}">
-                  <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-
-                  {%- if settings.currency_code_enabled -%}
-                    {{- discounted_price | money_with_currency -}}
-                  {%- else -%}
-                    {{- discounted_price | money -}}
-                  {%- endif -%}
-                </span>
-              {%- endif -%}
-
-              {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
-                <div class="price text--subdued text--xsmall">
-                  <div class="unit-price-measurement">
-                    <span class="unit-price-measurement__price">{{ product.selected_or_first_available_variant.unit_price | money }}</span>
-                    <span class="unit-price-measurement__separator">/</span>
-
-                    {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
-                      <span class="unit-price-measurement__reference-value">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_value }}</span>
-                    {%- endif -%}
-
-                    <span class="unit-price-measurement__reference-unit">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}</span>
-                  </div>
-                </div>
-              {%- endif -%}
-            </div>
-           <p class="inc-tax">Inclusive of all Taxes</p>
-          </div>
-          
-        </product-meta>
-      </div>
-      {% if product.metafields.custom.product_card_features %}
-        {% assign features = product.metafields.custom.product_card_features | split: '|' %}
-        <div class="product-feature">
-          {% for feature in features %}
-            <span>{{ feature }}</span>
-          {% endfor %}
-        </div>
-      {% endif %}
-  {%- endcapture -%}
-
     <div class="notifyMe_popup_main container">
         <div class="notifyMe_popup_container">
             <button class="custom_popup_close" type="button"
@@ -117,26 +13,23 @@
             <div class="notifyMe_popup_body">
                 <h3 class="notifyMe_popup_heading">Notify me <b>when Available</b></h3>
                 <div class="notifyMe_popup_product_details">
-                    {% comment %} <div class="notifyMe_popup_product_img">
-                        <img src="{{ product.selected_or_first_available_variant.image | img_url: 'medium' }}" alt="{{ product.title}}">
+                  <div class="notifyMe_popup_product_refresh">
+                  <div class="notifyMe_popup_product_img">
+                        <img src="{{ product.selected_or_first_available_variant.featured_media | img_url: 'medium' }}" alt="{{ product.title}}">
                     </div>
                 <div class="notifyMe_popup_title">
-                    <h4 class="product-name">{{ product.title }}</h4>
-                </div> {% endcomment %}
-
+                    <h4 class="product-name">{{ product.title | split: '|' | first | split: 'boAt' | last  }}</h4>
+                </div>
+</div>
                 
                 <div class="notifyMe_popup_product_swatch">
-                    {{ quick_buy_product_info }}
                         {%- render 'notifyMe-product-form', product: product -%}
                 </div>
                 </div>
                 <form action="#" class="notifyMe_form-horizontal">
                     <div id="notifyMe_variant-select-container">
                         <div class="notifyMe_form-group">
-                            <div class="col-xs-12">
-                                <select id="variants_select" class="input-lg" name="varient_id">
-                                </select>
-                            </div>
+                          <input type="hidden" value="{{ product.selected_or_first_available_variant.id }}">
                         </div>
                     </div>
                     {% if customer %}

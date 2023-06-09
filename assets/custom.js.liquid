@@ -237,7 +237,7 @@ let usual_price = '';
 Shopify.variantChange = function(e){
   $('.pdp-btn-price').remove()
   $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
-  // console.log(e);
+   console.log(e);
 
 function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
@@ -1817,6 +1817,22 @@ Shopify.notifyMe = function(){
     success: function(e) {
         // console.log(e);
         $(".notifyMe_popup__main_container").html(e);
+        setTimeout(function() {
+          $('.variants_color_select').change(function(){
+            console.log('hii color-swatch__radio');
+            $.ajax({
+              url: "/products/airdopes-131?view=notifyMe-popup",
+              type: "GET",
+              dataType: "html",
+              success: function(e) {
+                  // console.log(e);
+                  var notifyMeUpdatedContent = $(e).find(".notifyMe_popup_product_refresh").html();
+                  console.log(notifyMeUpdatedContent);
+              $(".notifyMe_popup_product_refresh").html(notifyMeUpdatedContent);
+              }
+          })
+          });
+      },500);
     }
 })
 
@@ -1825,9 +1841,7 @@ Shopify.notifyMe = function(){
   $('.notifyMe_popup__main_container').addClass('show');
 }
 
-$('#variants_select').change(function(){
-  $('.product-varient-title').html($(this).children('[value="'+ this.value +'"]').attr('data-title'));
-});
+
 
 
 $('.notifyMe_form-horizontal').submit(function () {

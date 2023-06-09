@@ -37,9 +37,7 @@
  -%}
       {%- assign size_chart_page = block.settings.size_chart_page -%}
       {%- assign found_size_option = false -%}
-      <product-variants
-        handle="{{ product.handle }}"
-        form-id="{{ product_form_id }}"
+      <div
         {% if update_url %}update-url{% endif %}
         {% if block.settings.hide_sold_out_variants %}hide-sold-out-variants{% endif %}
         class="product-form__variants"
@@ -158,7 +156,7 @@
                     {%- if variant.options[0] == value -%}
                       <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
                         <input
-                          class="color-swatch__radio visually-hidden"
+                          class="color-swatch__radio variants_color_select visually-hidden"
                           type="radio"
                           name="option{{ option.position }}"
                           form="{{ product_form_id }}"
@@ -256,7 +254,7 @@
           </div>
 
         {%- endfor -%}
-      </product-variants>
+      </div>
     {% endunless %}
   {% endcase %}
 {% endfor %}
