@@ -199,7 +199,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
         </svg>
         </div>
               <div class="discount_finder_item_content">
-                  <h6>${df_list[i].heading}</h6>
+                  <h6>${df_list[i].heading.split('•')[0]}</h6>
                   <p>${df_list[i].full_detail}</p>
                   <span>${df_list[i].code}</span>
               </div>
