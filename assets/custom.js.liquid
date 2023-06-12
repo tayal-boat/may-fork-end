@@ -803,7 +803,16 @@ $('a.banner_link').on('click', function() {
 /* clevertap code for clicking razor pay ends here */
 
 // OTP Login
-
+const date = new Date()
+options = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  hour12: true
+};
+const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
   //Function to allow only numbers
      function _isNumberCheck(evt) {
       var charCode = (evt.which) ? evt.which : event.keyCode
@@ -950,7 +959,7 @@ $('a.banner_link').on('click', function() {
         
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401){
+      }else if(response.code == 401 || response.code == 429){
         $('.otp-login-error').html(response.message);
       }else if(response.code == 406){
         $('.otp-login-error').html('Otp expired.');
@@ -979,6 +988,8 @@ $('a.banner_link').on('click', function() {
       // console.log(response);
       if(response.code == 200){
         
+      }else if(response.code == 429){
+        $('.otp-login-error').html(response.message);
       }else{
         $('.otp-login-error').html('Something went wrong please try again.');
       }
@@ -1035,7 +1046,7 @@ TimerFunction();
           }
       }else if(response.code == 422 && response.message == 'validation_error'){
         // $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401 || response.code == 404 ){
+      }else if(response.code == 401 || response.code == 404 || response.code == 429 ){
         $('.otp-login-error').html(response.message);
       }
     });
@@ -1163,6 +1174,8 @@ TimerFunction();
           e.preventDefault();
           location.reload();
         })
+      }else if(response.code == 429){
+        $('.otp-login-error').html(response.message);
       }
     });
   }
@@ -1194,13 +1207,16 @@ function verifyotp(session_id, otp, url){
       localStorage.setItem('boatHead_input', response.Token);
       clevertap.event.push('Successful Login', {
         "Mobile Number": mobile_number,
-        "Session ID": session_id
+        "Session ID": session_id,
+        "Login Timestamp": LOGIN_TIMESTAMP
       })
       clevertap.profile.push({
         "Site": {
           "OTP Login Number": mobile_number,
+          "Login Timestamp": LOGIN_TIMESTAMP,
           "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
+          "MSG-whatsapp": "TRUE",
+          "Login Timestamp": LOGIN_TIMESTAMP
         }
        }); 
       countdown(5, response.URL);
@@ -1303,6 +1319,8 @@ function verifyotp(session_id, otp, url){
     }else{
       signup_window(session_id);
     }
+    }else if(response.code == 429){
+      $('.otp-login-error').html(response.message);
     }else{
       $('.otp-login-error').html('Something went wrong please try again.');
       clevertap.event.push('Failed Login', {
@@ -1337,6 +1355,8 @@ function otpLogin(phone){
   }else if(response.code == 422 && response.message == 'validation_error'){
     $('.otp-login-error').html('The phone field is required.');
   }else if(response.code == 403 && response.message == 'Invalid phone number'){
+    $('.otp-login-error').html(response.message);
+  }else if(response.code == 429){
     $('.otp-login-error').html(response.message);
   }
   });
@@ -1778,8 +1798,20 @@ Shopify.product_slider = function(itemsDiv, itemsMainDiv, selector) {
                         }
                     }
                 }
+                var product_current_slide = $('.product__media-item.product_is-initial-selected').attr('data-index');
+                var product_slider_width = itemWidth * itemNumbers;
+                var product_itemsCondition = product_slider_width - $(window).width();
+                product_current_slide = parseInt(product_current_slide);
+                var Product_translateXval = parseInt(itemWidth * product_current_slide);
+                var Product_last_item_padding = 0;
+                if (window.innerWidth < 768) {
+                   Product_last_item_padding = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-last_item_padding'));
+                  if (Product_translateXval > product_itemsCondition - itemWidth / 2) {
+                    Product_translateXval = product_itemsCondition + Product_last_item_padding;
+                    }  
+                }
                 $(this).css({
-                    'transform': 'translateX(0px)',
+                    'transform': 'translateX('+ -Product_translateXval + 'px)',
                     'width': itemWidth * itemNumbers
                 });
                 $(this).find(itemClass).each(function() {

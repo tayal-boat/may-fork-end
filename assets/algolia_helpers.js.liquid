@@ -162,7 +162,9 @@
       }
       if(this.inventory_quantity < Shopify.sold_out_threshold) {
         if (this.tags.includes('Coming-Soon')) {
-          res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
+          res = `<div class="product-item__quick-form">
+          <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
+          "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>Notify Me</a></div>`;
         } else if (this.tags.includes('Gift Cards')) {
           res = '<input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button" />';
         } 
@@ -295,14 +297,14 @@
       var response = '';
       if(this.inventory_quantity < Shopify.sold_out_threshold){
         if (tags.includes('Coming-Soon')) {
-          var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+          var response = `<div class="aa-product-badge d-block coming-soon">⏳ Coming Soon</div>`;
         } else if (tags.includes('Gift Cards')) {
           var response = ``;
         } else if (tags.includes('Restocking-Soon')){
           var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
         }
         else {
-          var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+          var response = `<div class="aa-product-badge sold-out">📦 Sold Out</div>`;
         }
       }
       else if (this.inventory_available) {
@@ -527,7 +529,7 @@
         sessionStorage.setItem('queryList', queryList);
 
       } else {
-        res = `<div class="algolia-no-result-container"> <img style="display: block;margin: auto;margin-left:36%;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/empty_state.svg?v=1683096065"><h3> ${JSON.parse(Shopify.algolia_no_result)} </h3> <div class="algolia-trending-search-header px-3 mx-lg-4"><h4>Most Searched And Bought</h4></div> <div class="algolia-trending-list"> ${document.querySelector('.algolia-trending-list').innerHTML} </div></div>`;
+        res = `<div class="algolia-no-result-container"> <img style="display: block;margin:20px auto 0;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/oh_shoot_boat_new.svg?v=1686034128"><h3> ${JSON.parse(Shopify.algolia_no_result)} </h3> <div class="algolia-trending-search-header px-3 mx-lg-4"><h4>Most Searched And Bought</h4></div> <div class="algolia-trending-list"> ${document.querySelector('.algolia-trending-list').innerHTML} </div></div>`;
         let algolia_trending_item = "";
 
         function algolia__input(algolia_no_result_input) {
