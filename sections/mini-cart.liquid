@@ -515,6 +515,9 @@
        {%- endif -%} 
      
 </div>
+
+
+<div class="discount_coupon_field_container"></div>
 <div class="mini-cart__gst">
 <div class="gst-container">
 <label class="check_container">
@@ -674,7 +677,7 @@
               <div class="mini-cart_footer d-flex justify-content-between">
             <div>
               <div class=" align-items-baseline" style="gap:6%">
-                <div class="d-flex flex-column" >
+                <div class="d-flex flex-column mini-cart-total-price" >
                   <span class="cart-total"> <b>Total Amount</b></span>
                 </div>
 
@@ -741,6 +744,35 @@
         <button type="button" data-action="close" class="form__submit form__submit--closer button button--secondary">{{ 'cart.general.order_note_save' | t }}</button>
       </openable-element>
     {%- endif -%}
+    <div class="custom_discount_filder_container">
+      <div class="custom-discount-finder">
+    <div class="discount-finder-header">
+        <button type="button" class="discount-finder-close"
+            onclick="document.querySelector('.custom_discount_filder_container').removeAttribute('open_finder');">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_40x40.jpg" style="transform: rotate(180deg);">
+            </button>
+            <h2 class="custom-discount-finder-heading">Offers for you</h2>
+    </div>
+    <div class="discount_finder_coupon_holder">
+        <div class="finder_discountCode_txtbx_holder">
+            <input type="text" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Type coupon code here" value="" onkeyup id="af_kd_custom_coupon_text" class="afcd_coupon-inputtext af_custom_coupon_text">
+        </div>
+        <div class="discount_finder_btn_holder">
+            <button type="button" id="af_kd_custom_apply_coupon_trigger" class="discount_finder_apply_btn af_kd_df_apply_coupon_btn af_custom_apply_coupon_trigger" onclick="CDSetupInit.couponApplyClick(this)">
+                <af class="af_after_loading">Apply</af>
+            </button>
+        </div>
+    </div>
+    <div class="discount_finder_header_field_details">
+    <div id="af_kd_tagged_discounts" class="af_tagged_discounts"></div>
+    <p id="af_kd_discount_response" class="af_discount_response af_stacked_response" style="text-align:left;"></p>
+    <input type="hidden" name="discount" class="af_HiddenDiscount" value="">
+    <div class="afcd_coupon_error"></div>
+    </div>
+    <div class="discount_finder_body">
+    </div>
+</div>
+    </div>
   </cart-drawer>
 
 
@@ -953,6 +985,10 @@ $('#mini-cart-form .line-item').each(function() {
 });
 
 Shopify.cartMessage = `{{section.settings.cart_announcement}}`
+var total_discount_amount = {{ total_discount_amount | json }};
+sessionStorage.setItem('total_discount_amount', total_discount_amount);
+sessionStorage.setItem('offer_discount_code', '{{ section.settings.discount_code }}');
+
 {% comment %} const checkbox = document.querySelector(".check_container input");
 const message = document.querySelector(".message-container .message");
 

@@ -98,28 +98,7 @@
           personalizationSubmitBtn.classList.remove('visually-hidden')
          }
       })
-      // Disable copy and paste events
-      personalizedText.addEventListener('cut', (e) => {
-        e.preventDefault();
-      });
-
-      personalizedText.addEventListener('copy', (e) => {
-        e.preventDefault();
-      });
-
-      personalizedText.addEventListener('paste', (e) => {
-        e.preventDefault();
-      });
-      const maxCharacters = 8;
-
-      personalizedText.addEventListener('input', (e) => {
-        let inputValue = e.target.value;
-        // Remove characters that are not alphanumeric or white space
-        inputValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
-        // Limit the input to the maximum number of characters
-        inputValue = inputValue.slice(0, maxCharacters);
-        e.target.value = inputValue;
-      });
+      
       function convertToUppercase() {
         personalizedText.value = personalizedText.value.toUpperCase();
         if(personalizedText.value.length === 7) {
@@ -138,6 +117,34 @@
         customHeading.innerHTML=``;
         customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
       } {% endcomment %}
+    personalizedText.addEventListener('keypress', function inputKeypressHandler(e) {
+
+      // keypress event on input box is listened here and this function is triggered
+      // which key is pressed, keyPressed = e.which || e.keyCode;
+      const key = e.which || e.keyCode;
+      let char=String.fromCharCode(key);
+      if(currentInputValue.length<7){
+       if((key>=97&&key<=122||key>=55&&key<=90||key>=48&&key<=57||key==32)&&key!=64){
+        currentInputValue+=char;
+        personalizedText.value=currentInputValue.toUpperCase();
+        convertToUppercase()
+        window.addEventListener("keydown",(e)=>{
+          if(e.keyCode==8){
+          str=personalizedText.value.slice(0,personalizedText.value.length-1);
+          currentInputValue=str;
+          } 
+        })
+       }
+      }
+      const SPACE = 32;
+      const ZERO = 48;
+      const NINE = 57;
+      const isNotValidDigit = key < ZERO || key > NINE;
+      console.log(isNotValidDigit)
+    if (key != SPACE || ( isNotValidDigit ) ) {
+        e.preventDefault();
+    } 
+  });
       personalizedText.addEventListener("keydown",(e)=>{
         if(e.keyCode==8){
         str=personalizedText.value.slice(0,personalizedText.value.length-1);
@@ -263,7 +270,7 @@
       personalizationSubmitBtn.addEventListener('click', (e) => {
           let pMessage = personalizedText.value;
           personalizedMessageOriginal.value = pMessage.toUpperCase();
-         {% comment %} personalizedText.value=currentInputValue.toUpperCase().replace('  ', ' ' ); {% endcomment %}
+         personalizedText.value=currentInputValue.toUpperCase().replace('  ', ' ' );
         console.log(personalizedMessageOriginal.value)
           closePersonalizationModal()
           storePersonalizedMessage()
