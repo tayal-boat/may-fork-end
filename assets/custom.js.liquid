@@ -871,7 +871,7 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
         
       }else if(response.code == 422 && response.message == 'validation_error'){
         $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401){
+      }else if(response.code == 401 || response.code == 429){
         $('.otp-login-error').html(response.message);
       }else if(response.code == 406){
         $('.otp-login-error').html('Otp expired.');
@@ -900,6 +900,8 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
       // console.log(response);
       if(response.code == 200){
         
+      }else if(response.code == 429){
+        $('.otp-login-error').html(response.message);
       }else{
         $('.otp-login-error').html('Something went wrong please try again.');
       }
@@ -956,7 +958,7 @@ TimerFunction();
           }
       }else if(response.code == 422 && response.message == 'validation_error'){
         // $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401 || response.code == 404 ){
+      }else if(response.code == 401 || response.code == 404 || response.code == 429 ){
         $('.otp-login-error').html(response.message);
       }
     });
@@ -1084,6 +1086,8 @@ TimerFunction();
           e.preventDefault();
           location.reload();
         })
+      }else if(response.code == 429){
+        $('.otp-login-error').html(response.message);
       }
     });
   }
@@ -1227,6 +1231,8 @@ function verifyotp(session_id, otp, url){
     }else{
       signup_window(session_id);
     }
+    }else if(response.code == 429){
+      $('.otp-login-error').html(response.message);
     }else{
       $('.otp-login-error').html('Something went wrong please try again.');
       clevertap.event.push('Failed Login', {
@@ -1261,6 +1267,8 @@ function otpLogin(phone){
   }else if(response.code == 422 && response.message == 'validation_error'){
     $('.otp-login-error').html('The phone field is required.');
   }else if(response.code == 403 && response.message == 'Invalid phone number'){
+    $('.otp-login-error').html(response.message);
+  }else if(response.code == 429){
     $('.otp-login-error').html(response.message);
   }
   });
