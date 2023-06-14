@@ -2,7 +2,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/ScrollTrigger.min.js"></script>
 
 <div class="image_scroll_trigger_container container">
-  <div class="image_scroll_trigger_top"></div>
   <div class="image_scroll_trigger_inner">
     <div class="image_scroll_trigger_text">
       <h3>
@@ -26,11 +25,11 @@
       {% endfor %}
     </div>
   </div>
-  <div class="image_scroll_trigger_bottom"></div>
 </div>
 
 <script>
-  history.scrollRestoration = "manual"
+  history.scrollRestoration = "manual";
+
   $(window).on('load', function() {
     $('.loop-img').each(function(i) {
       if (i == 0) {
@@ -38,14 +37,14 @@
       }
       $(this).addClass(`loop-${
         i + 1
-      }`)
-      $(this).attr('loop-num', i + 1)
-    })
+      }`);
+      $(this).attr('loop-num', i + 1);
+    });
+
     gsap.registerPlugin(ScrollTrigger);
     var scrollInterval = 0;
     var i = 1;
 
-//     setTimeout(function(){
     gsap.to('.image_scroll_trigger_container', {
       scrollTrigger: {
         trigger: ".image_scroll_trigger_container",
@@ -55,18 +54,17 @@
         end: `+=100%`,
         scrub: true,
         onEnter: self => {
+          console.log('Pinned');
 
-          console.log('Pinned')
+// $('.pin-spacer .image_scroll_trigger_inner').css('top', var(-- header - height));
         }
       }
     });
 
-//     },2500)
-
-    var loopArray = document.querySelectorAll('.loop-img')
+    var loopArray = document.querySelectorAll('.loop-img');
 
     loopArray.forEach(element => {
-      var getLoopNum = parseInt(element.getAttribute('loop-num'))
+      var getLoopNum = parseInt(element.getAttribute('loop-num'));
       gsap.to(`.loop-${i}`, {
         scrollTrigger: {
           trigger: ".image_scroll_trigger_container",
@@ -77,33 +75,40 @@
           }%`,
           scrub: .3,
           onEnter: self => {
-            element.style.opacity = 1;
+            loopArray.forEach(img => {
+              img.style.opacity = img === element
+                ? 1
+                : 0;
+            });
           },
           onEnterBack: self => {
-            element.style.opacity = 1;
+            loopArray.forEach(img => {
+              img.style.opacity = img === element
+                ? 1
+                : 0;
+            });
           },
           onLeave: self => {
-            if (getLoopNum === loopArray.length) {
-              return
-            } else {
-              element.style.opacity = 0;
-            }
+            loopArray.forEach(img => {
+              img.style.opacity = img === element
+                ? 1
+                : 0;
+            });
           },
           onLeaveBack: self => {
-            if (getLoopNum === 1) {
-              return
-            } else {
-              element.style.opacity = 0;
-            }
+            loopArray.forEach(img => {
+              img.style.opacity = img === element
+                ? 1
+                : 0;
+            });
           }
-        },
-
-//             opacity: 1,
+        }
       });
-      scrollInterval = scrollInterval + 5;
+
+      scrollInterval += 5;
       i++;
-    })
-  })
+    });
+  });
 </script>
 
 {% schema %}
