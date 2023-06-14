@@ -1,0 +1,67 @@
+<div class="image_scroll_trigger_container container">
+    <div class="image_scroll_trigger_inner">
+      <div class="image_scroll_trigger_text">
+        <h3>
+          {{ section.settings.title }}</h3>
+        <span class="image_scroll_trigger_subtext">{{ section.settings.subText }}</span>
+        <h1 class="image_scroll_trigger_productTittle">{{ section.settings.productTitle }}</h1>
+        <div class="image_scroll_trigger_discription">{{- section.settings.discription -}}</div>
+      </div>
+      <div class="image_scroll_trigger_image_container">
+        {% if section.settings.image %}
+          <div class="image_scroll_image loop-img">
+            <picture>
+              {% if section.settings.desktop_image %}
+                <source media="(min-width: 769px)" {% render 'image-attributes', image: section.settings.desktop_image, sizes: '700,800,900,1000,1200,1400,1600', ignore_src: true %}>
+              {% endif %}
+              <img {% render 'image-attributes', image: section.settings.image, sizes: '200,300,400,500,600' %}alt="{{section.settings.image.alt}}"width="{{ section.settings.image.width }}">
+            </picture>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  {% schema %}
+    {
+      "name": "Home feature of week",
+      "class": "feature-of-week pt-5 pt-md-0",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop_image",
+          "label": "Desktop image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subText",
+          "label": "Sub Text"
+        }, {
+          "type": "text",
+          "id": "productTitle",
+          "label": "Product Title"
+        }, {
+          "type": "richtext",
+          "id": "discription",
+          "label": "Discription"
+        }
+      ],
+      "presets": [
+        {
+          "category": "Image",
+          "name": "Home feature of week",
+          "settings": {}
+        }
+      ]
+    }
+  {% endschema %}
