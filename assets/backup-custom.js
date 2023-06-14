@@ -332,7 +332,7 @@ let currentURL = location.href;
 let cartStr = "/cart";
 let cartHashStr = "/#cart";
 if (currentURL.indexOf(cartStr) != -1) {
-  location.href = "https://www.boat-lifestyle.com/#cart";
+  location.href = "/#cart";
 }
 if (currentURL.indexOf(cartHashStr) != -1) {
   $(".header__cart").attr("aria-expanded", true);
