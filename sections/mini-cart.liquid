@@ -356,7 +356,10 @@
                     {% assign discount_amount = line_price | minus: floor_price %}
                     {% assign line_item_quantity = line_item.quantity %}
                     {% if line_item_quantity > 0 %}
-                      {% assign discount_amount = discount_amount | times: line_item_quantity %}
+                    {% if section.settings.select_discount_rule == 'line_item' and discount_amount > section.settings.discount_code_max_amount %}
+                    {% assign discount_amount = section.settings.discount_code_max_amount %}
+                    {% endif %}
+                    {% assign discount_amount = discount_amount | times: line_item_quantity %}
                     {% endif %}
                     {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
                   {% endif %}
@@ -384,9 +387,12 @@
             </line-item>
           {%- endfor -%}
           {% if total_discount_amount > 0 %}
+          {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
+            {% assign total_discount_amount = section.settings.discount_code_max_amount %}
+          {% endif %}
             {% if section.settings.show_discount_msg %}
               <small class="discount-info">
-              Get flat <b>₹{% if total_discount_amount < section.settings.discount_code_max_amount %}{{- total_discount_amount -}}{% else %}{{- section.settings.discount_code_max_amount -}}{% endif %}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
+              Get flat <b>₹{{- total_discount_amount -}}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
               </small>
             {% endif %}
          {% else %}
@@ -1033,6 +1039,22 @@ document.addEventListener('cart:updated', (event) => {
         "id": "show_purple_msg",
         "label": "Show Purple Message",
         "default": true
+      },
+      {
+        "type": "select",
+        "id": "select_discount_rule",
+        "label": "select discount rule",
+        "options": [
+          {
+            "value": "line_item",
+            "label": "line item level discount"
+          },
+          {
+            "value": "cart",
+            "label": "cart level discount"
+          }
+        ],
+        "default": "cart"
       },
       {
         "type": "text",
