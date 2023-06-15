@@ -583,32 +583,61 @@
             </p>
           {% endif %}
           {%- if product.tags contains 'prebooking' -%}
-          <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
-            block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
-            data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}"
-            class="prebook product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
-            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}
-            >
-              <span class="atc_btn">
-                <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
-              </span>
-              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                <span class="pdp-btn-price d-lg-none ">
-                  <span class="custom_price_wrapper">
-                    <span class="inclusive_text_content">Inclusive of all Taxes</span>
-                    <span class="mobile_atc_btn">
-                      <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
-                      {% if product.compare_at_price > discounted_price %}
-                      <span class="saved_price">
-                        {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+            {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+              <button id="AddToCart" type="submit" is="loader-button" {% unless
+                block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+                data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}"
+                class="prebook product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+                {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}
+                >
+                  <span class="atc_btn">
+                    <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
+                  </span>
+                  {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                    <span class="pdp-btn-price d-lg-none ">
+                      <span class="custom_price_wrapper">
+                        <span class="inclusive_text_content">Inclusive of all Taxes</span>
+                        <span class="mobile_atc_btn">
+                          <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                          {% if product.compare_at_price > discounted_price %}
+                          <span class="saved_price">
+                            {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                          </span>
+                          {% endif %}
+                        </span>
                       </span>
-                      {% endif %}
+                    </span>
+                  {% endif %}
+                
+              </button>
+            {%- else -%}
+            <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
+              block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
+              data-product-add-to-cart-button data-button-content="{{ 'product.form.pre_order' | t | escape }}"
+              class="prebook product-form__add-button button {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}button--ternary{% else %}{% if block.settings.show_payment_button and template.suffix != 'quick-buy-popover' %}button--secondary{% else %}button--primary{% endif %}{% endunless %} button--full"
+              {% if product_varient.inventory_quantity < settings.sold_out_threshold %}disabled{% endif %}
+              >
+                <span class="atc_btn">
+                  <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
+                </span>
+                {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+                  <span class="pdp-btn-price d-lg-none ">
+                    <span class="custom_price_wrapper">
+                      <span class="inclusive_text_content">Inclusive of all Taxes</span>
+                      <span class="mobile_atc_btn">
+                        <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                        {% if product.compare_at_price > discounted_price %}
+                        <span class="saved_price">
+                          {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                        </span>
+                        {% endif %}
+                      </span>
                     </span>
                   </span>
-                </span>
-              {% endif %}
-            
-          </button>
+                {% endif %}
+              
+            </button>
+            {%- endif -%}
           {% else %}
             {% if product.handle == 'gift-card' %}
               <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
@@ -717,15 +746,23 @@
         {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
           
           {% unless product.tags contains settings.products_offering_freebie %}
-            {% unless product.tags contains "Coming-Soon" %}
-              <h3 class="out_of_stock_msg" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
-                <span>Restocking soon</span>
-              </h3>
-            {% endunless %}
+              {% unless product.tags contains "Coming-Soon" %}
+                <h3 class="out_of_stock_msg only-desktop" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+                  <span>Restocking soon</span>
+                </h3>
+              {% endunless %}
               <div class="amazon-c d-flex align-items-baseline justify-content-between">
                 <button id="BIS_trigger" type="button" class="custom-notify-btn"
                 data-variant-id="{{ product_varient.id }}" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
-                Notify me
+                {% unless product.tags contains "Coming-Soon" %}
+                  <h3 class="out_of_stock_msg mobile-only" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
+                    <span>Restocking soon</span>
+                  </h3>
+                {% endunless %}
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="Layer_2" viewBox="0 0 302.28 336.36" style="fill: white;height: 18px;width: 18px;margin-right: 6px;" class="mobile-only"><g id="Layer_1-2"><path d="m210.02,288.27c-7.01,30.4-32.19,47.18-56.95,48.05-24.37.86-52.78-14.34-61.03-48.05-1.26,0-2.62,0-3.97,0-20.76,0-41.51-.06-62.27.03-10.45.04-18.6-3.99-23.22-13.47-4.6-9.43-2.85-18.21,3.45-26.62,7.34-9.8,14.11-20.01,21.03-30.12,2.9-4.24,4.01-9.05,4-14.2-.04-27.88-.62-55.77.11-83.63,1.35-50.97,25.21-88.28,71.51-109.62,67.97-31.32,149.05,9.56,165.26,82.7,2.04,9.19,2.92,18.8,3.05,28.23.4,27.25.19,54.5.1,81.76-.02,6.11,1.61,11.51,5.15,16.48,7.17,10.08,14.25,20.22,21.31,30.38,5.46,7.86,6.22,16.3,1.98,24.82-4.26,8.55-11.55,13.12-21.09,13.2-21.38.19-42.76.06-64.15.07-1.36,0-2.72,0-4.29,0Zm67.85-24.13c-7.27-10.48-14.09-20.48-21.09-30.35-6.59-9.28-9.73-19.5-9.67-30.9.13-26.87.07-53.75.01-80.62,0-4.12-.21-8.25-.62-12.34-5.9-58.53-64.11-98.11-120.93-82.24-41.59,11.61-70.2,48.8-70.47,91.93-.17,27.87-.1,55.75,0,83.62.04,11.12-3.04,21.14-9.43,30.22-6.4,9.09-12.71,18.25-19.04,27.39-.68.97-1.28,2-2.1,3.29h253.35Zm-160.16,24.29c3.51,13.98,19.62,24.69,35.59,23.8,14.22-.8,29.5-12.53,30.99-23.8h-66.58Z"></path></g></svg>
+                  Notify me
+                </span>
                 </button>
                 <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
