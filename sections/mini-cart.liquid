@@ -348,7 +348,7 @@
                   {% endif %}
                 </div>
               </div>
-              {%- if section.settings.show_discount_msg and line_item.product.tags contains 'onlyforyou' -%}
+
                 {% for tag in line_item.product.tags %}
                   {% if tag contains 'gokwik_min_price_' %}
                     {% assign floor_price = tag | remove: 'gokwik_min_price_'  | plus: 0 %}
@@ -361,11 +361,12 @@
                     {% endif %}
                     {% assign discount_amount = discount_amount | times: line_item_quantity %}
                     {% endif %}
+                    {% comment %} <p> {{ discount_amount }}</p> {% endcomment %}
                     {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
                   {% endif %}
                   
                 {% endfor %}                 
-              {%- endif -%}
+
               
             {% assign data-loop = forloop.index %}
       
@@ -386,6 +387,7 @@
                       {% endfor %}
             </line-item>
           {%- endfor -%}
+          {% comment %} <p class="total_discount_amount">{{ total_discount_amount }}</p> {% endcomment %}
           {% if total_discount_amount > 0 %}
           {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
             {% assign total_discount_amount = section.settings.discount_code_max_amount %}
