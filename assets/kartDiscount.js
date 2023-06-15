@@ -151,7 +151,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
     for (let i = 0; i < df_list.length; i++) {
       if (df_list[i].is_active == 1) {
         var applyCoupun = df_list[i].code;
-        var applyCoupun_heading = df_list[i].heading;
+        var applyCoupun_heading = df_list[i].full_detail;
         applyCoupun_heading = applyCoupun_heading.split('•')[0];
         sessionStorage.setItem('applyCoupun', applyCoupun);
         sessionStorage.setItem('applyCoupun_heading', applyCoupun_heading);
@@ -199,8 +199,8 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
         </svg>
         </div>
               <div class="discount_finder_item_content">
-                  <h6>${df_list[i].heading.split('•')[0]}</h6>
-                  <p>${df_list[i].full_detail}</p>
+                  <h6>${df_list[i].full_detail.split('•')[0]}</h6>
+                  <!-- <p>${df_list[i].full_detail}</p> -->
                   <span>${df_list[i].code}</span>
               </div>
           </div>
