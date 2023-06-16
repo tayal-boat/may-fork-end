@@ -10,7 +10,7 @@
     </header>
     {% for line_item in cart.items %}
       {% assign purple_msg_check = false %}
-        {% if line_item.product.tags contains 'IPurpleU' %}
+        {% if line_item.product.tags contains 'IPurpleUu' %}
           {% assign purple_msg_check = true %}
           
           {% break %}
@@ -348,7 +348,7 @@
                   {% endif %}
                 </div>
               </div>
-              {%- if section.settings.show_discount_msg and line_item.product.tags contains 'onlyforyou' -%}
+
                 {% for tag in line_item.product.tags %}
                   {% if tag contains 'gokwik_min_price_' %}
                     {% assign floor_price = tag | remove: 'gokwik_min_price_'  | plus: 0 %}
@@ -361,11 +361,12 @@
                     {% endif %}
                     {% assign discount_amount = discount_amount | times: line_item_quantity %}
                     {% endif %}
+                    {% comment %} <p> {{ discount_amount }}</p> {% endcomment %}
                     {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
                   {% endif %}
                   
                 {% endfor %}                 
-              {%- endif -%}
+
               
             {% assign data-loop = forloop.index %}
       
@@ -386,10 +387,13 @@
                       {% endfor %}
             </line-item>
           {%- endfor -%}
+          <p class="total_discount_amount">{{ total_discount_amount }}</p>
           {% if total_discount_amount > 0 %}
           {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
             {% assign total_discount_amount = section.settings.discount_code_max_amount %}
           {% endif %}
+
+          <p class="total_discount_amount 2">{{ total_discount_amount }}</p>
             {% if section.settings.show_discount_msg %}
               <small class="discount-info">
               Get flat <b>₹{{- total_discount_amount -}}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
@@ -779,14 +783,24 @@
     </div>
 </div>
     </div>
+
+    <p class="total_discount_amount 4"> {{ total_discount_amount }}</p>
   </cart-drawer>
 
 
 <!--       freebie-offer -->
 {% assign gift-product = collections['freebie-offer'].products[0] %}
 {% assign gift-product_variant = gift-product.variants[0].id %}
-
+<p> {{ total_discount_amount }}</p>
 <script>
+console.log('hiii cart drawer free');
+console.log({{total_discount_amount}}, 'total_discount_amount');
+
+Shopify.cartMessage = `{{section.settings.cart_announcement}}`
+var total_discount_amount = {{ total_discount_amount | json }};
+sessionStorage.setItem('total_discount_amount', total_discount_amount);
+sessionStorage.setItem('offer_discount_code', '{{ section.settings.discount_code }}');
+
   function runDiscount() {
     const cartDiscountCustom = document.querySelector('.discount-info')
     const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
@@ -990,10 +1004,6 @@ $('#mini-cart-form .line-item').each(function() {
 
 });
 
-Shopify.cartMessage = `{{section.settings.cart_announcement}}`
-var total_discount_amount = {{ total_discount_amount | json }};
-sessionStorage.setItem('total_discount_amount', total_discount_amount);
-sessionStorage.setItem('offer_discount_code', '{{ section.settings.discount_code }}');
 
 {% comment %} const checkbox = document.querySelector(".check_container input");
 const message = document.querySelector(".message-container .message");
