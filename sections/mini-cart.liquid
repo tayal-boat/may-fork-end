@@ -387,13 +387,11 @@
                       {% endfor %}
             </line-item>
           {%- endfor -%}
-          <p class="total_discount_amount">{{ total_discount_amount }}</p>
           {% if total_discount_amount > 0 %}
           {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
             {% assign total_discount_amount = section.settings.discount_code_max_amount %}
           {% endif %}
-
-          <p class="total_discount_amount 2">{{ total_discount_amount }}</p>
+          <p class="discount_details" style="display: none;" data-discountAmount="{{ total_discount_amount }}" data-discountCode="{{ section.settings.discount_code }}"></p>
             {% if section.settings.show_discount_msg %}
               <small class="discount-info">
               Get flat <b>₹{{- total_discount_amount -}}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
@@ -783,71 +781,20 @@
     </div>
 </div>
     </div>
-
-    <p class="total_discount_amount 4"> {{ total_discount_amount }}</p>
   </cart-drawer>
 
 
 <!--       freebie-offer -->
 {% assign gift-product = collections['freebie-offer'].products[0] %}
 {% assign gift-product_variant = gift-product.variants[0].id %}
-<p> {{ total_discount_amount }}</p>
 <script>
-console.log('hiii cart drawer free');
-console.log({{total_discount_amount}}, 'total_discount_amount');
-
-Shopify.cartMessage = `{{section.settings.cart_announcement}}`
-var total_discount_amount = {{ total_discount_amount | json }};
-sessionStorage.setItem('total_discount_amount', total_discount_amount);
+Shopify.cartMessage = `{{section.settings.cart_announcement}}`;
+sessionStorage.setItem('total_discount_amount', {{ total_discount_amount | json }});
 sessionStorage.setItem('offer_discount_code', '{{ section.settings.discount_code }}');
 
-  function runDiscount() {
-    const cartDiscountCustom = document.querySelector('.discount-info')
-    const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
-
-    if(cartDiscountCustom) {
-      clickAndApplyCode(cartDiscountCustom)
-    }
-    if(cartDiscountHomeAudio) {
-      clickAndApplyCode(cartDiscountHomeAudio)
-    }
-  }
-  runDiscount()
-
-  function clickAndApplyCode(element) {
-    element.addEventListener('click', function() {
-      console.log(element)
-      const cartDiscountCode = element.querySelector('.cart-code').textContent;
-      const cartDiscountCodeEl = element.querySelector('.cart-code');
-      const discountField = document.querySelector('#af_kd_custom_coupon_text')
-      const discountApplyBtn = document.querySelector('#af_kd_custom_apply_coupon_trigger')
-      const applyMsg = element.querySelector('.apply-msg')
-      const current_date = new Date();
-      current_date.setTime(current_date.getTime());
-      const current_time = current_date.toUTCString();
-      document.cookie = "discount_code='';expires=" + current_time;
-  
-      // Seeting cookie for 24 hrs
-      let next_day = current_date.setTime(current_date.getTime() + (1 * 24 * 60 * 60 * 1000));
-      document.cookie = "discount_code=" + cartDiscountCode + ";expires=" + next_day;
-      {% comment %} applyMsg.textContent = 'Applied!' {% endcomment %}
-      copyToClipboard(cartDiscountCodeEl);
-      {% comment %} discountField.value = cartDiscountCode {% endcomment %}
-      {% comment %} $('#af_kd_custom_apply_coupon_trigger')[0].click() {% endcomment %}
-    })
-  }
-
-  function copyToClipboard(element) {
-    var $temp = $("<input class='copy-field'>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
-    navigator.clipboard.writeText($temp.val())
-    $temp.remove();
-  }
-  Shopify.cartUpdate = function(cartJson){
-    runDiscount()  
-  }
+Shopify.cartUpdate = function(cartJson){
+// Add code which need to run on cart update
+}
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';

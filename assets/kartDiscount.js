@@ -87,18 +87,22 @@ var kartHtml = `<div id="af_cart_page" class="cdThemeSetupV2">
     <input class="afHiddenDiscount" name="discount" type="hidden" value="">
   </div>`;
 window.KDHooks.__handleHTMLCreations_af = function (htmlElem, cartSelectorObj) {
+  // updating html of discount field
   // console.log(kartHtml);
   return kartHtml;
 }
 
 window.KDHooks.__discountFinderClick_ba = function () {
-  // here we can get the discount finder list and use it as required
+  // Preventing discount filder to open on click of view all coupons button
   return false;
 }
 
 window.KDHooks.__postDiscountProcess_af = function (response) {
-  var responseData = JSON.parse(response);
-  console.log(responseData);
+  // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
+ // console.log(response, 'response of __postDiscountProcess_af');
+ var responseData = JSON.parse(response);
+  // var responseData = JSON.parse(response.data.entire_response);
+  // console.log(responseData, 'responseData');
   if (responseData.is_success) {
     var total_discount_amount = sessionStorage.total_discount_amount;
     total_discount_amount = parseInt(total_discount_amount);
@@ -107,7 +111,6 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     var saveAmount = parseFloat(discount_amount);
     var discount_pair = responseData.data.response.formatted_text.discount_pair;
     var discount_code = Object.keys(discount_pair);
-    console.log(cart_amount, 'cart_amount');
     if (total_discount_amount > 0 && total_discount_amount < discount_amount && sessionStorage.offer_discount_code == discount_code[0]) {
       var after_discount = cart_amount - total_discount_amount;
       saveAmount = total_discount_amount;
@@ -119,8 +122,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
-    console.log(`Save Rs ${saveAmount} more on this order`);
-    $('.discountCode_details').html(`Save Rs ${saveAmount} more on this order`);
+    $('.discountCode_details').html(`Rs ${saveAmount} savings with this coupon`);
     $('.custom_kartdiscount_container').addClass('discount_added');
     $('.discountCode_details_container').addClass('show');
     $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="discountCode__remove_btn" onclick="CDSetupInit.removeIndividualCoupon('${discount_code[0]}',this);">Remove</button>`);
@@ -129,9 +131,9 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.discount_error').html('');
   }else if(responseData.is_success == false && responseData.code == "516"){
     var discountCode = responseData.data.discount_code;
-    KDSdk.showError('Coupon code '+ discountCode +' is invalid. Please try another code')
+    KDSdk.showError('Coupon code ' + discountCode + ' is invalid. Please try another code')
   }
-   else {
+  else {
     $('.discount_error').html(responseData.message);
     $('#af_custom_coupon_text').click(function () {
       $(this).val('');
@@ -142,11 +144,14 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     }, 7000);
   }
   responseData = JSON.stringify(responseData);
-  return responseData; // return the modified response back.
+  response = responseData;
+  // response.data.entire_response = responseData;
+  return response; // return the modified response back.
 }
 
 window.KDHooks.__postDiscountFinder_af = function (df_list) {
-  console.log(df_list, 'df_list');  // here we can get the discount finder list and use it as required
+  // here we can get the discount finder list and use it as required
+  // here we are getting the data of active discount code from dicount finder list and updating the content of the dicount finder in cart drawer.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
     for (let i = 0; i < df_list.length; i++) {
       if (df_list[i].is_active == 1) {
@@ -175,13 +180,13 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
       }
     }, 500);
   }
-    console.log(df_list, 'df_list discount finder content');
-      let discountListHtml = '', i ;
-      let discountListContainer = document.querySelector('.discount_finder_body');
-      var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-      if(df_list.length > 0){
-        for (let i = 0; i < df_list.length; i++) {
-          discountListHtml = discountListHtml + `
+  // here we are updating the list of discount codes in discount filder
+  let discountListHtml = '', i;
+  let discountListContainer = document.querySelector('.discount_finder_body');
+  var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
+  if (df_list.length > 0) {
+    for (let i = 0; i < df_list.length; i++) {
+      discountListHtml = discountListHtml + `
           <div class="discount_finder_item">
           <div class="discount_finder_item_details">
           <div class="discount_finder_item_icon">
@@ -208,70 +213,33 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}'), this.innerText = 'Applied', this.classList.add('coupon_applied');" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''}">${preAppliedCoupon == df_list[i].code ? 'Applied' : 'Tap To Apply'}</button>
           </div>
       </div>`
-        }
-        discountListContainer.innerHTML = discountListHtml;
-        // console.log(discountListHtml);
-      }
+    }
+    discountListContainer.innerHTML = discountListHtml;
+  }
 
   return df_list;
 }
 
 var kdDom = document.querySelector('body');
-// kdDom.addEventListener('KD_discountApplyOnComplete',(e)=>{
-//   console.log('Discount Process Complete');
-//   $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="discountCode__remove_btn" onclick="CDSetupInit.removeIndividualCoupon('${sessionStorage.applyCoupun}',this);">Remove</button>`);
-//     $('.custom_kartdiscount_container').attr('couponCode', 'true');
-// });
 kdDom.addEventListener('KD_discountRemoved', (e) => {
-  console.log('Discount code removed');
+  // here we are updating the content of discount field in cart drawer on removal of discount code.
   $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="af_custom_apply_coupon_trigger btn btn--regular btn--color btn--fill tlblbr0" id="af_custom_apply_coupon_trigger" onclick="CDSetupInit.couponApplyClick(this)" style="margin:0;width:100%;max-height:42px;min-height:42px;padding: 8px 31px;">
     <af class="af_after_loading">Apply</af>
   </button>`);
-  // $('.discountCode_details_container').removeClass('show');
   $('.custom_kartdiscount_container').removeAttr('couponCode');
   $('.mini-cart-total-price').show();
   $('.discount_finder_item_cta_btn button').html('Tap To Apply');
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
+  $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
 });
 kdDom.addEventListener('KD_discountFinderClicked', (e) => {
-  console.log('Discount finder clicked');
-
-//   var discount_finder = `
-// <div class="custom-discount-finder">
-//     <div class="discount-finder-header">
-//         <button type="button" class="discount-finder-close"
-//             onclick="document.querySelector('.custom_discount_filder_container').removeAttribute('open_finder');">
-//             <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_40x40.jpg" style="transform: rotate(180deg);">
-//             </button>
-//             <h2 class="custom-discount-finder-heading">Offers for you</h2>
-//     </div>
-//     <div class="discount_finder_coupon_holder">
-//         <div class="finder_discountCode_txtbx_holder">
-//             <input type="text" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Type coupon code here" value="" onkeyup id="af_kd_custom_coupon_text" class="afcd_coupon-inputtext af_custom_coupon_text">
-//         </div>
-//         <div class="discount_finder_btn_holder">
-//             <button type="button" id="af_kd_custom_apply_coupon_trigger" class="discount_finder_apply_btn af_kd_df_apply_coupon_btn af_custom_apply_coupon_trigger" onclick="CDSetupInit.couponApplyClick(this)">
-//                 <af class="af_after_loading">Apply</af>
-//             </button>
-//         </div>
-//     </div>
-//     <div class="discount_finder_header_field_details">
-//     <div id="af_kd_tagged_discounts" class="af_tagged_discounts"></div>
-//     <p id="af_kd_discount_response" class="af_discount_response af_stacked_response" style="text-align:left;"></p>
-//     <input type="hidden" name="discount" class="af_HiddenDiscount" value="">
-//     <div class="afcd_coupon_error"></div>
-//     </div>
-//     <div class="discount_finder_body">
-//     </div>
-// </div>`;
-
-//   $('.custom_discount_filder_container').html(discount_finder);
   if ($('.custom_kartdiscount_container').attr('data-finder') == "true") {
     $('.custom_discount_filder_container').attr('open_finder', true);
   }
 });
 Shopify.KartDiscountHooks = function () {
+  // here we are regulating the condition for opening of discount finder on click of view all coupon button.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
     setTimeout(function () {
       if ($('.custom_kartdiscount_container').attr('data-finder') == "false") {
@@ -285,7 +253,9 @@ Shopify.KartDiscountHooks();
 
 
 Shopify.KartDiscount = function (cartJson) {
-  var total_discount_amount = $('.discount-info').attr('data-total_discount_amount');
+  var total_discount_amount = $('.discount_details').attr('data-discountAmount');
+  var offer_discount_code = $('.discount_details').attr('data-discountCode');
   sessionStorage.setItem('total_discount_amount', total_discount_amount);
+  sessionStorage.setItem('offer_discount_code', offer_discount_code);
   Shopify.KartDiscountHooks();
 }
