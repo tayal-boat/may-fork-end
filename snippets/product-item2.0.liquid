@@ -74,6 +74,11 @@
   {% endif %}
 {% endfor %}
 
+{% comment %} info: marketplace logo {% endcomment %}
+{%- if product.metafields.custom.marketplace_details != blank -%}
+  {%- assign marketplace_details = product.metafields.custom.marketplace_details -%}
+  {%- assign marketplace_name = marketplace_details | split: '-' | first | downcase -%}
+{%- endif -%}
 <product-item
   class="product-item two-point-o {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
   {% if reveal %}
@@ -235,6 +240,17 @@
         {%- if settings.show_product_rating and reduced_content != true -%}
           <span class="product-item-meta__reviews-badge text--small">
             {%- render 'product-rating', product: product -%}
+            {% comment %} info: marketplace logo {% endcomment %}
+            {% comment %} {%- if product.metafields.custom.marketplace_details != blank -%}
+                <div class="mkp_bestseller">
+                  {%- if marketplace_name == 'amazon' -%}
+                    <img src="" loading="lazy" alt="amazon" />
+                  {%- else -%}
+                    <img src="" loading="lazy" alt="flipkart" />
+                  {%- endif-%}
+                  <p class="bestseller">bestseller</p>
+                </div>
+            {%- endif -%} {% endcomment %}
             {% capture swatch_btn %}
           {% if available_variants > 1 and has_color_code %}
             {% unless product.tags contains 'customized' %}

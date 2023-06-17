@@ -1,13 +1,61 @@
 {%- if product.metafields.custom.marketplace_details != blank -%}
+    <style>
+    .users_love{
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 22px;
+        letter-spacing: -0.02em;
+        margin:1rem 0 .5rem 0;
+        display:inline-block;
+    }
+    .marketplace_details{
+        display: flex;
+        align-items: center;
+        background: #D6E7FF;
+        border: 1px dashed #D6E7FF;
+        overflow: hidden;
+        max-width: calc(100vw - 22px);
+        border-radius: 8px;
+        padding: 10px;
+        column-gap:10px
+    }
+    .marketplace_data p {
+        margin: 0;
+        color: #070707;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 22px;
+        letter-spacing: -0.02em;
+    }
+    @media (min-width: 1099px) {
+        .marketplace_details{width:60%;}
+    }
+    </style>
     {%- assign marketplace_details = product.metafields.custom.marketplace_details -%}
-    {%- assign marketplace_name = marketplace_details | split: '-' | first -%}
-    {%- assign marketplace_units_sold = marketplace_details | split: '-' | last -%}
+    {%- assign marketplace_name = marketplace_details | split: '-' | first | downcase -%}
+    {%- assign marketplace_units_sold = marketplace_details | split: '|' | first | split: '-' | last -%}
     {%- assign marketplace_reviews = marketplace_details | split: '|' | last -%}
+    <p class="users_love">User's Love</p>
+    <div class="marketplace_details">
+        <div class="marketplace_logo">
+            {%- if marketplace_name == 'amazon' -%}
+                <img src="" loading="lazy" alt="amazon" />
+            {%- else -%}
+                <img src="" loading="lazy" alt="flipkart" />
+            {%- endif -%}
+        </div>
+        <div class="marketplace_data">
+            {%- if marketplace_name == 'amazon' -%}
+                <p>{{ marketplace_units_sold }}+ units sold on Amazon</p>
+                <p>{{ marketplace_reviews}}+ 5 star reviews</p>
+            {%- else -%}
+                <p>{{ marketplace_units_sold }}+ units sold on Flipkart</p>
+                <p>{{ marketplace_reviews}}+ 5 star reviews</p>
+            {%- endif -%}
+        </div>
+    </div>
+    
 
-    {%- if marketplace_name == 'amazon' -%}
-
-    {%- else -%}
-
-    {%- endif -%}
+    
 {%- endif -%}
 
