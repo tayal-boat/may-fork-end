@@ -918,7 +918,7 @@ here
 {%- endif -%}
 {% capture variantDelivery %}
   {% for variant in product.variants %}
-    "{{ variant.id }}":"{{ variant.metafields.custom.delivery | json }}"
+    "{{ variant.id }}":"{{ variant.metafields.custom.delivery }}"
     {% unless forloop.last %},{% endunless %}
   {% endfor %}
 {%- endcapture -%}
@@ -926,12 +926,12 @@ here
 <script>
   let variantDelivery = {{ variantDelivery }};
   Shopify.variantDelivery = function(varientID){
-    let variantDeliveryTime = variantDelivery[varientID];
-    if((!sessionStorage.pincode_delivery_text || sessionStorage.pincode_delivery_text == '') && (!sessionStorage.pincode_error || sessionStorage.pincode_error == '')){
-      if(variantDeliveryTime !== ''){
-        $('.pincode_details h6').html('Fastest delivery in ' + variantDeliveryTime );
-      }else{$('.pincode_details h6').html('Fastest delivery in 2 days');}
-    }
+  let variantDeliveryTime = variantDelivery[varientID];
+  if((!sessionStorage.pincode_delivery_text || sessionStorage.pincode_delivery_text == '') && (!sessionStorage.pincode_error || sessionStorage.pincode_error == '')){
+  if(variantDeliveryTime !== ''){
+  $('.pincode_details h6').html('Fastest delivery in ' + variantDeliveryTime );
+  }else{$('.pincode_details h6').html('Fastest delivery in 2 days');}
+  }
   }
 </script>
 {%- endif -%}
