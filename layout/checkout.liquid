@@ -932,7 +932,7 @@ li.mobile-nav__item.open collapsible-content {
                   });
                     $('#checkout_shipping_address_phone').attr('maxlength', "11");
                     const URL = window.location.href;
-                    if (!URL.includes('step=shipping_method')) {
+                    if (!URL.includes('step=shipping_method') || !URL.includes('orders') || !URL.includes('thank_you')) {
                         $('.order-summary-toggle').trigger('click');
                     }
                     $(window).keydown(function (event) {
@@ -2904,6 +2904,43 @@ li.mobile-nav__item.open collapsible-content {
           }
         }  
       if(Shopify.Checkout.isOrderStatusPage || Shopify.Checkout.step == "thank_you"){
+        $('.content-box__row:first-child .map, .tracking-info, #myFrame, .os-order-number, .content-box h2, .text-container address ~ h3, .text-container address ~ h3 ~ p, .content-box__row:first-child').hide()
+        const orderNumberDiv = `<p class="new-order-div" style="display: flex;align-items: center;justify-content: space-between;padding: 0;margin-block: 20px;background: red;color: white;padding-block: 10px;margin-inline: -20px;padding-inline: 23px;font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;"><span>Order Id</span><span>{{ order.order_number }}</span></p>`
+        $('.telegram').after(orderNumberDiv);
+        const exclusiveOffersDiv = `<div class="exclusive-offers-div" style="padding-bottom: 10px;border-bottom: 2px solid #ff0000;">
+          <h3 class="off_heading" style="font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;">Exclusive offers unlocked for you</h3><div class="exc-images" style="margin-top:16px;"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/CO_Page.gif?v=1686824409"></div>
+        </div>`
+        $('.new-order-div').after(exclusiveOffersDiv);
+        const customerInfo = `<h3 style="font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: 0.03px;margin-top: 20px">Customer Information</h3>`
+        $('.os-step__description').after(customerInfo)
+        const newElement = $(`<span>&nbsp;</span>`);
+        $('address.address br').replaceWith(newElement);
+        $('.text-container p, .content-box__row--no-border+.content-box__row, .content-box__row:last-child').css('padding-inline', '0')
+        $('.section__content .content-box:last-child').css({
+          'background': '#f7f7f7',
+          'margin-inline': '-20px',
+          'padding-inline': '20px',
+          'border-top': '1px solid #c4c4c4 !important',
+          'border-bottom': '1px solid #c4c4c4 !important',
+          'margin-top': '0px'
+        });
+        $('.section').css('padding-top', '0')
+        const continueShoppingBtn = `<a class='shop_btn' href="https://www.boat-lifestyle.com">Continue Shopping</a>`
+        $('.section>.section__content').append(continueShoppingBtn);
+        $('.shop_btn').css({
+          'display': 'block',
+          'margin-top': '15px',
+          'text-align': 'center',
+          'background': 'black',
+          'color': 'white',
+          'height': '42px',
+          'line-height': '42px',
+          'font-size': '14px',
+          'font-weight': 'bold',
+          'font-stretch': 'normal',
+          'font-style': 'normal',
+          'letter-spacing': '0.03px'
+        })
         $('body').prepend(`<div class="checkout_header" id="checkout_header"></div>`);
         setTimeout(function(){
           $.ajax({
