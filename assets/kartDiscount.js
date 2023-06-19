@@ -270,3 +270,14 @@ Shopify.KartDiscount = function (cartJson) {
   sessionStorage.setItem('offer_discount_code', offer_discount_code);
   Shopify.KartDiscountHooks();
 }
+
+window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
+  // convertedMoneyStr.replace('Rs.', '₹');
+  var unconvertedString_without_decimal = parseInt(extras.unconvertedString);
+  extras.money_format_first = '₹';
+  console.log(unconvertedString_without_decimal, 'unconvertedString_without_decimal');
+  extras.unconvertedString = `${unconvertedString_without_decimal}`;
+  console.log(convertedMoneyStr, 'convertedMoneyStr'); // converted currency string from number
+  console.log(extras, 'extras'); // extra details used to bring out this convertedMoneyStr
+  return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
+}
