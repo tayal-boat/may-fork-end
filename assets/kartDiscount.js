@@ -133,7 +133,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
-    $('.discountCode_details').html(`Rs ${saveAmount} savings with this coupon`);
+    $('.discountCode_details').html(`Rs ${saveAmount} discount applied`);
     $('.custom_kartdiscount_container').addClass('discount_added');
     $('.discountCode_details_container').addClass('show');
     $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="discountCode__remove_btn" onclick="CDSetupInit.removeIndividualCoupon('${discount_code[0]}',this);">Remove</button>`);
