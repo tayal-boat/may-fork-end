@@ -24,7 +24,7 @@
   .footer__item-list {gap: 3vw;}
   .footer .container{background:#eff4f7;max-width:98%;padding:0 20px;}
   p.desktop_menu_link.footer__item-title.heading.heading--small, footer .signup-form .input-block #subscriber-email{color: #000;text-transform: none;}
-  button#btn-back-to-top {display: none;padding: 0.5rem 0.75rem;width: 40px;font-weight: 400!important;border-radius: 0!important;position: fixed;color:white;background-color:black;{% if template contains 'product' or template contains 'collection' %}bottom: 18%!important;{% else %}bottom: 9%;{% endif %}right: 0.1%;align-items: center;z-index:9;}
+  button#btn-back-to-top {display: none;padding: 0.5rem 0.75rem;width: 40px;font-weight: 400!important;border-radius: 0!important;position: fixed;color:white;background-color:black;{% if template contains 'product' or template contains 'collection' %}bottom: 18%!important;{% else %}bottom: 9%;{% endif %}right: 0.1%;align-items: center;z-index:999;}
   .social-media__item--facebook:before {background: #4267B2; }
   .social-media__item--twitter:before{background: #1DA1F2; }
   .social-media__item--instagram:before{background: #E95950; }
@@ -57,7 +57,7 @@
     {% comment %} footer ul.linklist.list--unstyled li:nth-child(odd) {border-right: 1px solid #bcbcbc;} {% endcomment %}
     .footer .container{max-width:95%;}
     footer ul.linklist.list--unstyled li:nth-child(even) {padding-left: 20px;}
-    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #000;border-bottom:1px solid #cad6dd;padding-bottom:10px;width:100%;text-transform:none;font-size: 14px !important;font-weight: 500 !important;border-radius:0!important;}
+    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #000;padding-bottom:10px;width:100%;text-transform:none;font-size: 14px !important;font-weight: 500 !important;border-radius:0!important;}
     .mobile_footer_item_title button:active, .mobile_footer_item_title button:focus{outline: none;}
     {% comment %} .mobile_footer_item_title button span{display: none;} {% endcomment %}
     .mobile_footer_item_title .footer__item-content{display:none;padding:0!important;margin-bottom:2rem;}
@@ -91,6 +91,10 @@
 
   @media screen and (min-width: 767px){
     footer .footer__item{display: block !important;    padding-right: 2rem;}
+  }
+
+  @media screen and (max-width: 767px){
+    button#btn-back-to-top {bottom:unset!important;top:var(--mobilemenuHeightforbtt);}
   }
 
   @media screen and (min-width: 992px){
@@ -172,11 +176,11 @@
 <div class="brand-text text-left mb-4 visually-hidden">
   <p class="brand_content">
     India's fastest growing audio & wearables brand. The most incredible range of
-    <a href="https://www.boat-lifestyle.com/collections/bluetooth-wireless-headphones">wireless earphones</a>,
-    <a href="https://www.boat-lifestyle.com/collections/true-wireless-earbuds">earbuds</a>,
-    <a href="https://www.boat-lifestyle.com/collections/wired-headphones">headphones</a>,
-    <a href="https://www.boat-lifestyle.com/collections/smart-watches">smart watches</a>, and
-    <a href="https://www.boat-lifestyle.com/collections/home-audio">home audio</a>. From workouts to adventures, boAt
+    <a href="/collections/bluetooth-wireless-headphones">wireless earphones</a>,
+    <a href="/collections/true-wireless-earbuds">earbuds</a>,
+    <a href="/collections/wired-headphones">headphones</a>,
+    <a href="/collections/smart-watches">smart watches</a>, and
+    <a href="/collections/home-audio">home audio</a>. From workouts to adventures, boAt
     will get you sailing!
   </p>
 </div>
@@ -310,9 +314,12 @@
             {{- block_content -}}
           </div>
         {%- endif -%}
+        
       {%- endfor -%}
     </div>
-
+    {%- if section.settings.show_footer_filters -%}
+      {%- render 'footer-collection-filters' -%}
+    {%- endif -%}
     <div class="footer__aside footer_section">
       {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
         {%- assign country_selector = true -%}
@@ -459,6 +466,7 @@
           </div>
         {%- endif -%}
       {%- endcomment -%}
+      
       <div class="row mt-4 footer-bottom-row social_app_links">
         <div class="col-lg-12 text-left payment-box">
           <div class="row social--media hidden-phone">
@@ -631,6 +639,17 @@ $('.menu-panel').each(function(i) {
 "class": "shopify-section--footer",
 "max_blocks": 5,
 "settings": [
+  {
+    "type": "checkbox",
+    "id": "show_footer_filters",
+    "label": "Show Footer Filters",
+    "default": true
+  },
+  {
+    "type": "link_list",
+    "id": "filter_menu",
+    "label": "Filter Menu"
+  },
   {
     "type": "image_picker",
     "id": "payment_strip",

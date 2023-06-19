@@ -1,0 +1,86 @@
+ 
+  <style>
+    .shopify-section--collection.page-tabs .tabs-nav__item.heading.heading--small{
+    border-radius: 17px!important;background-color: #ecf0f4;
+    font-size: 12px!important;font-weight: 600!important;letter-spacing: -.48px;color: #1a2024;padding: 8px 16px;
+    }
+    .shopify-section--collection.page-tabs .tabs-nav__item.heading.heading--small[aria-expanded=true]{
+      color: white;background-color: #1a2024;
+    }
+    @media screen and (min-width: 768px) {
+        .shopify-section--collection.page-tabs{display:none;}
+    }
+  </style>
+  
+  <section class="container mt-4">
+
+          {%- if section.blocks.size > 1 -%}
+            <tabs-nav class="tabs-nav tabs-nav--center tabs-nav--edge2edge">
+              <scrollable-content class="tabs-nav__scroller hide-scrollbar">
+                <div class="tabs-nav__scroller-inner">
+                  <div class="tabs-nav__item-list">
+                    {%- for block in section.blocks -%}
+                      {%- capture on_boarding_title -%}
+                        {{ 'general.onboarding.collection_title' | t }}
+                        {{ forloop.index }}
+                      {%- endcapture -%}
+  
+                      <a
+                        type="button"
+                        class="tabs-nav__item heading heading--small ml-0"
+                        aria-expanded="{% if block.settings.collection.handle == collection.handle %}true{% else %}false{% endif %}"
+                        href="{{ block.settings.collection.handle }}"
+                        {{ block.shopify_attributes }}
+                      >
+                        {{-
+                          block.settings.label | default: block.settings.collection.title | default: on_boarding_title
+                        -}}
+                      </a>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </scrollable-content>
+            </tabs-nav>
+          {%- endif -%}
+
+  </section>
+
+  {% schema %}
+  {
+    "name": "collection page tabs",
+    "class": "shopify-section--collection page-tabs",
+    "max_blocks": 8,
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+          },
+          {
+            "type": "text",
+            "id": "label",
+            "label": "Tab label",
+            "info": "Shown when more than 1 collection is featured. Collection title is used if none is set."
+          }
+        ]
+      }
+    ],
+    "settings": [],
+    "presets": [
+      {
+        "name": "collection page tabs",
+        "blocks": [
+          {
+            "type": "collection"
+          }
+        ],
+        "settings": {}
+      }
+    ]
+  }
+  {% endschema %}
+  
