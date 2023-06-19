@@ -1491,67 +1491,67 @@ $('.mobile-otp-inout').click(function(){
   //   });
   // }
   
-$(document).on("click", ".custom-offer-add-to-cart", function(e) {
-  e.preventDefault();
-  let offerForm = $(this).parents("form")[0];
-  let offerId = offerForm.querySelector('[name="id"]').value;
-  let offerVariantData = sessionStorage.getItem('variantQtys');
-  let OfferProperty= [];
-  let varient_pod_units = [];
-  let podData = {};
-  offerVariantData = JSON.parse(offerVariantData);
-    for (var key in offerVariantData) {
-     if (offerVariantData.hasOwnProperty(offerId)) {
-      let OfferPropertyArr = offerVariantData[offerId];
-       OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
-       varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
-       break;
-      }
-    }
-  let varient_pod_unit = varient_pod_units[0];
-  varient_pod_unit = parseInt(varient_pod_unit);
-  OfferProperty = OfferProperty[0];
-  if(varient_pod_unit > 0){
-   podData = {'quantity': 1,'id': offerId,'properties': {'_POD': OfferProperty }}
-  }else{
-   podData = {'quantity': 1,'id': offerId} 
-  }
-    if($(this).hasClass( "algolia_pod_offer" )){
-      $.ajax({
-        url: "/cart/add.js",
-        dataType: "json",
-        cache: !1,
-        type: "post",
-        data: podData,
-        success: function(e) {
-            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
-                bubbles: !0
-            }));
-            setTimeout(function() {
-              Shopify.cart_item_count();
-          }, 1500)
-            // console.log('hiii');
-            document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex')
-        }
-    })
-    }else{
-      $.ajax({
-        url: "/cart/add.js",
-        dataType: "json",
-        cache: !1,
-        type: "post",
-        data: podData,
-        success: function(e) {
-            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
-                bubbles: !0
-            }));
-            setTimeout(function() {
-              Shopify.cart_item_count();
-          }, 1500)
-        }
-    })
-    }
-});
+// $(document).on("click", ".custom-offer-add-to-cart", function(e) {
+//   e.preventDefault();
+//   let offerForm = $(this).parents("form")[0];
+//   let offerId = offerForm.querySelector('[name="id"]').value;
+//   let offerVariantData = sessionStorage.getItem('variantQtys');
+//   let OfferProperty= [];
+//   let varient_pod_units = [];
+//   let podData = {};
+//   offerVariantData = JSON.parse(offerVariantData);
+//     for (var key in offerVariantData) {
+//      if (offerVariantData.hasOwnProperty(offerId)) {
+//       let OfferPropertyArr = offerVariantData[offerId];
+//        OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+//        varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+//        break;
+//       }
+//     }
+//   let varient_pod_unit = varient_pod_units[0];
+//   varient_pod_unit = parseInt(varient_pod_unit);
+//   OfferProperty = OfferProperty[0];
+//   if(varient_pod_unit > 0){
+//    podData = {'quantity': 1,'id': offerId,'properties': {'_POD': OfferProperty }}
+//   }else{
+//    podData = {'quantity': 1,'id': offerId} 
+//   }
+//     if($(this).hasClass( "algolia_pod_offer" )){
+//       $.ajax({
+//         url: "/cart/add.js",
+//         dataType: "json",
+//         cache: !1,
+//         type: "post",
+//         data: podData,
+//         success: function(e) {
+//             document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+//                 bubbles: !0
+//             }));
+//             setTimeout(function() {
+//               Shopify.cart_item_count();
+//           }, 1500)
+//              console.log('hiii');
+//             document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex')
+//         }
+//     })
+//     }else{
+//       $.ajax({
+//         url: "/cart/add.js",
+//         dataType: "json",
+//         cache: !1,
+//         type: "post",
+//         data: podData,
+//         success: function(e) {
+//             document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+//                 bubbles: !0
+//             }));
+//             setTimeout(function() {
+//               Shopify.cart_item_count();
+//           }, 1500)
+//         }
+//     })
+//     }
+// });
 
 
 
@@ -2216,15 +2216,15 @@ $(this).hasClass('expand') ? ($(this).children('.view-all').text('Expand Less'),
 //   $('button[aria-controls="facet-filter-filter.p.m.custom.category"]').closest('.product-facet__filter-item').siblings('.product-facet__filter-item').find('button[aria-controls="facet-filter-filter.v.m.custom.sprinklr_color"]').attr('aria-expanded', true)
 // }
 
-});
+
 
 $.ajax({
   type: "GET",
   url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Validate_Words_-_Sheet1.csv?v=1686812344",
   dataType: "text",
   success: function(data) {
-  var Validate_Words = data.split(/\r\n|\n/);
-      console.log(Validate_Words);
+   var Validate_Words = data.split(/\r\n|\n/);
+     //  console.log(Validate_Words);
       for (var i = 0; i < Validate_Words.length; i++) {
         Validate_Words[i] = Validate_Words[i].toUpperCase();
       }
@@ -2265,72 +2265,64 @@ $.ajax({
       let str=""
       const imageText=document.querySelector(".personalization-image-txt");
       $(document).ready(function(){
-        if(url.includes("&personalizenow")){
-          setTimeout(() => {
-            $('.custom-prebook')[0].click()
-          }, 1000)
-        }
+        // if(url.includes("&personalizenow")){
+        //   setTimeout(() => {
+        //     $('.custom-prebook')[0].click()
+        //   }, 1000)
+        // }
         if(url.includes("&personalized")){
           personalizationSubmitBtn.classList.remove('visually-hidden')
          }
       })
+
+
     if(personalizedText){
-      // Disable copy and paste events
-      personalizedText.addEventListener('cut', (e) => {
-        e.preventDefault();
-      });
 
-      personalizedText.addEventListener('copy', (e) => {
-        e.preventDefault();
-      });
+      // Disable  paste events
+      personalizedText.addEventListener('paste', (e) => {e.preventDefault();});
 
-      personalizedText.addEventListener('paste', (e) => {
-        e.preventDefault();
-      });
-      const maxCharacters = 8;
-
-      personalizedText.addEventListener('input', (e) => {
-        let inputValue = e.target.value;
-        // Remove characters that are not alphanumeric or white space
-        inputValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
-        // Limit the input to the maximum number of characters
-        inputValue = inputValue.slice(0, maxCharacters);
-        e.target.value = inputValue;
-        document.querySelector('.personalization-error-mes').classList.add('visually-hidden');
-      });
-      function convertToUppercase() {
-        personalizedText.value = personalizedText.value.toUpperCase();
-        if(personalizedText.value.length === 7) {
-          errorMsg.classList.remove('visually-hidden')
-        } else {
-          errorMsg.classList.add('visually-hidden')
-        }
+      personalizedText.addEventListener("keyup",()=>{
+        setTimeout(()=>{
+          imageText.innerHTML= currentInputValue ? `<span>${currentInputValue.toUpperCase()}</span>`: '';
+          console.log(currentInputValue)
+        },2000);
         if(personalizedText.value.length >= 1) {
           personalizationSubmitBtn.classList.remove('visually-hidden')
         } else {
           personalizationSubmitBtn.classList.add('visually-hidden')
         }
-      }
+      })
+
+      const maxCharacters = 8;
+      personalizedText.addEventListener('input', (e) => {
+        let inputValue = e.target.value;
+        // Remove characters that are not alphanumeric or white space
+        inputValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
+        inputValue = inputValue.toUpperCase();
+        // Limit the input to the maximum number of characters
+        inputValue = inputValue.slice(0, maxCharacters);
+        e.target.value = inputValue;
+        document.querySelector('.personalization-error-mes').classList.add('visually-hidden');
+      });
+
       
-      {% comment %} if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+      {% comment %}
+       if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
         customHeading.innerHTML=``;
         customSubHeading.innerHTML=`Your Engraving <span class="edit-red">| Edit</span> <br> ${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`;
-      } {% endcomment %}
+      } 
+      {% endcomment %}
+      
       personalizedText.addEventListener("keydown",(e)=>{
         if(e.keyCode==8){
         str=personalizedText.value.slice(0,personalizedText.value.length-1);
         currentInputValue=str;
         }
       })
-      personalizedText.addEventListener("keyup",()=>{
-        setTimeout(()=>{
-          imageText.innerHTML= currentInputValue ? `<span>${currentInputValue.toUpperCase()}</span>`: '';
-          console.log(currentInputValue)
-        },2000)
-      })
+
       function openPersonalizationModal() {
           personalizationModalOverlay.classList.remove('hide')
-          personalizationModal.classList.remove('hide-popup',"hide")
+          personalizationModal.classList.remove("hide")
           document.body.classList.add('noScroll');
            if(url.includes("&personalized")){
             personalizedText.value=currentInputValue.toUpperCase();
@@ -2341,19 +2333,16 @@ $.ajax({
             errorMsg.classList.add('visually-hidden')
           }
           
-          {% comment %} if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
+          {% comment %}
+           if(sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))) {
             personalizedText.focus()
             personalizedText.value = `${sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"))}`
-          } {% endcomment %}
-          if(personalizedText.value.length >= 1) {
-            personalizationSubmitBtn.classList.remove('visually-hidden')
-          } else {
-            personalizationSubmitBtn.classList.add('visually-hidden')
-          }
+          } 
+          {% endcomment %}
       }
       function closePersonalizationModal() {
           personalizationModalOverlay.classList.add('hide')
-          personalizationModal.classList.add('hide-popup',"hide")
+          personalizationModal.classList.add("hide")
           document.body.classList.remove('noScroll')
       }
       function btnClick() {
@@ -2381,11 +2370,13 @@ $.ajax({
       (()=>{
 
         if(!url.includes("&personalized")){
-          personalizationModal.classList.add("hide-popup","hide");
+          personalizationModal.classList.add("hide");
           $('.personilaztion-message-modal .skip-personalization').removeClass('d-none');
           personalizationModalOverlay.classList.add("hide");
           personalizedText.value="";
         }else{
+          personalizationModal.classList.remove("hide");
+          personalizationModalOverlay.classList.remove("hide");
           $('.personilaztion-message-modal .skip-personalization').addClass('d-none');
           if(pmsg){
             personalizedText.value=pmsg.toUpperCase();
@@ -2396,8 +2387,6 @@ $.ajax({
           }else{
             currentInputValue="";
           }
-          personalizationModal.classList.remove("hide-popup");
-          personalizationModalOverlay.classList.remove("hide");
         }
       })()
       function storePersonalizedMessage(){
@@ -2467,3 +2456,4 @@ $.ajax({
         // closePersonalizationModal()
       })
     }
+  });
