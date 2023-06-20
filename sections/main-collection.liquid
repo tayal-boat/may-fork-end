@@ -135,7 +135,7 @@ label.popover__choice-item {position: relative;padding: 10px;margin: 8px 0!impor
 label.popover__choice-item:has(input[checked="checked"]) {border-radius: 10px;border: solid 1px #399a7d; background-color: #ddeee9;}
 label.popover__choice-item:has(input[checked="checked"]):after {content: '✓';font-weight: 700;position: absolute;transform: rotate(10deg);right: 16px;}
 [dir=ltr] product-facet .drawer__close-button{top: 12px;}
-sort-by-popover .popover__title.heading.h6 {margin-top: 8px;font-size: 18px;font-weight: 600; color: #1a2024;text-transform: capitalize;}
+sort-by-popover .popover__title.heading.h6 {margin-top: 8px;font-size: 18px;font-weight: 600; color: #1a2024;text-transform: capitalize;display:block;}
 sort-by-popover .popover__header{border-radius: 0;}
 sort-by-popover button.popover__close-button.tap-area.tap-area--large {background-color: #d0d9de;padding: 8px;top: 16px;right: 16px;}
 span.product-facet__sort-by-title.text--subdued {font-size: 14px; font-weight: 700;color: #1a2024;}
@@ -150,9 +150,10 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 
 
 /* Collection Filter */
+.product-facet__active-list .tag{background:#EFF4F7!important;;border-radius:20px;}
 .product-facet__filters .product-facet__filter-list{height:100%;position:relative;overflow-y:auto}
 .product-facet__filters collapsible-content{position:absolute;top:0;left:36%;background:#fff;overflow-y:auto!important;padding:10px 0 24px;width:64%;height: 100%!important;}
-.product-facet__filters .checkbox-input{padding-right:12px}
+.product-facet__filters .checkbox-input{padding-right:12px;width:10%;}
 .product-facet__filters .drawer__content{padding:0;overflow:hidden;background: #f7f9fa;z-index:1}
 .product-facet__filters .collapsible-toggle svg.icon.icon--chevron{display:none}
 .product-facet__filters{top:0;background:white;border-width:0}
@@ -162,12 +163,12 @@ ol.breadcrumb__list>:last-child { font-weight: normal;}
 .product-facet__filters .collapsible-toggle[aria-expanded=true]::after {content: '';position: absolute;left: 0;width: 4px;height: 100%;background: #399a7d;}
 sort-by-popover#sort-by-popover .popover__content {padding-top: 0;}
 .product-facet__filters .checkbox-color-swatch{width:15px;height:15px;border-radius:50%;margin-right:5px;border:1px solid #bdbdbd}
-.product-facet__filters .checkbox-container{justify-content:space-between;margin-top:20px!important}
-.product-facet__filters .checkbox-lable{display:flex;align-items:center}
+.product-facet__filters .checkbox-container{justify-content:space-between;margin-top:20px!important;flex-direction: row-reverse;}
+.product-facet__filters .checkbox-lable{display:flex;align-items:center;width: 90%;}
 .product-facet__filters .checkbox-lable label{font-weight:500;font-size:14px;line-height:17px;margin:0;color: #4e5358;}
 .checkbox-container:has(.checkbox:checked) label{font-weight:600!important;color: #1a2024;}
 .product-facet__filters .checkbox-lable .checkbox{background:#f8f8f8;border:1px solid #bdbdbd;border-radius:2px}
-.product-facet__filters .checkbox-input span{font-weight:500;font-size:13px;line-height:15px;color:#4e5358;margin-right:5px}
+.product-facet__filters .checkbox-input span{font-weight:500;font-size:13px;line-height:15px;color:#4e5358;margin-right:5px;display:none;}
 .product-facet__filters .checkbox-container:first-child{margin:0!important}
 .product-facet__filters .drawer__header_inner{display:flex;width:100%;}
 .product-facet__filters .drawer__title svg{margin-right:5px}
@@ -296,7 +297,11 @@ nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone{display:none}
                 <div class="popover-container">
                   {%- for option in collection.sort_options -%}
                     {%- if option.value == collection_sort_by -%}
-                      {%- assign collection_sort_by_name = option.name -%}
+                      {%- if option.name == 'Date, new to old' -%}
+                        {%- assign collection_sort_by_name = 'New Arrivals' -%}
+                      {%- else -%}
+                        {%- assign collection_sort_by_name = option.name -%}
+                      {%- endif -%}
                       {%- break -%}
                     {%- endif -%}
                   {%- endfor -%}
@@ -326,7 +331,12 @@ nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone{display:none}
                           {% unless sort_option.value contains 'created-ascending' or sort_option.value contains 'created-descending' %}
                            <label class="popover__choice-item">
                              <input type="radio" data-bind-value="sort-by-selected-value" class="visually-hidden" {% if sort_option.value == collection_sort_by %}checked="checked"{% endif %} name="sort_by" value="{{ sort_option.value }}" title="{{ sort_option.name }}">
-                             <span class="popover__choice-label">{{ sort_option.name }}</span>
+                             <span class="popover__choice-label">
+                              {%- assign sort_option_name = sort_option.name -%}
+                              {%- if sort_option.name == 'Date, new to old'-%}
+                                {%- assign sort_option_name = 'New Arrivals' -%}
+                              {%- endif -%}
+                              {{ sort_option_name }}</span>
                            </label>
                           {% endunless %}
                         {%- endfor -%}
