@@ -268,18 +268,6 @@
                     {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                     {%- assign allow_more = false -%}
                   {%- endif -%}
-                  {% if line_item.product.tags contains 'customized-test' %}
-                    {% for p in line_item.properties %}
-                      {% if p.last != blank and p.first == 'PersonalisedMessage' %}
-                        <line-note class="customise-accordian" line={{ forloop.index }}>
-                          <span>1 customization</span>
-                          <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
-                        </line-note>
-                      {% elsif p.last == blank and p.first == 'PersonalisedMessage' %}
-                        {% comment %} <a href="{{line_item.url | append: '&personalizenow'}}" class="add-customization">Customize</a> {% endcomment %}
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
                   <line-item-quantity class="line-item__quantity">
                     <div class="quantity-selector">
                       <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
@@ -326,7 +314,18 @@
                     </div>
                   {% comment %} <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a> {% endcomment %}
                   </line-item-quantity>
-
+                  {% if line_item.product.tags contains 'customized-test' %}
+                    {% for p in line_item.properties %}
+                      {% if p.last != blank and p.first == 'PersonalisedMessage' %}
+                        <line-note class="customise-accordian mt-2" line={{ forloop.index }}>
+                          <span>1 customization</span>
+                          <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
+                        </line-note>
+                      {% elsif p.last == blank and p.first == 'PersonalisedMessage' %}
+                        {% comment %} <a href="{{line_item.url | append: '&personalizenow'}}" class="add-customization">Customize</a> {% endcomment %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
                 </div>
 
                   {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
