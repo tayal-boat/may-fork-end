@@ -571,7 +571,7 @@
                     IMPLEMENTATION NOTE: Depending on the device we show a different icon or open a different mode (either popover or drawer)
                   {%- endcomment -%}
                   <div class="product-item__quick-form  {% if product.available and product.tags contains 'flash-sale' %}flash{% endif %}">
-                    {% if product.tags contains 'customized-test' %}
+                    {% if product.tags contains 'customized' %}
                       <a
                         href="{{ product.url}}"
                         is="loader-button"
@@ -594,7 +594,8 @@
                         aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
                         aria-expanded="false"
                         class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone"
-                      >
+                      {%- if product.tags contains 'customized-test' -%} onclick="setTimeout(function(){Shopify.personalizedText()},1000);"{%- endif -%}
+                        >
                         {%- if product.tags contains 'prebooking' -%}
                           {{- 'product.form.pre_order' | t -}}
                         {% else %}

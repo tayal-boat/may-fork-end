@@ -650,7 +650,7 @@
                 {% endif %}
               </button>
             {% else %}
-  {%- if product.tags contains 'customized-test' and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
+              {%- if product.tags contains 'customized-test' -%}
               <!-- {% capture itemTags %}
                 {% for item in cart.items %}
                   {{ item.product.tags }},
@@ -813,6 +813,12 @@
     </product-payment-container>
     {%- endform -%}
     
+    {% if product.tags contains 'customized-test' %}
+    <div class="personalised-modal">
+      {%- render 'personalised-modal' -%}
+      </div>
+    {% endif %}
+
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
       <div class="pincode_checker_box" data-role="additonal-info">
         {% if product.available %}
@@ -827,10 +833,6 @@
           {% comment %} <div class="price-container p-lg-0 mb-2">
             {% render 'product-payment-partner' %}
           </div> {% endcomment %}
-        {% endif %}
-
-        {% if product.tags contains 'customized-test' %}
-          {%- render 'personalised-modal' -%}
         {% endif %}
 
         {%- if section.settings.enable_rush_plus and product.available -%}
