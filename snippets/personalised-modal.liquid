@@ -11,8 +11,12 @@
     <div class="message-form-container">
       <div class="personalization-heading-wrapper">
         <span class="personalized-modal-close" id="close-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
-            <path d="M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24">
+            <path d="M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z" />
           </svg>
         </span>
         <span class="personalization-heading">PERSONALIZE YOUR AIRDOPES</span>
@@ -32,8 +36,7 @@
         placeholder="YOUR ENGRAVING"
         maxlength="7"
         autocomplete="off"
-        onkeyup=""
-      >
+        onkeyup="">
       <p class="max-limit-reached visually-hidden">Max Limit reached</p>
       <p class="personalization-error-mes visually-hidden"></p>
       <div class="personalization-info">
@@ -42,22 +45,25 @@
       </div>
       <button type="button" class="submit-personalization visually-hidden">CONFIRM</button>
       {% comment %} <button type="button" class="cancel-personalization personalized-modal-close">SKIP</button> {% endcomment %}
-      <button type="button" class="skip-personalization" onclick="btnClick()">SKIP PERSONALIZATION</button>
+      <button type="button" class="skip-personalization">SKIP PERSONALIZATION</button>
     </div>
   </div>
 </div>
 {% capture variant_personalization %}
   {
   {% for variant in product.variants %}
-  "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}{{ variant.metafields.custom.personalised_image | strip_newlines }}{% else %}{{ variant.featured_image | image_url }}{% endif %}"
+    "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}
+      {{ variant.metafields.custom.personalised_image | strip_newlines }}
+    {% else %}
+      {{ variant.featured_image | image_url }}{% endif %}"
     {% unless forloop.last %}
       ,
     {% endunless %}
   {% endfor %}
-  } 
+  }
 {% endcapture %}
 <script>
-let variant_personalization = {{ variant_personalization }};
-variant_personalization = JSON.stringify(variant_personalization);
-sessionStorage.setItem('variant_personalization', variant_personalization);
+  let variant_personalization = {{ variant_personalization }};
+  variant_personalization = JSON.stringify(variant_personalization);
+  sessionStorage.setItem('variant_personalization', variant_personalization);
 </script>
