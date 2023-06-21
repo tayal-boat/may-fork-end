@@ -221,7 +221,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               </div>
           </div>
           <div class="discount_finder_item_cta_btn">
-              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}'), this.innerHTML = '<span>Applied</span>', this.classList.add('coupon_applied');" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
+              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}')" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''} ${df_list[i].code}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
           </div>
       </div>`
     }
@@ -243,6 +243,14 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
+});
+kdDom.addEventListener('KD_validDiscountApplied',(e)=>{
+  // let discountCode = e.detail;
+  var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
+  console.log(preAppliedCoupon);
+  console.log(e);
+  $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).html('<span>Applied</span>');
+  $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).addClass('coupon_applied');
 });
 kdDom.addEventListener('KD_discountFinderClicked', (e) => {
   if ($('.custom_kartdiscount_container').attr('data-finder') == "true") {
@@ -284,11 +292,11 @@ Shopify.KartDiscount = function (cartJson) {
 // }
 
 window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
-//console.log("before convert: ", convertedMoneyStr); // converted currency string from number
+console.log("before convert: ", convertedMoneyStr); // converted currency string from number
 var finalAmount = extras.finalAmount;
     finalAmount = finalAmount.replace('.00','');
 extras.money_format_first = "₹";
 convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
-//console.log("after convert: ", convertedMoneyStr);
+console.log("after convert: ", convertedMoneyStr);
 return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
 }
