@@ -110,7 +110,7 @@ window.KDHooks.__discountFinderClick_ba = function () {
 
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
- // console.log(response, 'response of __postDiscountProcess_af');
+  // console.log(response, 'response of __postDiscountProcess_af');
  var responseData = JSON.parse(response);
   // var responseData = JSON.parse(response.data.entire_response);
   // console.log(responseData, 'responseData');
@@ -133,7 +133,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
-    $('.discountCode_details').html(`Rs ${saveAmount} savings with this coupon`);
+    $('.discountCode_details').html(`Rs ${saveAmount} discount applied`);
     $('.custom_kartdiscount_container').addClass('discount_added');
     $('.discountCode_details_container').addClass('show');
     $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="discountCode__remove_btn" onclick="CDSetupInit.removeIndividualCoupon('${discount_code[0]}',this);">Remove</button>`);
@@ -221,7 +221,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               </div>
           </div>
           <div class="discount_finder_item_cta_btn">
-              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}'), this.innerText = 'Applied', this.classList.add('coupon_applied');" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''}">${preAppliedCoupon == df_list[i].code ? 'Applied' : 'Tap To Apply'}</button>
+              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}'), this.innerHTML = '<span>Applied</span>', this.classList.add('coupon_applied');" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
           </div>
       </div>`
     }
@@ -239,7 +239,7 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   </button>`);
   $('.custom_kartdiscount_container').removeAttr('couponCode');
   $('.mini-cart-total-price').show();
-  $('.discount_finder_item_cta_btn button').html('Tap To Apply');
+  $('.discount_finder_item_cta_btn button').html('<span>Tap To Apply</span>');
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
@@ -269,4 +269,26 @@ Shopify.KartDiscount = function (cartJson) {
   sessionStorage.setItem('total_discount_amount', total_discount_amount);
   sessionStorage.setItem('offer_discount_code', offer_discount_code);
   Shopify.KartDiscountHooks();
+}
+
+// window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
+//   // convertedMoneyStr.replace('Rs.', '₹');
+//   var unconvertedString_without_decimal = parseInt(extras.unconvertedString);
+//   extras.money_format_first = '₹';
+//   // console.log(unconvertedString_without_decimal, 'unconvertedString_without_decimal');
+//   // extras.unconvertedString = `${unconvertedString_without_decimal}`;
+//   convertedMoneyStr = extras.money_format_first + extras.finalAmount + extras.money_format_second;
+//   console.log(convertedMoneyStr, 'convertedMoneyStr'); // converted currency string from number
+//   console.log(extras, 'extras'); // extra details used to bring out this convertedMoneyStr
+//   return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
+// }
+
+window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
+//console.log("before convert: ", convertedMoneyStr); // converted currency string from number
+var finalAmount = extras.finalAmount;
+    finalAmount = finalAmount.replace('.00','');
+extras.money_format_first = "₹";
+convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
+//console.log("after convert: ", convertedMoneyStr);
+return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
 }
