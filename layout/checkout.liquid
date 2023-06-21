@@ -819,7 +819,8 @@ li.mobile-nav__item.open collapsible-content {
     height: unset !important;
 }
 }
-.total-line.total-line--shipping {
+{% comment %} Thank You Page Revamp CSS begins {% endcomment %}
+.thank-you-page .total-line.total-line--shipping {
   display: inline-flex;
     flex-direction: row-reverse;
     align-items: center;
@@ -830,22 +831,47 @@ li.mobile-nav__item.open collapsible-content {
     padding: 5px 15px;
     border-radius: 5px;
 }
-.total-line.total-line--shipping .total-line__name{
+.thank-you-page .total-line.total-line--shipping .total-line__name{
   padding-top: 0!important;
 }
-.total-line.total-line--shipping .total-line__price {
+.thank-you-page .total-line.total-line--shipping .total-line__price {
   padding-left: 0;
   margin-right: 5px;
   padding-top: 0!important;
 }
-.total-line.total-line--shipping .total-line__price span {
+.thank-you-page .total-line.total-line--shipping .total-line__price span {
   color: white!important;
 }
-.text-container p{color:#969696}
+.thank-you-page .text-container p{color:#969696}
+.thank-you-page .total-line__name.payment-due-label, .thank-you-page .total-line__price.payment-due{padding-top:1rem!important;}
+.thank-you-page .total-line__name.payment-due-label:before, .thank-you-page .total-line__price.payment-due:before{content:none!important;}
+.thank-you-page .order-summary-toggle__icon-wrapper{
+  width: 20px;
+  display: inline-block!important;
+  vertical-align: -webkit-baseline-middle;
+  padding-right: 5px;
+}
+.thank-you-page .order-summary-toggle__icon-wrapper img{display:block}
 @media (min-width:1300px) {
-  .new-order-div{margin-inline:0!important;}
-  .os-header__hanging-icon{position:static;transform:none!important;}
+  .thank-you-page .new-order-div{margin-inline:0!important;}
+  .thank-you-page .os-header__hanging-icon{position:static;transform:none!important;}
+  .thank-you-page .content-box__row:last-child .section__content{display:flex;flex-direction:column;}
+  .thank-you-page .content-box__row:last-child .section__content .section__content__column--half{width:100%;}
+  .thank-you-page .content-box__row:last-child .section__content .section__content__column--half:last-child{padding-inline:0;margin-top:20px;}
+  .thank-you-page .policy-list{
+    display: flex;
+    justify-content: space-between;
   }
+  .thank-you-page .policy-list .policy-list__item{
+    display:block;
+    width:100%;
+    margin: 0;
+  }
+  .thank-you-page .policy-list .policy-list__item:not(:last-child){border-right:1px solid #696969;}
+  }
+@media (max-width:768px) {
+  .thank-you-page .section__content .content-box:last-child{margin-inline:-20px!important;}
+}
       </style>
       <!-- Single Checkout Page Styling Engs -->
     </head>
@@ -2931,10 +2957,11 @@ li.mobile-nav__item.open collapsible-content {
           }
         }  
       if(Shopify.Checkout.isOrderStatusPage || Shopify.Checkout.step == "thank_you"){
+        $('body').addClass('thank-you-page')
         {% comment %} info: Add CSS to thank you/orders page {% endcomment %}
 
         
-        $('.content-box__row:first-child .map, .tracking-info, #myFrame, .os-order-number, .content-box h2, .text-container address ~ h3, .text-container address ~ h3 ~ p, .content-box__row:first-child').hide()
+        $('.content-box__row:first-child .map, .tracking-info, #myFrame, .os-order-number, .content-box h2, .text-container address ~ h3, .text-container address ~ h3 ~ p, .content-box__row:first-child,.total-line.total-line--subtotal').hide()
         const orderNumberDiv = `<p class="new-order-div" style="display: flex;align-items: center;justify-content: space-between;padding: 0;margin-block: 20px;background: red;color: white;padding-block: 10px;margin-inline: -20px;padding-inline: 23px;font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;"><span>Order Id</span><span>#{{ order.order_number }}</span></p>`
         $('.telegram').after(orderNumberDiv);
         const exclusiveOffersDiv = `<div class="exclusive-offers-div" style="padding-bottom: 10px;border-bottom: 2px solid #ff0000;">
@@ -2948,7 +2975,6 @@ li.mobile-nav__item.open collapsible-content {
         $('.text-container p, .content-box__row--no-border+.content-box__row, .content-box__row:last-child').css('padding-inline', '0')
         $('.section__content .content-box:last-child').css({
           'background': '#f7f7f7',
-          'margin-inline': '-20px',
           'padding-inline': '20px',
           'border-top': '1px solid #c4c4c4 !important',
           'border-bottom': '1px solid #c4c4c4 !important',
@@ -2971,6 +2997,7 @@ li.mobile-nav__item.open collapsible-content {
           'font-style': 'normal',
           'letter-spacing': '0.03px'
         })
+        $('.order-summary-toggle__icon-wrapper').html(`<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/navigation-Icon-3_6_2x_1888a249-1bc8-4d20-b350-e90b48649f66.jpg?v=1687331388" alt="order-summary" />`)
         $('body').prepend(`<div class="checkout_header" id="checkout_header"></div>`);
         setTimeout(function(){
           $.ajax({
