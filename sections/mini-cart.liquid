@@ -20,7 +20,9 @@
     {% comment %} info: Removed cart icon in 2.0 {% endcomment %}
     {% comment %} <img width="20" height="20" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Cart_7e68f099-c0bf-4966-a9ef-14d1a3af07ad.png?v=1673260730">&nbsp; {% endcomment %}
     
-    <span style="padding:6px 0 0 6px;">Your Cart {% if cart.item_count > 0 %}• {{cart.item_count}} Items {% endif %}</span>
+    <span style="padding:6px 0 0 6px;">Your Cart 
+      {% comment %} {% if cart.item_count > 0 %}• {{cart.item_count}} Items {% endif %} {% endcomment %}
+    </span>
 
    {% comment %} <span class="ms-3">{%- if cart.item_count == 0 -%}
     {%- else -%}
@@ -749,53 +751,6 @@
 {% assign gift-product_variant = gift-product.variants[0].id %}
 
 <script>
-  function runDiscount() {
-    const cartDiscountCustom = document.querySelector('.discount-info')
-    const cartDiscountHomeAudio = document.querySelector('.discount-info-home')
-
-    if(cartDiscountCustom) {
-      clickAndApplyCode(cartDiscountCustom)
-    }
-    if(cartDiscountHomeAudio) {
-      clickAndApplyCode(cartDiscountHomeAudio)
-    }
-  }
-  runDiscount()
-
-  function clickAndApplyCode(element) {
-    element.addEventListener('click', function() {
-      console.log(element)
-      const cartDiscountCode = element.querySelector('.cart-code').textContent;
-      const cartDiscountCodeEl = element.querySelector('.cart-code');
-      const discountField = document.querySelector('#af_kd_custom_coupon_text')
-      const discountApplyBtn = document.querySelector('#af_kd_custom_apply_coupon_trigger')
-      const applyMsg = element.querySelector('.apply-msg')
-      const current_date = new Date();
-      current_date.setTime(current_date.getTime());
-      const current_time = current_date.toUTCString();
-      document.cookie = "discount_code='';expires=" + current_time;
-  
-      // Seeting cookie for 24 hrs
-      let next_day = current_date.setTime(current_date.getTime() + (1 * 24 * 60 * 60 * 1000));
-      document.cookie = "discount_code=" + cartDiscountCode + ";expires=" + next_day;
-      {% comment %} applyMsg.textContent = 'Applied!' {% endcomment %}
-      copyToClipboard(cartDiscountCodeEl);
-      {% comment %} discountField.value = cartDiscountCode {% endcomment %}
-      {% comment %} $('#af_kd_custom_apply_coupon_trigger')[0].click() {% endcomment %}
-    })
-  }
-
-  function copyToClipboard(element) {
-    var $temp = $("<input class='copy-field'>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
-    navigator.clipboard.writeText($temp.val())
-    $temp.remove();
-  }
-  Shopify.cartUpdate = function(cartJson){
-    runDiscount()  
-  }
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
