@@ -852,7 +852,20 @@ li.mobile-nav__item.open collapsible-content {
   padding-right: 5px;
 }
 .thank-you-page .order-summary-toggle__icon-wrapper img{display:block}
-@media (min-width:1300px) {
+.thank-you-page .os-step__description{
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.25;
+  letter-spacing: 0.03px;
+  color: #209d1e!important;
+  margin-top:0;
+}
+.thank-you-page .content-box__row~.content-box__row{border:0!important;}
+.thank-you-page .section__content .content-box:last-child{border-block:1px solid #c4c4c4!important;}
+.thank-you-page .address{color:#969696;}
+@media (min-width:750px) {
   .thank-you-page .new-order-div{margin-inline:0!important;}
   .thank-you-page .os-header__hanging-icon{position:static;transform:none!important;}
   .thank-you-page .content-box__row:last-child .section__content{display:flex;flex-direction:column;}
@@ -868,9 +881,32 @@ li.mobile-nav__item.open collapsible-content {
     margin: 0;
   }
   .thank-you-page .policy-list .policy-list__item:not(:last-child){border-right:1px solid #696969;}
+  .thank-you-page .step__footer__info{padding:0;margin:0;}
+  .thank-you-page .order-summary__section--product-list{flex-direction:column;}
+  .thank-you-page .order-summary__section--product-list .order-summary__text{
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(175,175,175,0.34);
+  }
+  .thank-you-page .order-summary__section--product-list .order-summary__text img{
+    display: inline-block;
+    width: 25px;
+  }
+  .thank-you-page .order-summary__section--product-list .order-summary__text span:last-child{
+    font-size: 12px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.67;
+    letter-spacing: 0.02px;
+    color: #000;
+  }
   }
 @media (max-width:768px) {
   .thank-you-page .section__content .content-box:last-child{margin-inline:-20px!important;}
+  .thank-you-page .order-summary__section--product-list .order-summary__text{display:none;}
 }
       </style>
       <!-- Single Checkout Page Styling Engs -->
@@ -2973,16 +3009,15 @@ li.mobile-nav__item.open collapsible-content {
         const newElement = $(`<span>&nbsp;</span>`);
         $('address.address br').replaceWith(newElement);
         $('.text-container p, .content-box__row--no-border+.content-box__row, .content-box__row:last-child').css('padding-inline', '0')
-        $('.section__content .content-box:last-child').css({
+        $('.thank-you-page .section__content .content-box:last-child').css({
           'background': '#f7f7f7',
           'padding-inline': '20px',
-          'border-top': '1px solid #c4c4c4 !important',
-          'border-bottom': '1px solid #c4c4c4 !important',
+          'border-block': '1px solid #c4c4c4 !important',
           'margin-top': '0px'
         });
         $('.section').css('padding-top', '0')
         const continueShoppingBtn = `<a class='shop_btn' href="https://www.boat-lifestyle.com">Continue shopping</a>`
-        $('.section>.section__content').append(continueShoppingBtn);
+        $('.thank-you-page .section>.section__content').append(continueShoppingBtn);
         $('.shop_btn').css({
           'display': 'block',
           'margin-top': '15px',
@@ -2997,7 +3032,9 @@ li.mobile-nav__item.open collapsible-content {
           'font-style': 'normal',
           'letter-spacing': '0.03px'
         })
-        $('.order-summary-toggle__icon-wrapper').html(`<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/navigation-Icon-3_6_2x_1888a249-1bc8-4d20-b350-e90b48649f66.jpg?v=1687331388" alt="order-summary" />`)
+        $('.thank-you-page .order-summary-toggle__icon-wrapper').html(`<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/navigation-Icon-3_6_2x_1888a249-1bc8-4d20-b350-e90b48649f66.jpg?v=1687331388" alt="order-summary" />`)
+        const orderSummaryText = `<div class="order-summary__text"><span><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/navigation-Icon-3_6_2x_1888a249-1bc8-4d20-b350-e90b48649f66.jpg?v=1687331388" alt="order-summary" /></span><span>Order Summary</span></div>`
+        $('.thank-you-page .order-summary__section--product-list').prepend(orderSummaryText)
         $('body').prepend(`<div class="checkout_header" id="checkout_header"></div>`);
         setTimeout(function(){
           $.ajax({
