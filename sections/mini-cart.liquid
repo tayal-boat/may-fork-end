@@ -350,7 +350,7 @@
                   {% endif %}
                 </div>
               </div>
-              {%- if section.settings.show_discount_msg and line_item.product.tags contains 'onlyforyou' -%}
+
                 {% for tag in line_item.product.tags %}
                   {% if tag contains 'gokwik_min_price_' %}
                     {% assign floor_price = tag | remove: 'gokwik_min_price_'  | plus: 0 %}
@@ -358,13 +358,17 @@
                     {% assign discount_amount = line_price | minus: floor_price %}
                     {% assign line_item_quantity = line_item.quantity %}
                     {% if line_item_quantity > 0 %}
+                    {% if section.settings.select_discount_rule == 'line_item' and discount_amount > section.settings.discount_code_max_amount %}
+                    {% assign discount_amount = section.settings.discount_code_max_amount %}
+                    {% endif %}
                       {% assign discount_amount = discount_amount | times: line_item_quantity %}
                     {% endif %}
+                    {% comment %} <p> {{ discount_amount }}</p> {% endcomment %}
                     {% assign total_discount_amount = total_discount_amount | plus: discount_amount %}
                   {% endif %}
                   
                 {% endfor %}                 
-              {%- endif -%}
+
               
             {% assign data-loop = forloop.index %}
       
@@ -386,9 +390,13 @@
             </line-item>
           {%- endfor -%}
           {% if total_discount_amount > 0 %}
+          {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
+            {% assign total_discount_amount = section.settings.discount_code_max_amount %}
+          {% endif %}
+          <p class="discount_details" style="display: none;" data-discountAmount="{{ total_discount_amount }}" data-discountCode="{{ section.settings.discount_code }}"></p>
             {% if section.settings.show_discount_msg %}
               <small class="discount-info">
-              Get flat <b>₹{% if total_discount_amount < section.settings.discount_code_max_amount %}{{- total_discount_amount -}}{% else %}{{- section.settings.discount_code_max_amount -}}{% endif %}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
+              Get flat <b>₹{{- total_discount_amount -}}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
               </small>
             {% endif %}
          {% else %}
@@ -517,6 +525,9 @@
        {%- endif -%} 
      
 </div>
+
+
+<div class="discount_coupon_field_container"></div>
 <div class="mini-cart__gst">
 <div class="gst-container">
 <label class="check_container">
@@ -603,7 +614,7 @@
           <p class="coupon-p">Rs 0</p>
         </div>
         {%- if cart.cart_level_discount_applications != blank -%}
-          <ul class="mini-cart__discount-list list--unstyled" role="list">
+          <ul class="mini-cart__discount-list list--unstyled visually-hidden" role="list">
             {%- for discount_application in cart.cart_level_discount_applications -%}
               <li class="mini-cart__discount">
                 <span class="mini-cart__discount-badge discount-badge">{%- render 'icon' with 'discount-badge' -%}{{ discount_application.title }}</span>
@@ -676,7 +687,7 @@
               <div class="mini-cart_footer d-flex justify-content-between">
             <div>
               <div class=" align-items-baseline" style="gap:6%">
-                <div class="d-flex flex-column" >
+                <div class="d-flex flex-column mini-cart-total-price" >
                   <span class="cart-total"> <b>Total Amount</b></span>
                 </div>
 
@@ -743,14 +754,49 @@
         <button type="button" data-action="close" class="form__submit form__submit--closer button button--secondary">{{ 'cart.general.order_note_save' | t }}</button>
       </openable-element>
     {%- endif -%}
+    <div class="custom_discount_filder_container">
+      <div class="custom-discount-finder">
+    <div class="discount-finder-header">
+        <button type="button" class="discount-finder-close"
+            onclick="document.querySelector('.custom_discount_filder_container').removeAttribute('open_finder');">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_40x40.jpg" style="transform: rotate(180deg);">
+            </button>
+            <h2 class="custom-discount-finder-heading">Offers for you</h2>
+    </div>
+    <div class="discount_finder_coupon_holder">
+        <div class="finder_discountCode_txtbx_holder">
+            <input type="text" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Type coupon code here" value="" onkeyup id="af_kd_custom_coupon_text" class="afcd_coupon-inputtext af_custom_coupon_text">
+        </div>
+        <div class="discount_finder_btn_holder">
+            <button type="button" id="af_kd_custom_apply_coupon_trigger" class="discount_finder_apply_btn af_kd_df_apply_coupon_btn af_custom_apply_coupon_trigger" onclick="CDSetupInit.couponApplyClick(this)">
+                <af class="af_after_loading">Apply</af>
+            </button>
+        </div>
+    </div>
+    <div class="discount_finder_header_field_details">
+    <div id="af_kd_tagged_discounts" class="af_tagged_discounts"></div>
+    <p id="af_kd_discount_response" class="af_discount_response af_stacked_response" style="text-align:left;"></p>
+    <input type="hidden" name="discount" class="af_HiddenDiscount" value="">
+    <div class="afcd_coupon_error"></div>
+    </div>
+    <div class="discount_finder_body">
+    </div>
+</div>
+    </div>
   </cart-drawer>
 
 
 <!--       freebie-offer -->
 {% assign gift-product = collections['freebie-offer'].products[0] %}
 {% assign gift-product_variant = gift-product.variants[0].id %}
-
 <script>
+Shopify.cartMessage = `{{section.settings.cart_announcement}}`;
+sessionStorage.setItem('total_discount_amount', {{ total_discount_amount | json }});
+sessionStorage.setItem('offer_discount_code', '{{ section.settings.discount_code }}');
+
+Shopify.cartUpdate = function(cartJson){
+// Add code which need to run on cart update
+}
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
@@ -907,7 +953,7 @@ $('#mini-cart-form .line-item').each(function() {
 
 });
 
-Shopify.cartMessage = `{{section.settings.cart_announcement}}`
+
 {% comment %} const checkbox = document.querySelector(".check_container input");
 const message = document.querySelector(".message-container .message");
 
@@ -952,6 +998,22 @@ document.addEventListener('cart:updated', (event) => {
         "id": "show_purple_msg",
         "label": "Show Purple Message",
         "default": true
+      },
+      {
+        "type": "select",
+        "id": "select_discount_rule",
+        "label": "select discount rule",
+        "options": [
+          {
+            "value": "line_item",
+            "label": "line item level discount"
+          },
+          {
+            "value": "cart",
+            "label": "cart level discount"
+          }
+        ],
+        "default": "cart"
       },
       {
         "type": "text",
