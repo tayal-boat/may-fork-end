@@ -128,8 +128,13 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
       responseData.data.response.formatted_text.discount_amount = total_discount_amount.toFixed(2);
       responseData.data.response.formatted_text.final_total_price = after_discount.toFixed(2);
     }
+    
     sessionStorage.setItem('applyCoupun', discount_code[0]);
     sessionStorage.setItem('Coupun_saveAmount', saveAmount);
+    _discountCode = sessionStorage.getItem('applyCoupun')
+    clevertap.event.push('KD_Discount applied', {
+      "Discount Code": _discountCode
+    })
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
@@ -243,18 +248,20 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
+  clevertap.event.push('KD_Discount Removed')
 });
 kdDom.addEventListener('KD_validDiscountApplied',(e)=>{
   // let discountCode = e.detail;
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-  console.log(preAppliedCoupon);
-  console.log(e);
+  // console.log(preAppliedCoupon);
+  // console.log(e);
   $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).html('<span>Applied</span>');
   $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).addClass('coupon_applied');
 });
 kdDom.addEventListener('KD_discountFinderClicked', (e) => {
   if ($('.custom_kartdiscount_container').attr('data-finder') == "true") {
     $('.custom_discount_filder_container').attr('open_finder', true);
+    clevertap.event.push('KD_View All Coupons clicked');
   }
 });
 Shopify.KartDiscountHooks = function () {
@@ -292,11 +299,11 @@ Shopify.KartDiscount = function (cartJson) {
 // }
 
 window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
-console.log("before convert: ", convertedMoneyStr); // converted currency string from number
+// console.log("before convert: ", convertedMoneyStr); // converted currency string from number
 var finalAmount = extras.finalAmount;
     finalAmount = finalAmount.replace('.00','');
 extras.money_format_first = "₹";
 convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
-console.log("after convert: ", convertedMoneyStr);
+// console.log("after convert: ", convertedMoneyStr);
 return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
 }
