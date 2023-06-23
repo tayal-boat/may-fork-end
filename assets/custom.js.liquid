@@ -2254,17 +2254,20 @@ var customSubHeading = document.querySelector(".custom-prebook-subheading");
 var editText = document.querySelector(".edit-red");
 var errorMsg = document.querySelector(".max-limit-reached");
 var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
-if(personalizedMessageOriginal){
-var sessionValue = sessionStorage.getItem('personalized_data');
-sessionValue = JSON.parse(sessionValue);
-sessionValue = sessionValue[0].id;
-}
-var url = window.location.href;
-//Finding line item from URL params
-var queryString = window.location.search;
-var urlParams = new URLSearchParams(queryString);
-var line_item = urlParams.get('line-item');
-var pmsg = urlParams.get('msg');
+var personalize_flag = false;
+  var personalized_Data = sessionStorage.getItem('personalized_data');
+  if(personalized_Data !== null){
+    personalized_Data = JSON.parse(personalized_Data);
+    for (let i = 0; i < personalized_Data.length; i++) {
+      if (personalized_Data[i].id === sessionStorage.varientID) {
+        var line_item = personalized_Data[i].id;
+        var pmsg = personalized_Data[i].personalized_text;
+            personalize_flag = true;
+        break;
+      }
+    }
+    }
+
 //Input validation
 let currentInputValue = '';
 let value = "";
@@ -2275,12 +2278,7 @@ var personalized_data = '';
 var personalized_varient = '';
 var imageText = document.querySelector(".personalization-image-txt");
 
-  // if(url.includes("&personalizenow")){
-  //   setTimeout(() => {
-  //     $('.custom-prebook')[0].click()
-  //   }, 1000)
-  // }
-  if (url.includes("&personalized")) {
+  if (personalize_flag) {
     personalizationSubmitBtn.classList.remove('visually-hidden')
   }
 
@@ -2325,7 +2323,7 @@ var imageText = document.querySelector(".personalization-image-txt");
       personalizationModalOverlay.classList.remove('hide')
       personalizationModal.classList.remove("hide")
       document.body.classList.add('noScroll');
-      if (url.includes("&personalized")) {
+      if (personalize_flag) {
         personalizedText.value = currentInputValue.toUpperCase();
       }
       if (personalizedText.value.length === 7) {
@@ -2357,7 +2355,7 @@ var imageText = document.querySelector(".personalization-image-txt");
         }, 1500)
     }
     (() => {
-      if (!url.includes("&personalized")) {
+      if (!personalize_flag) {
         personalizationModal.classList.add("hide");
         $('.personilaztion-message-modal .skip-personalization').removeClass('d-none');
         personalizationModalOverlay.classList.add("hide");
@@ -2376,7 +2374,7 @@ var imageText = document.querySelector(".personalization-image-txt");
       }
     })()
     function storePersonalizedMessage() {
-    personalized_data = {"id": sessionStorage.varientID,"personalized_text": personalizedText.value }
+    personalized_varient = {"id": sessionStorage.varientID,"personalized_text": personalizedText.value }
     function isJson(str) {
       try {
           JSON.parse(str);
@@ -2388,19 +2386,21 @@ var imageText = document.querySelector(".personalization-image-txt");
     if (isJson(sessionStorage.personalized_data)) {
       personalized_data = JSON.parse(sessionStorage.personalized_data);
       console.log(personalized_data);
+      personalized_data = personalized_data.filter(obj => obj.id !== sessionStorage.varientID);
       personalized_arr = personalized_data;
     }
-      personalized_arr.push(personalized_data);
+    console.log(personalized_arr);
+      personalized_arr.push(personalized_varient);
+      console.log(personalized_arr);
       personalized_arr = JSON.stringify(personalized_arr);
       sessionStorage.setItem('personalized_data', personalized_arr);
-      sessionValue = sessionStorage.setItem(personalizedMessageOriginal.getAttribute("variant-id"), personalizedText.value);
-      personalizedText.value = sessionValue;
     }
 
     function updatePersonlizedMsg() {
+      console.log(line_item, pmsg , 'updatePersonlizedMsg');
       let formData = {
         'line': line_item,
-        'properties': { 'PersonalisedMessage': sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id")) }
+        'properties': { 'PersonalisedMessage': pmsg }
       }
         ;
 
@@ -2449,7 +2449,7 @@ var imageText = document.querySelector(".personalization-image-txt");
       console.log(personalizedMessageOriginal.value)
       closePersonalizationModal()
       storePersonalizedMessage()
-      if (!url.includes("&personalized")) {
+      if (!personalize_flag) {
         btnClick()
       } else {
         updatePersonlizedMsg()
@@ -2466,3 +2466,14 @@ var imageText = document.querySelector(".personalization-image-txt");
 }
 
 Shopify.personalizedText();
+Shopify.cartNote = function () {
+$.ajax({
+  url: '/cart/update.js',
+  dataType: 'json',
+  type: 'post',      
+  data: {note: 'personalised'},      
+  success: function(cart) {
+console.log(cart); 
+  }
+})
+}
