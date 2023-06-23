@@ -132,9 +132,9 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     sessionStorage.setItem('applyCoupun', discount_code[0]);
     sessionStorage.setItem('Coupun_saveAmount', saveAmount);
     _discountCode = sessionStorage.getItem('applyCoupun')
-    clevertap.event.push('KD_Discount applied', {
-      "Discount Code": _discountCode
-    })
+    // clevertap.event.push('KD_Discount applied', {
+    //   "Discount Code": _discountCode
+    // })
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
