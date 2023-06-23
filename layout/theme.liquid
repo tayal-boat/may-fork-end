@@ -88,6 +88,11 @@
         imagesrcset="{% render 'image-attributes', image: collection.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600', sizes_only: true %}"
       >
     {%- endif -%}
+    {% if template == 'product' %}
+      <meta property="og:image" content="{{ product.featured_image | img_url: '1200x' }}" />
+      <meta property="og:title" content="{{ product.title }}" />
+      <meta property="og:url" content="{{ canonical_url }}" />
+    {% endif %}
     {% render 'social-meta-tags' %}
     {% render 'microdata-schema' %}
     {% render 'css-variables', direction: direction %}
@@ -267,7 +272,8 @@
         defer
       ></script>
     {% endif %}
-    {% comment %} {% include 'kart_discount' %} {% endcomment %}
+    {% include 'kart_discount' %}
+    <script src="{{ 'kartDiscount.js' | asset_url }}"></script>
   </head>
   <body class="no-focus-outline {{ feature_classes }}" data-instant-allow-query-string>
     <!-- @prettify-ignore -->
