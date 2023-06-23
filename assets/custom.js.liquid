@@ -2255,7 +2255,9 @@ var editText = document.querySelector(".edit-red");
 var errorMsg = document.querySelector(".max-limit-reached");
 var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
 if(personalizedMessageOriginal){
-var sessionValue = sessionStorage.getItem(personalizedMessageOriginal.getAttribute("variant-id"));
+var sessionValue = sessionStorage.getItem('personalized_data');
+sessionValue = JSON.parse(sessionValue);
+sessionValue = sessionValue[0].id;
 }
 var url = window.location.href;
 //Finding line item from URL params
@@ -2266,7 +2268,11 @@ var pmsg = urlParams.get('msg');
 //Input validation
 let currentInputValue = '';
 let value = "";
-let str = ""
+let str = "";
+
+var personalized_arr = [];
+var personalized_data = '';
+var personalized_varient = '';
 var imageText = document.querySelector(".personalization-image-txt");
 
   // if(url.includes("&personalizenow")){
@@ -2370,6 +2376,23 @@ var imageText = document.querySelector(".personalization-image-txt");
       }
     })()
     function storePersonalizedMessage() {
+    personalized_data = {"id": sessionStorage.varientID,"personalized_text": personalizedText.value }
+    function isJson(str) {
+      try {
+          JSON.parse(str);
+      } catch (e) {
+          return false;
+      }
+      return true;
+    }
+    if (isJson(sessionStorage.personalized_data)) {
+      personalized_data = JSON.parse(sessionStorage.personalized_data);
+      console.log(personalized_data);
+      personalized_arr = personalized_data;
+    }
+      personalized_arr.push(personalized_data);
+      personalized_arr = JSON.stringify(personalized_arr);
+      sessionStorage.setItem('personalized_data', personalized_arr);
       sessionValue = sessionStorage.setItem(personalizedMessageOriginal.getAttribute("variant-id"), personalizedText.value);
       personalizedText.value = sessionValue;
     }

@@ -52,10 +52,10 @@
 {% capture variant_personalization %}
   {
   {% for variant in product.variants %}
-    "{{ variant.id }}": "{% if variant.metafields.custom.personalised_image != blank %}
-      {{ variant.metafields.custom.personalised_image | strip_newlines }}
-    {% else %}
-      {{ variant.featured_image | image_url }}{% endif %}"
+    "{{ variant.id }}": "{%- if variant.metafields.custom.personalised_image != blank -%}
+      {{- variant.metafields.custom.personalised_image | strip_newlines -}}
+    {%- else -%}
+      {{- variant.featured_image | image_url -}}{%- endif -%}"
     {% unless forloop.last %}
       ,
     {% endunless %}
@@ -65,5 +65,8 @@
 <script>
   let variant_personalization = {{ variant_personalization }};
   variant_personalization = JSON.stringify(variant_personalization);
+  console.log(variant_personalization);
   sessionStorage.setItem('variant_personalization', variant_personalization);
+  sessionStorage.setItem('varientID', '{{ product.selected_or_first_available_variant.id }}');
+  console.log({{ product.selected_or_first_available_variant.id }});
 </script>
