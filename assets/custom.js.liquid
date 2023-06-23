@@ -2217,66 +2217,66 @@ $(this).hasClass('expand') ? ($(this).children('.view-all').text('Expand Less'),
 // }
 
 
+});
+
+// Product personalization
 
 $.ajax({
   type: "GET",
   url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Validate_Words_-_Sheet1.csv?v=1686812344",
   dataType: "text",
-  success: function(data) {
-   var Validate_Words = data.split(/\r\n|\n/);
-       console.log(Validate_Words);
-      for (var i = 0; i < Validate_Words.length; i++) {
-        Validate_Words[i] = Validate_Words[i].toUpperCase();
-      }
-      Validate_Words = JSON.stringify(Validate_Words);
-      sessionStorage.setItem('Validate_Words', Validate_Words);
+  success: function (data) {
+    var Validate_Words = data.split(/\r\n|\n/);
+    console.log(Validate_Words);
+    for (var i = 0; i < Validate_Words.length; i++) {
+      Validate_Words[i] = Validate_Words[i].toUpperCase();
+    }
+    Validate_Words = JSON.stringify(Validate_Words);
+    sessionStorage.setItem('Validate_Words', Validate_Words);
   }
 });
 
-});
-
-// Product personalization
 Shopify.personalizedText = function () {
-var customPrebookBtn = document.querySelector('.custom-prebook');
-var customPreorderBtn = document.querySelector('.cutomized-btn');
-var personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
-var personalizationModal = document.querySelector('.personilaztion-message-modal');
-var personalizationModalClose = document.querySelectorAll('.personalized-modal-close');
-var personalizationSkipBtn = document.querySelector('.skip-personalization');
-var personalizationSubmitBtn = document.querySelector('.submit-personalization');
-var prebookBtn = document.querySelector('#AddToCart');
-var personalizedText = document.querySelector('#personalized-text');
-var personalizedMessageOriginal = document.querySelector('#personalised_message');
-var editMessage = document.querySelector(".edit-msg");
-var msgContainer = document.querySelector(".message-form-container");
-var customHeading = document.querySelector(".custom-prebook-heading");
-var customSubHeading = document.querySelector(".custom-prebook-subheading");
-var editText = document.querySelector(".edit-red");
-var errorMsg = document.querySelector(".max-limit-reached");
-var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
-var personalize_flag = false;
+  var customPrebookBtn = document.querySelector('.custom-prebook');
+  var customPreorderBtn = document.querySelector('.cutomized-btn');
+  var personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
+  var personalizationModal = document.querySelector('.personilaztion-message-modal');
+  var personalizationModalClose = document.querySelectorAll('.personalized-modal-close');
+  var personalizationSkipBtn = document.querySelector('.skip-personalization');
+  var personalizationSubmitBtn = document.querySelector('.submit-personalization');
+  var prebookBtn = document.querySelector('#AddToCart');
+  var personalizedText = document.querySelector('#personalized-text');
+  var personalizedMessageOriginal = document.querySelector('#personalised_message');
+  var editMessage = document.querySelector(".edit-msg");
+  var msgContainer = document.querySelector(".message-form-container");
+  var customHeading = document.querySelector(".custom-prebook-heading");
+  var customSubHeading = document.querySelector(".custom-prebook-subheading");
+  var editText = document.querySelector(".edit-red");
+  var errorMsg = document.querySelector(".max-limit-reached");
+  var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
+  var personalize_flag = false;
   var personalized_Data = sessionStorage.getItem('personalized_data');
-  if(personalized_Data !== null){
+  if (personalized_Data !== null) {
     personalized_Data = JSON.parse(personalized_Data);
     for (let i = 0; i < personalized_Data.length; i++) {
       if (personalized_Data[i].id === sessionStorage.varientID) {
         var line_item = personalized_Data[i].id;
         var pmsg = personalized_Data[i].personalized_text;
-            personalize_flag = true;
+        personalize_flag = true;
         break;
       }
     }
-    }
+  }
 
-//Input validation
-let currentInputValue = '';
-let value = "";
-let str = "";
+  //Input validation
+  let currentInputValue = '';
+  let value = "";
+  let str = "";
 
-var personalized_arr = [];
-var personalized_data = '';
-var personalized_varient = '';
-var imageText = document.querySelector(".personalization-image-txt");
+  var personalized_arr = [];
+  var personalized_data = '';
+  var personalized_varient = '';
+  var imageText = document.querySelector(".personalization-image-txt");
 
   if (personalize_flag) {
     personalizationSubmitBtn.classList.remove('visually-hidden')
@@ -2374,22 +2374,22 @@ var imageText = document.querySelector(".personalization-image-txt");
       }
     })()
     function storePersonalizedMessage() {
-    personalized_varient = {"id": sessionStorage.varientID,"personalized_text": personalizedText.value }
-    function isJson(str) {
-      try {
+      personalized_varient = { "id": sessionStorage.varientID, "personalized_text": personalizedText.value }
+      function isJson(str) {
+        try {
           JSON.parse(str);
-      } catch (e) {
+        } catch (e) {
           return false;
+        }
+        return true;
       }
-      return true;
-    }
-    if (isJson(sessionStorage.personalized_data)) {
-      personalized_data = JSON.parse(sessionStorage.personalized_data);
-      console.log(personalized_data);
-      personalized_data = personalized_data.filter(obj => obj.id !== sessionStorage.varientID);
-      personalized_arr = personalized_data;
-    }
-    console.log(personalized_arr);
+      if (isJson(sessionStorage.personalized_data)) {
+        personalized_data = JSON.parse(sessionStorage.personalized_data);
+        console.log(personalized_data);
+        personalized_data = personalized_data.filter(obj => obj.id !== sessionStorage.varientID);
+        personalized_arr = personalized_data;
+      }
+      console.log(personalized_arr);
       personalized_arr.push(personalized_varient);
       console.log(personalized_arr);
       personalized_arr = JSON.stringify(personalized_arr);
@@ -2397,7 +2397,7 @@ var imageText = document.querySelector(".personalization-image-txt");
     }
 
     function updatePersonlizedMsg() {
-      console.log(line_item, pmsg , 'updatePersonlizedMsg');
+      console.log(line_item, pmsg, 'updatePersonlizedMsg');
       let formData = {
         'line': line_item,
         'properties': { 'PersonalisedMessage': pmsg }
@@ -2467,13 +2467,13 @@ var imageText = document.querySelector(".personalization-image-txt");
 
 Shopify.personalizedText();
 Shopify.cartNote = function () {
-$.ajax({
-  url: '/cart/update.js',
-  dataType: 'json',
-  type: 'post',      
-  data: {note: 'personalised'},      
-  success: function(cart) {
-console.log(cart); 
-  }
-})
+  $.ajax({
+    url: '/cart/update.js',
+    dataType: 'json',
+    type: 'post',
+    data: { note: 'personalised' },
+    success: function (cart) {
+      console.log(cart);
+    }
+  })
 }
