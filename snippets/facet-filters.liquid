@@ -31,8 +31,12 @@ Code that create the faceted search for the collection and search pages. It curr
   <span class="drawer__overlay"></span>
 
   <header class="drawer__header {% if filters_position == 'always_visible' %}hidden-lap-and-up{% endif %}">
-    <p class="drawer__title heading h6 text-white">{{- 'collection.general.filters' | t -}} {% if active_filters_count > 0 %}<span class="product-facet__active-count bubble-count">{{ active_filters_count }}</span>{%- endif -%}</p>
-
+    <div class="drawer__header_inner">
+      <p class="drawer__title heading h6">
+        {%- render 'icon' with 'filters' -%}
+        {{- 'collection.general.filters' | t -}}&nbsp;By
+        {%- comment -%} {% if active_filters_count > 0 %}<span class="product-facet__active-count bubble-count">{{ active_filters_count }}</span>{%- endif -%} {%- endcomment -%}
+        </p>
     {%- if active_filters_count > 0 -%}
       {%- if request.page_type == 'collection' -%}
         <a class="drawer__header-action link text--subdued" data-action="clear-filters" href="{{ page_url }}?sort_by={{ sort_by }}">{{ 'collection.general.clear_filters' | t }}</a>
@@ -40,7 +44,7 @@ Code that create the faceted search for the collection and search pages. It curr
         <a class="drawer__header-action link text--subdued" data-action="clear-filters" href="{{ page_url }}?sort_by={{ sort_by }}&q={{ search.terms | escape }}&type=product&options[prefix]=last&options[unavailable_products]={{ settings.search_unavailable_products }}">{{ 'collection.general.clear_filters' | t }}</a>
       {%- endif -%}
     {%- endif -%}
-
+  </div>
     <button type="button" class="drawer__close-button tap-area" data-action="close" title="{{ 'general.accessibility.close' | t | escape }}">
       {%- render 'icon' with 'close' -%}
     </button>
@@ -128,8 +132,15 @@ Code that create the faceted search for the collection and search pages. It curr
                     {%- else -%}
                       {%- for filter_value in filter.values -%}
                         <div class="checkbox-container">
-                          <input class="checkbox" type="checkbox" name="{{ filter_value.param_name }}" id="{{ filter_value.param_name | escape }}-{{ forloop.index }}" value="{{ filter_value.value | escape }}" {% if filter_value.active %}checked="checked"{% endif %} {% if filter_value.count == 0 %}disabled{% endif %}>
-                          <label for="{{ filter_value.param_name | escape }}-{{ forloop.index }}">{{ filter_value.label }} ({{ filter_value.count}})&lrm;</label>
+                          <div class="checkbox-lable">
+                            {% if filter_value.param_name == 'filter.v.option.color' %}
+                            <div class="checkbox-color-swatch" style="{% render 'color-swatch-style', color_swatch_config: color_swatch_config, value: filter_value.label %}"></div>
+                            {% endif %}
+                            <label for="{{ filter_value.param_name | escape }}-{{ forloop.index }}">{{ filter_value.label }} <span style="opacity:.5;">({{ filter_value.count}})</span></label>
+                            </div>
+                            <div class="checkbox-input">
+                              <input class="checkbox" type="checkbox" name="{{ filter_value.param_name }}" id="{{ filter_value.param_name | escape }}-{{ forloop.index }}" value="{{ filter_value.value | escape }}" {% if filter_value.active %}checked="checked"{% endif %} {% if filter_value.count == 0 %}disabled{% endif %}>
+                          </div>
                         </div>
                       {%- endfor -%}
                     {%- endif -%}
@@ -176,6 +187,11 @@ Code that create the faceted search for the collection and search pages. It curr
   </div>
 
   <div class="drawer__footer drawer__footer--no-top-padding {% if filters_position == 'always_visible' %}hidden-lap-and-up{% endif %}">
-    <button type="button" class="button button--primary button--full" data-action="close">{{ 'collection.general.view_results' | t }}</button>
+    <button type="button" class="button button--primary button--full" data-action="close">
+      Apply Filter
+    </button>
+    <div class="button-wrapper d-flex justify-content-center w-50">
+      <a href="{{ collection.url }}?sort_by={{ collection_sort_by }}" data-action="clear-filters" class="button w-100">Clear All</a>
+    </div>
   </div>
 </facet-filters>
