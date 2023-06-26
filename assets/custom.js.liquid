@@ -2450,7 +2450,24 @@ Shopify.personalizedText = function () {
       closePersonalizationModal()
       storePersonalizedMessage()
       if (!personalize_flag) {
-        btnClick()
+        // btnClick()
+var personalization_data = {'quantity': 1,'id': sessionStorage.varientID,'properties': {'PersonalisedMessage': personalizedText.value } };
+        $.ajax({
+          url: "/cart/add.js",
+          dataType: "json",
+          cache: !1,
+          type: "post",
+          data: personalization_data,
+          success: function(e) {
+              document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                  bubbles: !0
+              })), document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex'), setTimeout(function() {
+                  Shopify.cart_item_count();
+                  cart_bubble();
+              }, 1500)
+          }
+      })
+
       } else {
         // updatePersonlizedMsg()
       }
