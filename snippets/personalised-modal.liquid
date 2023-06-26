@@ -43,7 +43,10 @@
         <p>Limit it to alphabets and numbers.</p>
         <p>Stay away from special Symbols. Max 7 characters.</p>
       </div>
-      <button type="button" class="submit-personalization visually-hidden">CONFIRM</button>
+      <button
+        type="button"
+        class="submit-personalization visually-hidden"
+        data-varientId="{{ product.selected_or_first_available_variant.metafields.custom.engrav_variant.value.id }}">CONFIRM</button>
       {% comment %} <button type="button" class="cancel-personalization personalized-modal-close">SKIP</button> {% endcomment %}
       <button type="button" class="skip-personalization">SKIP PERSONALIZATION</button>
     </div>
@@ -62,11 +65,26 @@
   {% endfor %}
   }
 {% endcapture %}
+{% capture variant_personalization_id %}
+  {
+  {% for variant in product.variants %}
+    {%- if variant.metafields.custom.engrav_variant -%}
+      "{{ variant.id }}": "{{- variant.metafields.custom.engrav_variant.value.id | strip_newlines -}}"
+      {% unless forloop.last %}
+        ,
+      {% endunless %}
+    {%- endif -%}
+  {% endfor %}
+  }
+{% endcapture %}
 <script>
   let variant_personalization = {{ variant_personalization }};
   variant_personalization = JSON.stringify(variant_personalization);
+  let variant_personalization_id = {{ variant_personalization_id }};
+  variant_personalization_id = JSON.stringify(variant_personalization_id);
   console.log(variant_personalization);
   sessionStorage.setItem('variant_personalization', variant_personalization);
   sessionStorage.setItem('varientID', '{{ product.selected_or_first_available_variant.id }}');
+  sessionStorage.setItem('variant_personalization_id', variant_personalization_id);
   console.log({{ product.selected_or_first_available_variant.id }});
 </script>

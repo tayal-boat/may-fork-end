@@ -354,6 +354,17 @@ for (let i = 0; i < varient_swatches_input.length; i++) {
   }    
 }
 }
+
+var variant_personalization_id = sessionStorage.getItem('variant_personalization_id');
+if(variant_personalization_id && variant_personalization_id !== null) {
+  variant_personalization_id = JSON.parse(variant_personalization_id);
+  for (var key in variant_personalization_id) {
+    if (variant_personalization_id.hasOwnProperty(e.id)) {
+      $('.submit-personalization').attr('data-varientid', variant_personalization_id[e.id]);
+      break;
+    }
+  }
+}
 }
 let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
 swatches_change(varient_swatches_input);
@@ -2256,17 +2267,17 @@ Shopify.personalizedText = function () {
   var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
   var personalize_flag = false;
   var personalized_Data = sessionStorage.getItem('personalized_data');
-  if (personalized_Data !== null) {
-    personalized_Data = JSON.parse(personalized_Data);
-    for (let i = 0; i < personalized_Data.length; i++) {
-      if (personalized_Data[i].id === sessionStorage.varientID) {
-        var line_item = personalized_Data[i].id;
-        var pmsg = personalized_Data[i].personalized_text;
-        personalize_flag = true;
-        break;
-      }
-    }
-  }
+  // if (personalized_Data !== null) {
+  //   personalized_Data = JSON.parse(personalized_Data);
+  //   for (let i = 0; i < personalized_Data.length; i++) {
+  //     if (personalized_Data[i].id === sessionStorage.varientID) {
+  //       var line_item = personalized_Data[i].id;
+  //       var pmsg = personalized_Data[i].personalized_text;
+  //       personalize_flag = true;
+  //       break;
+  //     }
+  //   }
+  // }
 
   //Input validation
   let currentInputValue = '';
@@ -2355,6 +2366,7 @@ Shopify.personalizedText = function () {
         }, 1500)
     }
     (() => {
+      console.log(personalize_flag, 'personalize_flag');
       if (!personalize_flag) {
         personalizationModal.classList.add("hide");
         $('.personilaztion-message-modal .skip-personalization').removeClass('d-none');
@@ -2432,6 +2444,8 @@ Shopify.personalizedText = function () {
 
     personalizationSubmitBtn.addEventListener('click', (e) => {
       let pMessage = personalizedText.value;
+      console.log(e);
+      var variantId = e.target.dataset.varientid;
       var Validate_Words = sessionStorage.getItem('Validate_Words');
       Validate_Words = JSON.parse(Validate_Words);
       console.log(pMessage, 'pMessage');
@@ -2451,7 +2465,8 @@ Shopify.personalizedText = function () {
       storePersonalizedMessage()
       if (!personalize_flag) {
         // btnClick()
-var personalization_data = {'quantity': 1,'id': sessionStorage.varientID,'properties': {'PersonalisedMessage': personalizedText.value } };
+        var personalization_data = {'quantity': 1,'id': variantId,'properties': {'PersonalisedMessage': pMessage } };
+        console.log(personalization_data);
         $.ajax({
           url: "/cart/add.js",
           dataType: "json",
