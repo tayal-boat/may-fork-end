@@ -141,7 +141,7 @@
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 Shopify.cart_item_count = function () {
   $.getJSON('/cart.js', function(cart){
-    console.log(cart.item_count);
+    console.log(cart);
     var cartCount = cart.item_count;
     $(".header__cart-count").html(cartCount);
     $('.header__cart-count.header__cart-count--floating.bubble-count').text(cartCount);
@@ -2494,8 +2494,14 @@ Shopify.personalizedText = function () {
       } else {
         // updatePersonlizedMsg()
       }
-      closePersonalizationModal()
-      storePersonalizedMessage()
+      closePersonalizationModal();
+      storePersonalizedMessage();
+      if(e.target.closest('quick-buy-drawer') !== null){
+        e.target.closest('quick-buy-drawer').removeAttribute('open');
+      }
+      if(e.target.closest('quick-buy-popover') !== null){
+        e.target.closest('quick-buy-popover').removeAttribute('open');
+      }
     })
 
     document.querySelector('.skip-personalization').addEventListener('click', (e) => {
@@ -2514,7 +2520,16 @@ Shopify.cartNote = function () {
     type: 'post',
     data: { note: 'personalised' },
     success: function (cart) {
-      console.log(cart);
+      // console.log(cart);
     }
   })
+}
+Shopify.onCartUpdate = function (cart) {
+  if(cart != null) {
+    for (let i = 0; i < cart.items.length; i++) {
+      if (Object.keys(cart.items[i].properties).includes("PersonalisedMessage")) {
+        Shopify.cartNote()
+      }
+    }
+  }
 }
