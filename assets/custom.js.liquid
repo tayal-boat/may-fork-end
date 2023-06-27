@@ -2513,14 +2513,14 @@ Shopify.personalizedText = function () {
 }
 
 Shopify.personalizedText();
-Shopify.cartNote = function () {
+Shopify.cartNote = function (text) {
   $.ajax({
     url: '/cart/update.js',
     dataType: 'json',
     type: 'post',
-    data: { note: 'personalised' },
+    data: { note: text },
     success: function (cart) {
-      // console.log(cart);
+       console.log(cart);
     }
   })
 }
@@ -2528,7 +2528,10 @@ Shopify.onCartUpdate = function (cart) {
   if(cart != null) {
     for (let i = 0; i < cart.items.length; i++) {
       if (Object.keys(cart.items[i].properties).includes("PersonalisedMessage")) {
-        Shopify.cartNote()
+        Shopify.cartNote('personalised');
+        break;
+      }else{
+        Shopify.cartNote('');
       }
     }
   }
