@@ -1,3 +1,34 @@
+{% capture variant_personalization %}
+  {
+  {% for variant in product.variants %}
+    "{{ variant.id }}": "{%- if variant.metafields.custom.personalised_image != blank -%}
+      {{- variant.metafields.custom.personalised_image | strip_newlines -}}
+    {%- else -%}
+      {{- variant.featured_image | image_url -}}{%- endif -%}"
+    {% unless forloop.last %}
+      ,
+    {% endunless %}
+  {% endfor %}
+  }
+{% endcapture %}
+{% capture variant_personalization_id %}
+  {
+  {% for variant in product.variants %}
+    "{{ variant.option1 | escape }}" : "{{ variant.id }}"
+    {% unless forloop.last %}
+      ,
+    {% endunless %}
+  {% endfor %}
+  }
+{% endcapture %}
+
+{% assign engrav_varient_id = '' %}
+{% for variant in product.variants %}
+  {% if variant.option1 contains 'engrav_' and variant.option1 contains product.selected_or_first_available_variant.option1 %}
+    {% assign engrav_varient_id = variant.id %}
+  {% endif %}
+{% endfor %}
+
 <div class="button custom-prebook mt-lg-3">
   <div class="custom-prebook-heading">Make it Personal.</div>
   <div class="custom-prebook-subheading">
@@ -6,7 +37,10 @@
 </div>
 <!-- Personalised Modal -->
 <div class="personilaztion-message-modal-overlay hide"></div>
-<div class="personilaztion-message-modal hide">
+<div
+  class="personilaztion-message-modal hide"
+  data-variant_personalization='{{ variant_personalization | strip_newlines }}'
+  data-variant_personalization_id='{{ variant_personalization_id | strip_newlines }}'>
   <div class="personilaztion-message-container">
     <div class="message-form-container">
       <div class="personalization-heading-wrapper">
@@ -46,38 +80,15 @@
       <button
         type="button"
         class="submit-personalization visually-hidden"
-        data-varientId="{{ product.selected_or_first_available_variant.metafields.custom.engrav_variant.value.id }}">CONFIRM</button>
+        data-varientId="{{ engrav_varient_id }}">CONFIRM</button>
       {% comment %} <button type="button" class="cancel-personalization personalized-modal-close">SKIP</button> {% endcomment %}
       <button type="button" class="skip-personalization">SKIP PERSONALIZATION</button>
     </div>
   </div>
 </div>
-{% capture variant_personalization %}
-  {
-  {% for variant in product.variants %}
-    "{{ variant.id }}": "{%- if variant.metafields.custom.personalised_image != blank -%}
-      {{- variant.metafields.custom.personalised_image | strip_newlines -}}
-    {%- else -%}
-      {{- variant.featured_image | image_url -}}{%- endif -%}"
-    {% unless forloop.last %}
-      ,
-    {% endunless %}
-  {% endfor %}
-  }
-{% endcapture %}
-{% capture variant_personalization_id %}
-  {
-  {% for variant in product.variants %}
-    {%- if variant.metafields.custom.engrav_variant -%}
-      "{{ variant.id }}": "{{- variant.metafields.custom.engrav_variant.value.id | strip_newlines -}}"
-      {% unless forloop.last %}
-        ,
-      {% endunless %}
-    {%- endif -%}
-  {% endfor %}
-  }
-{% endcapture %}
+
 <script>
+  console.log('hii personalization data');
   let variant_personalization = {{ variant_personalization }};
   variant_personalization = JSON.stringify(variant_personalization);
   let variant_personalization_id = {{ variant_personalization_id }};
