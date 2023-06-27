@@ -230,7 +230,7 @@
                       {% comment %} {{ value }}
                       {{ variant.options[option_position0] }} {% endcomment %}
                       {%- if variant.options[0] == value -%}
-                        <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
+                        <div class="color-swatch {% if product.tags contains 'customized-test' and value contains 'engrav_' %} customized_hide {% endif %} {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
                           <input class="color-swatch__radio visually-hidden" type="radio" name="option{{ option.position }}"
                             form="{{ product_form_id }}" id="{{ option_id }}-{{ forloop.index }}" value="{{ value | escape }}" 
                             {% if value==option.selected_value %}checked="checked" {% endif %} 
@@ -341,7 +341,7 @@
   <div class="pdp-inner custom-product-price">
     <div class="new-pdp">
       <div class="custom-product-price">
-              {% if product.tags contains 'customized' %}
+              {% if product.tags contains 'customized-test' %}
                 <div class="desktop current-in-cart free-personalised" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                   style="display: none;" {% endunless %}>
                   <p class="currently-in-cart" style="font-weight: 600; font-size: 12px; line-height: 17px; color: #ed1c24;text-align:center;"> Personalisation offer for only first 120 customers</p>
@@ -572,17 +572,9 @@
         <input type="hidden" disabled name="id" value="{{ product_varient.id }}">
         {%- if product.tags contains settings.products_offering_freebie -%}
         <input class="flash_sale_enable" type="hidden" name="properties[Free]" value="true">
-        {% comment %} {% elsif product.tags contains 'customized' %}
-          <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
         {%- endif -%}
         <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer" {% endif %}
           class="product-form__payment-container" {{ block.shopify_attributes }}>
-          {%- if product.tags contains 'customized' -%}
-            <p class="line-item-property__field" hidden>
-              <label for="personalised_message">Message</label>
-              <input id="personalised_message" style="width:120px; max-width:100%;" type="text" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}">
-            </p>
-          {% endif %}
           {%- if product.tags contains 'prebooking' -%}
             {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
               <button id="AddToCart" type="submit" is="loader-button" {% unless
@@ -651,22 +643,39 @@
                 {% endif %}
               </button>
             {% else %}
-              {%- if product.tags contains 'customized' and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-              {% capture itemTags %}
+              {%- if product.tags contains 'customized-test' -%}
+              <!-- {% capture itemTags %}
                 {% for item in cart.items %}
                   {{ item.product.tags }},
                 {% endfor %}
-              {% endcapture %}
+              {% endcapture %} -->
                 <a class="cutomized-btn mt-lg-2 {% if product_varient.inventory_quantity < settings.sold_out_threshold %} hide_cTA{% endif %}" is="loader-button">
-                  <span class="loader-button__text">
-                    {% if itemTags contains 'customized' %}
-                      Only one unit per order allowed
-                      {% else %}
-                    {{- 'product.form.pre_order' | t -}}
-                  <span class="pdp-btn-price d-lg-none">₹{{ selected_variant_price_on_btn }}</span>
-                {% endif %}
-                </span>
-                <span class="loader-button__loader" hidden="">  <div class="spinner"> <svg focusable="false" width="24" height="24" class="icon icon--spinner" viewBox="25 25 50 50">            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>          </svg>        </div>      </span>
+                  {%- if product_varient.inventory_quantity >= settings.sold_out_threshold -%}
+                 <span class="loader-button__text">
+                    <span class="atc_btn">
+                      <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
+                        <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
+                        <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
+                      </svg>                    
+                      <span class="add_to_cart_btn">{{- 'product.form.add_to_cart' | t -}}</span>
+                    </span>
+                      <span class="pdp-btn-price d-lg-none ">
+                        <span class="custom_price_wrapper">
+                          <span class="inclusive_text_content">Inclusive of all Taxes</span>
+                          <span class="mobile_atc_btn">
+                            <span class="mobile_atc_price">₹{{ selected_variant_price_on_btn }}</span>
+                            {% if product.compare_at_price > discounted_price %}
+                            <span class="saved_price">
+                              {{ product.compare_at_price | minus: discounted_price | times: 100.0 | divided_by: product.compare_at_price | round | append: '% Off' }} 
+                            </span>
+                          {% endif %}
+                          </span>
+                        </span>
+                      </span>
+                  </span> 
+                  {%- else -%}
+                    {{- 'product.form.sold_out' | t -}}
+                  {%- endif -%}
                 </a>
                 <button id="AddToCart" onclick="quickATC()" type="submit" is="loader-button" {% unless
                   block.settings.show_payment_button and template.suffix !='quick-buy-popover' %}data-use-primary{% endunless %}
@@ -797,8 +806,14 @@
     </product-payment-container>
     {%- endform -%}
     
+    {% if product.tags contains 'customized-test' %}
+    <div class="personalised-modal">
+      {%- render 'personalised-modal' -%}
+      </div>
+    {% endif %}
+
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
-      <div class="d-flex flex-column pincode_checker_box" data-role="additonal-info">
+      <div class="pincode_checker_box" data-role="additonal-info">
         {% if product.available %}
           {% if product.metafields.custom.product_highlights %}
             <div class="price-container product-highlight my-3 desktop">
@@ -811,10 +826,6 @@
           {% comment %} <div class="price-container p-lg-0 mb-2">
             {% render 'product-payment-partner' %}
           </div> {% endcomment %}
-        {% endif %}
-
-        {% if product.tags contains 'customized' %}
-          {%- render 'personalised-modal' -%}
         {% endif %}
 
         {%- if section.settings.enable_rush_plus and product.available -%}

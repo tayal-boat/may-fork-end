@@ -254,7 +254,7 @@
             {%- endif -%}
             {% capture swatch_btn %}
           {% if available_variants > 1 and has_color_code %}
-            {% unless product.tags contains 'customized' %}
+            {% unless product.tags contains 'customized-test' %}
             <button
               is="toggle-button"
               aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
@@ -554,11 +554,7 @@
                           name="properties[Free]"
                           value="true"
                         >
-                        {% comment %}
-                          {% elsif product.tags contains 'customized' %}
-                          <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
-                        {% endcomment %}
-                      {%- endif -%}
+                        {%- endif -%}
                       <button
                         is="loader-button"
                         type="submit"
@@ -592,13 +588,15 @@
                       <a
                         href="{{ product.url}}"
                         is="loader-button"
-                        class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}"
-                        style="
-                          background: red;line-height: normal;
-                          border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
-                          text-transform: uppercase;margin: 0!important;border-radius: 5px!important;
-                          font-size: 15px!important;font-weight: 700!important;
-                        "
+                        class="cutomized-btn" style="background: #1A2024;
+                        border: 1px solid #1A2024;
+                        padding: 12px;
+                        border-radius: 10px!important;
+                        color: #fff;
+                        font-size: 14px!important;
+                        font-weight: 500!important;line-height: normal;
+                        text-align: center;
+                        text-transform: capitalize;"
                       >
                         View Product
                       </a>
@@ -609,7 +607,8 @@
                         aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
                         aria-expanded="false"
                         class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone"
-                      >
+                      {%- if product.tags contains 'customized-test' -%} onclick="setTimeout(function(){Shopify.personalizedText()},1000);"{%- endif -%}
+                        >
                         {%- if product.tags contains 'prebooking' -%}
                           {{- 'product.form.pre_order' | t -}}
                         {% else %}
@@ -757,11 +756,7 @@
                   name="properties[Free]"
                   value="true"
                 >
-                {% comment %}
-                  {% elsif product.tags contains 'customized' %}
-                  <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
-                {% endcomment %}
-              {%- endif -%}
+                {%- endif -%}
               <button
                 type="submit"
                 {% if show_cta %}
