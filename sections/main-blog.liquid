@@ -1,4 +1,81 @@
+<style>
+.main-banner-img{margin-bottom:2rem;}
+.section__header.blog__header {max-width:95%;margin-bottom:12px;}
+.article_container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap:25px;
+  margin: 0 auto 2rem;
+  max-width: 95%;
+  justify-content: space-around;
+}
+.article--item {
+  max-width: 32%;
+}
+.article--title{
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.25;
+  letter-spacing: -0.64px;
+  color:#1a2024;
+  min-height: 40px;
+  margin-bottom: 5px;
+}
+.article--info {
+  padding: 11px 12px 12px;
+  border-radius: 10px;
+  border: solid 1px #ecf0f4;
+  background-color: #fafafa;
+}
+.top--info {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom:5px;
+}
+span.min-read {
+  font-size: 12px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #12b985;
+}
+.a_published-at{
+  font-size: 14px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.14;
+  letter-spacing: -0.56px;
+  text-align: left;
+  color: #868c91;
+}
+.article--meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
+@media (max-width:999px) {
+  .article_container{
+    flex-wrap: nowrap;
+    justify-content: unset;
+    max-width:100%;
+  }
+  .article--item {
+    max-width: calc(100dvw - 15%);
+    min-width: calc(100dvw - 15%);
+    padding: 0;
+  }
+  .article--item:first-child{margin-left:10px}
+}
+</style>
 <section>
   <div class="main-banner-img">
     <picture>
@@ -57,6 +134,18 @@
       </div>
     {%- endif -%}
 
+    {% render 'new-blogs-layout' %}
+
+    <header class="section__header blog__header">
+      <div class=""> 
+        <a class="d-flex justify-content-between align-items-center" href="/blogs/blog">
+          <h3 class="ui2-heading">From the  <span><b>Newsroom</b></span></h3>
+          <b class="view-all">View All
+            {%- render 'icon' with 'right-arrow-blue' -%}
+          </b>
+        </a>
+      </div>
+    </header>
     {%- if section.settings.show_tags and blog.all_tags.size > 0 -%}
       <link-bar class="link-bar">
         <div class="container">
@@ -88,8 +177,33 @@
         </div>
       </link-bar>
     {%- endif -%}
-
-    <div class="vertical-breather vertical-breather--margin vertical-breather--extra-tight mt-5 mb-0">
+    
+    <div class="article_container scroller">
+      {% for article in blog.articles %}
+        <div class="article--item scroller__inner">
+          <a href="{{ article.url }}" class="article-item__image-container">
+            <img class="article-item__image" sizes="(max-width: 740px) 81vw, (max-width: 999px) 37vw, 425px" loading="lazy" {% render 'image-attributes', image: article.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000' %}>
+          </a>
+          <div class="article--info">
+              <div class="top--info">
+                  <span class="min-read"></span>
+              </div>
+              <p class="article--title">{{ article.title | truncate: 60, '...' }}</p>
+              <div class="article--content visually-hidden">{{ article.content }}</div>
+              <div class="article--meta">
+                  <span class="a_published-at">{{ article.published_at | date: "%d %b, %Y" }}</span>
+                  <b class="view-all">
+                    <a href="{{article.url}}">Read Now
+                      {%- render 'icon' with 'right-arrow-blue' -%}
+                    </a>
+                  </b>
+              </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+      
+    {% comment %} <div class="vertical-breather vertical-breather--margin vertical-breather--extra-tight mt-5 mb-0">
       <div class="container">
         {%- paginate blog.articles by section.settings.articles_per_page -%}
         <article-list {% if settings.stagger_blog_posts_apparition %}stagger-apparition{% endif %} class="article-list article-list--stacked {% if paginate.pages > 1 %} load-more__inner {% endif %}" id="Huratips-Loop">
@@ -117,7 +231,7 @@
         {%- endif -%}
         {%- endpaginate -%}
       </div>
-    </div>
+    </div> {% endcomment %}
   {%- endif -%}
 </section>
 
@@ -125,6 +239,19 @@
   div[reveal] {opacity: 1;}
 </style>
 
+<script type="text/javascript">
+  var averageReadingSpeed = 200;
+  var articleContent = ''
+  var wordCount = 0
+  var minuteRead
+  $('.article_container .article--item').each(function() {
+    articleContent = $(this).find('.article--content').text();
+    wordCount = articleContent.trim().split(/\s+/).length;
+    minuteRead = Math.ceil(wordCount / averageReadingSpeed);
+    console.log($(this).find('.article--content').text())
+    $(this).find('.min-read').text(`${minuteRead} min read`)
+  })
+</script>
 {% schema %}
 {
   "name": "Blog",
