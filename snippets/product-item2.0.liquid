@@ -1,5 +1,4 @@
 <!-- product card -->
-{% unless product.tags contains "Developer_Test" and settings.Developer_Test %}
 {%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
@@ -254,7 +253,7 @@
             {%- endif -%}
             {% capture swatch_btn %}
           {% if available_variants > 1 and has_color_code %}
-            {% unless product.tags contains 'customized-test' %}
+            {% unless product.tags contains 'customized' %}
             <button
               is="toggle-button"
               aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
@@ -554,7 +553,11 @@
                           name="properties[Free]"
                           value="true"
                         >
-                        {%- endif -%}
+                        {% comment %}
+                          {% elsif product.tags contains 'customized' %}
+                          <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
+                        {% endcomment %}
+                      {%- endif -%}
                       <button
                         is="loader-button"
                         type="submit"
@@ -588,15 +591,13 @@
                       <a
                         href="{{ product.url}}"
                         is="loader-button"
-                        class="cutomized-btn" style="background: #1A2024;
-                        border: 1px solid #1A2024;
-                        padding: 12px;
-                        border-radius: 10px!important;
-                        color: #fff;
-                        font-size: 14px!important;
-                        font-weight: 500!important;line-height: normal;
-                        text-align: center;
-                        text-transform: capitalize;"
+                        class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}"
+                        style="
+                          background: red;line-height: normal;
+                          border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
+                          text-transform: uppercase;margin: 0!important;border-radius: 5px!important;
+                          font-size: 15px!important;font-weight: 700!important;
+                        "
                       >
                         View Product
                       </a>
@@ -607,8 +608,7 @@
                         aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-drawer"
                         aria-expanded="false"
                         class="button button--outline button--text button--full {% if section.settings.desktop_products_per_row >= 5 %}button--small{% endif %} hidden-touch hidden-phone"
-                      {%- if product.tags contains 'customized-test' -%} onclick="setTimeout(function(){Shopify.personalizedText()},1500);"{%- endif -%}
-                        >
+                      >
                         {%- if product.tags contains 'prebooking' -%}
                           {{- 'product.form.pre_order' | t -}}
                         {% else %}
@@ -633,7 +633,7 @@
                         is="toggle-button"
                         aria-controls="product-{{ section.id }}-{{ block.id }}-{{ product.id }}-popover"
                         aria-expanded="false"
-                        class="product-item__quick-buy-button hidden-tablet-and-up" {%- if product.tags contains 'customized-test' -%} onclick="setTimeout(function(){Shopify.personalizedText()},1500);"{%- endif -%}
+                        class="product-item__quick-buy-button hidden-tablet-and-up"
                       >
                         <span class="visually-hidden">ADD</span>
                         {%- if product.tags contains 'prebooking' -%}
@@ -756,7 +756,11 @@
                   name="properties[Free]"
                   value="true"
                 >
-                {%- endif -%}
+                {% comment %}
+                  {% elsif product.tags contains 'customized' %}
+                  <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
+                {% endcomment %}
+              {%- endif -%}
               <button
                 type="submit"
                 {% if show_cta %}
@@ -813,4 +817,3 @@
     </div>
   </div>
 </product-item>
-{% endunless %}

@@ -270,6 +270,18 @@
                     {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                     {%- assign allow_more = false -%}
                   {%- endif -%}
+                  {% if line_item.product.tags contains 'customized' %}
+                    {% for p in line_item.properties %}
+                      {% if p.last != blank and p.first == 'PersonalisedMessage' %}
+                        <line-note class="customise-accordian" line={{ forloop.index }}>
+                          <span>1 customization</span>
+                          <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
+                        </line-note>
+                      {% elsif p.last == blank and p.first == 'PersonalisedMessage' %}
+                        {% comment %} <a href="{{line_item.url | append: '&personalizenow'}}" class="add-customization">Customize</a> {% endcomment %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
                   <line-item-quantity class="line-item__quantity">
                     <div class="quantity-selector">
                       <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
@@ -303,7 +315,7 @@
                         </a>
                       {% else %}
                         {%- if allow_more -%}
-                          <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666 or line_item.product.tags contains 'customized-test' %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                          <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666 or line_item.product.tags contains 'customized' %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                             {%- render 'icon' with 'plus' -%}
                           </a>
                         {%- else -%}
@@ -316,18 +328,7 @@
                     </div>
                   {% comment %} <a href="{{ line_item.url_to_remove }}" class="line-item__remove-button link text--subdued text--xxsmall" data-no-instant><img width="16px;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_1_93145e45-8530-46aa-9fb8-6768cc3d80d2.png?v=1633783107"></a> {% endcomment %}
                   </line-item-quantity>
-                  {% if line_item.product.tags contains 'customized-test' %}
-                    {% for p in line_item.properties %}
-                      {% if p.last != blank and p.first == 'PersonalisedMessage' %}
-                        <line-note class="customise-accordian mt-2" line={{ forloop.index }}>
-                          <span>1 customization</span>
-                          <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
-                        </line-note>
-                      {% elsif p.last == blank and p.first == 'PersonalisedMessage' %}
-                        {% comment %} <a href="{{line_item.url | append: '&personalizenow'}}" class="add-customization">Customize</a> {% endcomment %}
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
+
                 </div>
 
                   {% if line_item.product.metafields.set.quantity_limit == 1 and line_item.quantity > 1 %}
@@ -377,9 +378,9 @@
                           <div class="personalised-msg-wrapper">
                           <div class="personalised-msg-content">
                           <p style="font-size:10px; font-weight: 500;padding-top:2px;line-height:normal;">{{ p.last | upcase }}</p>
-                          {% comment %} <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
+                          <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
                           <span class="edit-msg">Edit</span>
-                          </a> {% endcomment %}
+                          </a>
                           </div>
                           <div class="personalised-msg-free">Free</div>
                           </div>
@@ -388,7 +389,7 @@
                       {% endfor %}
             </line-item>
           {%- endfor -%}
-          {% if total_discount_amount > 0 %}
+        {% if total_discount_amount > 0 %}
           {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
             {% assign total_discount_amount = section.settings.discount_code_max_amount %}
           {% endif %}
@@ -400,21 +401,23 @@
             {% endif %}
          {% else %}
           {%- if purple_msg_check == true -%}
-                <small class="discount-info" style="background:#4c218c;">Get flat <b>₹500</b> off by using <b>IPURPLEYOU</b></small>
+                {% comment %} <small class="discount-info" style="background:#4c218c;">Get flat <b>₹500</b> off by using <b>IPURPLEYOU</b></small> {% endcomment %}
           {% else %}
-           <div class="payment_offers">
-             <div class="offer_text">
-               <span>₹15 off on All UPI Payments</span>
-             </div>
-             <div class="payment_icons">
-               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
-               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
-               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
-             </div>
-           </div>
+            
           {% endif %}
        {% endif %}
-       
+       {% if cart.total_price > 50000 %}
+        <div class="payment_offers">
+          <div class="offer_text">
+            <span>₹15 off on All UPI Payments</span>
+          </div>
+          <div class="payment_icons">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
+          </div>
+        </div>
+      {% endif %}
         </form>
 
       {% comment %} info: No more required on 2.0 {% endcomment %}
@@ -793,50 +796,13 @@ Shopify.cartMessage = `{{section.settings.cart_announcement}}`;
 sessionStorage.setItem('total_discount_amount', {{ total_discount_amount | json }});
 sessionStorage.setItem('offer_discount_code', '{{ section.settings.discount_code }}');
 
-    if(cartDiscountCustom) {
-      clickAndApplyCode(cartDiscountCustom)
-    }
-    if(cartDiscountHomeAudio) {
-      clickAndApplyCode(cartDiscountHomeAudio)
-    }
-  runDiscount()
-
-  function clickAndApplyCode(element) {
-    element.addEventListener('click', function() {
-      console.log(element)
-      const cartDiscountCode = element.querySelector('.cart-code').textContent;
-      const cartDiscountCodeEl = element.querySelector('.cart-code');
-      const discountField = document.querySelector('#af_kd_custom_coupon_text')
-      const discountApplyBtn = document.querySelector('#af_kd_custom_apply_coupon_trigger')
-      const applyMsg = element.querySelector('.apply-msg')
-      const current_date = new Date();
-      current_date.setTime(current_date.getTime());
-      const current_time = current_date.toUTCString();
-      document.cookie = "discount_code='';expires=" + current_time;
-  
-      // Seeting cookie for 24 hrs
-      let next_day = current_date.setTime(current_date.getTime() + (1 * 24 * 60 * 60 * 1000));
-      document.cookie = "discount_code=" + cartDiscountCode + ";expires=" + next_day;
-      {% comment %} applyMsg.textContent = 'Applied!' {% endcomment %}
-      copyToClipboard(cartDiscountCodeEl);
-      {% comment %} discountField.value = cartDiscountCode {% endcomment %}
-      {% comment %} $('#af_kd_custom_apply_coupon_trigger')[0].click() {% endcomment %}
-    })
-  }
-
-  function copyToClipboard(element) {
-    var $temp = $("<input class='copy-field'>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
-    navigator.clipboard.writeText($temp.val())
-    $temp.remove();
-  }
-
+Shopify.cartUpdate = function(cartJson){
+// Add code which need to run on cart update
+}
 {% comment %} if(document.readyState === 'loading') {console.log("loading");}{% endcomment %}
 $(window).on("load", function(){
 // $('.custom-gift-button')[0] ? $('.custom-gift-button')[0].click() : '';
-{% if settings.products_offering_freebie != blank %}  
+{% if settings.products_offering_freebie != blank %}
 let custumisedvariant_ids = [];
 let giftId = "{{ gift-product_variant }}";
 let onloadfreeqnty = 0;
@@ -847,15 +813,18 @@ jQuery.getJSON('/cart.js', function(cart) {
   $(onloadfreeItems).each(function(ind, el){
     onloadfreeqnty += el.quantity;
   })
+  {% comment %} info: for product customisation
     let onloadcustomised = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage != undefined);
     $(onloadcustomised).each(function(ind, el){
       onloadcustomisedqnt += el.quantity;
       if (!custumisedvariant_ids.includes(el.id)){ custumisedvariant_ids.push(el.id); }
     }) 
+  {% endcomment %}
   if (onloadcustomisedqnt > 0){customized_added() }
   console.log("onloadfreeqnty", onloadfreeqnty , "onloadcustomisedqnt" , onloadcustomisedqnt , custumisedvariant_ids )
 })
 
+{% comment %}  info: for product customisation
   let updatedcustomisedqnt = 0;
   document.addEventListener('cart:updated', function(event) {
     console.log("old",updatedcustomisedqnt);
@@ -905,6 +874,7 @@ jQuery.getJSON('/cart.js', function(cart) {
     $(".cutomized-btn .loader-button__text").html(`PRE-ORDER <span class="pdp-btn-price d-lg-none">₹{{ product.price | divided_by: 100 }}</span>`);
     $(".cutomized-btn, .button.custom-prebook").removeClass('signle-unit');
   }
+{% endcomment %}
 
 const checkbox = document.querySelector(".check_container input");
 const message = document.querySelector(".message-container .message");
@@ -953,11 +923,7 @@ jQuery.getJSON('/cart.js', function(cart) {
 };
 const observer_ = new MutationObserver(callback_);
 observer_.observe(targNode, config_);
-
-{% comment %} add to line no.802 
-{% endcomment %} 
-{% endif %} 
-
+{% endif %}
 {% comment %} if(checkbox) {
   checkbox.addEventListener('change', () => {
     if (checkbox.checked) {
