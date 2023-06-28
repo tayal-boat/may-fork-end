@@ -816,10 +816,11 @@
         {% endif %}
 
         {%- if section.settings.enable_rush_plus and product.available -%}
-          
-          {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-            <h2 class="pincode_checker_heading">Check Delivery</h2>
-          {% endif %}
+          {% unless product.tags contains "Coming-Soon" %}
+            {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
+              <h2 class="pincode_checker_heading">Check Delivery</h2>
+            {% endif %}
+          {% endunless %}
           <div class="pincode_checker_container">
             <div class="pincode_checker">
               <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter PIN code for exact delivery date">
