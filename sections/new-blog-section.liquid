@@ -1,5 +1,11 @@
 {%- assign blog = section.settings.blog -%}
-
+<style>
+  .shopify-section--single-blog .container.article_container.scroller {
+    flex-wrap: nowrap;overflow-x: auto;scroll-snap-type: x mandatory;
+  }
+  .article--item {  max-width: 32%;min-width: 32%;margin-right: 15px;
+}
+</style>
 <header class="section__header blog__header">
   <div class=""> 
     <a class="d-flex justify-content-between align-items-center" href="{{ blog.url }}">
@@ -12,7 +18,7 @@
 </header>
 
 <div class="container article_container scroller">
-  {% for article in blogs[blog].articles limit: 3 %}
+  {% for article in blogs[blog].articles limit: section.settings.articles_per_page %}
     <div class="article--item scroller__inner">
       <a href="{{ article.url }}" class="article-item__image-container">
         <img class="article-item__image" sizes="(max-width: 740px) 81vw, (max-width: 999px) 37vw, 425px" loading="lazy" {% render 'image-attributes', image: article.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000' %}>
@@ -47,10 +53,19 @@
       "label": "Blog"
     },
     {
-      "type": "text",
+      "type": "html",
       "id": "title",
       "label": "Heading",
       "default": "Blog posts"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Blog posts per page",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
     }
   ],
   "presets": [
