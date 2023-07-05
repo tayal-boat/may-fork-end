@@ -643,24 +643,24 @@ $('a.banner_link').on('click', function() {
 /* clevertap code for clicking razor pay ends here */
 
 // OTP Login
-
+Shopify.custom_otp_login = function () {
   //Function to allow only numbers
-     function _isNumberCheck(evt) {
-      var charCode = (evt.which) ? evt.which : event.keyCode
-      if (charCode > 31 && (charCode < 48 || charCode > 57))
+  function _isNumberCheck(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
       return false;
-      return true;
-   }
-   // Not allow 0 as first digit on input
-   $(document).on("input", "#otp-mobile-number, #otp", (e) => {
-      $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
-      $('.otp-login-error').html('');
-   })
-   $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
-      return _isNumberCheck(e);
-   })
-   let timerOn = false;
-   function timer(remaining, timerOn) {
+    return true;
+  }
+  // Not allow 0 as first digit on input
+  $(document).on("input", "#otp-mobile-number, #otp", (e) => {
+    $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+    $('.otp-login-error').html('');
+  })
+  $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
+    return _isNumberCheck(e);
+  })
+  let timerOn = false;
+  function timer(remaining, timerOn) {
     let m = Math.floor(remaining / 60);
     let s = remaining % 60;
 
@@ -668,16 +668,16 @@ $('a.banner_link').on('click', function() {
     s = s < 10 ? '0' + s : s;
     $('#timer').html(m + ':' + s);
     remaining -= 1;
-    if(remaining >= 0 && timerOn) {
-      setTimeout(function() {
+    if (remaining >= 0 && timerOn) {
+      setTimeout(function () {
         timerOn = sessionStorage.getItem('timerOn');
         timerOn = JSON.parse(timerOn);
-          timer(remaining, timerOn);
+        timer(remaining, timerOn);
       }, 1000);
       return;
     }
 
-    if(!timerOn) {
+    if (!timerOn) {
       // Do validate stuff here
       return;
     }
@@ -686,10 +686,10 @@ $('a.banner_link').on('click', function() {
     $('.resend-timer').hide();
     $('.resend-text').show();
     $('.resend-btn').show();
-    $('.otp-login-confirm-btn').css('background','#ED1C24');
+    $('.otp-login-confirm-btn').css('background', '#ED1C24');
   }
 
-   function TimerFunction(){
+  function TimerFunction() {
     timerOn = true;
     sessionStorage.setItem('timerOn', timerOn);
     $('.resend-timer').show();
@@ -697,27 +697,27 @@ $('a.banner_link').on('click', function() {
     $('.resend-btn').hide();
     $('.otp-login-confirm-btn').removeAttr('style');
     timer(60, timerOn);
-   }
+  }
 
-   function countdown(timeleft, url){
+  function countdown(timeleft, url) {
     var timeleft = timeleft;
-    var downloadTimer = setInterval(function(){
-      if(timeleft <= 0){
+    var downloadTimer = setInterval(function () {
+      if (timeleft <= 0) {
         clearInterval(downloadTimer);
-        sessionStorage.setItem('login','false');
+        sessionStorage.setItem('login', 'false');
         location.href = url;
       } else {
         document.getElementById("countdown").innerHTML = timeleft;
       }
       timeleft -= 1;
     }, 1000);
-   }
+  }
 
-   function emailMask(email) {
+  function emailMask(email) {
     var maskedEmail = email.replace(/([^@\.])/g, "*").split('');
-    var previous	= "";
-    for(i=0;i<maskedEmail.length;i++){
-      if (i<=1 || previous == "." || previous == "@"){
+    var previous = "";
+    for (i = 0; i < maskedEmail.length; i++) {
+      if (i <= 1 || previous == "." || previous == "@") {
         maskedEmail[i] = email[i];
       }
       previous = email[i];
@@ -727,44 +727,44 @@ $('a.banner_link').on('click', function() {
 
   var customer_container = document.querySelector('.customer-login-section.customer--section');
   function inputSubmit(input) {
-    if(input){
-    input.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        // debugger
-        if(customer_container.hasAttribute('otp_login_screen')){
-        //  console.log('otp_login_screen');
-        document.querySelector('.otp-login-btn').click();
-        }
-        else if(customer_container.hasAttribute('otp_send')){
-          document.querySelector('.otp-login-confirm-btn').click();  
-        }
-        else{
-        //  console.log('prevint defaunt reload');
+    if (input) {
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
           event.preventDefault();
+          // debugger
+          if (customer_container.hasAttribute('otp_login_screen')) {
+            //  console.log('otp_login_screen');
+            document.querySelector('.otp-login-btn').click();
+          }
+          else if (customer_container.hasAttribute('otp_send')) {
+            document.querySelector('.otp-login-confirm-btn').click();
+          }
+          else {
+            //  console.log('prevint defaunt reload');
+            event.preventDefault();
+          }
         }
-      }
-    });
-  }
+      });
     }
+  }
 
-  function signup_window(session_id){
+  function signup_window(session_id) {
     $('.customer-login-section').attr('new_customer', 'true');
     $('.customer-login-section').removeAttr('multi_email');
     $('.otp-login-message h3').html('Continue with Email');
     $('.otp-timer-container').hide();
     $('.otp-login-error').html('');
-    $('.otp-login-submit-btn').click(function(){
+    $('.otp-login-submit-btn').click(function () {
       let full_name = $('.otp-fullName #full_name').val();
       let email = $('.otp-email #email').val();
       let phone = $('#otp-mobile-number').val();
       let register_url = sessionStorage.getItem('login_location');
-      sessionStorage.setItem('selected_email',email);
+      sessionStorage.setItem('selected_email', email);
       otpSignUp(full_name, email, phone, session_id, register_url);
     })
   }
 
-  function verifyemail(session_id, otp, url){
+  function verifyemail(session_id, otp, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/email/verify';
     var settings = {
       "url": base_Url,
@@ -779,28 +779,28 @@ $('a.banner_link').on('click', function() {
         "otp": otp
       }),
     };
-    
+
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200 && response.message == 'login URL sent'){
+      if (response.code == 200 && response.message == 'login URL sent') {
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
         localStorage.setItem('boatHead_input', response.Token);
         countdown(5, response.URL);
-        
-      }else if(response.code == 422 && response.message == 'validation_error'){
+
+      } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401){
+      } else if (response.code == 401) {
         $('.otp-login-error').html(response.message);
-      }else if(response.code == 406){
+      } else if (response.code == 406) {
         $('.otp-login-error').html('Otp expired.');
-      }else{
+      } else {
         $('.otp-login-error').html('Something went wrong please try again.');
       }
     });
   }
-  
-  function emailResend(email, session_id){
+
+  function emailResend(email, session_id) {
     let base_Url = 'https://otp.boat-lifestyle.com/email/otp';
     var settings = {
       "url": base_Url,
@@ -814,18 +814,18 @@ $('a.banner_link').on('click', function() {
         "session_id": session_id
       }),
     };
-    
+
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
-        
-      }else{
+      if (response.code == 200) {
+
+      } else {
         $('.otp-login-error').html('Something went wrong please try again.');
       }
     });
   }
 
-  function selectEmail(email, session_id, url){
+  function selectEmail(email, session_id, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
     var settings = {
       "url": base_Url,
@@ -836,52 +836,52 @@ $('a.banner_link').on('click', function() {
       },
       "data": JSON.stringify({
         "session_id": session_id,
-        "email" : email,
+        "email": email,
         "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
+      if (response.code == 200) {
         $('.otp-login-error').html('');
-        if(response.message == 'Email exists with different number  , OTP sent to email'){
+        if (response.message == 'Email exists with different number  , OTP sent to email') {
           var session_id = response.session_id;
-  
-  // email varify code
-  $('.customer-login-section').attr('otp_send', 'true');
-  $('.customer-login-section').attr('otp_email_varify', 'true');
-  $('.customer-login-section').removeAttr('multi_email');
-  $('#resend__otp').removeClass('login-resend-btn');
-  $('#resend__otp').addClass('email-resend-btn');
-  $('.email-list-container').html('');
-  $('.mobile-otp-inout input').val('');
-  $('.otp-timer-container').show();
-$('.mobile-login-input').html(`
+
+          // email varify code
+          $('.customer-login-section').attr('otp_send', 'true');
+          $('.customer-login-section').attr('otp_email_varify', 'true');
+          $('.customer-login-section').removeAttr('multi_email');
+          $('#resend__otp').removeClass('login-resend-btn');
+          $('#resend__otp').addClass('email-resend-btn');
+          $('.email-list-container').html('');
+          $('.mobile-otp-inout input').val('');
+          $('.otp-timer-container').show();
+          $('.mobile-login-input').html(`
 <div class="input">
   <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
-$('.otp-login-error').html('');
-$('.otp-login-confirm-btn').addClass('email_varify');
-TimerFunction();
-  sessionStorage.setItem('login_session_id', response.session_id );
-  
-          }else{
-        $('.customer-login-section.customer--section').hide();
-        $('.oto-login-success-container').show();
-        localStorage.setItem('boatHead_input', response.Token);
-        countdown(5, response.URL);
-          }
-      }else if(response.code == 422 && response.message == 'validation_error'){
+          $('.otp-login-error').html('');
+          $('.otp-login-confirm-btn').addClass('email_varify');
+          TimerFunction();
+          sessionStorage.setItem('login_session_id', response.session_id);
+
+        } else {
+          $('.customer-login-section.customer--section').hide();
+          $('.oto-login-success-container').show();
+          localStorage.setItem('boatHead_input', response.Token);
+          countdown(5, response.URL);
+        }
+      } else if (response.code == 422 && response.message == 'validation_error') {
         // $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401 || response.code == 404 ){
+      } else if (response.code == 401 || response.code == 404) {
         $('.otp-login-error').html(response.message);
       }
     });
   }
 
-  function otpSignUp(full_name, email, phone, session_id, url){
+  function otpSignUp(full_name, email, phone, session_id, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/signup';
     var settings = {
       "url": base_Url,
@@ -891,78 +891,78 @@ TimerFunction();
         "Content-Type": "application/json"
       },
       "data": JSON.stringify({
-        "full_name" : full_name,
+        "full_name": full_name,
         "email": email,
         "phone": phone,
         "session_id": session_id,
-        "url" : url
+        "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
+      if (response.code == 200) {
         $('.otp-login-error').html('');
-        if(response.message == 'Email exists with different number  , OTP sent to email'){
-        var session_id = response.session_id;
+        if (response.message == 'Email exists with different number  , OTP sent to email') {
+          var session_id = response.session_id;
 
-// email varify code
+          // email varify code
 
-  $('.customer-login-section').attr('otp_send', 'true');
-  $('.customer-login-section').attr('otp_email_varify', 'true');
-  $('.customer-login-section').removeAttr('new_customer');
-  $('.customer-login-section').removeAttr('multi_email');
-  $('#resend__otp').removeClass('login-resend-btn');
-  $('#resend__otp').addClass('email-resend-btn');
-  $('.email-list-container').html('');
-  $('.mobile-otp-inout input').val('');
-  $('.otp-timer-container').show();
-$('.mobile-login-input').html(`
+          $('.customer-login-section').attr('otp_send', 'true');
+          $('.customer-login-section').attr('otp_email_varify', 'true');
+          $('.customer-login-section').removeAttr('new_customer');
+          $('.customer-login-section').removeAttr('multi_email');
+          $('#resend__otp').removeClass('login-resend-btn');
+          $('#resend__otp').addClass('email-resend-btn');
+          $('.email-list-container').html('');
+          $('.mobile-otp-inout input').val('');
+          $('.otp-timer-container').show();
+          $('.mobile-login-input').html(`
 <div class="input">
   <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
-$('.otp-login-error').html('');
-$('.otp-login-confirm-btn').addClass('email_varify');
-clevertap.event.push('OTP Signup', {
-  "Full Name": full_name,
-  "Email": email,
-  "Phone": phone,
-  "Message": response.message
-})
-clevertap.profile.push({
-  "Site": {
-    "OTP Signup Name": full_name,
-    "OTP Signuo Number": phone,
-    "OTP Signup Email": email,
-    "MSG-sms": "TRUE",
-    "MSG-whatsapp": "TRUE"
-  }
- }); 
-TimerFunction();
-  sessionStorage.setItem('login_session_id', response.session_id );
-        }else{
-        $('.customer-login-section.customer--section').hide();
-        $('.oto-login-success-container').show();
-        localStorage.setItem('boatHead_input', response.Token);
-        clevertap.event.push('OTP Signup', {
-          "Full Name": full_name,
-          "Email": email,
-          "Phone": phone,
-          "Message": response.message
-        })
-        clevertap.profile.push({
-          "Site": {
-            "OTP Signup Name": full_name,
-            "OTP Signuo Number": phone,
-            "OTP Signup Email": email,
-            "MSG-sms": "TRUE",
-            "MSG-whatsapp": "TRUE"
-          }
-        }); 
-        countdown(5, response.URL);
-      }
-      }else if(response.code == 422 && response.message == 'validation_error'){
+          $('.otp-login-error').html('');
+          $('.otp-login-confirm-btn').addClass('email_varify');
+          clevertap.event.push('OTP Signup', {
+            "Full Name": full_name,
+            "Email": email,
+            "Phone": phone,
+            "Message": response.message
+          })
+          clevertap.profile.push({
+            "Site": {
+              "OTP Signup Name": full_name,
+              "OTP Signuo Number": phone,
+              "OTP Signup Email": email,
+              "MSG-sms": "TRUE",
+              "MSG-whatsapp": "TRUE"
+            }
+          });
+          TimerFunction();
+          sessionStorage.setItem('login_session_id', response.session_id);
+        } else {
+          $('.customer-login-section.customer--section').hide();
+          $('.oto-login-success-container').show();
+          localStorage.setItem('boatHead_input', response.Token);
+          clevertap.event.push('OTP Signup', {
+            "Full Name": full_name,
+            "Email": email,
+            "Phone": phone,
+            "Message": response.message
+          })
+          clevertap.profile.push({
+            "Site": {
+              "OTP Signup Name": full_name,
+              "OTP Signuo Number": phone,
+              "OTP Signup Email": email,
+              "MSG-sms": "TRUE",
+              "MSG-whatsapp": "TRUE"
+            }
+          });
+          countdown(5, response.URL);
+        }
+      } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('Something went wrong please try again.');
         clevertap.event.push('OTP Signup', {
           "Full Name": full_name,
@@ -978,8 +978,8 @@ TimerFunction();
             "MSG-sms": "TRUE",
             "MSG-whatsapp": "TRUE"
           }
-        }); 
-      }else if(response.code == 401){
+        });
+      } else if (response.code == 401) {
         $('.otp-login-error').html('Customer already exist with this email ID and with ' + response.message + ' phone number login with this number.');
         let login_btn = $('.otp-login-submit-btn');
         login_btn.html('Back to Login');
@@ -998,287 +998,288 @@ TimerFunction();
             "MSG-sms": "TRUE",
             "MSG-whatsapp": "TRUE"
           }
-        }); 
-        $('.otp-login-submit-btn[return_to_login]').click(function(e){
+        });
+        $('.otp-login-submit-btn[return_to_login]').click(function (e) {
           e.preventDefault();
           location.reload();
         })
       }
     });
   }
-  
-function verifyotp(session_id, otp, url){
-  let base_Url = 'https://otp.boat-lifestyle.com/login/verifyotp';
-  var settings = {
-    "url": base_Url,
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "data": JSON.stringify({
-      "session_id": session_id,
-      "otp": otp,
-      "url": url
-    }),
-  };
-  
-  $.ajax(settings).done(function (response) {
-    // console.log(response);
-    let mobile_number = $('.mobile-login-input input').val()
-    if(response.code == 200 && response.message == 'login URL sent'){
-      sessionStorage.setItem('timerOn', false);
-    //  console.log(timerOn,'timerOn');
-      $('.customer-login-section.customer--section').hide();
-      $('.oto-login-success-container').show();
-      localStorage.setItem('boatHead_input', response.Token);
-      clevertap.event.push('Successful Login', {
-        "Mobile Number": mobile_number,
-        "Session ID": session_id
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Login Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-       }); 
-      countdown(5, response.URL);
-      
-    }else if(response.code == 422 && response.message == 'validation_error'){
-      $('.otp-login-error').html('Something went wrong please try again.');
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": 'Something went wrong please try again.'
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      }); 
-    }else if(response.code == 401 && response.message == 'Incorrect Otp'){
-      $('.otp-login-error').html(response.message);
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": response.message
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      });
-    }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
-      sessionStorage.setItem('timerOn', false);
-    //  console.log(timerOn,'timerOn');
-      $('.otp-login-error').html(response.message);
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": response.message
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      });
-      signup_window(session_id);
-    }else if(response.code == 406){
-      $('.otp-login-error').html('Otp expired.');
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": response.message
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      });
-    }else if(response.code == 300 && response.message == 'emailId list'){
-      sessionStorage.setItem('timerOn', false);
-    //  console.log(timerOn,'timerOn');
-      $('.otp-login-message h3').html('Please select your Primary email id');
-      $('.customer-login-section').attr('multi_email', 'true');
-      $('.otp-timer-container').hide();
-      $('.otp-login-error').html('');
-      let emailList = response.emailList;
-      let emailListHtml = '', i ;
-      let emailListContainer = document.querySelector('.email-list-container');
-      if(emailList.length > 0){
-      for (let i = 0; i < emailList.length; i++) {
-        emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
-      }
-      emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
-      let emailSelector = $('.email-list-container span');
-      let selectedEmail = '';
-      console.dir(emailSelector[0]);
-      selectedEmail = emailSelector[0].dataset.value;
-      sessionStorage.setItem('selected_email', selectedEmail);
-    //  console.log(selectedEmail);
-      emailSelector[0].setAttribute('selected','true');
-      emailSelector.click(function(event){
-      selectedEmail = event.target.dataset.value;
-      for (i = 0; i < emailSelector.length; i++) {
-        if (emailSelector[i].hasAttribute("selected")) {
-          emailSelector[i].removeAttribute("selected");   
-        }
-    }
-    sessionStorage.setItem('selected_email', selectedEmail);
-      $(this).attr('selected','true'); 
-      });
 
-      $('.redirect_to_signup').click(function(){
+  function verifyotp(session_id, otp, url) {
+    let base_Url = 'https://otp.boat-lifestyle.com/login/verifyotp';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "session_id": session_id,
+        "otp": otp,
+        "url": url
+      }),
+    };
+
+    $.ajax(settings).done(function (response) {
+      // console.log(response);
+      let mobile_number = $('.mobile-login-input input').val()
+      if (response.code == 200 && response.message == 'login URL sent') {
+        sessionStorage.setItem('timerOn', false);
+        //  console.log(timerOn,'timerOn');
+        $('.customer-login-section.customer--section').hide();
+        $('.oto-login-success-container').show();
+        localStorage.setItem('boatHead_input', response.Token);
+        clevertap.event.push('Successful Login', {
+          "Mobile Number": mobile_number,
+          "Session ID": session_id
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Login Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+        countdown(5, response.URL);
+
+      } else if (response.code == 422 && response.message == 'validation_error') {
+        $('.otp-login-error').html('Something went wrong please try again.');
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": 'Something went wrong please try again.'
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+      } else if (response.code == 401 && response.message == 'Incorrect Otp') {
+        $('.otp-login-error').html(response.message);
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": response.message
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+      } else if (response.code == 401 && response.message == 'Customer does not exists , consider Sign up') {
+        sessionStorage.setItem('timerOn', false);
+        //  console.log(timerOn,'timerOn');
+        $('.otp-login-error').html(response.message);
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": response.message
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
         signup_window(session_id);
-      });
-      let selectedEmail_url = sessionStorage.getItem('login_location');
-      $('.customer-login-section[multi_email] .otp-login-submit-btn').click(function(){
-      selectEmail(selectedEmail, session_id, selectedEmail_url);
-      });
-    }else{
-      signup_window(session_id);
-    }
-    }else{
-      $('.otp-login-error').html('Something went wrong please try again.');
-      clevertap.event.push('Failed Login', {
-        "Error Message": 'Something went wrong please try again.'
-      })
-    }
-  });
-}
+      } else if (response.code == 406) {
+        $('.otp-login-error').html('Otp expired.');
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": response.message
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+      } else if (response.code == 300 && response.message == 'emailId list') {
+        sessionStorage.setItem('timerOn', false);
+        //  console.log(timerOn,'timerOn');
+        $('.otp-login-message h3').html('Please select your Primary email id');
+        $('.customer-login-section').attr('multi_email', 'true');
+        $('.otp-timer-container').hide();
+        $('.otp-login-error').html('');
+        let emailList = response.emailList;
+        let emailListHtml = '', i;
+        let emailListContainer = document.querySelector('.email-list-container');
+        if (emailList.length > 0) {
+          for (let i = 0; i < emailList.length; i++) {
+            emailListHtml = emailListHtml + '<span data-value="' + emailList[i] + '">' + emailMask(emailList[i]) + '</span>'
+          }
+          emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
+          let emailSelector = $('.email-list-container span');
+          let selectedEmail = '';
+          console.dir(emailSelector[0]);
+          selectedEmail = emailSelector[0].dataset.value;
+          sessionStorage.setItem('selected_email', selectedEmail);
+          //  console.log(selectedEmail);
+          emailSelector[0].setAttribute('selected', 'true');
+          emailSelector.click(function (event) {
+            selectedEmail = event.target.dataset.value;
+            for (i = 0; i < emailSelector.length; i++) {
+              if (emailSelector[i].hasAttribute("selected")) {
+                emailSelector[i].removeAttribute("selected");
+              }
+            }
+            sessionStorage.setItem('selected_email', selectedEmail);
+            $(this).attr('selected', 'true');
+          });
 
-function otpLogin(phone){
-  let base_Url = 'https://otp.boat-lifestyle.com/login/sendotp';
-  var settings = {
-    "url": base_Url,
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "data": JSON.stringify({
-      "phone": phone
-    }),
-  };
-  $.ajax(settings).done(function (response) {
-    // console.log(response);
-    if(response.code == 200 && response.message == 'OTP sent'){
-    $('.customer-login-section').attr('otp_send', 'true');
-    $('.customer-login-section').removeAttr('otp_login_screen');
-    $('#otp-mobile-number').attr('disabled', true)
-    $('.otp-login-error').html('');
+          $('.redirect_to_signup').click(function () {
+            signup_window(session_id);
+          });
+          let selectedEmail_url = sessionStorage.getItem('login_location');
+          $('.customer-login-section[multi_email] .otp-login-submit-btn').click(function () {
+            selectEmail(selectedEmail, session_id, selectedEmail_url);
+          });
+        } else {
+          signup_window(session_id);
+        }
+      } else {
+        $('.otp-login-error').html('Something went wrong please try again.');
+        clevertap.event.push('Failed Login', {
+          "Error Message": 'Something went wrong please try again.'
+        })
+      }
+    });
+  }
+
+  function otpLogin(phone) {
+    let base_Url = 'https://otp.boat-lifestyle.com/login/sendotp';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "phone": phone
+      }),
+    };
+    $.ajax(settings).done(function (response) {
+      // console.log(response);
+      if (response.code == 200 && response.message == 'OTP sent') {
+        $('.customer-login-section').attr('otp_send', 'true');
+        $('.customer-login-section').removeAttr('otp_login_screen');
+        $('#otp-mobile-number').attr('disabled', true)
+        $('.otp-login-error').html('');
+        TimerFunction();
+        sessionStorage.setItem('login_session_id', response.session_id)
+      } else if (response.code == 422 && response.message == 'validation_error') {
+        $('.otp-login-error').html('The phone field is required.');
+      } else if (response.code == 403 && response.message == 'Invalid phone number') {
+        $('.otp-login-error').html(response.message);
+      }
+    });
+  }
+
+  $('.otp-login-btn, .login-resend-btn').click(function () {
+    if (!$('#resend__otp').hasClass('email-resend-btn')) {
+      console.log('login-resend-btn');
+      let phone = $('#otp-mobile-number').val();
+      if (phone.length < 1) {
+        $('.otp-login-error').html('The phone field is required.');
+      } else if (phone.length < 10) {
+        $('.otp-login-error').html('Invalid phone number.');
+      } else {
+        $('.otp-login-btn').attr('disabled', true);
+        otpLogin(phone);
+      }
+    }
+  })
+
+  $(document).on('click', '#resend__otp', function () {
     TimerFunction();
-      sessionStorage.setItem('login_session_id', response.session_id )
-  }else if(response.code == 422 && response.message == 'validation_error'){
-    $('.otp-login-error').html('The phone field is required.');
-  }else if(response.code == 403 && response.message == 'Invalid phone number'){
-    $('.otp-login-error').html(response.message);
-  }
   });
-}
 
-$('.otp-login-btn, .login-resend-btn').click(function(){
-  if(!$('#resend__otp').hasClass('email-resend-btn')){
-//  console.log('login-resend-btn');
-  let phone = $('#otp-mobile-number').val();
-  if(phone.length < 1){
-    $('.otp-login-error').html('The phone field is required.');
-  }else if(phone.length < 10){
-    $('.otp-login-error').html('Invalid phone number.');
-  }else {
-    $('.otp-login-btn').attr('disabled', true);
-    otpLogin(phone);
-  }
-  }
-})
-
-$(document).on('click', '#resend__otp', function(){
-  TimerFunction();
-});
-
-$( "#otp" ).on( "input", function() {
-  if($(this).val().length >5 ){
-    $('.otp-login-confirm-btn').css('background','#ED1C24');
-  }
-});
-
-$('.mobile-login-edit-icon').click(function(){
-  $('.otp-login-error').html('');
-  $('.otp-login-btn').attr('disabled', false);
-  $('.customer--section').removeAttr('otp_send');
-  $('.mobile-otp-inout input').val('');
-  $('#otp-mobile-number').attr('disabled', false)
+  $("#otp").on("input", function () {
+    if ($(this).val().length > 5) {
+      $('.otp-login-confirm-btn').css('background', '#ED1C24');
+    }
   });
-  if(!sessionStorage.login_location && sessionStorage.login_location !== ''){
-    sessionStorage.setItem('login_location','https://www.boat-lifestyle.com/');
+
+  $('.mobile-login-edit-icon').click(function () {
+    $('.otp-login-error').html('');
+    $('.otp-login-btn').attr('disabled', false);
+    $('.customer--section').removeAttr('otp_send');
+    $('.mobile-otp-inout input').val('');
+    $('#otp-mobile-number').attr('disabled', false)
+  });
+  if (!sessionStorage.login_location && sessionStorage.login_location !== '') {
+    sessionStorage.setItem('login_location', 'https://www.boat-lifestyle.com/');
   }
-  
+
 
   document.querySelector('.custom-account-icon').addEventListener("click", function myFunction(event) {
     event.preventDefault();
-      sessionStorage.setItem('login_location',window.location.href);
+    sessionStorage.setItem('login_location', window.location.href);
   });
 
   let mobile_account = document.querySelectorAll('.mobile-custom-account-icon');
   for (let i = 0; i < mobile_account.length; i++) {
     mobile_account[i].addEventListener("click", function myFunction(event) {
       event.preventDefault();
-        sessionStorage.setItem('login_location',window.location.href);
-        var account_url = this.firstElementChild.getAttribute('href');
-        window.location = account_url;
+      sessionStorage.setItem('login_location', window.location.href);
+      var account_url = this.firstElementChild.getAttribute('href');
+      window.location = account_url;
     });
   }
 
- $('.otp-login-confirm-btn').click(function(){
-   if(!$('.otp-login-confirm-btn').hasClass('email_varify')){
-//  console.log('verifyotp');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){  
-  verifyotp(session_id, otp, url);
-}
-     }else{
-  let session_id = sessionStorage.getItem('login_session_id');
-  let mobile_number = $('.mobile-login-input input').val()
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
-  verifyemail(session_id, otp, url);
-}else if(otp == ''){
-  $('.otp-login-error').html('OTP is required');
-}   
-     }
-})
+  $('.otp-login-confirm-btn').click(function () {
+    if (!$('.otp-login-confirm-btn').hasClass('email_varify')) {
+      //  console.log('verifyotp');
+      let session_id = sessionStorage.getItem('login_session_id');
+      let otp = $('.mobile-otp-inout input').val();
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyotp(session_id, otp, url);
+      }
+    } else {
+      let session_id = sessionStorage.getItem('login_session_id');
+      let mobile_number = $('.mobile-login-input input').val()
+      let otp = $('.mobile-otp-inout input').val();
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyemail(session_id, otp, url);
+      } else if (otp == '') {
+        $('.otp-login-error').html('OTP is required');
+      }
+    }
+  })
 
-$('#resend__otp').click(function(){
-  if($(this).hasClass('email-resend-btn')){
-//  console.log('email-resend-btn');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let email = $('#emailId').val();
-if(session_id && session_id !== '' && session_id !== 'undefined' && email){   
-  emailResend(email, session_id);
-}  
-  }
-})
+  $('#resend__otp').click(function () {
+    if ($(this).hasClass('email-resend-btn')) {
+      //  console.log('email-resend-btn');
+      let session_id = sessionStorage.getItem('login_session_id');
+      let email = $('#emailId').val();
+      if (session_id && session_id !== '' && session_id !== 'undefined' && email) {
+        emailResend(email, session_id);
+      }
+    }
+  })
 
-var input_login = document.querySelector('.mobile-login-input input');
-inputSubmit(input_login);  
-var otp_login = document.querySelector('.mobile-otp-inout input');
-inputSubmit(otp_login);  
+  var input_login = document.querySelector('.mobile-login-input input');
+  inputSubmit(input_login);
+  var otp_login = document.querySelector('.mobile-otp-inout input');
+  inputSubmit(otp_login);
 
-$('.mobile-otp-inout').click(function(){
-  if($('.otp-login-error').html() !== ''){
-    $('.otp-login-error').html('');
-    $(this).children('input').val('');
-  }
-});
-
+  $('.mobile-otp-inout').click(function () {
+    if ($('.otp-login-error').html() !== '') {
+      $('.otp-login-error').html('');
+      $(this).children('input').val('');
+    }
+  });
+};
+Shopify.custom_otp_login();
 // if( window.location = '/account/logout'){
 //   localStorage.removeItem('boatHead_input');
 //   sessionStorage.removeItem('login')
@@ -1794,96 +1795,81 @@ Shopify.notifyMe = function(){
   // console.log("custom notify me");
   // console.log(event.target.dataset);
   var dataSet =  event.target.dataset;
-  var productJson = dataSet["productData"];
-  productJson = JSON.parse(productJson);
   var varientID = dataSet["variantId"];
   varientID = parseInt(varientID);
-  // console.log(productJson);
   var varientSelector = '';
-  // for (let i = 0; i < productJson.variants.length; i++) {
-  //   if(!productJson.variants[i].available || productJson.variants[i].available == "false"){
-  //     varientSelector = varientSelector + `<option value="${productJson.variants[i].id}" data-title="${productJson.variants[i].title}">${productJson.variants[i].title}</option>`;
-  //   if(productJson.variants[i].id == varientID){
-  //     $('.product-varient-title').text(productJson.variants[i].title);
-  //     }
-  // }
-  // }
-  // $('.product-name').text(productJson.title);
-
+  var varientUrl = dataSet["url"];
+  varientUrl = varientUrl + "?variant=" + varientID + "&view=notifyMe-popup";
   $.ajax({
-    url: "/products/airdopes-131?view=notifyMe-popup",
+    url: varientUrl,
     type: "GET",
     dataType: "html",
     success: function(e) {
         // console.log(e);
         $(".notifyMe_popup__main_container").html(e);
-        setTimeout(function() {
+        Shopify.custom_otp_login();
           $('.variants_color_select').change(function(){
             console.log('hii color-swatch__radio');
-            $.ajax({
-              url: "/products/airdopes-131?view=notifyMe-popup",
-              type: "GET",
-              dataType: "html",
-              success: function(e) {
-                  // console.log(e);
-                  var notifyMeUpdatedContent = $(e).find(".notifyMe_popup_product_refresh").html();
-                  console.log(notifyMeUpdatedContent);
-              $(".notifyMe_popup_product_refresh").html(notifyMeUpdatedContent);
-              }
-          })
+            var varientImage = $(this).attr('data-image');
+            var varientId = $(this).attr('data-id');
+            $('.notifyMe_popup_product_img img').attr('src',varientImage);
+            $('.notifyMe_form-group input').val(varientId);
           });
-      },500);
     }
 })
 
   // $('#variants_select').html(varientSelector);
   $('#variants_select option[value="'+ varientID +'"]').attr('selected','true');
   $('.notifyMe_popup__main_container').addClass('show');
-}
 
-
-
-
-$('.notifyMe_form-horizontal').submit(function () {
-  event.preventDefault();
-  var varient_id = $(this).find('#variants_select').val();
-  var mobile_number = $(this).find('#mobile_number').val();
-  var title = $(this).siblings('.notifyMe_popup_title').text().trim();
-  var notifyMe_arr = [];
-  var notifyMe_data = '';
-  var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
- 
-  if(mobile_number.length < 1){
-    $('#message_holder').html('Phone number is required.');
-  }else if(mobile_number.length < 10){
-    $('#message_holder').html('Invalid phone number.');
-  }else {
-  function isJson(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-  if (isJson(sessionStorage.notifyMe_data)) {
-    notifyMe_data = JSON.parse(sessionStorage.notifyMe_data);
- console.log(notifyMe_data);
-    notifyMe_arr = notifyMe_data;
+  $('.notifyMe_form-horizontal').submit(function () {
+    event.preventDefault();
+    console.log(this);
+    var varient_id = $(this).find('#variants_select').val();
+    var mobile_number = $(this).find('#mobile_number').val();
+    var title = $(this).siblings('.notifyMe_popup_title').text().trim();
+    var notifyMe_arr = [];
+    var notifyMe_data = '';
+    var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
+   
+    if(mobile_number.length < 1){
+      $('#message_holder').html('Phone number is required.');
+    }else if(mobile_number.length < 10){
+      $('#message_holder').html('Invalid phone number.');
+    }else {
+    function isJson(str) {
+      try {
+          JSON.parse(str);
+      } catch (e) {
+          return false;
+      }
+      return true;
   }
-  notifyMe_arr.push(notifyMe_varient);
-  notifyMe_arr = JSON.stringify(notifyMe_arr);
-  sessionStorage.setItem('notifyMe_data', notifyMe_arr);
-  document.querySelector('.completed_message').style.display = 'block';
-  var custom_popup_body = this.closest('.custom_popup');
-  setTimeout(function() {
-  custom_popup_body.classList.remove('show'); 
-  document.querySelector('body').classList.remove('overflow-hidden');
-  $('#mobile_number').val('');
-  document.querySelector('.completed_message').removeAttribute('style');
-  },3000);
+    if (isJson(sessionStorage.notifyMe_data)) {
+      notifyMe_data = JSON.parse(sessionStorage.notifyMe_data);
+   console.log(notifyMe_data);
+      notifyMe_arr = notifyMe_data;
+    }
+    notifyMe_arr.push(notifyMe_varient);
+    notifyMe_arr = JSON.stringify(notifyMe_arr);
+    sessionStorage.setItem('notifyMe_data', notifyMe_arr);
+    document.querySelector('.completed_message').style.display = 'block';
+    var custom_popup_body = this.closest('.custom_popup');
+    setTimeout(function() {
+    custom_popup_body.classList.remove('show'); 
+    document.querySelector('body').classList.remove('overflow-hidden');
+    $('#mobile_number').val('');
+    document.querySelector('.completed_message').removeAttribute('style');
+    },3000);
+  }
+  });
+  
 }
-});
+
+
+
+
+
 
 
   //Function to allow only numbers

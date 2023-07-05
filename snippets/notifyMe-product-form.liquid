@@ -67,36 +67,6 @@
             class="product-form__option-selector"
             data-selector-type="{{ selector_type | replace: '_', '-' | escape }}"
             data-option-name="{{ option.name | downcase | replace: ' ', '-'}}">
-            <div class="d-flex justify-content-between align-items-baseline product-form__option-info">
-              <div>
-                <span class="text-capitalize product-form__option-name">Chose your colour</span>
-
-                {% comment %} {%- if selector_type != 'dropdown' -%}
-                <span id="{{ option_id }}-value" class="product-form__option-value">{{ option.selected_value }}</span>
-                {%- endif -%} {% endcomment %}
-
-                {%- if size_chart_page != blank and size_label_list contains option_downcase -%}
-                  {%- assign found_size_option = true -%}
-                  <button
-                    type="button"
-                    is="toggle-button"
-                    class="product-form__option-link link text--subdued hidden-phone"
-                    aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-drawer"
-                    aria-expanded="false">{{
-   'product.general.size_chart' | t }}</button>
-                  <button
-                    type="button"
-                    is="toggle-button"
-                    class="product-form__option-link link text--subdued hidden-tablet-and-up"
-                    aria-controls="product-{{ section.id }}-{{ product.id }}-size-chart-popover"
-                    aria-expanded="false">{{
-   'product.general.size_chart' | t }}</button>
-                {%- endif -%}
-              </div>
-              {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-                <img class="varnt-drop h-100" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/left-arrow_1_968e75a2-9de8-4f80-9b47-1136ad3beb50.png?v=1654760428">
-              {% endif %}
-            </div>
             {%- case selector_type -%}
               {%- when 'variant_image' -%}
               <div class="variant-swatch-list">
@@ -153,10 +123,12 @@
                     {% for variant in product.variants %}
                     {% comment %} {{ value }}
                     {{ variant.options[option_position0] }} {% endcomment %}
-                    {%- if variant.options[0] == value -%}
+                    {%- if variant.options[0] == value and variant.inventory_quantity < settings.sold_out_threshold -%}
                       <div class="color-swatch {% if color_white_label == color_value_downcase %}color-swatch--white{% endif %}" data-varient_disabled="{% if variant.inventory_quantity < settings.sold_out_threshold %}true {% else %} false {% endif %}">
                         <input
                           class="color-swatch__radio variants_color_select visually-hidden"
+                          data-image="{{ variant.featured_media | img_url: 'medium' }}"
+                          data-id = "{{ variant.id }}"
                           type="radio"
                           name="option{{ option.position }}"
                           form="{{ product_form_id }}"
