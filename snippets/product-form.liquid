@@ -321,10 +321,8 @@
       </product-variants>
     {%- endunless -%}
           
-
-        
   {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-    {% if product.available %}
+    {% if product.available and product.price > 50000 %}
       <div class="payment_offers">
         <div class="offer_text">
           <span>₹15 off on All UPI Payments</span>
@@ -336,6 +334,7 @@
         </div>
       </div>  
     {% endif %}
+    {%- render 'marketplace-details' -%}
   <!--  for desktop layout -->
   <div class="pdp-inner custom-product-price">
     <div class="new-pdp">
@@ -764,7 +763,7 @@
                   Notify me
                 </span>
                 </button>
-                <div class="d-lg-none current-in-cart" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
+                <div class="d-lg-none current-in-cart visually-hidden" {% unless product_varient.inventory_quantity >= settings.sold_out_threshold %}
                 style="display: none;" {% endunless %}>
                 {{ random_cart }}
                 </div>
@@ -817,10 +816,11 @@
         {% endif %}
 
         {%- if section.settings.enable_rush_plus and product.available -%}
-          
-          {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-            <h2 class="pincode_checker_heading">Check Delivery</h2>
-          {% endif %}
+          {% unless product.tags contains "Coming-Soon" %}
+            {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
+              <h2 class="pincode_checker_heading">Check Delivery</h2>
+            {% endif %}
+          {% endunless %}
           <div class="pincode_checker_container">
             <div class="pincode_checker">
               <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter PIN code for exact delivery date">

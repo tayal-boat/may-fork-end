@@ -1,5 +1,4 @@
 <!-- product card -->
-
 {%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign color_white_label = 'general.label.white' | t | downcase -%}
 {%- assign quick_buy_icon_name = 'quick-buy-' | append: settings.cart_icon | replace: '_', '-' -%}
@@ -74,6 +73,11 @@
   {% endif %}
 {% endfor %}
 
+{% comment %} info: marketplace logo {% endcomment %}
+{%- if product.metafields.custom.marketplace_details != blank -%}
+  {%- assign marketplace_details = product.metafields.custom.marketplace_details -%}
+  {%- assign marketplace_name = marketplace_details | split: '-' | first | downcase -%}
+{%- endif -%}
 <product-item
   class="product-item two-point-o {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
   {% if reveal %}
@@ -152,7 +156,7 @@
         <a
           href="{{ product.url }}"
           class="product-item__aspect-ratio aspect-ratio"
-          style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}"
+          style="padding-bottom: 100.0%; --aspect-ratio: 1"
         >
           {% if product.metafields.custom.product_cards_placeholder1 %}
             <img
@@ -235,6 +239,18 @@
         {%- if settings.show_product_rating and reduced_content != true -%}
           <span class="product-item-meta__reviews-badge text--small">
             {%- render 'product-rating', product: product -%}
+            {% comment %} info: marketplace logo {% endcomment %}
+            {%- if product.metafields.custom.marketplace_details != blank and template contains 'collection' -%}
+                <div class="mkp_bestseller">
+                  {%- if marketplace_name == 'amazon' -%}
+                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon-logo_2.svg?v=1687159443" loading="lazy" alt="amazon" />
+                  {%- elsif marketplace_name == 'flipkart' -%}
+                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/flipkart-logo-transparent-png-download-0_3.svg?v=1687159443" loading="lazy" alt="flipkart" style="margin-top:-3px;" />
+                  {%- else -%}
+                  {%- endif-%}
+                  <p class="bestseller">Best seller</p>
+                </div>
+            {%- endif -%}
             {% capture swatch_btn %}
           {% if available_variants > 1 and has_color_code %}
             {% unless product.tags contains 'customized' %}
