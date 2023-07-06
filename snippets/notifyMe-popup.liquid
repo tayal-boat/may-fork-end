@@ -26,18 +26,23 @@
                         {%- render 'notifyMe-product-form', product: product -%}
                 </div>
                 </div>
-                <form class="notifyMe_form-horizontal">
                     <div id="notifyMe_variant-select-container">
                         <div class="notifyMe_form-group">
                           <input type="hidden" id="variants_select" value="{{ product.selected_or_first_available_variant.id }}">
+                          <input type="hidden" id="variants_select_title" value="{{ product.selected_or_first_available_variant.title }}">
                         </div>
                     </div>
                     {% if customer %}
                     <div class="notifyMe_submit_btn_container">
+                        {% if customer.phone != blank %}
+                        <input type="hidden" id="notifyMe_mobile_number" value="{{ customer.phone }}">
+                        {% else %}
+                        <input type="text" id="notifyMe_mobile_number" value="">
+                        {% endif %}
                         <div class="col-xs-12">
                             <button type="submit" id="notifyMe_submit_btn" class="btn btn-success btn-lg btn-block">
                                 Notify me when
-                                available </button>
+                                available {{ customer.first_name }} </button>
                         </div>
                     </div>
                     {% endif %}
@@ -46,7 +51,6 @@
                         <span class="action-close"
                             onclick="this.closest('.custom_popup').classList.remove('show'); document.querySelector('body').classList.remove('overflow-hidden'); document.querySelector('.completed_message').removeAttribute('style')">Close</span>
                     </div>
-                </form>
             </div>
             {% unless customer %}
             {% render 'otp-login' %}

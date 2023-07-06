@@ -249,13 +249,17 @@ if(varient_swatches_input[i].checked){
       $("#gokwik-buy-now").addClass('hide_cTA');
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
-      $('.product-item__quick-form.quick-buy-notify-me').show();
+      $('.product-item__quick-form.quick-buy-notify-me').addClass('show_notifyMe');
       $('.product-item__quick-form.quick-buy-notify-me #notifyMe_trigger').attr('data-variant-id',e.id);
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
       $('.d-lg-none.restocking, .desktop.restocking').show();
       $('.pincode_checker_container').hide();
     if($('#notifyMe_trigger.custom-notify-btn').length > 0){
       $('#notifyMe_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+      var varient_url = $('#notifyMe_trigger.custom-notify-btn').attr('data-url');
+      varient_url = varient_url.split('?')[0];
+      varient_url = varient_url + "?variant=" + e.id;
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-url',varient_url);
     } 
       
   }else{
@@ -265,7 +269,7 @@ if(varient_swatches_input[i].checked){
     $('#AddToCart, .cutomized-btn, .button.custom-prebook').removeClass('hide_cTA');
     $('quick-buy-drawer #AddToCart').show();
     $('quick-buy-popover #AddToCart').show();
-    $('.product-item__quick-form.quick-buy-notify-me').hide();
+    $('.product-item__quick-form.quick-buy-notify-me').removeClass('show_notifyMe');
     $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
     $('.pincode_checker_container').show();
@@ -1808,66 +1812,66 @@ Shopify.notifyMe = function(){
         // console.log(e);
         $(".notifyMe_popup__main_container").html(e);
         Shopify.custom_otp_login();
+        $('#notifyMe_submit_btn').click(function () {
+          event.preventDefault();
+          console.log(this);
+          var varient_id = $('#variants_select').val();
+          var mobile_number = $('#notifyMe_mobile_number').val();
+          var title = $('.notifyMe_popup_title').text().trim() + " - " +$('#variants_select_title').val();
+          var notifyMe_arr = [];
+          var notifyMe_data = '';
+          var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
+         console.log(mobile_number);
+          if(mobile_number.length < 1){
+            $('#message_holder').html('Phone number is required.');
+          }else if(mobile_number.length < 10){
+            $('#message_holder').html('Invalid phone number.');
+          }else {
+            $('#message_holder').html('');
+          function isJson(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+          if (isJson(localStorage.notifyMe_data)) {
+            notifyMe_data = JSON.parse(localStorage.notifyMe_data);
+            notifyMe_data = notifyMe_data.filter(obj => obj.id !== varient_id);
+         console.log(notifyMe_data);
+            notifyMe_arr = notifyMe_data;
+          }
+          notifyMe_arr.push(notifyMe_varient);
+          console.log(notifyMe_arr, 'notifyMe_arr');
+          notifyMe_arr = JSON.stringify(notifyMe_arr);
+          localStorage.setItem('notifyMe_data', notifyMe_arr);
+          document.querySelector('.completed_message').style.display = 'block';
+          var custom_popup_body = this.closest('.custom_popup');
+          setTimeout(function() {
+          custom_popup_body.classList.remove('show'); 
+          document.querySelector('body').classList.remove('overflow-hidden');
+          $('#mobile_number').val('');
+          document.querySelector('.completed_message').removeAttribute('style');
+          },3000);
+        }
+        });
           $('.variants_color_select').change(function(){
             console.log('hii color-swatch__radio');
             var varientImage = $(this).attr('data-image');
             var varientId = $(this).attr('data-id');
+            var variantTitle = $(this).attr('data-title');
+            console.log(variantTitle , 'variantTitle');
             $('.notifyMe_popup_product_img img').attr('src',varientImage);
             $('.notifyMe_form-group input').val(varientId);
+            $('#variants_select_title').val(variantTitle);
           });
     }
 })
 
-  // $('#variants_select').html(varientSelector);
-  $('#variants_select option[value="'+ varientID +'"]').attr('selected','true');
-  $('.notifyMe_popup__main_container').addClass('show');
+$('.notifyMe_popup__main_container').addClass('show');
 
-  $('.notifyMe_form-horizontal').submit(function () {
-    event.preventDefault();
-    console.log(this);
-    var varient_id = $(this).find('#variants_select').val();
-    var mobile_number = $(this).find('#mobile_number').val();
-    var title = $(this).siblings('.notifyMe_popup_title').text().trim();
-    var notifyMe_arr = [];
-    var notifyMe_data = '';
-    var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
-   
-    if(mobile_number.length < 1){
-      $('#message_holder').html('Phone number is required.');
-    }else if(mobile_number.length < 10){
-      $('#message_holder').html('Invalid phone number.');
-    }else {
-    function isJson(str) {
-      try {
-          JSON.parse(str);
-      } catch (e) {
-          return false;
-      }
-      return true;
-  }
-    if (isJson(sessionStorage.notifyMe_data)) {
-      notifyMe_data = JSON.parse(sessionStorage.notifyMe_data);
-   console.log(notifyMe_data);
-      notifyMe_arr = notifyMe_data;
-    }
-    notifyMe_arr.push(notifyMe_varient);
-    notifyMe_arr = JSON.stringify(notifyMe_arr);
-    sessionStorage.setItem('notifyMe_data', notifyMe_arr);
-    document.querySelector('.completed_message').style.display = 'block';
-    var custom_popup_body = this.closest('.custom_popup');
-    setTimeout(function() {
-    custom_popup_body.classList.remove('show'); 
-    document.querySelector('body').classList.remove('overflow-hidden');
-    $('#mobile_number').val('');
-    document.querySelector('.completed_message').removeAttribute('style');
-    },3000);
-  }
-  });
-  
 }
-
-
-
 
 
 
