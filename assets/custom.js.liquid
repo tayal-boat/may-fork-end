@@ -1793,12 +1793,12 @@ for(let i = 0; i < slider_Selector.length; i++){
 }
 
 
-Shopify.notifyMe = function(){
+Shopify.notifyMe = function () {
   event.preventDefault();
   document.querySelector('body').classList.add('overflow-hidden');
   // console.log("custom notify me");
   // console.log(event.target.dataset);
-  var dataSet =  event.target.dataset;
+  var dataSet = event.target.dataset;
   var varientID = dataSet["variantId"];
   varientID = parseInt(varientID);
   var varientSelector = '';
@@ -1808,38 +1808,38 @@ Shopify.notifyMe = function(){
     url: varientUrl,
     type: "GET",
     dataType: "html",
-    success: function(e) {
-        // console.log(e);
-        $(".notifyMe_popup__main_container").html(e);
-        Shopify.custom_otp_login();
-        $('#notifyMe_submit_btn').click(function () {
-          event.preventDefault();
-          console.log(this);
-          var varient_id = $('#variants_select').val();
-          var mobile_number = $('#notifyMe_mobile_number').val();
-          var title = $('.notifyMe_popup_title').text().trim() + " - " +$('#variants_select_title').val();
-          var notifyMe_arr = [];
-          var notifyMe_data = '';
-          var notifyMe_varient = {"id": varient_id,"mobile_number": mobile_number, "title": title };
-         console.log(mobile_number);
-          if(mobile_number.length < 1){
-            $('#message_holder').html('Phone number is required.');
-          }else if(mobile_number.length < 10){
-            $('#message_holder').html('Invalid phone number.');
-          }else {
-            $('#message_holder').html('');
+    success: function (e) {
+      // console.log(e);
+      $(".notifyMe_popup__main_container").html(e);
+      Shopify.custom_otp_login();
+      $('#notifyMe_submit_btn').click(function () {
+        event.preventDefault();
+        console.log(this);
+        var varient_id = $('#variants_select').val();
+        var mobile_number = $('#notifyMe_mobile_number').val();
+        var title = $('.notifyMe_popup_title').text().trim() + " - " + $('#variants_select_title').val();
+        var notifyMe_arr = [];
+        var notifyMe_data = '';
+        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title };
+        console.log(mobile_number);
+        if (mobile_number.length < 1) {
+          $('#message_holder').html('Phone number is required.');
+        } else if (mobile_number.length < 10) {
+          $('#message_holder').html('Invalid phone number.');
+        } else {
+          $('#message_holder').html('');
           function isJson(str) {
             try {
-                JSON.parse(str);
+              JSON.parse(str);
             } catch (e) {
-                return false;
+              return false;
             }
             return true;
-        }
+          }
           if (isJson(localStorage.notifyMe_data)) {
             notifyMe_data = JSON.parse(localStorage.notifyMe_data);
             notifyMe_data = notifyMe_data.filter(obj => obj.id !== varient_id);
-         console.log(notifyMe_data);
+            console.log(notifyMe_data);
             notifyMe_arr = notifyMe_data;
           }
           notifyMe_arr.push(notifyMe_varient);
@@ -1848,50 +1848,50 @@ Shopify.notifyMe = function(){
           localStorage.setItem('notifyMe_data', notifyMe_arr);
           document.querySelector('.completed_message').style.display = 'block';
           var custom_popup_body = this.closest('.custom_popup');
-          setTimeout(function() {
-          custom_popup_body.classList.remove('show'); 
-          document.querySelector('body').classList.remove('overflow-hidden');
-          $('#mobile_number').val('');
-          document.querySelector('.completed_message').removeAttribute('style');
-          },3000);
+          setTimeout(function () {
+            custom_popup_body.classList.remove('show');
+            document.querySelector('body').classList.remove('overflow-hidden');
+            $('#mobile_number').val('');
+            document.querySelector('.completed_message').removeAttribute('style');
+          }, 3000);
         }
-        });
-          $('.variants_color_select').change(function(){
-            console.log('hii color-swatch__radio');
-            var varientImage = $(this).attr('data-image');
-            var varientId = $(this).attr('data-id');
-            var variantTitle = $(this).attr('data-title');
-            console.log(variantTitle , 'variantTitle');
-            $('.notifyMe_popup_product_img img').attr('src',varientImage);
-            $('.notifyMe_form-group input').val(varientId);
-            $('#variants_select_title').val(variantTitle);
-          });
+      });
+      $('.variants_color_select').change(function () {
+        console.log('hii color-swatch__radio');
+        var varientImage = $(this).attr('data-image');
+        var varientId = $(this).attr('data-id');
+        var variantTitle = $(this).attr('data-title');
+        console.log(variantTitle, 'variantTitle');
+        $('.notifyMe_popup_product_img img').attr('src', varientImage);
+        $('.notifyMe_form-group input').val(varientId);
+        $('#variants_select_title').val(variantTitle);
+      });
     }
-})
+  })
 
-$('.notifyMe_popup__main_container').addClass('show');
+  $('.notifyMe_popup__main_container').addClass('show');
 
 }
 
 
 
 
-  //Function to allow only numbers
-  function _isNumberCheck(evt) {
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    console.log(evt.target.value);
-    if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
+//Function to allow only numbers
+function _isNumberCheck(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  console.log(evt.target.value);
+  if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
     return false;
-    return true;
- }
- // Not allow 0 as first digit on input
- $(document).on("input", "#mobile_number", (e) => {
-    $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
-    $('#message_holder').html('');
- })
- $(document).on("keypress", "#mobile_number", (e) => {
-    return _isNumberCheck(e);
- })
+  return true;
+}
+// Not allow 0 as first digit on input
+$(document).on("input", "#mobile_number", (e) => {
+  $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+  $('#message_holder').html('');
+})
+$(document).on("keypress", "#mobile_number", (e) => {
+  return _isNumberCheck(e);
+})
 $(document).ready(function(){
   // $('.mobile_hamburger_btn').on('click', function(e){
   //   e.preventDefault();
