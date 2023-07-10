@@ -389,7 +389,7 @@
                       {% endfor %}
             </line-item>
           {%- endfor -%}
-          {% if total_discount_amount > 0 %}
+        {% if total_discount_amount > 0 %}
           {% if section.settings.select_discount_rule == 'cart' and total_discount_amount > section.settings.discount_code_max_amount %}
             {% assign total_discount_amount = section.settings.discount_code_max_amount %}
           {% endif %}
@@ -401,21 +401,23 @@
             {% endif %}
          {% else %}
           {%- if purple_msg_check == true -%}
-                <small class="discount-info" style="background:#4c218c;">Get flat <b>₹500</b> off by using <b>IPURPLEYOU</b></small>
+                {% comment %} <small class="discount-info" style="background:#4c218c;">Get flat <b>₹500</b> off by using <b>IPURPLEYOU</b></small> {% endcomment %}
           {% else %}
-           <div class="payment_offers">
-             <div class="offer_text">
-               <span>₹15 off on All UPI Payments</span>
-             </div>
-             <div class="payment_icons">
-               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
-               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
-               <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
-             </div>
-           </div>
+            
           {% endif %}
        {% endif %}
-       
+       {% if cart.total_price > 50000 %}
+        <div class="payment_offers">
+          <div class="offer_text">
+            <span>₹15 off on All UPI Payments</span>
+          </div>
+          <div class="payment_icons">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
+          </div>
+        </div>
+      {% endif %}
         </form>
 
       {% comment %} info: No more required on 2.0 {% endcomment %}

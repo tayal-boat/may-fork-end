@@ -111,7 +111,14 @@ window.KDHooks.__discountFinderClick_ba = function () {
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
   // console.log(response, 'response of __postDiscountProcess_af');
- var responseData = JSON.parse(response);
+  var responseData = '';
+  if (typeof response === 'string') {
+    responseData = JSON.parse(response);
+    console.log(response);
+  }
+  else {
+    responseData = response;
+  }
   // var responseData = JSON.parse(response.data.entire_response);
   // console.log(responseData, 'responseData');
   if (responseData.is_success) {
@@ -128,24 +135,19 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
       responseData.data.response.formatted_text.discount_amount = total_discount_amount.toFixed(2);
       responseData.data.response.formatted_text.final_total_price = after_discount.toFixed(2);
     }
-    
     sessionStorage.setItem('applyCoupun', discount_code[0]);
     sessionStorage.setItem('Coupun_saveAmount', saveAmount);
-    _discountCode = sessionStorage.getItem('applyCoupun')
-    // clevertap.event.push('KD_Discount applied', {
-    //   "Discount Code": _discountCode
-    // })
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
-    $('.discountCode_details').html(`Rs ${saveAmount} discount applied`);
+    $('.discountCode_details').html(`₹${saveAmount} discount applied`);
     $('.custom_kartdiscount_container').addClass('discount_added');
     $('.discountCode_details_container').addClass('show');
     $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="discountCode__remove_btn" onclick="CDSetupInit.removeIndividualCoupon('${discount_code[0]}',this);">Remove</button>`);
     $('.custom_kartdiscount_container').attr('couponCode', 'true');
     $('.mini-cart-total-price').hide();
     $('.discount_error').html('');
-  }else if(responseData.is_success == false && responseData.code == "516"){
+  } else if (responseData.is_success == false && responseData.code == "516") {
     var discountCode = responseData.data.discount_code;
     KDSdk.showError('Coupon code ' + discountCode + ' is invalid. Please try another code')
   }
@@ -226,11 +228,17 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               </div>
           </div>
           <div class="discount_finder_item_cta_btn">
-              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}')" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''} ${df_list[i].code}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
+              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}')" ${df_list[i].is_active == 0 ? 'disabled' : ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''} ${df_list[i].code}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
           </div>
       </div>`
     }
     discountListContainer.innerHTML = discountListHtml;
+    setTimeout(function(){
+      var discount_finder_apply_btn = $('.discount_finder_btn_holder .discount_finder_apply_btn');
+      $('#af_kd_custom_coupon_text').on('input', function() {
+        $(this).val().length > 0 ? discount_finder_apply_btn.addClass('discount_finder_active_btn') : discount_finder_apply_btn.removeClass('discount_finder_active_btn');
+      });
+    },500);
   }
 
   return df_list;
@@ -248,22 +256,22 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
-  clevertap.event.push('KD_Discount Removed')
 });
-kdDom.addEventListener('KD_validDiscountApplied',(e)=>{
+kdDom.addEventListener('KD_validDiscountApplied', (e) => {
   // let discountCode = e.detail;
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
   // console.log(preAppliedCoupon);
   // console.log(e);
-  $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).html('<span>Applied</span>');
-  $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).addClass('coupon_applied');
+  $('.discount_finder_item_cta_btn .' + preAppliedCoupon).html('<span>Applied</span>');
+  $('.discount_finder_item_cta_btn .' + preAppliedCoupon).addClass('coupon_applied');
+  $('.custom_discount_filder_container').removeAttr('open_finder');
 });
 kdDom.addEventListener('KD_discountFinderClicked', (e) => {
   if ($('.custom_kartdiscount_container').attr('data-finder') == "true") {
     $('.custom_discount_filder_container').attr('open_finder', true);
-    clevertap.event.push('KD_View All Coupons clicked');
   }
 });
+
 Shopify.KartDiscountHooks = function () {
   // here we are regulating the condition for opening of discount finder on click of view all coupon button.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
@@ -286,24 +294,12 @@ Shopify.KartDiscount = function (cartJson) {
   Shopify.KartDiscountHooks();
 }
 
-// window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
-//   // convertedMoneyStr.replace('Rs.', '₹');
-//   var unconvertedString_without_decimal = parseInt(extras.unconvertedString);
-//   extras.money_format_first = '₹';
-//   // console.log(unconvertedString_without_decimal, 'unconvertedString_without_decimal');
-//   // extras.unconvertedString = `${unconvertedString_without_decimal}`;
-//   convertedMoneyStr = extras.money_format_first + extras.finalAmount + extras.money_format_second;
-//   console.log(convertedMoneyStr, 'convertedMoneyStr'); // converted currency string from number
-//   console.log(extras, 'extras'); // extra details used to bring out this convertedMoneyStr
-//   return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
-// }
-
-window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
-// console.log("before convert: ", convertedMoneyStr); // converted currency string from number
-var finalAmount = extras.finalAmount;
-    finalAmount = finalAmount.replace('.00','');
-extras.money_format_first = "₹";
-convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
-// console.log("after convert: ", convertedMoneyStr);
-return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
+window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
+  // console.log("before convert: ", convertedMoneyStr); // converted currency string from number
+  var finalAmount = extras.finalAmount;
+  finalAmount = finalAmount.replace('.00', '');
+  extras.money_format_first = "₹";
+  convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
+  // console.log("after convert: ", convertedMoneyStr);
+  return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
 }
