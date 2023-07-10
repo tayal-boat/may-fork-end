@@ -1242,7 +1242,17 @@ Shopify.custom_otp_login = function () {
     if (!$('.otp-login-confirm-btn').hasClass('email_varify')) {
       //  console.log('verifyotp');
       let session_id = sessionStorage.getItem('login_session_id');
-      let otp = $('.mobile-otp-inout input').val();
+      console.log('hii otp login input');
+      // Get the values of all the inputs
+      var digit1 = document.getElementById("digit1").value;
+      var digit2 = document.getElementById("digit2").value;
+      var digit3 = document.getElementById("digit3").value;
+      var digit4 = document.getElementById("digit4").value;
+      var digit5 = document.getElementById("digit5").value;
+      var digit6 = document.getElementById("digit6").value;
+
+      console.log(digit1 + digit2 + digit3 + digit4 + digit5 + digit6);
+      let otp = digit1 + digit2 + digit3 + digit4 + digit5 + digit6;
       let url = sessionStorage.getItem('login_location');
       if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
         verifyotp(session_id, otp, url);
@@ -1873,9 +1883,10 @@ Shopify.notifyMe = function () {
 
 }
 
-
-
-
+$('#notifyMe_trigger').click(function (e) {
+  e.preventDefault();
+sessionStorage.setItem('login_location', window.location.href);
+});
 //Function to allow only numbers
 function _isNumberCheck(evt) {
   var charCode = (evt.which) ? evt.which : event.keyCode
@@ -1884,6 +1895,13 @@ function _isNumberCheck(evt) {
     return false;
   return true;
 }
+
+function OTP_login_moveToNext(currentInput, nextInputId) {
+  if (currentInput.value.length === currentInput.maxLength) {
+      document.getElementById(nextInputId).focus();
+  }
+}
+
 // Not allow 0 as first digit on input
 $(document).on("input", "#mobile_number", (e) => {
   $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
