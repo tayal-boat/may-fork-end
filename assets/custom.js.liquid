@@ -1355,7 +1355,8 @@ function otpLogin(phone){
     }),
   };
   $.ajax(settings).done(function (response) {
-    // console.log(response);
+    console.log(phone);
+     console.log(response);
     if(response.code == 200 && response.message == 'OTP sent'){
     $('.customer-login-section').attr('otp_send', 'true');
     $('.customer-login-section').removeAttr('otp_login_screen');
@@ -1375,8 +1376,9 @@ function otpLogin(phone){
 
 $('.otp-login-btn, .login-resend-btn').click(function(){
   if(!$('#resend__otp').hasClass('email-resend-btn')){
-//  console.log('login-resend-btn');
-  let phone = $('#otp-mobile-number').val();
+  console.log('login-resend-btn');
+  var phone = this.closest('.customer-login-section').querySelector('#otp-mobile-number').value;
+  console.log(phone);
   if(phone.length < 1){
     $('.otp-login-error').html('The phone field is required.');
   }else if(phone.length < 10){
