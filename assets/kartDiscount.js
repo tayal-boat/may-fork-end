@@ -108,6 +108,16 @@ window.KDHooks.__discountFinderClick_ba = function () {
   return false;
 }
 
+window.KDHooks.__preDiscountProcess_af = function(data) {
+  console.log(data, '__preDiscountProcess_af'); // edit data before send to discount api for calculation
+  var cartJson = JSON.parse(data.json_data.cart_json);
+  console.log(cartJson, '__preDiscountProcess cart_json');
+  var cartToken = cartJson.token;
+  var basecode = data.json_data.data.discount_code;
+   Shopify.farziDiscount(basecode, cartToken);
+  return data; // return the modified data back.
+}
+
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
   // console.log(response, 'response of __postDiscountProcess_af');
@@ -294,6 +304,43 @@ Shopify.KartDiscount = function (cartJson) {
   Shopify.KartDiscountHooks();
 }
 
+Shopify.farziDiscount = function (basecode, cartToken) {
+  console.log(basecode, cartToken);
+  $.ajax({
+      type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" },
+      data: `{"code":"${basecode}", "cartId":"${cartToken}"}`,
+  }).then((response) => {
+      console.log(response)
+      if (response == "true" || response == "True") {
+          setTimeout(function () {
+              console.log('hiiiii');
+      var couponlog_postrequest = {
+          url: "https://boat-api.farziengineer.co/couponlog",
+          method: "POST", timeout: 0,
+          headers: { "Content-Type": "application/json", },
+      };
+      var v = setInterval(function () {
+          if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+              couponlog_postrequest.data = JSON.stringify({
+                  coupon: basecode,
+                  log: $(".edit_checkout .fieldset:last p").text(),
+              });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          }
+      }, 1000);
+  }, 3000);
+      }
+  });
+}
 window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
   // console.log("before convert: ", convertedMoneyStr); // converted currency string from number
   var finalAmount = extras.finalAmount;
