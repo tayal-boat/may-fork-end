@@ -320,13 +320,17 @@ for (let i = 0; i < varient_swatches_input.length; i++) {
       $("#gokwik-buy-now").addClass('hide_cTA');
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
-      $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      $('.product-item__quick-form.quick-buy-notify-me').addClass('show_notifyMe');
+      $('.product-item__quick-form.quick-buy-notify-me #notifyMe_trigger').attr('data-variant-id',e.id);
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
       $('.d-lg-none.restocking, .desktop.restocking').show();
       $('.pincode_checker_container').hide();
-    if($('#BIS_trigger.custom-notify-btn').length > 0){
-      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+    if($('#notifyMe_trigger.custom-notify-btn').length > 0){
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+      var varient_url = $('#notifyMe_trigger.custom-notify-btn').attr('data-url');
+      varient_url = varient_url.split('?')[0];
+      varient_url = varient_url + "?variant=" + e.id;
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-url',varient_url);
     } 
       
   }else{
@@ -339,7 +343,7 @@ for (let i = 0; i < varient_swatches_input.length; i++) {
     $('#AddToCart, .cutomized-btn, .button.custom-prebook').removeClass('hide_cTA');
     $('quick-buy-drawer #AddToCart').show();
     $('quick-buy-popover #AddToCart').show();
-    $('.product-item__quick-form.quick-buy-notify-me').hide();
+    $('.product-item__quick-form.quick-buy-notify-me').removeClass('show_notifyMe');
     $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
     $('.pincode_checker_container').show();
@@ -808,6 +812,7 @@ $('a.banner_link').on('click', function() {
 /* clevertap code for clicking razor pay ends here */
 
 // OTP Login
+
 const date = new Date()
 options = {
   year: "numeric",
@@ -818,6 +823,7 @@ options = {
   hour12: true
 };
 const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
+Shopify.custom_otp_login = function () {
   //Function to allow only numbers
      function _isNumberCheck(evt) {
       var charCode = (evt.which) ? evt.which : event.keyCode
@@ -1419,27 +1425,37 @@ $('.mobile-login-edit-icon').click(function(){
     });
   }
 
- $('.otp-login-confirm-btn').click(function(){
-   if(!$('.otp-login-confirm-btn').hasClass('email_varify')){
-//  console.log('verifyotp');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){  
-  verifyotp(session_id, otp, url);
-}
-     }else{
-  let session_id = sessionStorage.getItem('login_session_id');
-  let mobile_number = $('.mobile-login-input input').val()
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
-  verifyemail(session_id, otp, url);
-}else if(otp == ''){
-  $('.otp-login-error').html('OTP is required');
-}   
-     }
-})
+  $('.otp-login-confirm-btn').click(function () {
+    if (!$('.otp-login-confirm-btn').hasClass('email_varify')) {
+      //  console.log('verifyotp');
+      let session_id = sessionStorage.getItem('login_session_id');
+      console.log('hii otp login input');
+      // Get the values of all the inputs
+      var digit1 = document.getElementById("digit1").value;
+      var digit2 = document.getElementById("digit2").value;
+      var digit3 = document.getElementById("digit3").value;
+      var digit4 = document.getElementById("digit4").value;
+      var digit5 = document.getElementById("digit5").value;
+      var digit6 = document.getElementById("digit6").value;
+
+      console.log(digit1 + digit2 + digit3 + digit4 + digit5 + digit6);
+      let otp = digit1 + digit2 + digit3 + digit4 + digit5 + digit6;
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyotp(session_id, otp, url);
+      }
+    } else {
+      let session_id = sessionStorage.getItem('login_session_id');
+      let mobile_number = $('.mobile-login-input input').val()
+      let otp = $('.mobile-otp-inout input').val();
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyemail(session_id, otp, url);
+      } else if (otp == '') {
+        $('.otp-login-error').html('OTP is required');
+      }
+    }
+  })
 
 $('#resend__otp').click(function(){
   if($(this).hasClass('email-resend-btn')){
@@ -1463,7 +1479,8 @@ $('.mobile-otp-inout').click(function(){
     $(this).children('input').val('');
   }
 });
-
+};
+Shopify.custom_otp_login();
 // if( window.location = '/account/logout'){
 //   localStorage.removeItem('boatHead_input');
 //   sessionStorage.removeItem('login')
@@ -2222,3 +2239,118 @@ $(this).hasClass('expand') ? ($(this).children('.view-all').text('Expand Less'),
 //   $('button[aria-controls="facet-filter-filter.p.m.custom.category"]').siblings('.collapsible').hide()
 //   $('button[aria-controls="facet-filter-filter.p.m.custom.category"]').closest('.product-facet__filter-item').siblings('.product-facet__filter-item').find('button[aria-controls="facet-filter-filter.v.m.custom.sprinklr_color"]').attr('aria-expanded', true)
 // }
+
+
+Shopify.notifyMe = function () {
+  event.preventDefault();
+  document.querySelector('body').classList.add('overflow-hidden');
+  // console.log("custom notify me");
+  // console.log(event.target.dataset);
+  var dataSet = event.target.dataset;
+  var varientID = dataSet["variantId"];
+  varientID = parseInt(varientID);
+  var varientSelector = '';
+  var varientUrl = dataSet["url"];
+  varientUrl = varientUrl + "?variant=" + varientID + "&view=notifyMe-popup";
+  $.ajax({
+    url: varientUrl,
+    type: "GET",
+    dataType: "html",
+    success: function (e) {
+      // console.log(e);
+      $(".notifyMe_popup__main_container").html(e);
+      Shopify.custom_otp_login();
+      $('#notifyMe_submit_btn').click(function () {
+        event.preventDefault();
+        console.log(this);
+        var varient_id = $('#variants_select').val();
+        var mobile_number = $('#notifyMe_mobile_number').val();
+        var title = $('.notifyMe_popup_title').text().trim() + " - " + $('#variants_select_title').val();
+        var notifyMe_arr = [];
+        var notifyMe_data = '';
+        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title };
+        console.log(mobile_number);
+        if (mobile_number.length < 1) {
+          $('#message_holder').html('Phone number is required.');
+        } else if (mobile_number.length < 10) {
+          $('#message_holder').html('Invalid phone number.');
+        } else {
+          $('#message_holder').html('');
+          function isJson(str) {
+            try {
+              JSON.parse(str);
+            } catch (e) {
+              return false;
+            }
+            return true;
+          }
+          if (isJson(localStorage.notifyMe_data)) {
+            notifyMe_data = JSON.parse(localStorage.notifyMe_data);
+            notifyMe_data = notifyMe_data.filter(obj => obj.id !== varient_id);
+            console.log(notifyMe_data);
+            notifyMe_arr = notifyMe_data;
+          }
+          notifyMe_arr.push(notifyMe_varient);
+          console.log(notifyMe_arr, 'notifyMe_arr');
+          notifyMe_arr = JSON.stringify(notifyMe_arr);
+          localStorage.setItem('notifyMe_data', notifyMe_arr);
+          document.querySelector('.completed_message').style.display = 'block';
+          var custom_popup_body = this.closest('.custom_popup');
+          setTimeout(function () {
+            custom_popup_body.classList.remove('show');
+            document.querySelector('body').classList.remove('overflow-hidden');
+            $('#mobile_number').val('');
+            document.querySelector('.completed_message').removeAttribute('style');
+          }, 3000);
+        }
+      });
+      $('.variants_color_select').change(function () {
+        console.log('hii color-swatch__radio');
+        var varientImage = $(this).attr('data-image');
+        var varientId = $(this).attr('data-id');
+        var variantTitle = $(this).attr('data-title');
+        console.log(variantTitle, 'variantTitle');
+        $('.notifyMe_popup_product_img img').attr('src', varientImage);
+        $('.notifyMe_form-group input').val(varientId);
+        $('#variants_select_title').val(variantTitle);
+      });
+    }
+  })
+
+  $('.notifyMe_popup__main_container').addClass('show');
+
+}
+
+$('#notifyMe_trigger').click(function (e) {
+  e.preventDefault();
+sessionStorage.setItem('login_location', window.location.href);
+});
+//Function to allow only numbers
+function _isNumberCheck(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  console.log(evt.target.value);
+  if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
+    return false;
+  return true;
+}
+
+function OTP_login_moveToNext(currentInput, nextInputId) {
+  if (currentInput.value.length === currentInput.maxLength) {
+      document.getElementById(nextInputId).focus();
+  }
+}
+
+// Not allow 0 as first digit on input
+$(document).on("input", "#mobile_number", (e) => {
+  $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+  $('#message_holder').html('');
+})
+$(document).on("keypress", "#mobile_number", (e) => {
+  return _isNumberCheck(e);
+})
+
+$('.login').click(function(){
+  event.preventDefault();
+  document.querySelector('body').classList.add('overflow-hidden');
+  $('.login_popup_main_container').addClass('show');
+});
