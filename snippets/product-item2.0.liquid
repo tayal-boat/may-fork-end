@@ -513,26 +513,28 @@
               {% endif %}
             {% endunless %}
           </div>
-          {%- if request.page_type != 'password'
-            and settings.product_add_to_cart
-            and reduced_content != true
-            and show_cta != true
-          -%}
-            {% if product_soldout == false %}
-              <div class="d-flex align-items-center product-item_atc">
-                {%- if available_variants == 1 -%}
-                  {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
-                    <div class="product-item__quick-form">
-                      <a
-                        href="#"
-                        class="BIS_trigger item_BIS"
-                        data-product-data="{{ product | json | escape }}"
-                      >
-                        Notify Me
-                      </a>
-                    </div>
-                  {% else %}
-                    {%- capture form_id -%}
+        {% endif %}
+      {% endunless %}
+      </div>
+      {%- if request.page_type != 'password'
+        and settings.product_add_to_cart
+        and reduced_content != true
+        and show_cta != true
+        -%}
+
+          {% if product_soldout == false %}
+          <div class="d-flex align-items-center product-item_atc">
+            {%- if available_variants == 1 -%}
+            {% if product_varient.inventory_quantity < settings.sold_out_threshold %}
+            <div class="product-item__quick-form">
+              <a
+                href="#" id="notifyMe_trigger" class="custom-notify-btn"
+                data-variant-id="{{ product_varient.id }}" data-url="{{ product_varient.url }}" onclick="Shopify.notifyMe()">
+                Notify Me
+              </a>
+            </div>
+            {% else %}
+              {%- capture form_id -%}
                 product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
               {%- endcapture -%}
                     {%- form 'product', product, is: 'product-form', id: form_id, class: 'product-item__quick-form' -%}
@@ -674,15 +676,22 @@
             {%- if product.options_by_name[color_label] != blank -%}
               {%- assign product_option = product.options_by_name[color_label] -%}
 
-              {%- case settings.product_color_display -%}
-                {%- when 'count' -%}
-                  <p class="product-item-meta__color-count text--small text--subdued">
-                    {{- 'collection.product.available_colors_count' | t: count: product_option.values.size -}}
-                  </p>
-                {%- when 'swatch' -%}
-                  <div class="product-item-meta__swatch-list color-swatch-list color-swatch-list--mini">
-                    {%- assign variant_option = 'option' | append: product_option.position -%}
-                    {%- assign color_swatch_config = settings.color_swatch_config | newline_to_br | split: '<br />' -%}
+          </div>
+          {% else %}
+          <div class="product-item__quick-form">
+            <a
+              href="#" id="notifyMe_trigger" class="custom-notify-btn"
+              data-variant-id="{{ product_varient.id }}" data-url="{{ product_varient.url }}" onclick="Shopify.notifyMe()">
+              Notify Me
+            </a>
+          </div>
+          {% endif %}
+        {%- endif -%}
+    </div>
+      {%- if settings.product_color_display != 'hide' and reduced_content != true -%}
+        {%- for color_label in color_label_list -%}
+          {%- if product.options_by_name[color_label] != blank -%}
+            {%- assign product_option = product.options_by_name[color_label] -%}
 
                     {%- capture color_name -%}
                   {{ section.id }}-{{ block.id }}-{{ product.id }}{%- endcapture -%}

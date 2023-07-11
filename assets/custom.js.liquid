@@ -235,48 +235,9 @@ let unitsLeft = '';
 let usual_price = '';
 
 Shopify.variantChange = function(e){
-
-  $('.pdp-btn-price').remove();
-  //let compare_price =  ( ${e.price / 100} *100 ) / ${e.compare_at_price / 100} ;
-
-  let regular_price = e.compare_at_price / 100;
-  let sale_price = e.price / 100;
-  let discount_percentage;
-  
-  if(regular_price > sale_price) {
-    discount_percentage = Math.round( (( regular_price - sale_price)  / regular_price) * 100 ) + '% Off';
-  } else {
-    discount_percentage = ''
-  }
-  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text, #AddToCart.prebook .loader-button__text").html('');
-  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text").append(`
-  <span class="atc_btn">
-  <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
-    <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
-    <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
-  </svg>                    
-  <span class="add_to_cart_btn">{{- 'product.form.add_to_cart' | t -}}</span>
- </span>
-  <span class="pdp-btn-price custom_price_wrapper">
-  <span class="inclusive_text_content">Inclusive of all Taxes</span>
-  <span class="mobile_atc_btn">
-    <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage}</span>
-  </span>
-  </span>`);
-  
-  $("#AddToCart.prebook .loader-button__text").append(`
-  <span class="atc_btn">
-  <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
- </span>
-  <span class="pdp-btn-price custom_price_wrapper">
-  <span class="inclusive_text_content">Inclusive of all Taxes</span>
-  <span class="mobile_atc_btn">
-    <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage}</span>
-  </span>
-  </span>`);
-  console.log(e);
+  $('.pdp-btn-price').remove()
+  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
+  // console.log(e);
 
 function swatches_change(varient_swatches_input){
 for (let i = 0; i < varient_swatches_input.length; i++) {
@@ -320,13 +281,17 @@ for (let i = 0; i < varient_swatches_input.length; i++) {
       $("#gokwik-buy-now").addClass('hide_cTA');
       $('quick-buy-drawer #AddToCart').hide();
       $('quick-buy-popover #AddToCart').hide();
-      $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
+      $('.product-item__quick-form.quick-buy-notify-me').addClass('show_notifyMe');
+      $('.product-item__quick-form.quick-buy-notify-me #notifyMe_trigger').attr('data-variant-id',e.id);
       $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
       $('.d-lg-none.restocking, .desktop.restocking').show();
       $('.pincode_checker_container').hide();
-    if($('#BIS_trigger.custom-notify-btn').length > 0){
-      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+    if($('#notifyMe_trigger.custom-notify-btn').length > 0){
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-variant-id',e.id);
+      var varient_url = $('#notifyMe_trigger.custom-notify-btn').attr('data-url');
+      varient_url = varient_url.split('?')[0];
+      varient_url = varient_url + "?variant=" + e.id;
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-url',varient_url);
     } 
       
   }else{
@@ -339,7 +304,7 @@ for (let i = 0; i < varient_swatches_input.length; i++) {
     $('#AddToCart, .cutomized-btn, .button.custom-prebook').removeClass('hide_cTA');
     $('quick-buy-drawer #AddToCart').show();
     $('quick-buy-popover #AddToCart').show();
-    $('.product-item__quick-form.quick-buy-notify-me').hide();
+    $('.product-item__quick-form.quick-buy-notify-me').removeClass('show_notifyMe');
     $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
     $('.pincode_checker_container').show();
@@ -814,22 +779,22 @@ options = {
 };
 const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
   //Function to allow only numbers
-     function _isNumberCheck(evt) {
-      var charCode = (evt.which) ? evt.which : event.keyCode
-      if (charCode > 31 && (charCode < 48 || charCode > 57))
+  function _isNumberCheck(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
       return false;
-      return true;
-   }
-   // Not allow 0 as first digit on input
-   $(document).on("input", "#otp-mobile-number, #otp", (e) => {
-      $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
-      $('.otp-login-error').html('');
-   })
-   $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
-      return _isNumberCheck(e);
-   })
-   let timerOn = false;
-   function timer(remaining, timerOn) {
+    return true;
+  }
+  // Not allow 0 as first digit on input
+  $(document).on("input", "#otp-mobile-number, #otp", (e) => {
+    $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+    $('.otp-login-error').html('');
+  })
+  $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
+    return _isNumberCheck(e);
+  })
+  let timerOn = false;
+  function timer(remaining, timerOn) {
     let m = Math.floor(remaining / 60);
     let s = remaining % 60;
 
@@ -837,16 +802,16 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
     s = s < 10 ? '0' + s : s;
     $('#timer').html(m + ':' + s);
     remaining -= 1;
-    if(remaining >= 0 && timerOn) {
-      setTimeout(function() {
+    if (remaining >= 0 && timerOn) {
+      setTimeout(function () {
         timerOn = sessionStorage.getItem('timerOn');
         timerOn = JSON.parse(timerOn);
-          timer(remaining, timerOn);
+        timer(remaining, timerOn);
       }, 1000);
       return;
     }
 
-    if(!timerOn) {
+    if (!timerOn) {
       // Do validate stuff here
       return;
     }
@@ -855,10 +820,10 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
     $('.resend-timer').hide();
     $('.resend-text').show();
     $('.resend-btn').show();
-    $('.otp-login-confirm-btn').css('background','#ED1C24');
+    $('.otp-login-confirm-btn').css('background', '#ED1C24');
   }
 
-   function TimerFunction(){
+  function TimerFunction() {
     timerOn = true;
     sessionStorage.setItem('timerOn', timerOn);
     $('.resend-timer').show();
@@ -866,27 +831,27 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
     $('.resend-btn').hide();
     $('.otp-login-confirm-btn').removeAttr('style');
     timer(60, timerOn);
-   }
+  }
 
-   function countdown(timeleft, url){
+  function countdown(timeleft, url) {
     var timeleft = timeleft;
-    var downloadTimer = setInterval(function(){
-      if(timeleft <= 0){
+    var downloadTimer = setInterval(function () {
+      if (timeleft <= 0) {
         clearInterval(downloadTimer);
-        sessionStorage.setItem('login','false');
+        sessionStorage.setItem('login', 'false');
         location.href = url;
       } else {
         document.getElementById("countdown").innerHTML = timeleft;
       }
       timeleft -= 1;
     }, 1000);
-   }
+  }
 
-   function emailMask(email) {
+  function emailMask(email) {
     var maskedEmail = email.replace(/([^@\.])/g, "*").split('');
-    var previous	= "";
-    for(i=0;i<maskedEmail.length;i++){
-      if (i<=1 || previous == "." || previous == "@"){
+    var previous = "";
+    for (i = 0; i < maskedEmail.length; i++) {
+      if (i <= 1 || previous == "." || previous == "@") {
         maskedEmail[i] = email[i];
       }
       previous = email[i];
@@ -896,44 +861,44 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
 
   var customer_container = document.querySelector('.customer-login-section.customer--section');
   function inputSubmit(input) {
-    if(input){
-    input.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        // debugger
-        if(customer_container.hasAttribute('otp_login_screen')){
-        //  console.log('otp_login_screen');
-        document.querySelector('.otp-login-btn').click();
-        }
-        else if(customer_container.hasAttribute('otp_send')){
-          document.querySelector('.otp-login-confirm-btn').click();  
-        }
-        else{
-        //  console.log('prevint defaunt reload');
+    if (input) {
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
           event.preventDefault();
+          // debugger
+          if (customer_container.hasAttribute('otp_login_screen')) {
+            //  console.log('otp_login_screen');
+            document.querySelector('.otp-login-btn').click();
+          }
+          else if (customer_container.hasAttribute('otp_send')) {
+            document.querySelector('.otp-login-confirm-btn').click();
+          }
+          else {
+            //  console.log('prevint defaunt reload');
+            event.preventDefault();
+          }
         }
-      }
-    });
-  }
+      });
     }
+  }
 
-  function signup_window(session_id){
+  function signup_window(session_id) {
     $('.customer-login-section').attr('new_customer', 'true');
     $('.customer-login-section').removeAttr('multi_email');
     $('.otp-login-message h3').html('Continue with Email');
     $('.otp-timer-container').hide();
     $('.otp-login-error').html('');
-    $('.otp-login-submit-btn').click(function(){
+    $('.otp-login-submit-btn').click(function () {
       let full_name = $('.otp-fullName #full_name').val();
       let email = $('.otp-email #email').val();
       let phone = $('#otp-mobile-number').val();
       let register_url = sessionStorage.getItem('login_location');
-      sessionStorage.setItem('selected_email',email);
+      sessionStorage.setItem('selected_email', email);
       otpSignUp(full_name, email, phone, session_id, register_url);
     })
   }
 
-  function verifyemail(session_id, otp, url){
+  function verifyemail(session_id, otp, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/email/verify';
     var settings = {
       "url": base_Url,
@@ -948,28 +913,28 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
         "otp": otp
       }),
     };
-    
+
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200 && response.message == 'login URL sent'){
+      if (response.code == 200 && response.message == 'login URL sent') {
         $('.customer-login-section.customer--section').hide();
         $('.oto-login-success-container').show();
         localStorage.setItem('boatHead_input', response.Token);
         countdown(5, response.URL);
-        
-      }else if(response.code == 422 && response.message == 'validation_error'){
+
+      } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401 || response.code == 429){
         $('.otp-login-error').html(response.message);
-      }else if(response.code == 406){
+      } else if (response.code == 406) {
         $('.otp-login-error').html('Otp expired.');
-      }else{
+      } else {
         $('.otp-login-error').html('Something went wrong please try again.');
       }
     });
   }
-  
-  function emailResend(email, session_id){
+
+  function emailResend(email, session_id) {
     let base_Url = 'https://otp.boat-lifestyle.com/email/otp';
     var settings = {
       "url": base_Url,
@@ -983,7 +948,7 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
         "session_id": session_id
       }),
     };
-    
+
     $.ajax(settings).done(function (response) {
       // console.log(response);
       if(response.code == 200){
@@ -996,7 +961,7 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
     });
   }
 
-  function selectEmail(email, session_id, url){
+  function selectEmail(email, session_id, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
     var settings = {
       "url": base_Url,
@@ -1007,44 +972,44 @@ const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
       },
       "data": JSON.stringify({
         "session_id": session_id,
-        "email" : email,
+        "email": email,
         "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
+      if (response.code == 200) {
         $('.otp-login-error').html('');
-        if(response.message == 'Email exists with different number  , OTP sent to email'){
+        if (response.message == 'Email exists with different number  , OTP sent to email') {
           var session_id = response.session_id;
-  
-  // email varify code
-  $('.customer-login-section').attr('otp_send', 'true');
-  $('.customer-login-section').attr('otp_email_varify', 'true');
-  $('.customer-login-section').removeAttr('multi_email');
-  $('#resend__otp').removeClass('login-resend-btn');
-  $('#resend__otp').addClass('email-resend-btn');
-  $('.email-list-container').html('');
-  $('.mobile-otp-inout input').val('');
-  $('.otp-timer-container').show();
-$('.mobile-login-input').html(`
+
+          // email varify code
+          $('.customer-login-section').attr('otp_send', 'true');
+          $('.customer-login-section').attr('otp_email_varify', 'true');
+          $('.customer-login-section').removeAttr('multi_email');
+          $('#resend__otp').removeClass('login-resend-btn');
+          $('#resend__otp').addClass('email-resend-btn');
+          $('.email-list-container').html('');
+          $('.mobile-otp-inout input').val('');
+          $('.otp-timer-container').show();
+          $('.mobile-login-input').html(`
 <div class="input">
   <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
-$('.otp-login-error').html('');
-$('.otp-login-confirm-btn').addClass('email_varify');
-TimerFunction();
-  sessionStorage.setItem('login_session_id', response.session_id );
-  
-          }else{
-        $('.customer-login-section.customer--section').hide();
-        $('.oto-login-success-container').show();
-        localStorage.setItem('boatHead_input', response.Token);
-        countdown(5, response.URL);
-          }
-      }else if(response.code == 422 && response.message == 'validation_error'){
+          $('.otp-login-error').html('');
+          $('.otp-login-confirm-btn').addClass('email_varify');
+          TimerFunction();
+          sessionStorage.setItem('login_session_id', response.session_id);
+
+        } else {
+          $('.customer-login-section.customer--section').hide();
+          $('.oto-login-success-container').show();
+          localStorage.setItem('boatHead_input', response.Token);
+          countdown(5, response.URL);
+        }
+      } else if (response.code == 422 && response.message == 'validation_error') {
         // $('.otp-login-error').html('Something went wrong please try again.');
       }else if(response.code == 401 || response.code == 404 || response.code == 429 ){
         $('.otp-login-error').html(response.message);
@@ -1052,7 +1017,7 @@ TimerFunction();
     });
   }
 
-  function otpSignUp(full_name, email, phone, session_id, url){
+  function otpSignUp(full_name, email, phone, session_id, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/signup';
     var settings = {
       "url": base_Url,
@@ -1062,78 +1027,78 @@ TimerFunction();
         "Content-Type": "application/json"
       },
       "data": JSON.stringify({
-        "full_name" : full_name,
+        "full_name": full_name,
         "email": email,
         "phone": phone,
         "session_id": session_id,
-        "url" : url
+        "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
+      if (response.code == 200) {
         $('.otp-login-error').html('');
-        if(response.message == 'Email exists with different number  , OTP sent to email'){
-        var session_id = response.session_id;
+        if (response.message == 'Email exists with different number  , OTP sent to email') {
+          var session_id = response.session_id;
 
-// email varify code
+          // email varify code
 
-  $('.customer-login-section').attr('otp_send', 'true');
-  $('.customer-login-section').attr('otp_email_varify', 'true');
-  $('.customer-login-section').removeAttr('new_customer');
-  $('.customer-login-section').removeAttr('multi_email');
-  $('#resend__otp').removeClass('login-resend-btn');
-  $('#resend__otp').addClass('email-resend-btn');
-  $('.email-list-container').html('');
-  $('.mobile-otp-inout input').val('');
-  $('.otp-timer-container').show();
-$('.mobile-login-input').html(`
+          $('.customer-login-section').attr('otp_send', 'true');
+          $('.customer-login-section').attr('otp_email_varify', 'true');
+          $('.customer-login-section').removeAttr('new_customer');
+          $('.customer-login-section').removeAttr('multi_email');
+          $('#resend__otp').removeClass('login-resend-btn');
+          $('#resend__otp').addClass('email-resend-btn');
+          $('.email-list-container').html('');
+          $('.mobile-otp-inout input').val('');
+          $('.otp-timer-container').show();
+          $('.mobile-login-input').html(`
 <div class="input">
   <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
   <label for="mobile" class="input__label">Enter your email</label>
 </div>
 `);
-$('.otp-login-error').html('');
-$('.otp-login-confirm-btn').addClass('email_varify');
-clevertap.event.push('OTP Signup', {
-  "Full Name": full_name,
-  "Email": email,
-  "Phone": phone,
-  "Message": response.message
-})
-clevertap.profile.push({
-  "Site": {
-    "OTP Signup Name": full_name,
-    "OTP Signuo Number": phone,
-    "OTP Signup Email": email,
-    "MSG-sms": "TRUE",
-    "MSG-whatsapp": "TRUE"
-  }
- }); 
-TimerFunction();
-  sessionStorage.setItem('login_session_id', response.session_id );
-        }else{
-        $('.customer-login-section.customer--section').hide();
-        $('.oto-login-success-container').show();
-        localStorage.setItem('boatHead_input', response.Token);
-        clevertap.event.push('OTP Signup', {
-          "Full Name": full_name,
-          "Email": email,
-          "Phone": phone,
-          "Message": response.message
-        })
-        clevertap.profile.push({
-          "Site": {
-            "OTP Signup Name": full_name,
-            "OTP Signuo Number": phone,
-            "OTP Signup Email": email,
-            "MSG-sms": "TRUE",
-            "MSG-whatsapp": "TRUE"
-          }
-        }); 
-        countdown(5, response.URL);
-      }
-      }else if(response.code == 422 && response.message == 'validation_error'){
+          $('.otp-login-error').html('');
+          $('.otp-login-confirm-btn').addClass('email_varify');
+          clevertap.event.push('OTP Signup', {
+            "Full Name": full_name,
+            "Email": email,
+            "Phone": phone,
+            "Message": response.message
+          })
+          clevertap.profile.push({
+            "Site": {
+              "OTP Signup Name": full_name,
+              "OTP Signuo Number": phone,
+              "OTP Signup Email": email,
+              "MSG-sms": "TRUE",
+              "MSG-whatsapp": "TRUE"
+            }
+          });
+          TimerFunction();
+          sessionStorage.setItem('login_session_id', response.session_id);
+        } else {
+          $('.customer-login-section.customer--section').hide();
+          $('.oto-login-success-container').show();
+          localStorage.setItem('boatHead_input', response.Token);
+          clevertap.event.push('OTP Signup', {
+            "Full Name": full_name,
+            "Email": email,
+            "Phone": phone,
+            "Message": response.message
+          })
+          clevertap.profile.push({
+            "Site": {
+              "OTP Signup Name": full_name,
+              "OTP Signuo Number": phone,
+              "OTP Signup Email": email,
+              "MSG-sms": "TRUE",
+              "MSG-whatsapp": "TRUE"
+            }
+          });
+          countdown(5, response.URL);
+        }
+      } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('Something went wrong please try again.');
         clevertap.event.push('OTP Signup', {
           "Full Name": full_name,
@@ -1149,8 +1114,8 @@ TimerFunction();
             "MSG-sms": "TRUE",
             "MSG-whatsapp": "TRUE"
           }
-        }); 
-      }else if(response.code == 401){
+        });
+      } else if (response.code == 401) {
         $('.otp-login-error').html('Customer already exist with this email ID and with ' + response.message + ' phone number login with this number.');
         let login_btn = $('.otp-login-submit-btn');
         login_btn.html('Back to Login');
@@ -1169,8 +1134,8 @@ TimerFunction();
             "MSG-sms": "TRUE",
             "MSG-whatsapp": "TRUE"
           }
-        }); 
-        $('.otp-login-submit-btn[return_to_login]').click(function(e){
+        });
+        $('.otp-login-submit-btn[return_to_login]').click(function (e) {
           e.preventDefault();
           location.reload();
         })
@@ -1362,103 +1327,114 @@ function otpLogin(phone){
   });
 }
 
-$('.otp-login-btn, .login-resend-btn').click(function(){
-  if(!$('#resend__otp').hasClass('email-resend-btn')){
-//  console.log('login-resend-btn');
-  let phone = $('#otp-mobile-number').val();
-  if(phone.length < 1){
-    $('.otp-login-error').html('The phone field is required.');
-  }else if(phone.length < 10){
-    $('.otp-login-error').html('Invalid phone number.');
-  }else {
-    $('.otp-login-btn').attr('disabled', true);
-    otpLogin(phone);
-  }
-  }
-})
+  $('.otp-login-btn, .login-resend-btn').click(function () {
+    if (!$('#resend__otp').hasClass('email-resend-btn')) {
+      console.log('login-resend-btn');
+      let phone = $('#otp-mobile-number').val();
+      if (phone.length < 1) {
+        $('.otp-login-error').html('The phone field is required.');
+      } else if (phone.length < 10) {
+        $('.otp-login-error').html('Invalid phone number.');
+      } else {
+        $('.otp-login-btn').attr('disabled', true);
+        otpLogin(phone);
+      }
+    }
+  })
 
-$(document).on('click', '#resend__otp', function(){
-  TimerFunction();
-});
-
-$( "#otp" ).on( "input", function() {
-  if($(this).val().length >5 ){
-    $('.otp-login-confirm-btn').css('background','#ED1C24');
-  }
-});
-
-$('.mobile-login-edit-icon').click(function(){
-  $('.otp-login-error').html('');
-  $('.otp-login-btn').attr('disabled', false);
-  $('.customer--section').removeAttr('otp_send');
-  $('.mobile-otp-inout input').val('');
-  $('#otp-mobile-number').attr('disabled', false)
+  $(document).on('click', '#resend__otp', function () {
+    TimerFunction();
   });
-  if(!sessionStorage.login_location && sessionStorage.login_location !== ''){
-    sessionStorage.setItem('login_location','https://www.boat-lifestyle.com/');
+
+  $("#otp").on("input", function () {
+    if ($(this).val().length > 5) {
+      $('.otp-login-confirm-btn').css('background', '#ED1C24');
+    }
+  });
+
+  $('.mobile-login-edit-icon').click(function () {
+    $('.otp-login-error').html('');
+    $('.otp-login-btn').attr('disabled', false);
+    $('.customer--section').removeAttr('otp_send');
+    $('.mobile-otp-inout input').val('');
+    $('#otp-mobile-number').attr('disabled', false)
+  });
+  if (!sessionStorage.login_location && sessionStorage.login_location !== '') {
+    sessionStorage.setItem('login_location', 'https://www.boat-lifestyle.com/');
   }
-  
+
 
   document.querySelector('.custom-account-icon').addEventListener("click", function myFunction(event) {
     event.preventDefault();
-      sessionStorage.setItem('login_location',window.location.href);
+    sessionStorage.setItem('login_location', window.location.href);
   });
 
   let mobile_account = document.querySelectorAll('.mobile-custom-account-icon');
   for (let i = 0; i < mobile_account.length; i++) {
     mobile_account[i].addEventListener("click", function myFunction(event) {
       event.preventDefault();
-        sessionStorage.setItem('login_location',window.location.href);
-        var account_url = this.firstElementChild.getAttribute('href');
-        window.location = account_url;
+      sessionStorage.setItem('login_location', window.location.href);
+      var account_url = this.firstElementChild.getAttribute('href');
+      window.location = account_url;
     });
   }
 
- $('.otp-login-confirm-btn').click(function(){
-   if(!$('.otp-login-confirm-btn').hasClass('email_varify')){
-//  console.log('verifyotp');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){  
-  verifyotp(session_id, otp, url);
-}
-     }else{
-  let session_id = sessionStorage.getItem('login_session_id');
-  let mobile_number = $('.mobile-login-input input').val()
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
-  verifyemail(session_id, otp, url);
-}else if(otp == ''){
-  $('.otp-login-error').html('OTP is required');
-}   
-     }
-})
+  $('.otp-login-confirm-btn').click(function () {
+    if (!$('.otp-login-confirm-btn').hasClass('email_varify')) {
+      //  console.log('verifyotp');
+      let session_id = sessionStorage.getItem('login_session_id');
+      console.log('hii otp login input');
+      // Get the values of all the inputs
+      var digit1 = document.getElementById("digit1").value;
+      var digit2 = document.getElementById("digit2").value;
+      var digit3 = document.getElementById("digit3").value;
+      var digit4 = document.getElementById("digit4").value;
+      var digit5 = document.getElementById("digit5").value;
+      var digit6 = document.getElementById("digit6").value;
 
-$('#resend__otp').click(function(){
-  if($(this).hasClass('email-resend-btn')){
-//  console.log('email-resend-btn');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let email = $('#emailId').val();
-if(session_id && session_id !== '' && session_id !== 'undefined' && email){   
-  emailResend(email, session_id);
-}  
-  }
-})
+      console.log(digit1 + digit2 + digit3 + digit4 + digit5 + digit6);
+      let otp = digit1 + digit2 + digit3 + digit4 + digit5 + digit6;
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyotp(session_id, otp, url);
+      }
+    } else {
+      let session_id = sessionStorage.getItem('login_session_id');
+      let mobile_number = $('.mobile-login-input input').val()
+      let otp = $('.mobile-otp-inout input').val();
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyemail(session_id, otp, url);
+      } else if (otp == '') {
+        $('.otp-login-error').html('OTP is required');
+      }
+    }
+  })
 
-var input_login = document.querySelector('.mobile-login-input input');
-inputSubmit(input_login);  
-var otp_login = document.querySelector('.mobile-otp-inout input');
-inputSubmit(otp_login);  
+  $('#resend__otp').click(function () {
+    if ($(this).hasClass('email-resend-btn')) {
+      //  console.log('email-resend-btn');
+      let session_id = sessionStorage.getItem('login_session_id');
+      let email = $('#emailId').val();
+      if (session_id && session_id !== '' && session_id !== 'undefined' && email) {
+        emailResend(email, session_id);
+      }
+    }
+  })
 
-$('.mobile-otp-inout').click(function(){
-  if($('.otp-login-error').html() !== ''){
-    $('.otp-login-error').html('');
-    $(this).children('input').val('');
-  }
-});
+  var input_login = document.querySelector('.mobile-login-input input');
+  inputSubmit(input_login);
+  var otp_login = document.querySelector('.mobile-otp-inout input');
+  inputSubmit(otp_login);
 
+  $('.mobile-otp-inout').click(function () {
+    if ($('.otp-login-error').html() !== '') {
+      $('.otp-login-error').html('');
+      $(this).children('input').val('');
+    }
+  });
+};
+Shopify.custom_otp_login();
 // if( window.location = '/account/logout'){
 //   localStorage.removeItem('boatHead_input');
 //   sessionStorage.removeItem('login')
@@ -2217,3 +2193,119 @@ $(this).hasClass('expand') ? ($(this).children('.view-all').text('Expand Less'),
 //   $('button[aria-controls="facet-filter-filter.p.m.custom.category"]').siblings('.collapsible').hide()
 //   $('button[aria-controls="facet-filter-filter.p.m.custom.category"]').closest('.product-facet__filter-item').siblings('.product-facet__filter-item').find('button[aria-controls="facet-filter-filter.v.m.custom.sprinklr_color"]').attr('aria-expanded', true)
 // }
+
+
+
+Shopify.notifyMe = function () {
+  event.preventDefault();
+  document.querySelector('body').classList.add('overflow-hidden');
+  // console.log("custom notify me");
+  // console.log(event.target.dataset);
+  var dataSet = event.target.dataset;
+  var varientID = dataSet["variantId"];
+  varientID = parseInt(varientID);
+  var varientSelector = '';
+  var varientUrl = dataSet["url"];
+  varientUrl = varientUrl + "?variant=" + varientID + "&view=notifyMe-popup";
+  $.ajax({
+    url: varientUrl,
+    type: "GET",
+    dataType: "html",
+    success: function (e) {
+      // console.log(e);
+      $(".notifyMe_popup__main_container").html(e);
+      Shopify.custom_otp_login();
+      $('#notifyMe_submit_btn').click(function () {
+        event.preventDefault();
+        console.log(this);
+        var varient_id = $('#variants_select').val();
+        var mobile_number = $('#notifyMe_mobile_number').val();
+        var title = $('.notifyMe_popup_title').text().trim() + " - " + $('#variants_select_title').val();
+        var notifyMe_arr = [];
+        var notifyMe_data = '';
+        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title };
+        console.log(mobile_number);
+        if (mobile_number.length < 1) {
+          $('#message_holder').html('Phone number is required.');
+        } else if (mobile_number.length < 10) {
+          $('#message_holder').html('Invalid phone number.');
+        } else {
+          $('#message_holder').html('');
+          function isJson(str) {
+            try {
+              JSON.parse(str);
+            } catch (e) {
+              return false;
+            }
+            return true;
+          }
+          if (isJson(localStorage.notifyMe_data)) {
+            notifyMe_data = JSON.parse(localStorage.notifyMe_data);
+            notifyMe_data = notifyMe_data.filter(obj => obj.id !== varient_id);
+            console.log(notifyMe_data);
+            notifyMe_arr = notifyMe_data;
+          }
+          notifyMe_arr.push(notifyMe_varient);
+          console.log(notifyMe_arr, 'notifyMe_arr');
+          notifyMe_arr = JSON.stringify(notifyMe_arr);
+          localStorage.setItem('notifyMe_data', notifyMe_arr);
+          document.querySelector('.completed_message').style.display = 'block';
+          var custom_popup_body = this.closest('.custom_popup');
+          setTimeout(function () {
+            custom_popup_body.classList.remove('show');
+            document.querySelector('body').classList.remove('overflow-hidden');
+            $('#mobile_number').val('');
+            document.querySelector('.completed_message').removeAttribute('style');
+          }, 3000);
+        }
+      });
+      $('.variants_color_select').change(function () {
+        console.log('hii color-swatch__radio');
+        var varientImage = $(this).attr('data-image');
+        var varientId = $(this).attr('data-id');
+        var variantTitle = $(this).attr('data-title');
+        console.log(variantTitle, 'variantTitle');
+        $('.notifyMe_popup_product_img img').attr('src', varientImage);
+        $('.notifyMe_form-group input').val(varientId);
+        $('#variants_select_title').val(variantTitle);
+      });
+    }
+  })
+
+  $('.notifyMe_popup__main_container').addClass('show');
+
+}
+
+$('#notifyMe_trigger').click(function (e) {
+  e.preventDefault();
+sessionStorage.setItem('login_location', window.location.href);
+});
+//Function to allow only numbers
+function _isNumberCheck(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  console.log(evt.target.value);
+  if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
+    return false;
+  return true;
+}
+
+function OTP_login_moveToNext(currentInput, nextInputId) {
+  if (currentInput.value.length === currentInput.maxLength) {
+      document.getElementById(nextInputId).focus();
+  }
+}
+
+// Not allow 0 as first digit on input
+$(document).on("input", "#mobile_number", (e) => {
+  $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+  $('#message_holder').html('');
+})
+$(document).on("keypress", "#mobile_number", (e) => {
+  return _isNumberCheck(e);
+})
+
+$('.login').click(function(){
+  event.preventDefault();
+  document.querySelector('body').classList.add('overflow-hidden');
+  $('.login_popup_main_container').addClass('show');
+});
