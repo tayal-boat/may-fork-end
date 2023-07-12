@@ -930,6 +930,8 @@ Shopify.custom_otp_login = function () {
 
   function signup_window(session_id){
     $('.customer-login-section').attr('new_customer', 'true');
+    $('.mobile-login-otp_heading h2').html('<b>Looks like you’re new here</b>');
+    $('.mobile-login-otp_heading span').html('Please enter your Name & Email ID to continue');
     $('.customer-login-section').removeAttr('multi_email');
     $('.otp-login-message h3').html('Continue with Email');
     $('.otp-timer-container').hide();
@@ -1298,6 +1300,8 @@ function verifyotp(session_id, otp, url){
       let emailListHtml = '', i ;
       let emailListContainer = document.querySelector('.email-list-container');
       if(emailList.length > 0){
+        $('.mobile-login-otp_heading h2').html('<b>Select your primary Email ID</b>');
+        $('.mobile-login-otp_heading span').html('Please select one of the below to continue');
       for (let i = 0; i < emailList.length; i++) {
         emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
       }
@@ -1422,8 +1426,8 @@ $('.mobile-login-edit-icon').click(function(){
     mobile_account[i].addEventListener("click", function myFunction(event) {
       event.preventDefault();
         sessionStorage.setItem('login_location',window.location.href);
-        var account_url = this.firstElementChild.getAttribute('href');
-        window.location = account_url;
+        // var account_url = this.firstElementChild.getAttribute('href');
+        // window.location = account_url;
     });
   }
 
@@ -2356,7 +2360,7 @@ $(document).on("keypress", "#mobile_number", (e) => {
   return _isNumberCheck(e);
 })
 
-$('.login').click(function(){
+$('.login, .mobile-custom-account-icon').click(function(){
   event.preventDefault();
   $.ajax({
     url: "/account/login?view=otp-login-popup",
