@@ -82,18 +82,12 @@
           {% endcomment %}
 
           <div id="product-{{ section.id }}-{{ media.id }}" class="product__media-item item {% if is_media_filtered %}is-filtered{% endif %} {% if selected_media.id == media.id %}product_is-initial-selected is-initial-selected is-selected{% endif %}" data-media-type="{{ media.media_type }}" data-media-id="{{ media.id }}" data-original-position="{{ forloop.index0 }}">
-            
+            <div class="pdp-mobile-rating hidden-lap-and-up">
+              {%- render 'product-rating', product: product -%}
+            </div>
             {%- case media.media_type -%}
               {%- when 'image' -%}
-                <div class="product__media-image-wrapper aspect-ratio aspect-ratio--natural" style="padding-bottom: {{ 100.0 | divided_by: media.aspect_ratio }}%; --aspect-ratio: {{ media.aspect_ratio }}">
-                  {%- if forloop.first -%}
-                    {%- if section.settings.show_product_rating -%}
-                      <div class="pdp-mobile-rating hidden-lap-and-up">
-                        {%- render 'product-rating', product: product -%}
-                      </div>
-                      {% comment %} {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %} {% endcomment %}
-                    {%- endif -%}
-                  {%- endif -%}
+                <div class=" product__media-image-wrapper aspect-ratio aspect-ratio--natural" style="padding-bottom: {{ 100.0 | divided_by: media.aspect_ratio }}%; --aspect-ratio: {{ media.aspect_ratio }}">
                   <img {% if selected_media.id == media.id and settings.reveal_product_media %}reveal{% endif %} {% if selected_media.id != media.id or request.page_type != 'product' %}loading="lazy"{% endif %} sizes="(max-width: 999px) calc(100vw - 48px), 640px" {% render 'image-attributes', image: media, alt: alt, sizes: '400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800' %}>
                 </div>
               {%- when 'video' -%}
