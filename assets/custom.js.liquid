@@ -1377,7 +1377,7 @@ function otpLogin(phone){
 $('.otp-login-btn, .login-resend-btn').click(function(){
   if(!$('#resend__otp').hasClass('email-resend-btn')){
   console.log('login-resend-btn');
-  var phone = this.closest('.customer-login-section').querySelector('#otp-mobile-number').value;
+  var phone = $('#otp-mobile-number').val();
   console.log(phone);
   if(phone.length < 1){
     $('.otp-login-error').html('The phone field is required.');
@@ -2353,6 +2353,16 @@ $(document).on("keypress", "#mobile_number", (e) => {
 
 $('.login').click(function(){
   event.preventDefault();
-  document.querySelector('body').classList.add('overflow-hidden');
+  $.ajax({
+    url: "/account/login?view=otp-login-popup",
+    type: "GET",
+    dataType: "html",
+    success: function (e) {
+       console.log(e);
+      document.querySelector('body').classList.add('overflow-hidden');
+      $(".login_popup_main_container").html(e);
+      Shopify.custom_otp_login();
+    }
+  });
   $('.login_popup_main_container').addClass('show');
 });
