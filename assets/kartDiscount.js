@@ -310,7 +310,7 @@ Shopify.farziDiscount = function (basecode, cartToken) {
       type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" },
       data: `{"code":"${basecode}", "cartId":"${cartToken}"}`,
   }).then((response) => {
-      console.log(response)
+    console.log(response , 'sucess response');
       if (response == "true" || response == "True") {
           setTimeout(function () {
               console.log('hiiiii');
@@ -339,7 +339,9 @@ Shopify.farziDiscount = function (basecode, cartToken) {
       }, 1000);
   }, 3000);
       }
-  });
+  }).fail(() => {
+    console.log(response , 'fail response');
+});
 }
 window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
   // console.log("before convert: ", convertedMoneyStr); // converted currency string from number
