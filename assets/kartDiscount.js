@@ -340,7 +340,7 @@ Shopify.farziDiscount = function (basecode, cartToken) {
   }, 3000);
       }
   }).fail(() => {
-    console.log(response , 'fail response');
+    // console.log(response , 'fail response');
 });
 }
 window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
