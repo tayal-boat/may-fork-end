@@ -15,12 +15,12 @@
     .article_container .view-all{background: transparent;border: none;font-weight: bold;line-height: 0.57;letter-spacing: -0.56px;text-align: right;}
     .section__header.blog__header{margin: 30px auto;}
     .section__header.blog__header h3{margin: 0px;line-height:normal;font-size: 24px;letter-spacing: -0.56px;}
-    .shopify-section--main-blog link-bar li{padding: 9px 21px !important;border-radius: 17px;line-height: unset;}
-    .shopify-section--main-blog link-bar li.link-bar__link-item--selected{background: #ecf0f4;}
-    .shopify-section--main-blog link-bar li a{font-size: 16px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 14px;letter-spacing: normal;text-align: left;color: #1a2024;}
-    .shopify-section--main-blog link-bar li.capitalized_text a{text-transform: capitalize;}
-    .shopify-section--main-blog link-bar li.link-bar__link-item--selected a{font-weight: bold;letter-spacing: -0.64px;}
-    .shopify-section--main-blog link-bar li.link-bar__link-item--selected a:after{display: none;}
+    .shopify-section--complete-blogs-list link-bar li{padding: 9px 21px !important;border-radius: 17px;line-height: unset;}
+    .shopify-section--complete-blogs-list link-bar li.link-bar__link-item--selected{background: #ecf0f4;}
+    .shopify-section--complete-blogs-list link-bar li a{font-size: 16px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 14px;letter-spacing: normal;text-align: left;color: #1a2024;}
+    .shopify-section--complete-blogs-list link-bar li.capitalized_text a{text-transform: capitalize;}
+    .shopify-section--complete-blogs-list link-bar li.link-bar__link-item--selected a{font-weight: bold;letter-spacing: -0.64px;}
+    .shopify-section--complete-blogs-list link-bar li.link-bar__link-item--selected a:after{display: none;}
     link-bar .link-bar__wrapper{margin: 0px 0px 30px 0px !important;}
     link-bar .link-bar__wrapper ul{gap: 10px;}
     .link-bar{box-shadow:none!important;}
@@ -32,8 +32,8 @@
       .article--item {max-width: calc(100dvw - 20%);min-width: calc(100dvw - 20%);padding: 0;margin-right: 10px;}
       .article--item:first-child{margin-left:10px}
       .section__header.blog__header{padding-left: 0px;padding-right: 0px;margin: 20px 12px;}
-      .shopify-section--main-blog .article_container{flex-wrap: wrap;justify-content: center;}
-      .shopify-section--main-blog .article--item{margin-left: 10px;margin-right: 10px;max-width: calc(100dvw - 10%);min-width: calc(100dvw - 10%);}
+      .shopify-section--complete-blogs-list .article_container{flex-wrap: wrap;justify-content: center;}
+      .shopify-section--complete-blogs-list .article--item{margin-left: 10px;margin-right: 10px;max-width: calc(100dvw - 10%);min-width: calc(100dvw - 10%);}
     }
     
 </style>
@@ -42,9 +42,6 @@
   <div class=""> 
     <a class="d-flex justify-content-between align-items-center" href="{{ blog.url }}">
       <h3 class="ui2-heading">{{ section.settings.title }} </h3>
-      <b class="view-all">View All
-        {%- render 'icon' with 'right-arrow-blue' -%}
-      </b>
     </a>
   </div>
 </header>
@@ -102,7 +99,21 @@
           </div>
         {% endfor %}
       </div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    let averageReadingSpeed = 200;
+    let articleContent = '';
+    let wordCount = 0;
+    let minuteRead;
 
+    $('.article_container .article--item').each(function() {
+      articleContent = $(this).find('.article--content').text();
+      wordCount = articleContent.trim().split(/\s+/).length;
+      minuteRead = Math.ceil(wordCount / averageReadingSpeed);
+      $(this).find('.min-read').text(`${minuteRead} min read`);
+    });
+  });
+</script>
 {% schema %}
 {
   "name": "Complete Blogs List",
