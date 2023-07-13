@@ -1,0 +1,81 @@
+{%- assign blog = section.settings.blog -%}
+<link-bar class="link-bar">
+        <div class="container">
+          <div class="link-bar__wrapper">
+            {% comment %} <span class="link-bar__title heading heading--small text--subdued">{{ 'blog.general.view' | t }}</span> {% endcomment %}
+
+            <div class="link-bar__scroller hide-scrollbar">
+              <ul class="link-bar__linklist list--unstyled" role="list">
+                <li class="link-bar__link-item {% if current_tags == blank %}link-bar__link-item--selected{% endif %}">
+                  <a href="{{ blog.url }}" class="link-bar__link link--animated {% if current_tags == blank %}text--underlined{% endif %}">{{ 'blog.general.all_posts' | t }}</a>
+                </li>
+
+                {%- for tag in blog.all_tags -%}
+                {% unless tag contains 'meta-' %}
+                  <li class="{% unless tag == 'do what floats your boAt' %}capitalized_text {%endunless%} link-bar__link-item {% if current_tags contains tag %}link-bar__link-item--selected{% endif %}">
+                    {%- capture link_to_tag_replacement -%}class="link-bar__link link--animated {% if current_tags contains tag %}text--underlined{% endif %}" title={%- endcapture -%}
+
+                    {%- if current_tags contains tag -%}
+                      {{ tag | link_to_remove_tag: tag | replace: 'title=', link_to_tag_replacement }}
+                    {%- else -%}
+                      {{- tag | link_to_tag: tag | replace: 'title=', link_to_tag_replacement -}}
+                    {%- endif -%}
+                  </li>
+                  {% endunless %}
+                {%- endfor -%}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </link-bar>
+      <div class="container article_container">
+        {% for article in blog.articles %}
+          <div class="article--item scroller__inner">
+            <a href="{{ article.url }}" class="article-item__image-container">
+              <img class="article-item__image" sizes="(max-width: 740px) 81vw, (max-width: 999px) 37vw, 425px" loading="lazy" {% render 'image-attributes', image: article.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000' %}>
+            </a>
+            <div class="article--info">
+                
+                <p class="article--title"><a href="{{ article.url }}">{{ article.title | truncate: 60, '...' }}</a></p>
+                <div class="article--content visually-hidden">{{ article.content }}</div>
+                <div class="article--meta">
+                    <span class="a_published-at">{{ article.published_at | date: "%d %b, %Y" }}</span>
+                    {% comment %} <b class="view-all">
+                      <a href="{{article.url}}">Read Now
+                        {%- render 'icon' with 'right-arrow-blue' -%}
+                      </a>
+                    </b> {% endcomment %}
+                    <div class="top--info">
+                      <span class="min-read"></span>
+                    </div>
+                </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+{% schema %}
+{
+  "name": "Complete Blogs List",
+  "class": "shopify-section--complete-blogs-list",
+  "settings": [
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "html",
+      "id": "title",
+      "label": "Heading",
+      "default": "Blog posts"
+    }
+  ],
+  "presets": [
+    {
+      "category" : "Blog",
+      "name": "Complete Blogs List"
+    }
+  ]
+}
+{% endschema %}
