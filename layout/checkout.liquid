@@ -3010,10 +3010,20 @@ li.mobile-nav__item.open collapsible-content {
         $('.content-box__row:first-child .map, .tracking-info, #myFrame, .os-order-number, .content-box h2, .text-container address ~ h3, .text-container address ~ h3 ~ p, .content-box__row:first-child,.total-line.total-line--subtotal,.step__footer__continue-btn.btn').hide()
         const orderNumberDiv = `<p class="new-order-div" style="display: flex;align-items: center;justify-content: space-between;padding: 0;margin-block: 20px;background: red;color: white;padding-block: 10px;margin-inline: -20px;padding-inline: 23px;font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;"><span>Order Id</span><span>#{{ order.order_number }}</span></p>`
         $('.telegram').after(orderNumberDiv);
-        {% comment %} const exclusiveOffersDiv = `<div class="exclusive-offers-div" style="padding-bottom: 10px;border-bottom: 2px solid #ff0000;">
-          <h3 class="off_heading" style="font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;">Exclusive offers unlocked for you</h3><div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/collections/daily-deals"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group.svg?v=1687427610" style="display:block;width:100%;"></a></div>
+        const orderItemCount = {{order.item_count}}
+        const itemType = sessionStorage.getItem('ItemType')
+        let imageDiv = ''
+        if(itemType === 'Smart') {
+          imageDiv = `<div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/collections/daily-deals"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group.svg?v=1687427610" style="display:block;width:100%;"></a></div>`
+        } else {
+          imageDiv = `<div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/products/wave-stride-voice-bluetooth-calling-smartwatch"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/TYpagebanner_wave-stride-voice.jpg?v=1689317158" style="display:block;width:100%;"></a></div>`
+        }
+        const exclusiveOffersDiv = `<div class="exclusive-offers-div" style="padding-bottom: 10px;border-bottom: 2px solid #ff0000;">
+          <h3 class="off_heading" style="font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;">Unmissable Offers</h3>${imageDiv}
         </div>`
-        $('.new-order-div').after(exclusiveOffersDiv); {% endcomment %}
+        {% comment %} if(orderItemCount === 1) {
+          $('.new-order-div').after(exclusiveOffersDiv);
+        } {% endcomment %}
         const customerInfo = `<h3 style="font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: 0.03px;margin-top: 20px">Customer Information</h3>`
         $('.os-step__description').after(customerInfo)
         const newElement = $(`<span>&nbsp;</span>`);
