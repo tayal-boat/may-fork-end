@@ -158,6 +158,14 @@
           class="product-item__aspect-ratio aspect-ratio"
           style="padding-bottom: 100.0%; --aspect-ratio: 1"
         >
+          {% if add_first_available == true %}
+            <img
+              class="product-item__primary-image old"
+              loading="lazy"
+              data-media-id="{{ product.featured_media.id | escape }}"
+              {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}
+            >
+          {% else %}
           {% if product.metafields.custom.product_cards_placeholder1 %}
             <img
               class="product-item__primary-image"
@@ -181,7 +189,7 @@
                 {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}
               >
             {% endif %}
-
+          {% endif %}
             {%- if settings.product_color_display == 'swatch' -%}
               {%- assign featured_media = product.variants | map: 'featured_media' -%}
 
