@@ -5,7 +5,7 @@
 .article_container .article-item__image-container .article-item__image{border-radius: 10px 10px 0px 0px;}
 .section__header.blog__header {max-width:94%;margin-bottom:12px;}
 .article_container{display: flex;flex-direction: row;flex-wrap: wrap;column-gap: 0px;row-gap:15px;margin: 0 auto 2rem;max-width: 100%;justify-content: space-between;}
-.article--item {max-width: 32%;}
+.article--item {flex:0 0 32.5%;}
 .article--title{font-size: 16px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.25;letter-spacing: -0.64px;color:#1a2024;min-height: 40px;margin-bottom: 22px;}
 .article--info {padding: 11px 12px 12px;border-radius: 0px 0px 10px 10px;border: solid 1px #ecf0f4;background-color: #fafafa;}
 .top--info {display: flex;justify-content: flex-end;margin-bottom:12px;}
@@ -14,7 +14,7 @@ span.min-read {font-size: 12px;font-weight: bold;font-stretch: normal;font-style
 .article--meta {display: flex;align-items: center;justify-content: space-between;}
 .article_container .view-all{background: transparent;border: none;font-weight: bold;line-height: 0.57;letter-spacing: -0.56px;text-align: right;}
 .section__header.blog__header{margin: 30px auto;}
-.section__header.blog__header h3{margin: 0px;line-height: 52px;font-size: 24px;letter-spacing: -0.56px;}
+.section__header.blog__header h3{margin: 0px;line-height:normal;font-size: 24px;letter-spacing: -0.56px;}
 .shopify-section--main-blog link-bar li{padding: 9px 21px !important;border-radius: 17px;line-height: unset;}
 .shopify-section--main-blog link-bar li.link-bar__link-item--selected{background: #ecf0f4;}
 .shopify-section--main-blog link-bar li a{font-size: 16px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 14px;letter-spacing: normal;text-align: left;color: #1a2024;}
@@ -23,6 +23,9 @@ span.min-read {font-size: 12px;font-weight: bold;font-stretch: normal;font-style
 .shopify-section--main-blog link-bar li.link-bar__link-item--selected a:after{display: none;}
 link-bar .link-bar__wrapper{margin: 0px 0px 30px 0px !important;}
 link-bar .link-bar__wrapper ul{gap: 10px;}
+.link-bar{box-shadow:none!important;}
+.shopify-section--single-blog .article_container{column-gap:15px;}
+.shopify-section--single-blog .article_container .article--item {flex:1;max-width:unset;}
 
 @media (max-width:999px) {
   .article_container{flex-wrap: nowrap;justify-content: unset;max-width:100%;}
@@ -136,25 +139,26 @@ link-bar .link-bar__wrapper ul{gap: 10px;}
       </link-bar>
     {%- endif -%}
     
-    <div class="container article_container scroller">
+    <div class="container article_container">
       {% for article in blog.articles limit: 12 %}
         <div class="article--item scroller__inner">
           <a href="{{ article.url }}" class="article-item__image-container">
             <img class="article-item__image" sizes="(max-width: 740px) 81vw, (max-width: 999px) 37vw, 425px" loading="lazy" {% render 'image-attributes', image: article.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000' %}>
           </a>
           <div class="article--info">
-              <div class="top--info">
-                  <span class="min-read"></span>
-              </div>
-              <p class="article--title">{{ article.title | truncate: 60, '...' }}</p>
+              
+              <p class="article--title"><a href="{{ article.url }}">{{ article.title | truncate: 60, '...' }}</a></p>
               <div class="article--content visually-hidden">{{ article.content }}</div>
               <div class="article--meta">
                   <span class="a_published-at">{{ article.published_at | date: "%d %b, %Y" }}</span>
-                  <b class="view-all">
+                  {% comment %} <b class="view-all">
                     <a href="{{article.url}}">Read Now
                       {%- render 'icon' with 'right-arrow-blue' -%}
                     </a>
-                  </b>
+                  </b> {% endcomment %}
+                  <div class="top--info">
+                    <span class="min-read"></span>
+                  </div>
               </div>
           </div>
         </div>
