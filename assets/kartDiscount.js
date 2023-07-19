@@ -215,6 +215,19 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
   if (df_list.length > 0) {
     for (let i = 0; i < df_list.length; i++) {
+      var discount_collection_link = '';
+      var discount_info = df_list[i].info;
+      console.log(discount_info != "", 'df_list.info');
+      console.log(discount_info, 'discount_info');
+      if(df_list[i].info != ""){
+      var discount_tempElement = document.createElement('div');
+      discount_tempElement.innerHTML = discount_info;
+      var discount_collection = discount_tempElement.querySelector('.afcd_product-collection-dropdown');
+      var discount_collection_link = discount_collection.querySelector('a');
+      discount_collection_link = discount_collection_link.getAttribute('href');
+      console.log('discount_collection_link', discount_collection_link);
+      }
+      var discount_collection_element = discount_collection_link ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
       discountListHtml = discountListHtml + `
           <div class="discount_finder_item">
           <div class="discount_finder_item_details">
@@ -235,7 +248,10 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               <div class="discount_finder_item_content">
                   <h6>${df_list[i].full_detail.split('•')[0]}</h6>
                   <!-- <p>${df_list[i].full_detail}</p> -->
+                  <div class="discount_finder_view_products_container">
                   <span>${df_list[i].code}</span>
+                  ${discount_collection_element}
+                  </div>
               </div>
           </div>
           <div class="discount_finder_item_cta_btn">
