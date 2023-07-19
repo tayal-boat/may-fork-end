@@ -181,6 +181,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   // here we can get the discount finder list and use it as required
   // here we are getting the data of active discount code from dicount finder list and updating the content of the dicount finder in cart drawer.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
+    console.log(df_list, 'df_list');
     for (let i = 0; i < df_list.length; i++) {
       if (df_list[i].is_active == 1) {
         var applyCoupun = df_list[i].code;
