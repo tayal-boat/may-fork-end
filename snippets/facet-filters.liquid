@@ -68,8 +68,31 @@ Code that create the faceted search for the collection and search pages. It curr
           {%- render 'facet-active-filters', filters: filters -%}
         </div>
       {%- endif -%}
-
+      {%assign category_filter = collection.metafields.custom.category_filter.value%}
       <div class="product-facet__filter-list">
+        {% if category_filter != blank %}
+        <div class="product-facet__filter-item">
+        <button type="button" is="toggle-button" class="collapsible-toggle text--strong" aria-controls="facet-filter-{{ filter.param_name | escape }}" aria-expanded="{% if is_filter_group_open %}true{% else %}false{% endif %}">
+          Category
+        </button>
+
+        <collapsible-content>
+          <div class="collapsible__content">
+            {%- for filter_value in category_filter -%}
+              {% assign category_filter_path = filter_value | strip | replace: ' ', '+' %}
+              <div class="checkbox-container">
+                <div class="checkbox-lable">
+                  <label for="filter.p.m.custom.category-{{ forloop.index }}">{{ filter_value }}</label>
+                  </div>
+                  <div class="checkbox-input">
+                    <input class="checkbox" type="checkbox" name="filter.p.m.custom.category" id="filter.p.m.custom.category-{{ forloop.index }}" data-path="filter.p.m.custom.category={{ category_filter_path }}" value="{{ filter_value | strip }}">
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </collapsible-content>
+        </div>
+          {% endif %}
         {%- for filter in filters -%}
           {%- assign is_filter_group_open = false -%}
 
