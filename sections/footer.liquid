@@ -540,7 +540,62 @@
   </div>
 </div>
 </footer>
-
+{% if section.settings.time_popup  %}
+  <style>
+    #timed-Modal{z-index:9999;background:#0009;padding:0!important;transform:translateY(100%)}
+    #timed-Modal .close{position:absolute;top:0;right:0;width:30px;height:30px;background:#EB1C24;color:#fff;line-height:30px;font-weight:400;opacity:1;text-align:center;font-size:30px!important}
+    #timed-Modal .close:focus{border:0;outline:none}
+    #timed-Modal input#sale_email::placeholder{color:grey!important}
+    #timed-Modal .error-msg-sale,#timed-Modal .thankyou-msg-sale,#timed-Modal .aluser-msg-sale{text-align:left;margin:0;font-size:12px;opacity:.8;color:black;}
+    #timed-Modal .sale-btn:focus{outline:none}
+    #timed-Modal img{display:block}
+    #timed-Modal .modal-content{border:0}
+    #timed-Modal .modal-form{background:white};
+    #timed-Modal input{background:transparent;color:#ccc;margin-right:4px;padding:0 12px;border:0}
+    #timed-Modal input::-webkit-input-placeholder{color:#ccc}
+    #timed-Modal .sale-btn:hover{background:#EB1C24!important}
+    #timed-Modal.show {transform: translateY(0);display: block;}
+    #timed-Modal .modal-dialog {position: absolute;bottom: 0; margin: 0;}
+  </style>
+  <div id="timed-Modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body-content">
+            <div class="modal-form p-3">
+              {% if section.settings.popup_image %}           
+                <div class="modal-image">
+                  <img loading="lazy" class="image-overlay__image_" 
+                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="Popup Image"/>
+                </div>
+              {% endif %}
+              {% if section.settings.popup_text  %}            
+                <p class="pt-3">
+                mymyh  {{ section.settings.popup_text }}
+                </p>
+              {% endif %}
+              {% comment %} <div class="sale-pop-form">
+                <div class="form-group" style="margin: 0;">
+                  <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: space-between;">
+                    <input style="border-radius: 5px;max-width: 65%;font-size: 12px;width: 100%;color:black" type="email" name="email" id="sale_email" placeholder="Email Address">
+                    <button style="border-radius: 5px;background: red;margin: 2px;color: white;padding:0 1rem;height:45px;line-height:normal;" class="button sale-btn" type="submit">
+                      {% if section.settings.button_id %}
+                        {{ section.settings.button_id }}
+                      {% else %}
+                        YES
+                      {% endif %}
+                    </button>
+                  </div>
+                </div>
+              </div> {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
 {%- if section.settings.show_cookie_bar -%}
 <cookie-bar section="{{ section.id }}" hidden class="cookie-bar text--xsmall">
   {%- if section.settings.cookie_bar_title != blank -%}
@@ -619,7 +674,21 @@ function openLink(evt, tabName) {
   document.getElementById(tabName).style.display = 'block';
   evt.currentTarget.className += ' active';
 } {% endcomment %}
-
+{% if section.settings.time_popup  %}
+  if (sessionStorage.getItem("timed_popUpPoped") === null) {
+    $(document).one('touchmove scroll', function() {
+      console.log("start_time")
+      setTimeout(function() {
+        console.log("time")
+        $("#timed-Modal").toggleClass("show");
+        sessionStorage.setItem("timed_popUpPoped", "poped");
+      }, 15000);
+    })
+    $("#timed-Modal, #timed-Modal .close").click(function(){
+      $(this).toggleClass("show")
+    })
+  }
+{% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
     $(this).find('.expanded').toggleClass('visually-hidden')
@@ -644,6 +713,11 @@ $('.menu-panel').each(function(i) {
     "id": "show_footer_filters",
     "label": "Show Footer Filters",
     "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "time_popup",
+    "label": "Show time_popup throughout website"
   },
   {
     "type": "link_list",
