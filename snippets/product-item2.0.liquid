@@ -79,13 +79,13 @@
   {%- assign marketplace_name = marketplace_details | split: '-' | first | downcase -%}
 {%- endif -%}
 <product-item
-  class="product-item two-point-o {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical{% endunless %}"
+  class="product-item two-point-o {% if section.settings.vertical_ui or vertical_ui %}product-item-vertical {% else %} item-horizontal {% endif %}"
   {% if reveal %}
     reveal
   {% endif %}
 >
   <div class="product__wrapper">
-    <div class="labels-wrapper {% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
+    <div class="labels-wrapper {% unless section.settings.vertical_ui or vertical_ui %}product-horizontal{% endunless %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
       {% if product.metafields.product_labels.label %}
         <span class="metafeild-label label--highlight custom-label label ui-2">
           {{- product.metafields.product_labels.label -}}
@@ -156,8 +156,16 @@
         <a
           href="{{ product.url }}"
           class="product-item__aspect-ratio aspect-ratio"
-          style="padding-bottom: {{ 100.0 | divided_by: product.featured_media.preview_image.aspect_ratio }}%; --aspect-ratio: {{ product.featured_media.preview_image.aspect_ratio }}"
+          style="padding-bottom: 100.0%; --aspect-ratio: 1"
         >
+          {% if add_first_available == true %}
+            <img
+              class="product-item__primary-image old"
+              loading="lazy"
+              data-media-id="{{ product.featured_media.id | escape }}"
+              {% render 'image-attributes', image: product_varient.image, sizes: '200,300' -%}
+            >
+          {% else %}
           {% if product.metafields.custom.product_cards_placeholder1 %}
             <img
               class="product-item__primary-image"
@@ -181,7 +189,7 @@
                 {% render 'image-attributes', image: product.featured_image, sizes: '200,300' -%}
               >
             {% endif %}
-
+          {% endif %}
             {%- if settings.product_color_display == 'swatch' -%}
               {%- assign featured_media = product.variants | map: 'featured_media' -%}
 
@@ -240,17 +248,19 @@
           <span class="product-item-meta__reviews-badge text--small">
             {%- render 'product-rating', product: product -%}
             {% comment %} info: marketplace logo {% endcomment %}
-            {%- if product.metafields.custom.marketplace_details != blank and template contains 'collection' -%}
-                <div class="mkp_bestseller">
-                  {%- if marketplace_name == 'amazon' -%}
-                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon-logo_2.svg?v=1687159443" loading="lazy" alt="amazon" />
-                  {%- elsif marketplace_name == 'flipkart' -%}
-                    <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/flipkart-logo-transparent-png-download-0_3.svg?v=1687159443" loading="lazy" alt="flipkart" style="margin-top:-3px;" />
-                  {%- else -%}
-                  {%- endif-%}
-                  <p class="bestseller">Best seller</p>
-                </div>
-            {%- endif -%}
+            {% unless product.metafields.reviews.rating.value == blank %}
+              {%- if product.metafields.custom.marketplace_details != blank and template contains 'collection' -%}
+                  <div class="mkp_bestseller">
+                    {%- if marketplace_name == 'amazon' -%}
+                      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon-logo_2.svg?v=1687159443" loading="lazy" alt="amazon" />
+                    {%- elsif marketplace_name == 'flipkart' -%}
+                      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/flipkart-logo-transparent-png-download-0_3.svg?v=1687159443" loading="lazy" alt="flipkart" style="margin-top:-3px;" />
+                    {%- else -%}
+                    {%- endif-%}
+                    <p class="bestseller">Best seller</p>
+                  </div>
+              {%- endif -%}
+            {% endunless %}
             {% capture swatch_btn %}
           {% if available_variants > 1 and has_color_code %}
             {% unless product.tags contains 'customized' %}
@@ -734,7 +744,7 @@
 
       {%- if product.available and reduced_content or show_cta -%}
         <div class="product-item__cta-wrapper">
-          {%- if product.variants.size == 1 -%}
+          {%- if product.variants.size == 1 or add_first_available -%}
             {%- capture form_id -%}
             product_form_{{ section.id }}_{{ block.id }}_{{ product.id }}_{% increment product_form_index %}
           {%- endcapture -%}
@@ -756,10 +766,6 @@
                   name="properties[Free]"
                   value="true"
                 >
-                {% comment %}
-                  {% elsif product.tags contains 'customized' %}
-                  <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden">
-                {% endcomment %}
               {%- endif -%}
               <button
                 type="submit"
@@ -768,7 +774,11 @@
                 {% endif -%}
                 class="{% if reduced_content %}product-item__link link text--subdued{% else %}product-item__cta button button--primary{% endif %}"
               >
-                Add To Cart
+                {% if add_first_available %}
+                 <img  width="20px" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/add-to-cart.png?v=1689752714">
+                {% else %}
+                  Add To Cart
+                {% endif %}
               </button>
             {%- endform -%}
           {%- else -%}

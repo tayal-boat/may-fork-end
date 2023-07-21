@@ -5,9 +5,6 @@
 {%- endif -%}
 
 <style>
-  .featured_collection_container{position: relative;}
-  .view_all_items{display: block;text-align: right;margin-bottom: 1rem;}
-
   @media screen and (max-width: 768px) {
      .flash-desk{margin-top: 1rem;align-items: center;}
     }
@@ -26,7 +23,7 @@
    }
 </style>
 
-<section class="section section--flush">
+<section class="section section--flush {% if section.settings.custom_class %} {{ section.settings.custom_class }} {% endif %}">
   <div class="section__color-wrapper">
     {% capture featured_image %} 
       <picture>
@@ -152,7 +149,7 @@
               {% endunless %}
             >
               <div
-                class="product-list__inner item-horizontal {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}"
+                class="product-list__inner {% unless section.settings.stack_products %}product-list__inner--scroller hide-scrollbar{% endunless %}"
               >
                 {% comment %} info:ajax-tabs  if forloop.index == 1  {% endcomment %}
                 {%- assign number_of_products_minus_one = section.settings.products_per_row | minus: 1 -%}
@@ -171,6 +168,7 @@
                       | at_least: product.featured_media.aspect_ratio
                     -%}
                   {%- endif -%}
+                  {% unless product.tags contains "Developer_Test" and settings.Developer_Test %}
                   {%- render 'product-item2.0',
                     product: product,
                     collection: collection,
@@ -179,6 +177,7 @@
                     sizes_attribute: sizes_attribute,
                     reveal: settings.stagger_products_apparition
                   -%}
+                  {% endunless %}
                 {%- else -%}
                   {%- assign smallest_image_aspect_ratio = 1 -%}
 
@@ -402,19 +401,30 @@
       "type": "range",
       "id": "products_count",
       "label": "Products to show",
-      "min": 2,
+      "min": 1,
       "max": 4,
       "step": 1,
-      "default": 4
+      "default": 2
     },
       {
       "type": "range",
       "id": "products_per_row",
       "label": "Products per row (desktop)",
-      "min": 4,
+      "min": 1,
       "max": 4,
       "step": 1,
       "default": 4
+    },
+    { 
+      "type": "text",
+      "id": "custom_class",
+      "label": "custom class"
+    },
+    {
+      "type": "checkbox",
+      "id": "vertical_ui",
+      "label": "Enable vertical ui",
+      "default": true
     },
     {
       "type": "checkbox",

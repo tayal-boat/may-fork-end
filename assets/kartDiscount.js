@@ -99,7 +99,6 @@ var kartHtml = `<div id="af_cart_page" class="cdThemeSetupV2">
   </div>`;
 window.KDHooks.__handleHTMLCreations_af = function (htmlElem, cartSelectorObj) {
   // updating html of discount field
-  // console.log(kartHtml);
   return kartHtml;
 }
 
@@ -108,10 +107,25 @@ window.KDHooks.__discountFinderClick_ba = function () {
   return false;
 }
 
+// window.KDHooks.__preDiscountProcess_af = function(data) {
+//   console.log(data, '__preDiscountProcess_af'); // edit data before send to discount api for calculation
+//   var cartJson = JSON.parse(data.json_data.cart_json);
+//   console.log(cartJson, '__preDiscountProcess cart_json');
+//   var cartToken = cartJson.token;
+//   var basecode = data.json_data.data.discount_code;
+//    Shopify.farziDiscount(basecode, cartToken);
+//   return data; // return the modified data back.
+// }
+
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
-  // console.log(response, 'response of __postDiscountProcess_af');
- var responseData = JSON.parse(response);
+  var responseData = '';
+  if (typeof response === 'string') {
+    responseData = JSON.parse(response);
+  }
+  else {
+    responseData = response;
+  }
   // var responseData = JSON.parse(response.data.entire_response);
   // console.log(responseData, 'responseData');
   if (responseData.is_success) {
@@ -128,24 +142,19 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
       responseData.data.response.formatted_text.discount_amount = total_discount_amount.toFixed(2);
       responseData.data.response.formatted_text.final_total_price = after_discount.toFixed(2);
     }
-    
     sessionStorage.setItem('applyCoupun', discount_code[0]);
     sessionStorage.setItem('Coupun_saveAmount', saveAmount);
-    _discountCode = sessionStorage.getItem('applyCoupun')
-    // clevertap.event.push('KD_Discount applied', {
-    //   "Discount Code": _discountCode
-    // })
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
-    $('.discountCode_details').html(`Rs ${saveAmount} discount applied`);
+    $('.discountCode_details').html(`₹${saveAmount} discount applied`);
     $('.custom_kartdiscount_container').addClass('discount_added');
     $('.discountCode_details_container').addClass('show');
     $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="discountCode__remove_btn" onclick="CDSetupInit.removeIndividualCoupon('${discount_code[0]}',this);">Remove</button>`);
     $('.custom_kartdiscount_container').attr('couponCode', 'true');
     $('.mini-cart-total-price').hide();
     $('.discount_error').html('');
-  }else if(responseData.is_success == false && responseData.code == "516"){
+  } else if (responseData.is_success == false && responseData.code == "516") {
     var discountCode = responseData.data.discount_code;
     KDSdk.showError('Coupon code ' + discountCode + ' is invalid. Please try another code')
   }
@@ -202,6 +211,16 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
   if (df_list.length > 0) {
     for (let i = 0; i < df_list.length; i++) {
+      var discount_collection_link = '';
+      var discount_info = df_list[i].info;
+      if(df_list[i].info != ""){
+      var discount_tempElement = document.createElement('div');
+      discount_tempElement.innerHTML = discount_info;
+      var discount_collection = discount_tempElement.querySelector('.afcd_product-collection-dropdown');
+      var discount_collection_link = discount_collection.querySelector('a');
+      discount_collection_link = discount_collection_link.getAttribute('href');
+      }
+      var discount_collection_element = discount_collection_link ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
       discountListHtml = discountListHtml + `
           <div class="discount_finder_item">
           <div class="discount_finder_item_details">
@@ -222,15 +241,24 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               <div class="discount_finder_item_content">
                   <h6>${df_list[i].full_detail.split('•')[0]}</h6>
                   <!-- <p>${df_list[i].full_detail}</p> -->
+                  <div class="discount_finder_view_products_container">
                   <span>${df_list[i].code}</span>
+                  ${discount_collection_element}
+                  </div>
               </div>
           </div>
           <div class="discount_finder_item_cta_btn">
-              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}')" ${df_list[i].is_active == 0 ? 'disabled': ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''} ${df_list[i].code}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
+              <button type="button" onclick="CDSetupInit.applyDiscount('${df_list[i].code}')" ${df_list[i].is_active == 0 ? 'disabled' : ''} class="${preAppliedCoupon == df_list[i].code ? 'coupon_applied' : ''} ${df_list[i].code}">${preAppliedCoupon == df_list[i].code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
           </div>
       </div>`
     }
     discountListContainer.innerHTML = discountListHtml;
+    setTimeout(function(){
+      var discount_finder_apply_btn = $('.discount_finder_btn_holder .discount_finder_apply_btn');
+      $('#af_kd_custom_coupon_text').on('input', function() {
+        $(this).val().length > 0 ? discount_finder_apply_btn.addClass('discount_finder_active_btn') : discount_finder_apply_btn.removeClass('discount_finder_active_btn');
+      });
+    },500);
   }
 
   return df_list;
@@ -248,22 +276,78 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
-  clevertap.event.push('KD_Discount Removed')
 });
-kdDom.addEventListener('KD_validDiscountApplied',(e)=>{
+kdDom.addEventListener('KD_validDiscountApplied', (e) => {
   // let discountCode = e.detail;
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-  // console.log(preAppliedCoupon);
-  // console.log(e);
-  $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).html('<span>Applied</span>');
-  $('.discount_finder_item_cta_btn .'+ preAppliedCoupon).addClass('coupon_applied');
+  $('.discount_finder_item_cta_btn .' + preAppliedCoupon).html('<span>Applied</span>');
+  $('.discount_finder_item_cta_btn .' + preAppliedCoupon).addClass('coupon_applied');
+  $('.custom_discount_filder_container').removeAttr('open_finder');
 });
 kdDom.addEventListener('KD_discountFinderClicked', (e) => {
   if ($('.custom_kartdiscount_container').attr('data-finder') == "true") {
     $('.custom_discount_filder_container').attr('open_finder', true);
-    clevertap.event.push('KD_View All Coupons clicked');
   }
 });
+
+Shopify.KartDiscount = function (cartJson) {
+  var total_discount_amount = $('.discount_details').attr('data-discountAmount');
+  var offer_discount_code = $('.discount_details').attr('data-discountCode');
+  sessionStorage.setItem('total_discount_amount', total_discount_amount);
+  sessionStorage.setItem('offer_discount_code', offer_discount_code);
+  Shopify.KartDiscountHooks();
+}
+
+Shopify.farziDiscount = function (basecode, cartToken) {
+  $.ajax({
+      type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" },
+      data: `{"code":"${basecode}", "cartId":"${cartToken}"}`,
+  }).then((response) => {
+    // console.log(response , 'sucess response');
+      if (response == "true" || response == "True") {
+          setTimeout(function () {
+      var couponlog_postrequest = {
+          url: "https://boat-api.farziengineer.co/couponlog",
+          method: "POST", timeout: 0,
+          headers: { "Content-Type": "application/json", },
+      };
+      var v = setInterval(function () {
+          if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+              couponlog_postrequest.data = JSON.stringify({
+                  coupon: basecode,
+                  log: $(".edit_checkout .fieldset:last p").text(),
+              });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          }
+      }, 1000);
+  }, 3000);
+      }
+  }).fail(() => {
+    console.log(response , 'fail response');
+});
+}
+
+Shopify.DiscountSubmit = function () {
+// here we are farzi discount api on kart discount field submit
+  $.getJSON('/cart.js', function (cart) {
+    var cartToken = cart.token;
+    var basecode = $('#af_kd_custom_coupon_text').val();
+    Shopify.farziDiscount(basecode, cartToken);
+  })
+  setTimeout(function () {
+    CDSetupInit.couponApplyClick(this);
+  }, 500);
+}
+
 Shopify.KartDiscountHooks = function () {
   // here we are regulating the condition for opening of discount finder on click of view all coupon button.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
@@ -277,33 +361,11 @@ Shopify.KartDiscountHooks = function () {
 }
 Shopify.KartDiscountHooks();
 
-
-Shopify.KartDiscount = function (cartJson) {
-  var total_discount_amount = $('.discount_details').attr('data-discountAmount');
-  var offer_discount_code = $('.discount_details').attr('data-discountCode');
-  sessionStorage.setItem('total_discount_amount', total_discount_amount);
-  sessionStorage.setItem('offer_discount_code', offer_discount_code);
-  Shopify.KartDiscountHooks();
-}
-
-// window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
-//   // convertedMoneyStr.replace('Rs.', '₹');
-//   var unconvertedString_without_decimal = parseInt(extras.unconvertedString);
-//   extras.money_format_first = '₹';
-//   // console.log(unconvertedString_without_decimal, 'unconvertedString_without_decimal');
-//   // extras.unconvertedString = `${unconvertedString_without_decimal}`;
-//   convertedMoneyStr = extras.money_format_first + extras.finalAmount + extras.money_format_second;
-//   console.log(convertedMoneyStr, 'convertedMoneyStr'); // converted currency string from number
-//   console.log(extras, 'extras'); // extra details used to bring out this convertedMoneyStr
-//   return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
-// }
-
-window.KDHooks.__numberToMoney_af = function(convertedMoneyStr, extras) {
-// console.log("before convert: ", convertedMoneyStr); // converted currency string from number
-var finalAmount = extras.finalAmount;
-    finalAmount = finalAmount.replace('.00','');
-extras.money_format_first = "₹";
-convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
-// console.log("after convert: ", convertedMoneyStr);
-return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
+window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
+// converted currency string from number
+  var finalAmount = extras.finalAmount;
+  finalAmount = finalAmount.replace('.00', '');
+  extras.money_format_first = "₹";
+  convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
+  return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
 }
