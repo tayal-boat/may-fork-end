@@ -542,39 +542,39 @@
 </footer>
 {% if section.settings.time_popup  %}
   <style>
-    #timed-Modal{z-index:9999;background:#0009;padding:0!important;transform:translateY(100%)}
-    #timed-Modal .close{position:absolute;top:0;right:0;width:30px;height:30px;background:#EB1C24;color:#fff;line-height:30px;font-weight:400;opacity:1;text-align:center;font-size:30px!important}
-    #timed-Modal .close:focus{border:0;outline:none}
-    #timed-Modal input#sale_email::placeholder{color:grey!important}
-    #timed-Modal .error-msg-sale,#timed-Modal .thankyou-msg-sale,#timed-Modal .aluser-msg-sale{text-align:left;margin:0;font-size:12px;opacity:.8;color:black;}
-    #timed-Modal .sale-btn:focus{outline:none}
-    #timed-Modal img{display:block}
-    #timed-Modal .modal-content{border:0}
-    #timed-Modal .modal-form{background:white};
-    #timed-Modal input{background:transparent;color:#ccc;margin-right:4px;padding:0 12px;border:0}
-    #timed-Modal input::-webkit-input-placeholder{color:#ccc}
-    #timed-Modal .sale-btn:hover{background:#EB1C24!important}
-    #timed-Modal.show {transform: translateY(0);display: block;}
-    #timed-Modal .modal-dialog {position: absolute;bottom: 0; margin: 0;}
+    #timed-Modal.show .popover__overlay {visibility: visible;opacity: .3; top: 0;z-index:1111;}
+    #timed-Modal{display: block;visibility: hidden;z-index:999;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1);}
+    #timed-Modal .close{position: absolute;top: 12px;right: 12px;width: 30px;height: 30px;line-height: 24px;opacity: 1;
+      text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
+    }
+    div#timed-Modal.show {transform: translateY(0);visibility: visible;}
+    #timed-Modal .modal-dialog {position: absolute;bottom: 0; margin: 0;z-index:9999;}
   </style>
   <div id="timed-Modal" class="modal fade" role="dialog">
+    <span class="popover__overlay"></span>
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content" style="border-radius: 16px 16px 0 0;">
         <div class="modal-body p-0">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <div class="modal-body-content">
-            <div class="modal-form p-3">
+            <div class="p-3">
+              {% if section.settings.popup_text  %}            
+              <div class="pt-5 mb-0 text-center">
+                {{ section.settings.popup_text }}
+              </div>
+              {% endif %}
               {% if section.settings.popup_image %}           
-                <div class="modal-image">
-                  <img loading="lazy" class="image-overlay__image_" 
-                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000,2200,2400,2600' %} alt="Popup Image"/>
+                <div class="modal-image p-4 px-5" style="font-size: 16px;">
+                  <img class="image-overlay__image_" 
+                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '300' %} alt="Popup Image"/>
                 </div>
               {% endif %}
-              {% if section.settings.popup_text  %}            
-                <p class="py-3">
-                  {{ section.settings.popup_text }}
-                </p>
-              {% endif %}
+              <a style="color: white;font-weight: 700!important;
+                padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
+                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" 
+                href="https://t.me/boAtonTelegram" target="_blank">
+                Count Me In 🥳
+              </a>
               {% comment %} <div class="sale-pop-form">
                 <div class="form-group" style="margin: 0;">
                   <div class="myform" id="myform" style="display: flex;margin: 0;justify-content: space-between;">
@@ -675,21 +675,22 @@ function openLink(evt, tabName) {
   evt.currentTarget.className += ' active';
 } {% endcomment %}
 {% if section.settings.time_popup  %}
-  if (sessionStorage.getItem("timed_popUpPoped") === null) {
+if(window.innerWidth <= 768){
+  if (sessionStorage.getItem("timed_popUpPoped") === null){
     $(document).one('touchmove scroll', function() {
-      if(window.innerWidth <= 768){
       console.log("start_time")
       setTimeout(function() {
         console.log("time")
-        $("#timed-Modal").toggleClass("show");
+        $("#timed-Modal").addClass("show");
+        $("html").addClass("lock-mobile");
         sessionStorage.setItem("timed_popUpPoped", "poped");
       }, 15000);
-      }
     })
-    $("#timed-Modal .close").click(function(){
-      $("#timed-Modal").toggleClass("show")
+    $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+      $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
     })
   }
+}
 {% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
