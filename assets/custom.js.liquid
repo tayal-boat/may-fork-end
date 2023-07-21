@@ -477,18 +477,32 @@ for (var key in offerVariantdata) {
     //    filter_button.siblings(':first').children('.collapsible-toggle').click();
     //    }
 
-    var category_param = window.location.search.substr(1).split('&');
-    for (let i = 0; i < category_param.length; i++) {
-      const category_keyValue = category_param[i].split('=');
-      if (category_keyValue.length) {
-          if(decodeURIComponent(category_keyValue[0]) == 'filter.p.m.custom.category'){
-              var category_select = '[data-path="'+category_param[i]+'"]';
-              document.querySelector(category_select).setAttribute('checked','checked')
-          }
+    $('.checkbox-input [name="filter.p.m.custom.category"]').click(function(e){
+      e.preventDefault();
+      if($(this).is(':checked')){
+        var category_searchParams = window.location.search.replace('&'+ $(this).attr('data-path'), '');
+        console.log(category_searchParams);
+        triggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${category_searchParams}` });
+        $(this).removeAttr('checked');
+      }else{
+        var category_searchParams = `${window.location.search}?${$(this).attr('data-path')}`;
+        console.log(category_searchParams);
+        triggerEvent(this, "facet:criteria-changed", { url: `${window.location.pathname}?${category_searchParams}` });
+        $(this).removeAttr('checked');
       }
-  }
-  }
+      });
 
+  //   var category_param = window.location.search.substr(1).split('&');
+  //   for (let i = 0; i < category_param.length; i++) {
+  //     const category_keyValue = category_param[i].split('=');
+  //     if (category_keyValue.length) {
+  //         if(decodeURIComponent(category_keyValue[0]) == 'filter.p.m.custom.category'){
+  //             var category_select = '[data-path="'+category_param[i]+'"]';
+  //               document.querySelector(category_select).setAttribute('checked','checked')
+  //         }
+  //     }
+  // }
+  }
 
   let collectionFilterLoad = true; Shopify.collectionFilter(collectionFilterLoad);
 
