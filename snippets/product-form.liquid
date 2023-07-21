@@ -3,7 +3,7 @@
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
 {%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price | divided_by:100 -%}
-
+{% assign numberOfVariants = product.variants.size %}
 
 {% assign product_varient = product.selected_or_first_available_variant %}
 {%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
@@ -131,7 +131,7 @@
         </div>
       {% endunless %}
     {% endif %}
-  
+    {%- if numberOfVariants > 0 -%}
     {%- unless product.has_only_default_variant or block.settings.hide_sold_out_variants and product.available == false -%}
       {%- assign size_chart_page = block.settings.size_chart_page -%}
       {%- assign found_size_option = false -%}
@@ -320,6 +320,7 @@
         </noscript>
       </product-variants>
     {%- endunless -%}
+  {%- endif -%}
           
   {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
     
