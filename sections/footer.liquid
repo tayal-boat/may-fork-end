@@ -571,8 +571,8 @@
                 </div>
               {% endif %}
               {% if section.settings.popup_text  %}            
-                <p class="pt-3">
-                mymyh  {{ section.settings.popup_text }}
+                <p class="py-3">
+                  {{ section.settings.popup_text }}
                 </p>
               {% endif %}
               {% comment %} <div class="sale-pop-form">
@@ -677,15 +677,17 @@ function openLink(evt, tabName) {
 {% if section.settings.time_popup  %}
   if (sessionStorage.getItem("timed_popUpPoped") === null) {
     $(document).one('touchmove scroll', function() {
+      if(window.innerWidth <= 768){
       console.log("start_time")
       setTimeout(function() {
         console.log("time")
         $("#timed-Modal").toggleClass("show");
         sessionStorage.setItem("timed_popUpPoped", "poped");
       }, 15000);
+      }
     })
-    $("#timed-Modal, #timed-Modal .close").click(function(){
-      $(this).toggleClass("show")
+    $("#timed-Modal .close").click(function(){
+      $("#timed-Modal").toggleClass("show")
     })
   }
 {% endif %}
@@ -720,6 +722,16 @@ $('.menu-panel').each(function(i) {
     "label": "Show time_popup throughout website"
   },
   {
+    "type": "html",
+    "id": "popup_text",
+    "label": "Popup text"
+  },
+  {
+    "type": "image_picker",
+    "id": "popup_image",
+    "label": "Popup Image"
+  },
+  {
     "type": "link_list",
     "id": "filter_menu",
     "label": "Filter Menu"
@@ -728,11 +740,6 @@ $('.menu-panel').each(function(i) {
     "type": "image_picker",
     "id": "payment_strip",
     "label": "Payment Image"
-  },
-  {
-    "type": "image_picker",
-    "id": "popup_image",
-    "label": "Popup Image"
   },
   {
     "type": "checkbox",
