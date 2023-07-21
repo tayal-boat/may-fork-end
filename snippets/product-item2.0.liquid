@@ -79,13 +79,13 @@
   {%- assign marketplace_name = marketplace_details | split: '-' | first | downcase -%}
 {%- endif -%}
 <product-item
-  class="product-item two-point-o {% unless template contains 'collection' or section.settings.horizontal_ui %}product-item-vertical {% else %} item-horizontal {% endunless %}"
+  class="product-item two-point-o {% if section.settings.vertical_ui %}product-item-vertical {% else %} item-horizontal {% endif %}"
   {% if reveal %}
     reveal
   {% endif %}
 >
   <div class="product__wrapper">
-    <div class="labels-wrapper {% if template contains 'collection' or section.settings.horizontal_ui %}product-horizontal{% endif %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
+    <div class="labels-wrapper {% unless section.settings.vertical_ui %}product-horizontal{% endunless %}{% if product.metafields.product_labels.label %} metafeild-label{% endif %}">
       {% if product.metafields.product_labels.label %}
         <span class="metafeild-label label--highlight custom-label label ui-2">
           {{- product.metafields.product_labels.label -}}
