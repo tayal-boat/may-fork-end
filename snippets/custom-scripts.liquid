@@ -90,12 +90,50 @@
 
 
 <script>
+  {% comment %} console.log('hi lazy script') {% endcomment %}
+  let chatbot = document.getElementsByClassName("chatbot")
+  for (let i = 0; i < chatbot.length; i++) {
+   chatbot[i].addEventListener("click", function(e){
+     e.preventDefault();
+     if(window.sprChatSettings == undefined){
+       sessionStorage.setItem('chatbot','clicked');
+     }
+   });
+ }
 
   $('.algolia-header-search-input').css('pointer-events', 'all');
   Defer.all('script[type="lazyScript"]', 0, true);
   Defer.all('script[type="lazyScript2"]', 500, true);
 </script>
-
+{% unless template contains 'product' %}
+  <script type="lazyScript2">
+            {% comment %} console.log('hii sprChatSettings'); {% endcomment %}
+              window.sprChatSettings = window.sprChatSettings || {};
+              window.sprChatSettings = {"appId":"621a05ac610f9e4bb89aaed7_app_600017531"};
+              (function(){var t=window,e=t.sprChat,a=e&&!!e.loaded,n=document,r=function(){r.m(arguments)};r.q=[],r.m=function(t){r.q.push(t)},t.sprChat=a?e:r;var o=function(){var e=n.createElement("script");e.type="text/javascript",e.async=!0,e.src="https://prod4-live-chat.sprinklr.com/api/livechat/handshake/widget/"+t.sprChatSettings.appId,e.onerror=function(){t.sprChat.loaded=!1},e.onload=function(){t.sprChat.loaded=!0};var a=n.getElementsByTagName("script")[0];a.parentNode.insertBefore(e,a)};"function"==typeof e?a?e("update",t.sprChatSettings):o():"loading"!==n.readyState?o():n.addEventListener("DOMContentLoaded",o)})()
+              setTimeout(function(){
+                for (let i = 0; i < chatbot.length; i++) {
+                  chatbot[i].addEventListener("click", function(e){
+                    e.preventDefault();
+                    sessionStorage.setItem('chatbot','notclicked');
+                    var iframe = document.querySelector('[name="spr-chat__trigger-frame"]');
+                    var iframeDoc = iframe.contentDocument || iframe.contentWindow;
+                    var iframeHtml = iframeDoc.getElementsByTagName("html")[0];
+                    iframeHtml.querySelector('.frame-content [data-testid="Open chat"]').click()   
+                  });
+                }
+                },1500);  
+                {% comment %} setTimeout(function(){  
+                  if(sessionStorage.chatbot == 'clicked'){
+                    var iframe = document.querySelector('[name="spr-chat__trigger-frame"]');
+                    var iframeDoc = iframe.contentDocument || iframe.contentWindow;
+                    var iframeHtml = iframeDoc.getElementsByTagName("html")[0];
+                    iframeHtml.querySelector('.frame-content [data-testid="Open chat"]').click() 
+                  } 
+                },3000);     {% endcomment %}
+            
+  </script>       
+   {% endunless %} 
 {% unless template contains 'index' %}
 <script>
 // console.log('owl slider script');
@@ -159,3 +197,13 @@ for (let i = 0; i < sliderSelector.length; i++) {
 </script>
 {% endunless %}
 <!-- /Algolia head -->
+
+
+<style>
+    .spr-chat__trigger-box.spr-live-chat-frame {
+      display: none !important;
+  }
+  .spr-chat__box.spr-live-chat-frame {
+      z-index: 999;
+  }
+</style>
