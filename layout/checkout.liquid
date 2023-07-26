@@ -973,13 +973,11 @@ li.mobile-nav__item.open collapsible-content {
       </div>
       {{ tracking_code }}
 
-      {% assign line_item_url = "" | split: "," %}
       {% for line_item in order.line_items %}
         {% assign line_item_id = line_item.variant_id %}
-        {% assign line_item_url = line_item.url %}
+        {% assign line_item_url = line_item.url %}      
         <script>
-          let base_url = window.location.origin;
-          $('.order-summary__sections .product-table tr.product[data-variant-id="{{ line_item_id }}"]').attr("data-product-url", base_url+"{{ line_item_url }}");
+          $('.order-summary__sections .product-table tr.product[data-variant-id="{{ line_item_id }}"]').attr("data-product-url", window.location.origin+"{{ line_item_url }}");
         </script>
       {% endfor %}
 
