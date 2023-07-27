@@ -972,6 +972,15 @@ li.mobile-nav__item.open collapsible-content {
         </div>
       </div>
       {{ tracking_code }}
+
+      {% for line_item in order.line_items %}
+        {% assign line_item_id = line_item.variant_id %}
+        {% assign line_item_url = line_item.url %}      
+        <script>
+          $('.order-summary__sections .product-table tr.product[data-variant-id="{{ line_item_id }}"]').attr("data-product-url", window.location.origin+"{{ line_item_url }}");
+        </script>
+      {% endfor %}
+
       <script type="text/javascript">
         var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
         clevertap.account.push({"id": "8W4-9WW-Z85Z"});
@@ -3065,6 +3074,13 @@ li.mobile-nav__item.open collapsible-content {
         }
         
         $('.payment-method-list_item_info').text().replace('_', ' ')
+
+        {% comment %} Line item link on each item {% endcomment %}
+          
+        $('.order-summary__sections').on('click', '.product-table tr.product', function(){
+          let pdp_redirection_url = $(this).attr('data-product-url');
+          window.location.href = `${pdp_redirection_url}`;
+        });
 
         {% comment %} Thankyou page revamp ends {% endcomment %}
         
