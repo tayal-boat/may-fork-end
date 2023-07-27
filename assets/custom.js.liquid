@@ -583,7 +583,7 @@ window.addEventListener('load', labelsPriority)
 function createCleverTapEvent( event_name, event_data ){
   if( event_name != '' && event_data != '' ){
     clevertap.event.push( event_name, event_data );
-    console.log(clevertap.getCleverTapID());
+    // console.log(clevertap.getCleverTapID());
   }
 }
 
@@ -2265,6 +2265,7 @@ Shopify.loginInput = function ($otp_length) {
 
 Shopify.notifyMe = function () {
   event.preventDefault();
+  let notifyMe_popup_Button = event.target;
   var quick_popup_desktop = document.querySelectorAll('quick-buy-drawer');
   var quick_popup_mobile = document.querySelectorAll('quick-buy-popover');
   function quick_add_popup (quick_popup){
@@ -2277,7 +2278,20 @@ Shopify.notifyMe = function () {
   quick_add_popup(quick_popup_desktop);
   quick_add_popup(quick_popup_mobile);
   document.querySelector('body').classList.add('overflow-hidden');
+  var popupCloseButton = event.target;
+  document.addEventListener("click", function (event) {
+    var popupContainer = document.querySelector(".notifyMe_popup_container");
+    // Check if the click occurred outside the popup container and not on the close button
+    if (popupContainer != null && !popupContainer.contains(event.target) && event.target !== popupCloseButton) {
+        closePopup();
+    }
+  });
 
+function closePopup() {
+  $('.notifyMe_popup__main_container').removeClass('show');
+  $('body').removeClass('overflow-hidden');
+  document.querySelector('.notifyMe_popup__main_container').innerHTML = '';
+}
   var dataSet = event.target.dataset;
   var varientID = dataSet["variantId"];
   varientID = parseInt(varientID);
@@ -2292,17 +2306,9 @@ Shopify.notifyMe = function () {
       $(".notifyMe_popup__main_container").html(e);
       Shopify.loginInput(6);
       Shopify.custom_otp_login();
-      let notifyMe_popup_Container = document.querySelector('.notifyMe_popup__main_container .notifyMe_popup_container');
-      let notifyMe_popup_Button = document.querySelector('#notifyMe_trigger');
-      const notifyMe_popup_HandleOutsideClick = (event) => {
-        console.log(notifyMe_popup_Container);
-        if (!notifyMe_popup_Container.contains(event.target) && !notifyMe_popup_Button.contains(event.target)) {
-          $('.notifyMe_popup__main_container').removeClass('show');
-          $('body').removeClass('overflow-hidden');
-          $('.notifyMe_popup__main_container').html('');
-        }
-      };
-      document.addEventListener('click', notifyMe_popup_HandleOutsideClick);
+      const notifyMe_tempDiv = document.createElement('div');
+      notifyMe_tempDiv.innerHTML = e;
+
       $('#notifyMe_submit_btn').click(function () {
         event.preventDefault();
         var varient_id = $('#variants_select').val();
@@ -2384,6 +2390,21 @@ $(document).on("keypress", "#mobile_number", (e) => {
 
 $('.login, .login-popup-trigger').click(function () {
   event.preventDefault();
+  var popupCloseButton = event.target;
+  document.addEventListener("click", function (event) {
+    var popupContainer = document.querySelector(".notifyMe_popup_container");
+    // Check if the click occurred outside the popup container and not on the close button
+    if (popupContainer != null && !popupContainer.contains(event.target) && event.target !== popupCloseButton) {
+        closePopup();
+    }
+  });
+
+function closePopup() {
+  $('.login_popup_main_container').removeClass('show');
+  $('body').removeClass('overflow-hidden');
+  document.querySelector('.login_popup_main_container').innerHTML = '';
+}
+
   $.ajax({
     url: "/account/login?view=otp-login-popup",
     type: "GET",
@@ -2391,18 +2412,6 @@ $('.login, .login-popup-trigger').click(function () {
     success: function (e) {
       document.querySelector('body').classList.add('overflow-hidden');
       $(".login_popup_main_container").html(e);
-      const loginContainer = document.querySelector('.login_popup_main_container .notifyMe_popup_container');
-      const loginButton = document.querySelectorAll('.login-popup-trigger');
-      const loginHandleOutsideClick = (event) => {
-      for (i = 0; i < loginButton.length; i++) {
-        if (!loginContainer.contains(event.target) && !loginButton[i].contains(event.target)) {
-          $('.login_popup_main_container').removeClass('show');
-          $('body').removeClass('overflow-hidden');
-          document.querySelector('.login_popup_main_container').innerHTML = '';
-        }
-      }
-      };
-      document.addEventListener('click', loginHandleOutsideClick);
       Shopify.loginInput(6);
       Shopify.custom_otp_login();
     }
