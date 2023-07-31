@@ -54,9 +54,9 @@
 
             {% assign product = all_products[section.settings.featured_product] %}
           {% if section.settings.featured_product != blank and product.available %}
-          <a class="announce" href="{{- section.settings.text1 | split: ',' | last -}}" >
+          <a class="announce" href="{{- product.url -}}" >
             <div class="announcement-bar__message {{ text_size_class }}">
-                <p class="{%- if section.settings.show_timer -%}m-0{%- endif -%}">{{- section.settings.text1 | split: ',' | first -}}</p>
+                <p class="{%- if section.settings.show_timer -%}m-0{%- endif -%}">{{- section.settings.text1 -}}</p>
                 {% if section.settings.show_timer %}
                   {% render 'countdown-timer', banner_title: section.settings.timer_title , banner_end_date: section.settings.end_date , time_background: section.settings.timer_background , time_inline: section.settings.timer_inline %}
                 {% endif %}
@@ -96,9 +96,9 @@
       "label": "Featured Product"
     },
     {
-      "type": "html",
+      "type": "text",
       "id": "text1",
-      "label": "Text , url",
+      "label": "Featured Product Announcement",
       "default": "Announce something here, Button link"
     },
     {
@@ -176,21 +176,6 @@
       "type": "text",
       "id": "end_date",
       "label": "timer End Date (Ex: Apr 30, 2022)"
-    },
-    {
-      "type": "checkbox",
-      "id": "autoplay",
-      "label": "Auto rotate between messages"
-    },
-    {
-      "type": "range",
-      "id": "cycle_speed",
-      "min": 3,
-      "max": 20,
-      "step": 1,
-      "unit": "sec",
-      "label": "Change message every",
-      "default": 5
     },
     {
       "type": "header",
