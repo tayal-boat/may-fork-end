@@ -3,7 +3,7 @@
 {%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
 {%- assign product_form_id = 'product-form-' | append: section.id | append: '-' | append: product.id -%}
 {%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price | divided_by:100 -%}
-
+{% assign numberOfVariants = product.variants.size %}
 
 {% assign product_varient = product.selected_or_first_available_variant %}
 {%- if template.suffix == 'quick-buy-popover' or template.suffix == 'quick-buy-drawer'  -%}
@@ -16,7 +16,6 @@
     {%- endfor -%} 
   {%- endif -%}
 {%- endif -%}
-
   {%- for block in section.blocks -%}
   {%- case block.type -%}
   {%- comment -%}
@@ -43,7 +42,7 @@
 
         <div class="product-meta__price-list-container custom-product-price-mobile " role="region" aria-live="polite">
           <div class="d-flex align-items-center justify-content-between price_offer_wrapper">
-            <div class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %} {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%} pdp_flash_sale {%- endif -%}" data-product-price-list>
+            <div class="price-list custom-product-price {% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product_namogoo {% endif %} {% endif %} {% if product.available %}{%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%} pdp_flash_sale {%- endif -%}{%- endif -%}" data-product-price-list>
               {% capture fixed_discount %}{% render 'fixed-discount-by-tag', product: product %} {% endcapture %}
               {%- if product.tags contains settings.tag_selector -%}
                 {% assign discount_price = fixed_discount | times: 100 %}
@@ -82,7 +81,7 @@
                     {% comment %} <span class="inclusive-text">Inclusive of all Taxes</span> {% endcomment %}
                   </div>
                 </div>
-
+              {%- if product.available -%}
                 {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
                   {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale and template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
                     <div class="flash-sale-lable d-flex position-relative">
@@ -99,7 +98,7 @@
                     </div>
                   {%- endif -%}
                 {% endunless %}
-
+              {%- endif -%}
               {%- else -%}
                 <span class="price price--large">
                   <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
@@ -131,7 +130,7 @@
         </div>
       {% endunless %}
     {% endif %}
-  
+    {%- if numberOfVariants > 0 -%}
     {%- unless product.has_only_default_variant or block.settings.hide_sold_out_variants and product.available == false -%}
       {%- assign size_chart_page = block.settings.size_chart_page -%}
       {%- assign found_size_option = false -%}
@@ -320,22 +319,11 @@
         </noscript>
       </product-variants>
     {%- endunless -%}
+  {%- endif -%}
           
-
-        
   {%- if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
-    {% if product.available %}
-      <div class="payment_offers">
-        <div class="offer_text">
-          <span>₹15 off on All UPI Payments</span>
-        </div>
-        <div class="payment_icons">
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/paytm_icon_fa75a315-11a2-4c8e-a241-18af809eb683.svg?v=1682575951" class="single_payment_icon paytm_icon">
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/gpay_icon_503ebbda-a3e1-4659-af32-0686aecec227.svg?v=1682575951" class="single_payment_icon gpay_icon">
-          <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/phone_pe_icon_f9872d32-f8cf-43ca-8fa2-78db125fcdad.svg?v=1682575951" class="single_payment_icon phonepe_icon">
-        </div>
-      </div>  
-    {% endif %}
+    
+    {%- render 'product-payment-partner' -%}
     {%- render 'marketplace-details' -%}
   <!--  for desktop layout -->
   <div class="pdp-inner custom-product-price">
@@ -818,17 +806,16 @@
         {% endif %}
 
         {%- if section.settings.enable_rush_plus and product.available -%}
-          
-          {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
-            <h2 class="pincode_checker_heading">Check Delivery</h2>
-          {% endif %}
+          {% unless product.tags contains "Coming-Soon" %}
+            {% if product_varient.inventory_quantity >= settings.sold_out_threshold %}
+              <h2 class="pincode_checker_heading">Check Delivery</h2>
+            {% endif %}
+          {% endunless %}
           <div class="pincode_checker_container">
             <div class="pincode_checker">
-              <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter PIN code for exact delivery date">
+              <input class="pincode_checker_input" type="text" pattern="[0-9]*" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'');" placeholder="Enter PIN Code">
               <button type="button" class="pincode_checker_btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18.135" height="14.805" viewBox="0 0 18.135 14.805">
-                  <path id="_MFYDIAMONDS" data-name="#MFYDIAMONDS" d="M20.625-7.051a.885.885,0,0,0-.293-.654L13.857-14.16a1.02,1.02,0,0,0-.317-.225.854.854,0,0,0-.337-.068.831.831,0,0,0-.605.239.806.806,0,0,0-.244.6.978.978,0,0,0,.059.337.751.751,0,0,0,.176.278l2.188,2.227,3.877,3.535.2-.488L15.7-7.92H3.35a.83.83,0,0,0-.62.244.856.856,0,0,0-.239.625.856.856,0,0,0,.239.625.83.83,0,0,0,.62.244H15.7l3.145-.2-.2-.479L14.775-3.33,12.588-1.1a.751.751,0,0,0-.176.278.978.978,0,0,0-.059.337.806.806,0,0,0,.244.6A.831.831,0,0,0,13.2.352a.893.893,0,0,0,.635-.273L20.332-6.4A.885.885,0,0,0,20.625-7.051Z" transform="translate(-2.49 14.453)" fill="#fff"/>
-                </svg>
+                Check
               </button>
             </div>
             <div class="pincode_details">

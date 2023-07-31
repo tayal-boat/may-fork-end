@@ -31,11 +31,8 @@
      .variants-list::before{content: '';width: 0.5px;height: 26.8px;background: #adadad;left: -14px;position: absolute;}
      div[role="progressbar"]{position: absolute;top: 0;right: 0;width: 2.7rem!important;margin:0;}
    {% endcomment %}
-  .item-horizontal .product-item{flex-direction: column!important;}
-  .item-horizontal .product__wrapper{display:flex;padding: 4px;}
-  .product-list__inner.item-horizontal .product-item__info{border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 8px;border-bottom-right-radius: 8px;margin: 0 ;padding: 0;padding-left: 10px;padding-right: 6px;}
-  .item-horizontal .product-item{border-radius: 10px;border: solid 1px #ecf0f4;background-color: #fafafa;}
-  .price-list.price-list--centered{border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;position:relative;}
+
+  product-list .price-list.price-list--centered{border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;position:relative;}
  @media screen and (max-width:768px){ 
   .product-item .product-item__info .product-item-meta__reviews-badge .variants-list:before{display: none;}
   .product-facet{margin-top: 10px;}
@@ -116,19 +113,7 @@
     }
   {%- endif -%}
 
-/* ui2.0 product cards css*/
-.more-colors {font-size: 10px;}
-.two-point-o .product-item__quick-form {padding: 6px 0;}
-.product-item__info {background-color: inherit;}
-.two-point-o .product-item__primary-image {border-radius: 8px;}
-.product-horizontal {width: 90%; margin-bottom: 12px;background: #F5F5F5;border-radius: 8px;}
-.product-horizontal span.metafeild-label.label--highlight.custom-label.label.ui-2{max-width: 100%!important;left: 0;border: 0;border-radius: 0 0 8px 8px!important;}
-a.product-item-meta__title.tile-title {font-size: 16px;font-weight: 500;letter-spacing: -0.64px;color: #1a2024;  line-height: 1.38;}
-.rating__stars {font-weight: 500;line-height: 1;letter-spacing: -0.48px;color: #000;}
-.two-point-o span.swatch-circle {width: 14px;height: 14px;margin-left: -6px;}
-.two-point-o .variants-list {position: absolute;right: 0;bottom: 0.6rem;}
-.two-point-o .product-item-meta__price-list-container {padding-top: 4px;}
-.two-point-o:has(.ui-2) .product-item__primary-image {border-radius: 8px 8px 0 0;}
+
 
 {% comment %} sort by {% endcomment %}
 label.popover__choice-item {position: relative;padding: 10px;margin: 8px 0!important;}
@@ -195,6 +180,7 @@ button.product-facet__meta-bar-item.product-facet__meta-bar-item--filter svg.ico
 .product-facet__filter-item .collapsible__content:last-child {
   padding-bottom: 5dvh;
 }
+.two-point-o span.metafeild-label.label--highlight.custom-label.ui-2{bottom: -1dvh;}
 @media screen and (max-width:549px){
 .price-tag-filter .tag{padding:7px 11px 8px 11px;margin:2px}
 facet-filters#facet-filters {height: 88dvh;top: unset;width: 100%;bottom: 0;}
@@ -232,9 +218,10 @@ facet-filters header.drawer__header{ height: unset; padding-block: 16px 18px;}
 .product-list__inner{grid-template-columns:1fr 1fr 1fr;grid-auto-rows:200px}
 .more-colors{font-size:10px}
 sort-by-popover .popover__header{display:none}
-.product-horizontal{width:70%;margin-bottom:14px}
+.product-horizontal{margin-bottom: 1vw;}
 nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone{display:none}
 }
+
 @media(min-width:1400px){
 .product-horizontal{width:60%}
 }
@@ -328,7 +315,7 @@ nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone{display:none}
                     <div class="popover__content">
                       <div class="popover__choice-list">
                         {%- for sort_option in collection.sort_options -%}
-                          {% unless sort_option.value contains 'created-ascending' or sort_option.value contains 'created-descending' %}
+                          {% unless sort_option.value contains 'created-ascending' %}
                            <label class="popover__choice-item">
                              <input type="radio" data-bind-value="sort-by-selected-value" class="visually-hidden" {% if sort_option.value == collection_sort_by %}checked="checked"{% endif %} name="sort_by" value="{{ sort_option.value }}" title="{{ sort_option.name }}">
                              <span class="popover__choice-label">
@@ -362,13 +349,13 @@ nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone{display:none}
                 {%- assign sidebar_width = 0 -%}
               {%- endif -%}
 
-              <div class="product-list__inner item-horizontal {% if paginate.pages > 1 %}load-more__inner {% endif %}" id="Huratips_Loop">
+              <div class="product-list__inner {% if paginate.pages > 1 %}load-more__inner {% endif %}" id="Huratips_Loop">
                 {%- assign desktop_number_of_products_minus_one = section.settings.desktop_products_per_row | minus: 1 -%}
                 {%- assign gap_width = 24.0 | divided_by: section.settings.desktop_products_per_row | times: desktop_number_of_products_minus_one -%}
                 {%- capture sizes_attribute -%}(max-width: 740px) calc({{ 100.0 | divided_by: section.settings.mobile_products_per_row | ceil }}vw - 24px), calc((min(100vw - 80px, 1520px) - {{ sidebar_width }}px) / {{ section.settings.desktop_products_per_row }} - {{ gap_width | ceil }}px){%- endcapture -%}
 
                 {%- for product in collection.products -%}
-                   {% unless product.handle == 'membership' %}
+                  {% unless product.handle == 'membership' or product.tags contains "Developer_Test" and settings.Developer_Test %}
                      {% if section.settings.enable_price_slab %}
                         {% if forloop.index == 3 %}
                           <div class="price-tag-filter-container">

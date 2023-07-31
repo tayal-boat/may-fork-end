@@ -9,16 +9,28 @@
 
 
       $(document).ready(function () {
-
+        let appended_text = '';
         {% unless product.tags contains 'IndianManu' %}
+          appended_text = 'Imported And ';
+        {% endunless %}
+        
           // New Product Specifications
           $('.productSpecificationbox tbody').append(
-            `<tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Net Quantity </span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">1</span></td></tr>
-            <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Imported And Marketed By</span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Imagine Marketing Limited</span></td></tr>
+            `<tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">For Consumer Complaints </span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">022-6918-1920<br style="display: block !important;">info@imaginemarketingindia.com<br style="display: block !important;">Imagine Marketing Limited<br style="display: block !important;">Address: Unit No. 204&205, D-wing & E-wing, Corporate Avenue, Andheri Ghatkopar Link Road, Andheri East, Mumbai-400093</span></td></tr>
+            <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Net Quantity </span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">1 Unit</span></td></tr>
+            <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">${appended_text}Marketed By</span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Imagine Marketing Limited</span></td></tr>
             <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Address</span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Unit No. 204&205, D-wing & E-wing, Corporate Avenue, Andheri Ghatkopar Link Road, Andheri East, Mumbai-400093</span></td></tr>
             `);
-        
-        {% endunless %}
+
+            function replaceTextInTD(oldText, newText) {
+              $('td span:contains(' + oldText + ')').each(function() {
+                var content = $(this).html();
+                content = content.replace(oldText, newText);
+                $(this).html(content);
+              });
+            }
+
+            replaceTextInTD('Screen Type', 'Display Dimension');
 
         AOS.init({duration: 1200});
         $(function() {
@@ -76,7 +88,7 @@
     $('.productSpecificationbox').attr('id', 'specifications');
   
     $("#btn-specifications").on('click',function(){ $("#specifications")[0].scrollIntoView(); });
-     $("#btn-reviews, .product__info .rating").on('click',function(){ $("#judgeme")[0].scrollIntoView(); });
+     $("#btn-reviews, .product__info .rating, .pdp-mobile-rating").on('click',function(){ $("#judgeme")[0].scrollIntoView(); });
   
     $(".usp_section, .productDescriptions1").attr("data-aos", "");
     function usp_height(height, source) {
@@ -305,5 +317,11 @@
     } else {
       $('.offer-callout-simple').removeClass('fixed-callout')
     } */
+  })
+  $(document).ready(function() {
+    var paymentContainer = $('.payment-offers-container')
+    if(paymentContainer.children().length === 1) {
+      $(paymentContainer).addClass('single-child')
+    }
   })
 </script>
