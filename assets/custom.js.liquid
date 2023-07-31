@@ -1350,3 +1350,41 @@ $(document).on("click", ".custom-offer-add-to-cart", function(e) {
     })
     }
 });
+
+Shopify.farziDiscount = function (basecode, cartToken) {
+  $.ajax({
+      type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" },
+      data: `{"code":"${basecode}", "cartId":"${cartToken}"}`,
+  }).then((response) => {
+    // console.log(response , 'sucess response');
+      if (response == "true" || response == "True") {
+          setTimeout(function () {
+      var couponlog_postrequest = {
+          url: "https://boat-api.farziengineer.co/couponlog",
+          method: "POST", timeout: 0,
+          headers: { "Content-Type": "application/json", },
+      };
+      var v = setInterval(function () {
+          if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+              couponlog_postrequest.data = JSON.stringify({
+                  coupon: basecode,
+                  log: $(".edit_checkout .fieldset:last p").text(),
+              });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          }
+      }, 1000);
+  }, 3000);
+      }
+  }).fail(() => {
+    console.log(response , 'fail response');
+});
+}
