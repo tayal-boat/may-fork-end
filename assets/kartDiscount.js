@@ -175,6 +175,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
 }
 
 window.KDHooks.__postDiscountFinder_af = function (df_list) {
+  console.log('df_list', df_list);
   // here we can get the discount finder list and use it as required
   // here we are getting the data of active discount code from dicount finder list and updating the content of the dicount finder in cart drawer.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
@@ -212,15 +213,12 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   if (df_list.length > 0) {
     for (let i = 0; i < df_list.length; i++) {
       var discount_collection_link = '';
-      var discount_info = df_list[i].info;
-      if(df_list[i].info != ""){
-      var discount_tempElement = document.createElement('div');
-      discount_tempElement.innerHTML = discount_info;
-      var discount_collection = discount_tempElement.querySelector('.afcd_product-collection-dropdown');
-      var discount_collection_link = discount_collection.querySelector('a');
-      discount_collection_link = discount_collection_link.getAttribute('href');
+      var discount_info = df_list[i].dependedProductCollection.entitled_collection[0];
+      if(discount_info != ""){
+      var discount_collection = discount_info.handle;
+      var discount_collection_link = discount_collection ? '/collections/' + discount_collection : '';
       }
-      var discount_collection_element = discount_collection_link ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
+      var discount_collection_element = discount_collection_link != '' ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
       discountListHtml = discountListHtml + `
           <div class="discount_finder_item">
           <div class="discount_finder_item_details">
