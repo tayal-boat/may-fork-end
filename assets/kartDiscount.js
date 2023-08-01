@@ -213,9 +213,9 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   if (df_list.length > 0) {
     for (let i = 0; i < df_list.length; i++) {
       var discount_collection_link = '';
-      var discount_info = df_list[i].dependedProductCollection.entitled_collection[0];
-      if(discount_info != ""){
-      var discount_collection = discount_info.handle;
+      var discount_info = df_list[i].dependedProductCollection.entitled_collection;
+      if(discount_info && discount_info != ""){
+      var discount_collection = discount_info[0].handle;
       var discount_collection_link = discount_collection ? '/collections/' + discount_collection : '';
       }
       var discount_collection_element = discount_collection_link != '' ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
