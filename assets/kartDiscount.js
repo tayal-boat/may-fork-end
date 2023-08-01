@@ -264,6 +264,10 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   return df_list;
 }
 
+function deleteCookie(cookieName) {
+  document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 var kdDom = document.querySelector('body');
 kdDom.addEventListener('KD_discountRemoved', (e) => {
   // here we are updating the content of discount field in cart drawer on removal of discount code.
@@ -276,6 +280,10 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
+  
+  setTimeout(() => {
+    deleteCookie('discount_code');
+  }, 1000)
 });
 kdDom.addEventListener('KD_validDiscountApplied', (e) => {
   // let discountCode = e.detail;
