@@ -609,6 +609,97 @@ $('a.banner_link').on('click', function() {
 
 /* clevertap code for clicking razor pay ends here */
 
+// # info: Collection Filters Code
+Shopify.accordion = function(tablinks) {
+  for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].hasAttribute("open")) {
+          tablinks[i].removeAttribute("open");
+          tablinks[i].previousElementSibling.setAttribute('aria-expanded', 'false');
+      }
+  }
+}
+
+function preserveQuery() {
+  Shopify.queryParams = {};
+  if (window.location.search.length) {
+      const params = window
+          .location
+          .search
+          .substr(1)
+          .split('&');
+      const filterParams = params.filter(checkPrice);
+      const fliterUrl = params.filter(priceNotInclude);
+
+      function checkPrice(param) {
+          return param.includes('filter.v.price');
+      }
+
+      function priceNotInclude(param) {
+          return !param.includes('filter.v.price');
+      }
+
+      let fliterBaseUrl = fliterUrl.toString();
+      fliterBaseUrl = fliterBaseUrl.replaceAll(',', '&')
+      Shopify.fliterUrl = fliterBaseUrl;
+      for (let i = 0; i < filterParams.length; i++) {
+          const keyValue = filterParams[i].split('=');
+
+          if (keyValue.length) {
+              Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+          }
+      }
+  }
+
+}
+
+function triggerEvent(element, name, data = {}) {
+  element.dispatchEvent(new CustomEvent(name, {
+      bubbles: true,
+      detail: data
+  }));
+}
+
+Shopify.collectionFilter = function(filterLoad) {
+
+  let details = document.querySelectorAll("#facet-filters-form collapsible-content");
+  let summary = $('#facet-filters-form .collapsible-toggle');
+
+  summary.click(function() {
+      Shopify.accordion(details);
+      $(this).attr('aria-expanded', 'true');
+      $(this).siblings('collapsible-content').attr('open', 'true');
+  });
+
+  preserveQuery();
+
+  let sortItems = document.querySelectorAll('.price-tag-filter .tag');
+  for (let i = 0; i < sortItems.length; i++) {
+      sortItems[i].addEventListener('click', function(e) {
+          preserveQuery();
+          Shopify.queryParams['filter.v.price.gte'] = e.target.attributes['data-min'].value;
+          Shopify.queryParams['filter.v.price.lte'] = e.target.attributes['data-max'].value;
+          let searchParams = new URLSearchParams(Shopify.queryParams).toString();
+          if (Shopify.fliterUrl) {
+              searchParams = `${Shopify.fliterUrl}&${searchParams}`
+          }
+          triggerEvent(this, "facet:criteria-changed", {
+              url: `${window.location.pathname}?${searchParams}`
+          });
+
+      })
+  }
+  if (filterLoad) {
+      Shopify.accordion(details);
+      if (summary[0] != undefined) {
+          summary[0].setAttribute('aria-expanded', 'true');
+          summary[0].nextElementSibling.setAttribute('open', 'true');
+      }
+  }
+}
+
+let collectionFilterLoad = true;
+Shopify.collectionFilter(collectionFilterLoad);
+
 // OTP Login
 
 const date = new Date()
