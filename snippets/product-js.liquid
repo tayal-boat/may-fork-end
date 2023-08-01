@@ -9,15 +9,49 @@
 
 
       $(document).ready(function () {
+
+        let product_type = '{{ product.type }}';
+        let cat_spec = "";
+        let cat_name = "";
+        let content_spec = "";
         let appended_text = '';
         {% unless product.tags contains 'IndianManu' %}
           appended_text = 'Imported And ';
         {% endunless %}
         
+        if( product_type == 'TWS' ){
+          cat_name = 'Wireless Earbuds';
+          content_spec = '1 Unit Pair of Earbuds, 1 Unit Case,  1 Unit Type - C Cable, 1 Unit User Manual, 1 Unit Warranty Card, 1 Unit Catalogue, 1 Unit FAQ Card';
+        }
+        if( product_type == 'Rockerz' ){
+          cat_name = 'Headphones';
+          content_spec = '1 Unit Headphone, 1 Unit Type - C Cable, 1 Unit User Manual, 1 Unit Audio Cable, 1 Unit Catalogue, 1 Unit Warranty Card';
+        }
+        if( product_type == 'Rockerz In-Ear' ){
+          cat_name = 'Wireless Earphones';
+          content_spec = '1 Unit Rockerz, 1 Unit Type -C Charging Cable, 1 Unit User Manual, 1 Unit Warranty Card, 2 Unit Pairs of Additional Earmuffs (Small & Large)';
+        }
+        if( product_type == 'Smart' ){
+          cat_name = 'Smartwatches';
+          content_spec = '1 Unit Smartwatch, 1 Unit USB Magnetic Charging Cable, 1 Unit User Manual, 1 Unit Warranty Card';
+        }
+        if( product_type == 'Bassheads' ){
+          cat_name = 'Wired Earphones';
+          content_spec = '1 Unit Earphones, 1 Unit User Manual, 1 Unit Warranty Card, 2 Unit Earmuffs';
+        }
+        
+        if( cat_name != ''){
+          $('.productSpecificationbox tbody').prepend(
+            `<tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Category </span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">`+ cat_name + `</span></td></tr>`
+          );
+        }
+
+
           // New Product Specifications
           $('.productSpecificationbox tbody').append(
             `<tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">For Consumer Complaints </span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">022-6918-1920<br style="display: block !important;">info@imaginemarketingindia.com<br style="display: block !important;">Imagine Marketing Limited<br style="display: block !important;">Address: Unit No. 204&205, D-wing & E-wing, Corporate Avenue, Andheri Ghatkopar Link Road, Andheri East, Mumbai-400093</span></td></tr>
             <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Net Quantity </span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">1 Unit</span></td></tr>
+            <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Net Content</span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">`+ content_spec +`</span></td></tr>7
             <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">${appended_text}Marketed By</span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Imagine Marketing Limited</span></td></tr>
             <tr><td width="153"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Address</span></td><td width="201"><span style="color: #ffffff;" data-mce-style="color: #ffffff;">Unit No. 204&205, D-wing & E-wing, Corporate Avenue, Andheri Ghatkopar Link Road, Andheri East, Mumbai-400093</span></td></tr>
             `);
