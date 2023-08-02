@@ -249,7 +249,7 @@
             {%- render 'product-rating', product: product -%}
             {% comment %} info: marketplace logo {% endcomment %}
             {% unless product.metafields.reviews.rating.value == blank %}
-              {%- if product.metafields.custom.marketplace_details != blank and template contains 'collection' -%}
+              {%- if product.metafields.custom.marketplace_details != blank and template contains 'collection' and template != 'list-collections' -%}
                   <div class="mkp_bestseller">
                     {%- if marketplace_name == 'amazon' -%}
                       <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon-logo_2.svg?v=1687159443" loading="lazy" alt="amazon" />
@@ -283,6 +283,7 @@
           {% endif %}
           {% endcapture %}
             {% unless template contains 'collection' %} {{ swatch_btn }} {% endunless %}
+            {% if template == 'list-collections' %} {{ swatch_btn }} {% endif %}
           </span>
         {%- endif -%}
         <div class="position-relative">
@@ -509,10 +510,10 @@
                     </div>
                   </div>
                 {%- endif -%}
-                {% if template contains 'collection' %} {{ swatch_btn }} {% endif %}
+                {% if template contains 'collection' and template != 'list-collections' %} {{ swatch_btn }} {% endif %}
               </div>
 
-              {% if template contains 'collection' %}
+              {% if template contains 'collection' and template != 'list-collections' %}
                 <div class="features-list only-horizontal">
                   {% assign features = product.metafields.custom.product_card_features | split: '|' %}
                   {% for feature in features %}
