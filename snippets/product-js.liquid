@@ -298,7 +298,20 @@
     if($('.new-productpart-footer-content').length) {
         document.querySelector('.new-productpart-footer-content h3').textContent = 'FAQs';
     }
-    $("p.product-ques").append(`<span class="expand icon-faq"><img alt="down-arrow" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down-arrow.png?v=1611821970"></span>`)
+    $("p.product-ques").append(`<span class="expand icon-faq 123123">
+      <span class="plus_icon"><svg xmlns="http://www.w3.org/2000/svg" width="20.733" height="18" viewBox="0 0 20.733 21">
+        <g id="Group_336538" data-name="Group 336538" transform="translate(0.834 0.5)">
+          <line id="Line_53709" data-name="Line 53709" y2="19" transform="translate(9.166 0.5)" fill="none" stroke="#868c91" stroke-linecap="round" stroke-width="2"/>
+          <line id="Line_53708" data-name="Line 53708" y2="18.733" transform="translate(18.898 9.866) rotate(90)" fill="none" stroke="#868c91" stroke-linecap="round" stroke-width="2"/>
+        </g>
+      </svg></span>
+      <span class="minus_icon">
+        <svg xmlns="http://www.w3.org/2000/svg" height="2" width="10" viewBox="0 0 20.733 2">
+          <g id="Group_336538" data-name="Group 336538" transform="translate(0.834 -8.866)">
+            <line id="Line_53708" data-name="Line 53708" y2="18.733" transform="translate(18.898 9.866) rotate(90)" fill="none" stroke="#1a2024" stroke-linecap="round" stroke-width="2"/>
+          </g>
+        </svg></span>
+    </span>`)
         $("p.product-ques").click(function(){
           $(this).next(".product-ans").slideToggle("fast");
           $(this).find(".icon-faq").toggleClass("collapsed").removeClass("expand");
@@ -306,7 +319,9 @@
           $(this).closest(".ac-tab-new").siblings(".ac-tab-new").find(".icon-faq").removeClass("collapsed").addClass("expand");
         })
         if($(".new-productpart-footer-content .ac-tab-new").length > 7) {
-            $(".new-productpart-footer-content .ac-col").append('<div class="view-more-faqs"><span class="outer-text"><span class="more-text">View More</span><img alt="down-arrow" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/down-arrow.png?v=1611821970" /></span></div>')
+            $(".new-productpart-footer-content .ac-col").append(`<div class="view-more-faqs"><span class="outer-text"><span class="more-text">View More</span><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#2f5b96" height="12px" width="12px" version="1.1" id="Layer_1" viewBox="0 0 330 330" xml:space="preserve">
+              <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393  c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393  s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z" style="&#10;"/>
+              </svg></span></div>`)
         }
         $('.new-productpart-footer-content .ac-tab-new:gt(6)').hide();
         $('.view-more-faqs span.outer-text').click(function() {
@@ -315,10 +330,10 @@
             })
             $('.new-productpart-footer-content .ac-tab-new:gt(6)').slideToggle(200);
             if($('.view-more-faqs span.more-text').text() == "View Less") {
-              $('.view-more-faqs img').addClass("rotated");
+              $('.view-more-faqs svg').addClass("rotated");
             }
             else {
-              $('.view-more-faqs img').removeClass("rotated");
+              $('.view-more-faqs svg').removeClass("rotated");
             }
         });
         $(".video-new img, .manual-new img").attr("alt", "");
@@ -357,5 +372,21 @@
     if(paymentContainer.children().length === 1) {
       $(paymentContainer).addClass('single-child')
     }
+
+
+    /* JS for PDP FAQ section starts here */
+      // Adding a class to a single tab on expand and removing on collapse
+
+      $('.pdp-2-0-faq-section').on('click', '.ac-tabs-new .ac-tab-new .product-ques', function(e){
+        e.preventDefault();
+        $('.pdp-2-0-faq-section .ac-tabs-new .ac-tab-new .product-ques').not($(this)).parent('.ac-tab-new').removeClass("expanded-tab");
+        if( $(this).parent('.ac-tab-new').hasClass('expanded-tab') ){
+          $(this).parent('.ac-tab-new').removeClass("expanded-tab");
+        }else{
+          $(this).parent('.ac-tab-new').addClass("expanded-tab");
+        }
+      });
+
+    /* JS for PDP FAQ section ends here */
   })
 </script>
