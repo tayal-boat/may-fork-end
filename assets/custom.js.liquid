@@ -210,104 +210,6 @@ $(document).on("click", ".custom-search-cta", function(e) {
 let unitsLeft = '';
 let usual_price = '';
 
-<<<<<<< HEAD
-Shopify.variantChange = function(e){
-
-  $('.pdp-btn-price').remove();
-  //let compare_price =  ( ${e.price / 100} *100 ) / ${e.compare_at_price / 100} ;
-
-  let regular_price = e.compare_at_price / 100;
-  let sale_price = e.price / 100;
-  let discount_percentage;
-  
-  if(regular_price > sale_price) {
-    discount_percentage = Math.round( (( regular_price - sale_price)  / regular_price) * 100 ) + '% Off';
-  } else {
-    discount_percentage = ''
-  }
-  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text, #AddToCart.prebook .loader-button__text").html('');
-  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text").append(`
-  <span class="atc_btn">
-  <svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
-    <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
-    <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
-  </svg>                    
-  <span class="add_to_cart_btn">{{- 'product.form.add_to_cart' | t -}}</span>
- </span>
-  <span class="pdp-btn-price custom_price_wrapper">
-  <span class="inclusive_text_content">Inclusive of all Taxes</span>
-  <span class="mobile_atc_btn">
-    <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage}</span>
-  </span>
-  </span>`);
-  
-  $("#AddToCart.prebook .loader-button__text").append(`
-  <span class="atc_btn">
-  <span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
- </span>
-  <span class="pdp-btn-price custom_price_wrapper">
-  <span class="inclusive_text_content">Inclusive of all Taxes</span>
-  <span class="mobile_atc_btn">
-    <span class="mobile_atc_price">₹${e.price / 100}</span>
-    <span class="saved_price">${discount_percentage}</span>
-  </span>
-  </span>`);
-  console.log(e);
-
-function swatches_change(varient_swatches_input){
-for (let i = 0; i < varient_swatches_input.length; i++) {
- 
-          if (varient_swatches_input[i].checked) {
-              $.ajax({
-                  url: location.pathname + "?variant=" + e.id + "&section_id=main-product",
-                  type: "GET",
-                  dataType: "html",
-                  success: function(e) {
-                      var product_media = $(e).find('product-media').html();
-                      $("product-media").html(product_media);
-                      setTimeout(function() {
-                          var product_itemsDiv = '.product_media_section .MultiCarousel-inner';
-                          var product_itemsMainDiv = ('.product_media_section .MultiCarousel');
-                          var product_selector = 'MultiCarousel_product';
-                          Shopify.product_slider(product_itemsDiv, product_itemsMainDiv, product_selector);
-                          if ($('.MultiCarousel_loaded.MultiCarousel-inner .product__media-item').length < 2) {
-                              $(product_itemsMainDiv).addClass('hide_dots');
-                            } else {
-                              $(product_itemsMainDiv).removeClass('hide_dots');
-                            }
-                          $('.product__media-image-wrapper img').click(function () {
-                            $('.product__zoom-button').click();
-                          });
-                          $('button.product__thumbnail-item.hidden-pocket').hover(function() {
-                              $(this).trigger('click');
-                          });
-                      }, 500);
-                  }
-              })
-
-              if (JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
-                  // image swatch selector
-      $('.custom-notify-btn').show();
-      $('.pdp_right_section .payment_offers').css("visibility", "hidden");
-      $('.out_of_stock_msg').show();
-      $('.pincode_checker_heading').css("visibility", "hidden");
-      $('.pdp_right_section .users_love').css("visibility", "hidden");
-      $('.pdp_right_section .marketplace_details').css("visibility", "hidden");
-      $('.product__info button#AddToCart').hide();
-      $('#AddToCart, .cutomized-btn, .button.custom-prebook').addClass('hide_cTA');
-      $("#gokwik-buy-now").addClass('hide_cTA');
-      $('quick-buy-drawer #AddToCart').hide();
-      $('quick-buy-popover #AddToCart').hide();
-      $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
-      $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
-      $('.d-lg-none.restocking, .desktop.restocking').show();
-      $('.pincode_checker_container').hide();
-    if($('#BIS_trigger.custom-notify-btn').length > 0){
-      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
-    } 
-=======
 Shopify.variantChange = function (e) {
   var product_form = event.target;
   if (!e.available) {
@@ -335,7 +237,6 @@ Shopify.variantChange = function (e) {
       varient_url = varient_url + "?variant=" + e.id;
       $('#notifyMe_trigger.custom-notify-btn').attr('data-url', varient_url);
     }
->>>>>>> 01f0eb2d125108620b804458ee4cbdcd6d46f6a5
     setTimeout(() => {
       $('.flash-sale-lable').hide()
     }, 10)
