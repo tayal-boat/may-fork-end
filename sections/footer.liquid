@@ -666,43 +666,24 @@ function openLink(evt, tabName) {
   evt.currentTarget.className += ' active';
 } {% endcomment %}
 {% if section.settings.time_popup  %}
-  const hasModalBeenShown = sessionStorage.getItem("hasTimedModalBeenShown");
-
-  if(window.innerWidth <= 768 && hasModalBeenShown === null) {
-    const debounce = (func, wait) => {
-      let timeout;
-      console.log("start_time");
-      return function executedFunction(...args) {
-        const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-        };
-  
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-      };
-    };
-  
-    const displayModal = debounce(() => {
-      if ($('cart-drawer#mini-cart[open], quick-buy-popover[open], quick-buy-drawer[open], mobile-navigation[open]').length === 0) {
-        console.log("time");
-        $("#timed-Modal").addClass("show");
-        $("html").addClass("lock-mobile");
-        sessionStorage.setItem("hasTimedModalBeenShown", "shown");
-      }
-    }, 15000);
-  
-    document.addEventListener('scroll', displayModal);
-    document.addEventListener('touchmove', displayModal);
-  
-    document.querySelectorAll("#timed-Modal .close, #timed-Modal .popover__overlay").forEach(element => {
-      element.addEventListener('click', () => {
-        $("#timed-Modal").removeClass("show");
-        $("html").removeClass("lock-mobile");
-      });
-    });
+  if(window.innerWidth <= 768){
+    if (sessionStorage.getItem("timed_popUpPoped") === null){
+      $(document).one('touchmove scroll', function() {
+        console.log("start_time");
+        setTimeout(function() {
+          if ($('cart-drawer#mini-cart[open], quick-buy-popover[open], quick-buy-drawer[open], mobile-navigation[open], .login_popup_main_container.show').length == 0){
+            console.log("time")
+            $("#timed-Modal").addClass("show");
+            $("html").addClass("lock-mobile");
+            sessionStorage.setItem("timed_popUpPoped", "poped");
+          }
+        }, 15000);
+      })
+      $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+        $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
+      })
+    }
   }
-  
 {% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
