@@ -668,7 +668,8 @@ function openLink(evt, tabName) {
 {% if section.settings.time_popup  %}
   if(window.innerWidth <= 768){
     if (sessionStorage.getItem("timed_popUpPoped") === null){
-      $(document).one('touchmove scroll', function() {
+      $(document).one('touchmove scroll', function(event) {
+        event.stopPropagation();
         console.log("start_time");
         setTimeout(function() {
           if ($('cart-drawer#mini-cart[open], quick-buy-popover[open], quick-buy-drawer[open], mobile-navigation[open], .login_popup_main_container.show').length == 0){
@@ -683,7 +684,7 @@ function openLink(evt, tabName) {
         $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
       })
     }
-  }
+  }  
 {% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
