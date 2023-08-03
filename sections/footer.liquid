@@ -602,6 +602,11 @@
   </div>
 </cookie-bar>
 {%- endif -%}
+
+<div class="chatbot hidden-moble-chat" style="position:fixed;bottom:10px;right:10px;cursor:pointer;">
+  <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chat-Icon.jpg?v=1690367119" style="width:45px;border-radius:50%;">
+</div>  
+
 {% comment %}
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-custom">
@@ -661,22 +666,29 @@ function openLink(evt, tabName) {
   evt.currentTarget.className += ' active';
 } {% endcomment %}
 {% if section.settings.time_popup  %}
-if(window.innerWidth <= 768){
-  if (sessionStorage.getItem("timed_popUpPoped") === null){
-    $(document).one('touchmove scroll', function() {
-      console.log("start_time")
-      setTimeout(function() {
-        console.log("time")
-        $("#timed-Modal").addClass("show");
-        $("html").addClass("lock-mobile");
-        sessionStorage.setItem("timed_popUpPoped", "poped");
-      }, 15000);
-    })
-    $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
-      $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
-    })
+  if(window.innerWidth <= 768){
+    if (sessionStorage.getItem("timed_popUpPoped") === null){
+      var flag = false;
+      $(document).one('touchmove scroll', function(event) {
+        if (!flag) {
+          flag = true;
+          console.log("start_time");
+          setTimeout(function() {
+            if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show').length == 0){
+              console.log("time")
+              $("#timed-Modal").addClass("show");
+              $("html").addClass("lock-mobile");
+              sessionStorage.setItem("timed_popUpPoped", "poped");
+            }
+          }, 10000);
+        }
+      })
+      $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+        $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
+      })
+    }
   }
-}
+  
 {% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {

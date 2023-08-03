@@ -3020,10 +3020,16 @@ li.mobile-nav__item.open collapsible-content {
         const orderNumberDiv = `<p class="new-order-div" style="display: flex;align-items: center;justify-content: space-between;padding: 0;margin-block: 20px;background: red;color: white;padding-block: 10px;margin-inline: -20px;padding-inline: 23px;font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;"><span>Order Id</span><span>#{{ order.order_number }}</span></p>`
         $('.telegram').after(orderNumberDiv);
         const orderItemCount = {{order.item_count}}
-        const itemType = sessionStorage.getItem('ItemType')
+        const itemType = []
+        
+        $('table.product-table>tbody>tr.product').each(function() {
+          itemType.push($(this).attr('data-product-type'))
+        });
+        const uniqueItemType = [...new Set(itemType)];
+        console.log(uniqueItemType)
         let imageDiv = ''
-        if(itemType === 'Smartyyyy') {
-          imageDiv = `<div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/collections/daily-deals"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Mask_group.svg?v=1687427610" style="display:block;width:100%;"></a></div>`
+        if(uniqueItemType.includes('Smart')) {
+          imageDiv = `<div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/products/boat-airdopes-138-wireless-earbuds-1"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/TP-Banner-AD138.jpg?v=1690868467" style="display:block;width:100%;"></a></div>`
         } else {
           imageDiv = `<div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/products/wave-stride-voice-bluetooth-calling-smartwatch"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/TYpagebanner_wave-stride-voice.jpg?v=1689317158" style="display:block;width:100%;"></a></div>`
         }
