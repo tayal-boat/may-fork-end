@@ -99,7 +99,6 @@ var kartHtml = `<div id="af_cart_page" class="cdThemeSetupV2">
   </div>`;
 window.KDHooks.__handleHTMLCreations_af = function (htmlElem, cartSelectorObj) {
   // updating html of discount field
-  // console.log(kartHtml);
   return kartHtml;
 }
 
@@ -108,13 +107,21 @@ window.KDHooks.__discountFinderClick_ba = function () {
   return false;
 }
 
+// window.KDHooks.__preDiscountProcess_af = function(data) {
+//   console.log(data, '__preDiscountProcess_af'); // edit data before send to discount api for calculation
+//   var cartJson = JSON.parse(data.json_data.cart_json);
+//   console.log(cartJson, '__preDiscountProcess cart_json');
+//   var cartToken = cartJson.token;
+//   var basecode = data.json_data.data.discount_code;
+//    Shopify.farziDiscount(basecode, cartToken);
+//   return data; // return the modified data back.
+// }
+
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
-  // console.log(response, 'response of __postDiscountProcess_af');
   var responseData = '';
   if (typeof response === 'string') {
     responseData = JSON.parse(response);
-    console.log(response);
   }
   else {
     responseData = response;
@@ -168,6 +175,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
 }
 
 window.KDHooks.__postDiscountFinder_af = function (df_list) {
+  console.log('df_list', df_list);
   // here we can get the discount finder list and use it as required
   // here we are getting the data of active discount code from dicount finder list and updating the content of the dicount finder in cart drawer.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
@@ -204,6 +212,13 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
   if (df_list.length > 0) {
     for (let i = 0; i < df_list.length; i++) {
+      var discount_collection_link = '';
+      var discount_info = df_list[i].dependedProductCollection.entitled_collection;
+      if(discount_info && discount_info != ""){
+      var discount_collection = discount_info[0].handle;
+      var discount_collection_link = discount_collection ? '/collections/' + discount_collection : '';
+      }
+      var discount_collection_element = discount_collection_link != '' ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
       discountListHtml = discountListHtml + `
           <div class="discount_finder_item">
           <div class="discount_finder_item_details">
@@ -224,7 +239,10 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
               <div class="discount_finder_item_content">
                   <h6>${df_list[i].full_detail.split('•')[0]}</h6>
                   <!-- <p>${df_list[i].full_detail}</p> -->
+                  <div class="discount_finder_view_products_container">
                   <span>${df_list[i].code}</span>
+                  ${discount_collection_element}
+                  </div>
               </div>
           </div>
           <div class="discount_finder_item_cta_btn">
@@ -244,6 +262,10 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   return df_list;
 }
 
+function deleteCookie(cookieName) {
+  document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 var kdDom = document.querySelector('body');
 kdDom.addEventListener('KD_discountRemoved', (e) => {
   // here we are updating the content of discount field in cart drawer on removal of discount code.
@@ -256,12 +278,14 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
+  
+  setTimeout(() => {
+    deleteCookie('discount_code');
+  }, 1000)
 });
 kdDom.addEventListener('KD_validDiscountApplied', (e) => {
   // let discountCode = e.detail;
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-  // console.log(preAppliedCoupon);
-  // console.log(e);
   $('.discount_finder_item_cta_btn .' + preAppliedCoupon).html('<span>Applied</span>');
   $('.discount_finder_item_cta_btn .' + preAppliedCoupon).addClass('coupon_applied');
   $('.custom_discount_filder_container').removeAttr('open_finder');
@@ -271,6 +295,64 @@ kdDom.addEventListener('KD_discountFinderClicked', (e) => {
     $('.custom_discount_filder_container').attr('open_finder', true);
   }
 });
+
+Shopify.KartDiscount = function (cartJson) {
+  var total_discount_amount = $('.discount_details').attr('data-discountAmount');
+  var offer_discount_code = $('.discount_details').attr('data-discountCode');
+  sessionStorage.setItem('total_discount_amount', total_discount_amount);
+  sessionStorage.setItem('offer_discount_code', offer_discount_code);
+  Shopify.KartDiscountHooks();
+}
+
+Shopify.farziDiscount = function (basecode, cartToken) {
+  $.ajax({
+      type: "POST", url: "https://boat-api.farziengineer.co/discount", headers: { "Content-Type": "application/json" },
+      data: `{"code":"${basecode}", "cartId":"${cartToken}"}`,
+  }).then((response) => {
+    // console.log(response , 'sucess response');
+      if (response == "true" || response == "True") {
+          setTimeout(function () {
+      var couponlog_postrequest = {
+          url: "https://boat-api.farziengineer.co/couponlog",
+          method: "POST", timeout: 0,
+          headers: { "Content-Type": "application/json", },
+      };
+      var v = setInterval(function () {
+          if ($(".edit_checkout .fieldset:last p").length != 0 && $(".edit_checkout .fieldset:last p").css("display") != "none") {
+              couponlog_postrequest.data = JSON.stringify({
+                  coupon: basecode,
+                  log: $(".edit_checkout .fieldset:last p").text(),
+              });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".notice.notice--warning .notice__content .notice__text").text().length > 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".notice.notice--warning .notice__content .notice__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          } else if ($(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").length != 0) {
+              couponlog_postrequest.data = JSON.stringify({ coupon: basecode, log: $(".tags-list .tag .tag__wrapper .reduction-code .reduction-code__text").text(), });
+              $.ajax(couponlog_postrequest).done(function (response) { });
+              clearInterval(v);
+          }
+      }, 1000);
+  }, 3000);
+      }
+  }).fail(() => {
+    console.log(response , 'fail response');
+});
+}
+
+Shopify.DiscountSubmit = function () {
+// here we are farzi discount api on kart discount field submit
+  $.getJSON('/cart.js', function (cart) {
+    var cartToken = cart.token;
+    var basecode = $('#af_kd_custom_coupon_text').val();
+    Shopify.farziDiscount(basecode, cartToken);
+  })
+  setTimeout(function () {
+    CDSetupInit.couponApplyClick(this);
+  }, 500);
+}
 
 Shopify.KartDiscountHooks = function () {
   // here we are regulating the condition for opening of discount finder on click of view all coupon button.
@@ -285,21 +367,11 @@ Shopify.KartDiscountHooks = function () {
 }
 Shopify.KartDiscountHooks();
 
-
-Shopify.KartDiscount = function (cartJson) {
-  var total_discount_amount = $('.discount_details').attr('data-discountAmount');
-  var offer_discount_code = $('.discount_details').attr('data-discountCode');
-  sessionStorage.setItem('total_discount_amount', total_discount_amount);
-  sessionStorage.setItem('offer_discount_code', offer_discount_code);
-  Shopify.KartDiscountHooks();
-}
-
 window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
-  // console.log("before convert: ", convertedMoneyStr); // converted currency string from number
+// converted currency string from number
   var finalAmount = extras.finalAmount;
   finalAmount = finalAmount.replace('.00', '');
   extras.money_format_first = "₹";
   convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
-  // console.log("after convert: ", convertedMoneyStr);
   return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
 }

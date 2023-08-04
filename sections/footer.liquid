@@ -540,7 +540,48 @@
   </div>
 </div>
 </footer>
-
+{% if section.settings.time_popup  %}
+  <style>
+    #timed-Modal.show .popover__overlay {visibility: visible;opacity: .3; top: 0;z-index:1111;}
+    #timed-Modal{display: block;visibility: hidden;z-index:1000;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1);}
+    #timed-Modal .close{position: absolute;top: 12px;right: 12px;width: 30px;height: 30px;line-height: 24px;opacity: 1;
+      text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
+    }
+    div#timed-Modal.show {transform: translateY(0);visibility: visible;}
+    #timed-Modal .modal-dialog {position: absolute;bottom: 0; margin: 0;z-index:9999;}
+  </style>
+  <div id="timed-Modal" class="modal fade" role="dialog">
+    <span class="popover__overlay"></span>
+    <div class="modal-dialog">
+      <div class="modal-content" style="border-radius: 16px 16px 0 0;">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body-content">
+            <div class="p-4">
+              {% if section.settings.popup_text  %}            
+              <div class="pt-5 mb-0 text-center" style="font-size: 24px;line-height: 1.2;">
+                {{ section.settings.popup_text }}
+              </div>
+              {% endif %}
+              {% if section.settings.popup_image %}           
+                <div class="modal-image p-4 px-5" style="font-size: 16px;">
+                  <img class="image-overlay__image_" 
+                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '300' %} alt="Popup Image"/>
+                </div>
+              {% endif %}
+              <a style="color: white;font-weight: 700!important;
+                padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
+                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" 
+                href="https://t.me/boAtonTelegram" target="_blank">
+                Count Me In 🥳
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
 {%- if section.settings.show_cookie_bar -%}
 <cookie-bar section="{{ section.id }}" hidden class="cookie-bar text--xsmall">
   {%- if section.settings.cookie_bar_title != blank -%}
@@ -561,6 +602,11 @@
   </div>
 </cookie-bar>
 {%- endif -%}
+
+<div class="chatbot hidden-moble-chat" style="position:fixed;bottom:10px;right:10px;cursor:pointer;">
+  <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chat-Icon.jpg?v=1690367119" style="width:45px;border-radius:50%;">
+</div>  
+
 {% comment %}
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-custom">
@@ -619,7 +665,31 @@ function openLink(evt, tabName) {
   document.getElementById(tabName).style.display = 'block';
   evt.currentTarget.className += ' active';
 } {% endcomment %}
-
+{% if section.settings.time_popup  %}
+  if(window.innerWidth <= 768){
+    if (sessionStorage.getItem("timed_popUpPoped") === null){
+      var flag = false;
+      $(document).one('touchmove scroll', function(event) {
+        if (!flag) {
+          flag = true;
+          console.log("start_time");
+          setTimeout(function() {
+            if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show').length == 0){
+              console.log("time")
+              $("#timed-Modal").addClass("show");
+              $("html").addClass("lock-mobile");
+              sessionStorage.setItem("timed_popUpPoped", "poped");
+            }
+          }, 10000);
+        }
+      })
+      $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+        $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
+      })
+    }
+  }
+  
+{% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
     $(this).find('.expanded').toggleClass('visually-hidden')
@@ -646,6 +716,21 @@ $('.menu-panel').each(function(i) {
     "default": true
   },
   {
+    "type": "checkbox",
+    "id": "time_popup",
+    "label": "Show time_popup throughout website"
+  },
+  {
+    "type": "html",
+    "id": "popup_text",
+    "label": "Popup text"
+  },
+  {
+    "type": "image_picker",
+    "id": "popup_image",
+    "label": "Popup Image"
+  },
+  {
     "type": "link_list",
     "id": "filter_menu",
     "label": "Filter Menu"
@@ -654,11 +739,6 @@ $('.menu-panel').each(function(i) {
     "type": "image_picker",
     "id": "payment_strip",
     "label": "Payment Image"
-  },
-  {
-    "type": "image_picker",
-    "id": "popup_image",
-    "label": "Popup Image"
   },
   {
     "type": "checkbox",
