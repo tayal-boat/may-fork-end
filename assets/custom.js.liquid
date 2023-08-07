@@ -138,6 +138,8 @@
  */
 {% endcomment %}
 
+console.log('hii cart from custom.js');
+
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 Shopify.cart_item_count = function () {
   $.getJSON('/cart.js', function(cart){
@@ -1290,7 +1292,7 @@ Shopify.custom_otp_login = function () {
         sessionStorage.setItem('login_session_id', response.session_id)
       } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('The phone field is required.');
-      } else if (response.code == 403 && response.message == 'Invalid phone number') {
+      } else if (response.code == 403) {
         $('.otp-login-error').html(response.message);
       } else if (response.code == 429) {
         $('.otp-login-error').html(response.message);
@@ -1306,7 +1308,7 @@ Shopify.custom_otp_login = function () {
       } else if (phone.length < 10) {
         $('.otp-login-error').html('Invalid phone number.');
       } else {
-        $('.otp-login-btn').attr('disabled', true);
+        // $('.otp-login-btn').attr('disabled', true);
         otpLogin(phone);
       }
     }
@@ -1395,6 +1397,7 @@ Shopify.custom_otp_login = function () {
   });
 
 };
+Shopify.loginInput(6);
 Shopify.custom_otp_login();
 
 $(document).on("click", ".custom-offer-add-to-cart", function (e) {
@@ -1660,3 +1663,5 @@ function closePopup() {
   });
   $('.login_popup_main_container').addClass('show');
 });
+
+console.log('hii cart from custom.js 2');
