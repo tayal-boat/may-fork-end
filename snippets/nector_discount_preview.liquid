@@ -1,0 +1,108 @@
+{%- liquid
+  assign nector_api_key = '11e08d14d64b8d0e2a6fa97b22c2b6cc3bca8b6ffec67b3d23a052001b09b4c1'
+  assign nector_customer_id = customer.id
+-%}
+
+<span id="nector-discount-preview"></span>
+
+<script>
+  const config = {
+    api_key: '{{ nector_api_key }}',
+    customer_id: 'shopify-{{ nector_customer_id }}',
+  };
+
+  function convert_money_to_number(value) {
+    const num_value = Number(String(value).replace(/[^0-9.]+/g, ''));
+    return num_value;
+  }
+
+  async function fetch_discount_preview(amount) {
+    let final_url =
+      'https://platform.nector.io/api/v2/merchant/integrations/gokwikpreview/9d0db99d-4955-40f3-b8b3-ffcc720ead7b';
+
+    const headers = {
+      'x-apikey': config.api_key,
+      'x-source': 'web',
+    };
+
+    const params = {
+      customer_id: config.customer_id,
+      amount: amount,
+    };
+
+    if (params && Object.keys(params).length > 0) {
+      const search_params = new URLSearchParams(params);
+      final_url += `?${search_params.toString()}`;
+
+      {% comment %} info: Passing Fake Nector Code to cookies for GoKwik {% endcomment %}
+      {% assign phone = customer.phone | replace: '+91', '' %}
+      document.cookie = "nector_code=" + 'nector_{{phone}}';
+    }
+
+    const options = {
+      method: 'GET',
+      headers: headers,
+    };
+
+    const discount_preview_response = await fetch(final_url, options);
+    const response_json = await discount_preview_response.json();
+    let data = null;
+
+    if (response_json.meta.status === 'success') {
+      data = response_json.data;
+      const points_balance = data.points_balance;
+      if($('.av_bal').length) {
+        $('.av_bal .points_ span').text(points_balance)
+      }
+    }
+
+    return data;
+  }
+
+  function compute_discount(amount, promotion) {
+    const original_price = Number(amount);
+    const discount_fiat_value = Number(promotion.fiat_value);
+    const redeemable_points = Number(promotion.delta_redeemable);
+    const discount_fiat_class = promotion.type;
+
+    {% comment %} info: Passing Nector Reedemable points to cookies for GoKwik {% endcomment %}
+    document.cookie = "nector_amount=" + discount_fiat_value;
+    sessionStorage.setItem('Redeemable Points', redeemable_points)
+    $('.redeemable_points').text(redeemable_points)
+
+    let discounted_price = original_price;
+    if (discount_fiat_class === 'flat_discount') {
+      discounted_price = Number((original_price - discount_fiat_value).toFixed(2));
+    } else if (discount_fiat_class === 'percent_discount') {
+      const discount = (original_price * discount_fiat_class) / 100;
+      discounted_price = Number((original_price - discount).toFixed(2));
+    }
+
+    return discounted_price;
+  }
+
+  async function init_nector_discount_preview(amount) {
+    const parsed_amount = convert_money_to_number(amount) / 100;
+
+    try {
+      if (!config.api_key || config.customer_id.replace('shopify-', '').length < 1 || isNaN(Number(parsed_amount))) {
+        return null;
+      }
+
+      const discount_preview_data = await fetch_discount_preview(parsed_amount);
+      const discounted_price = compute_discount(parsed_amount, discount_preview_data.promotions[0]);
+
+      if (isNaN(Number(discounted_price)) === false) {
+        const discount_preview_ele = document.getElementById('nector-discount-preview');
+        if (discount_preview_ele) {
+          discount_preview_ele.innerText = `₹${Number(discounted_price)}`;
+          
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  init_nector_discount_preview('{{ amount }}');
+</script>
