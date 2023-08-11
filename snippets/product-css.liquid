@@ -422,9 +422,8 @@
   .variant-swatch__item-div{border:1px solid #e1e1e1}
   .variant-swatch__item{border-radius:0!important}
   .product-meta__price-list-container{padding-block:6px;border-block:1px solid #dadada}
-  .pdp-inner #AddToCart, .cutomized-btn{position:fixed;bottom:65px;z-index:10;left:50%;transform:translateX(-50%);width:100%;margin:auto;max-width:94%;}
-  .new-pdp #BIS_trigger{position:fixed;bottom:65px;z-index:10;left:50%;transform:translateX(-50%);width:100%;margin:auto;max-width:94%;}
-  .new-pdp .product-form__payment-container .loader-button__text{width:100%;justify-content:space-between;flex-direction: row-reverse;}
+  .new-pdp #notifyMe_trigger,.pdp-inner #AddToCart, .cutomized-btn{position:fixed;bottom:65px;z-index:10;left:50%;transform:translateX(-50%);width:100%;margin:auto;max-width:94%}
+  .new-pdp .product-form__payment-container .loader-button__text{width:100%;justify-content:space-between}
   }
   .currently-in-cart{background:rgba(237,28,36,.05);border-radius:5px;padding:6px 12px}
   img.varnt-drop.toggle{transform:rotate(0)}
@@ -506,6 +505,9 @@
 {% if product.handle == 'gift-card' %}
   #BIS_trigger{display:none !important}
 {% endif %}
+{% unless product.tags contains 'customized' %}
+  .mobile-only.pdp_section_para{display:none!important;}
+{% endunless %}
 .product:has([handle="gift-card"]) .restocking{display:none;}
 {% comment %} !NEW PDP LAYOUT CSS ENDS {% endcomment %}
 
@@ -745,7 +747,7 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
 }
 .payment-offers-container .payment_offers .payment_icons {
   background: #fcf2cf;
-  padding: 0px 20px;
+  padding: 0px 0px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   display: flex;
@@ -754,6 +756,11 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
   align-items: center;
   justify-content: center;
 }
+
+@media screen and (min-width: 990px){
+  .pdp_right_section .new-pdp #notifyMe_trigger.custom-notify-btn{height:56px;border-radius: 20px !important;}
+}
+
 @media screen and (max-width:768px) {
   .pdp_right_section .new-pdp .out_of_stock_msg{margin-left:-24px;margin-bottom: 0px;}
   .MultiCarousel_container {margin-top: 16px;}
@@ -792,7 +799,7 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
   .custom-product-price .new-pdp .custom-product-price .custom_price_wrapper .inclusive_text_content{font-size: 12px;font-weight: normal;color: #868c91;line-height: 1.67;text-align: left;}
   .custom-product-price .new-pdp .custom-product-price .custom_price_wrapper .mobile_atc_btn{gap: 10px;display: flex;}
   .custom-product-price .new-pdp .custom-product-price product-payment-container #AddToCart .atc_btn{display: flex;align-items: center;gap: 6px;line-height:normal;}
-  product-meta .desktop_reviews_wrapper .offer-callout-simple{position: fixed;bottom: 120px;z-index: 9;max-width: 93%;width: 100%;padding-bottom: 18px;border-top-left-radius: 10px;border-top-right-radius: 10px;left: 50%;transform: translateX(-50%);}
+  product-meta .desktop_reviews_wrapper .offer-callout-simple{position: fixed;bottom: 120px;z-index: 9;max-width: 93%;width: 100%;padding-bottom: 18px;border-top-left-radius: 20px;border-top-right-radius: 20px;left: 50%;transform: translateX(-50%);}
   .changed_variant_regular_price{margin-right: 8px !important;margin-left: 6px !important;}
   .pdp_right_section .custom-product-price .price.price--highlight:after{top: 0px; display: none;}
   .pdp_right_section .custom-product-price .variant_changed_saved_percentage{font-size: 16px;color: #12b985;font-weight: bold;}
@@ -800,10 +807,13 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
   .pdp_right_section .custom-product-price-mobile .pdp_price_box{display: table;margin-bottom: 8px;}
   {% comment %} .pdp_right_section .custom-product-price-mobile .pdp_price_box .price--compare{vertical-align: bottom;} {% endcomment %}
   .custom-product-price .new-pdp .pincode_checker_box .pincode_checker_container .pincode_checker input{font-size: 15px !important;}
+  .product-content__tabs .product-tabs .tabs-nav__item-list:after{width: 0px;}
 
   /* Code for Promise icons starts here */
-  .promise-icons .img-row .myIcon img{width: 112px;}
+  .promise-icons .img-row .myIcon img{width: 75px;}
   .section__color-wrapper.promise-icons .myText p{font-size:12px;font-weight:500; line-height: 14px;}
+  .promise-icons .single_prmoise .myText {width: 100%;}
+  .promise-icons .single_prmoise.col-1 {display: none;}
   /* Code for Promise icons ends here */
 
   /* Code starts for showing numbering dots on PDP slider */
@@ -820,14 +830,21 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
   .pdp_right_section .new-pdp #BIS_trigger.custom-notify-btn span{display: flex;align-items: center;}
   /* CSS ends for notify me button */
 
+  /* Marketplace logo css starts here */
+  .marketplace_logo img{width: 40px;}
+  /* marketplace logo css ends here */
+
 }
 @media(max-width:768px){
   .pdp_right_section .price-list {gap: 8px 4px;}
+  product-payment-container .loader-button__text{flex-direction:row-reverse;}
+  .pdp_right_section .new-pdp #notifyMe_trigger{justify-content:space-between;height:68px;border-radius: 20px !important;}
 }
 .pdp_right_section .price-list {display: grid;justify-content: flex-start;grid-template-areas:'price stike-down flash''percent percent flash';}
 .pdp_right_section span.price.price--highlight.quick_product-price {grid-area: price;}
 .pdp_right_section span.price.price--compare.line-through {grid-area: stike-down;}
 .pdp_right_section p.custom-saved-price {grid-area: percent;}
+.custom_product_nav.hide_desc_nav {opacity: 0;height: 0px;margin: 0px; padding: 0px;}
 
 /* Quick product highlights CSS starts here */
 
@@ -895,6 +912,159 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
     .payment-offers-container{flex-direction:column;}
   }
 /* Quick product highlights CSS ends here */
+
+/* Featured icons css starts here */
+
+.featured-icon-section{background: #f7f9fa;padding: 24px 0px;}
+.featured-icons-container .featured-icons-row{display: flex;}
+.featured-icons-container .featured-icons-row .single-icon-box{width: 130px;margin: 0px auto;text-align: center;display: flex;flex-direction: column;gap: 15px;line-height: 18px;}
+.featured-icons-container .featured-icons-row .single-icon-box span {font-size: 14px;font-weight: 500;line-height: 18px;letter-spacing: -0.56px;color: #1a2024;}
+
+@media (max-width: 767px){
+  .featured-icons-container .featured-icons-row .single-icon-box{gap: 10px;margin-bottom: 40px;width: 50%;}
+  .featured-icons-container .featured-icons-row .single-icon-box span {font-size: 12px;line-height: 16px;letter-spacing: -0.48px;}
+}
+
+.pdp-section.section-1{margin-top: 30px;}
+.pdp-section.section-1 .pdp-section-container{display: flex; gap: 30px;}
+.pdp-section.section-1 .pdp-section-container .left-section{position: relative;}
+.pdp-section.section-1 .pdp-section-container .left-section .text-on-image-box{position: absolute;left: 30px;top: 30px;display: grid;}
+.pdp-section.section-1 .text-on-image-box .normal-span{font-size: 37px;line-height:47px;letter-spacing: -1.48px;text-align: center;color: #1a2024;font-weight: normal;}
+.pdp-section.section-1 .text-on-image-box .bold-span{font-size: 62px;font-weight: bold;line-height: 68px;letter-spacing: -2.48px;}
+.pdp-section.section-1 .pdp-section-container .right-section{position: relative;}
+.pdp-section.section-1 .pdp-section-container .right-section .text-on-image-box{position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);display: grid;text-align: center;}
+.pdp-section.section-1 .pdp-section-container .right-section .normal-span{color: #fff;font-size: 62px;line-height: 61px;letter-spacing: -2.48px;text-align: center;display: flex;gap: 6px;}
+.pdp-section.section-1 .pdp-section-container .right-section .smaller-span{color: #fff;font-size: 22px;line-height: 29px;letter-spacing: -0.88px;text-align: center;}
+
+.pdp-section.section-2{margin-top: 30px;}
+.pdp-section.section-2 .full-width-section{position: relative;}
+.pdp-section.section-2 .full-width-section .text-on-image-box{display: grid;gap: 30px;position: absolute;top: 66px;left: 46px;color: #fff;}
+.pdp-section.section-2 .text-on-image-box .normal-span{font-style: normal;line-height: 78px;font-size: 80px;}
+.pdp-section.section-2 .text-on-image-box .smaller-span{font-style: normal;line-height: 28px;font-size: 22px;text-align: left;width: 500px;}
+.pdp-section.section-2 .text-on-image-box .product_features_box{border-radius: 10px;-webkit-backdrop-filter: blur(3px);backdrop-filter: blur(3px);background-color: #1a2024;width: 516px;padding: 20px 40px;opacity: .6;background-image: linear-gradient(90deg, black, #1a2024);display: flex;justify-content: space-around;}
+.pdp-section.section-2 .text-on-image-box .product_features_box .single_feature {display: grid;gap: 14px;position: relative;}
+.pdp-section.section-2 .text-on-image-box .product_features_box .single_feature::after{content: '';height: 100%;width: 1px;background: #959999;position: absolute;right: -30px;}
+.pdp-section.section-2 .text-on-image-box .product_features_box .single_feature:last-child:after{display: none;}
+.pdp-section.section-2 .text-on-image-box .product_features_box .single_feature .feature-title{font-size: 16px;line-height: 26px;opacity: 0.58;letter-spacing: -0.64px;text-align: center;}
+.pdp-section.section-2 .text-on-image-box .product_features_box .single_feature .feature-value{font-size: 26px;font-weight: bold;line-height: 26px;letter-spacing: -1.04px;text-align: center;}
+
+.pdp-section.section-3{margin-top: 30px;}
+.pdp-section.section-3 .pdp-section-container {display: flex; gap: 30px;}
+.pdp-section.section-3 .pdp-section-container .left-section{max-width: 50%;position: relative;}
+.pdp-section.section-3 .pdp-section-container .left-section .text-on-image-box{position: absolute;left: 50%; top: 40px;transform: translateX(-50%);display: grid;text-align: center;}
+.pdp-section.section-3 .pdp-section-container .left-section .text-on-image-box .normal-span.red-color{font-size: 40px;line-height: 67px;color: #d83333;letter-spacing: -1.6px;}
+.pdp-section.section-3 .pdp-section-container .left-section .text-on-image-box .bold-span{font-size: 62px;line-height: 67px;letter-spacing: -2.48px;width: max-content;}
+.pdp-section.section-3 .pdp-section-container .left-section .text-on-image-box .smaller-span{font-size: 22px;line-height: 28px;letter-spacing: -0.88px;}
+.pdp-section.section-3 .pdp-section-container .right-section{max-width: 50%;position: relative;}
+.pdp-section.section-3 .pdp-section-container .right-section .text-on-image-box{position: absolute;bottom: 38px;right: 38px;display: grid;text-align: center;}
+.pdp-section.section-3 .pdp-section-container .right-section .text-on-image-box .normal-span{font-size: 38px;color: #fff;letter-spacing: -2.48px;line-height: 66px;}
+.pdp-section.section-3 .pdp-section-container .right-section .text-on-image-box .bold-span{font-size: 62px;color: #fff;line-height: 66px;letter-spacing: -1.52px;}
+
+.pdp-section.section-4{margin-top: 30px;}
+.pdp-section.section-4 .pdp-section-container {display: flex; gap: 30px;}
+.pdp-section.section-4 .pdp-section-container{display: flex;}
+.pdp-section.section-4 .pdp-section-container .left-section{width: 50%;position: relative;}
+.pdp-section.section-4 .pdp-section-container .right-section{width: 50%;position: relative;}
+/* Featured icons css ends here */
+
+@media (min-width: 990px){
+  .pdp_section_2_0{margin-top: 0px;}
+  .promise-icons .single_prmoise .myIconRow{display:grid;}
+  .promise-icons .single_prmoise .myIconRow .myText p br{display:none;}
+}
+
+
+/* Tech Specs section css starts here */
+
+.tech-specs-section {background: #f7fafc;padding: 30px 0px;}
+.tech-specs-section .left-section .heading {padding-top: 48px;}
+.tech-specs-section .left-section .heading h2{font-size: 58px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 45px;letter-spacing: -2.32px;}
+.tech-specs-section .left-section .specs-items{margin-top: 41px;}
+.tech-specs-section .specs-item{display: grid;width: 50%;float: left;margin-bottom: 28px;}
+.tech-specs-section .specs-item .spec-type {font-size: 16px;font-weight: 300;font-stretch: normal;font-style: normal;line-height: 1.81;letter-spacing: normal;text-align: left;color: #4e5358;}
+.tech-specs-section .specs-item .spec {font-size: 20px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.45;letter-spacing: normal;text-align: left;color: #1a2024;}
+.tech-specs-section .right-section .specs-image-box {display: flex;align-items: center;}
+.tech-specs-section .spec-wrapper .right-section .heading{display: none;}
+.tech-specs-section .spec-wrapper .left-section .heading{display: block;}
+
+@media ( max-width: 767px){
+  .tech-specs-section .spec-wrapper{flex-direction: column-reverse;}
+  .tech-specs-section .spec-wrapper .left-section .heading{display: none;}
+  .tech-specs-section .spec-wrapper .right-section .heading{display: block;}
+  .tech-specs-section .spec-wrapper .right-section .heading h2{font-size: 44px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.02;letter-spacing: -1.76px;text-align: center;}
+  .tech-specs-section .specs-item{padding-left: 20px;margin-bottom: 18px;}
+  .tech-specs-section .specs-item .spec-type{font-size: 10px;}
+  .tech-specs-section .specs-item .spec{font-size: 12px;}
+}
+
+/* Tech Specs section css ends here */
+
+/* Download user manual section css starts here */
+
+.pdp-section.section-3.user-manual-section {margin-top: 60px;}
+.user-manual-section .user-manual-wrapper{margin: 0px auto;width: 90%;gap: 30px;padding: 30px 50px;background: #eff3f5;align-items: center;border-radius: 10px;justify-content: space-around;}
+.user-manual-section .manual-icon img{width: 52px;}
+.user-manual-section .manual-text h2{font-size: 24px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 0.92;letter-spacing: -0.96px;text-align: left;color: #1a2024;}
+.user-manual-section .manual-text span{margin: 7px 0 0;font-size: 16px;font-weight: 300;font-stretch: normal;font-style: normal;line-height: 1.13;letter-spacing: -0.64px;text-align: left;color: #1a2024;}
+.user-manual-section .manual-download-button a{background-color:#1a2024;border-radius: 10px;font-size: 16px;font-weight: 500;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: left;color: #fff;padding: 16px 67px 16px 67px;}
+
+@media (max-width: 767px){
+  .user-manual-section .user-manual-wrapper{position: relative;height: 150px;}
+  .user-manual-section .user-manual-wrapper .manual-icon{position: absolute;top: -30px;}
+  .user-manual-section .user-manual-wrapper .manual-text{margin-top: 10px;}
+  .user-manual-section .user-manual-wrapper .manual-download-button a{padding: 16px 50px;}
+  .user-manual-section .manual-text h2{font-size: 18px;}
+  .user-manual-section .manual-text span{font-size: 12px;}
+}
+
+/* Download user manual section css ends here */
+
+/* PDP FAQ section css starts here */
+
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container{max-width: 75%;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .new-productpart-footer-content h3{font-size: 58px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 0.9;letter-spacing: -2.32px;text-align: center;margin-bottom: 30px;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tabs-new .ac-tab-new{border-bottom: none;background: #f7f9fa;margin: 30px 20px;padding: 19px 20px;border-radius: 10px;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tabs-new .ac-tab-new .product-ques{margin-bottom: 0px;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: -0.64px;text-align: left;color: #111314 !important;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tabs-new .ac-tab-new.expanded-tab{border-radius: 10px;border: solid 1px #e4eaea;background-color: #fcfdff;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tabs-new .ac-tab-new.expanded-tab .product-ques{font-size: 16px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: -0.64px;text-align: left;color: #d83333 !important;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tabs-new .ac-tab-new.expanded-tab .product-ans{margin-top: 10px;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.71;letter-spacing: normal;text-align: left;color: #111314;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tab-new .icon-faq .plus_icon{display: block;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tab-new .icon-faq .minus_icon{display: none;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .expanded-tab .collapsed .plus_icon{display: none;}
+.new-productPart-footer.pdp-2-0-faq-section .productpage-container .expanded-tab .collapsed .minus_icon{display: block;}
+
+@media(max-width: 767px){
+  .new-productPart-footer.pdp-2-0-faq-section .productpage-container{max-width: 100%;padding:0px;}
+  .new-productPart-footer.pdp-2-0-faq-section .productpage-container .ac-tabs-new .ac-tab-new{margin: 10px 0px;padding: 19px 20px;}
+}
+
+/* PDP FAQ section css ends here */
+
+/* PDP Reviews section css begins here */
+
+#judgeme .jdgm-star.jdgm--off{color: #f4f5f7 !important;}
+#judgeme .jdgm-rev-widg__header .jdgm-widget-actions-wrapper a{background: #f4f5f7;border: 1px solid #f4f5f7 !important;color: #1a2024 !important;font-size: 16px;font-weight: 600;}
+
+@media (max-width: 767px){
+  #judgeme .jdgm-rev-widg__header .jdgm-widget-actions-wrapper a{margin-top: 1em;}
+}
+
+/* PDP Reviews section css ends here */
+
+/* PDP FAQ & Notes section css starts here */
+
+.product_notes_section .pdp_notes_content{font-size: 12px;font-weight: 300;font-stretch: normal;font-style: normal;line-height: 1.17;letter-spacing: normal;text-align: left;color: #868c91;}
+.product_notes_section .pdp_notes_content ul{list-style: decimal;}
+.product_notes_section .pdp_notes_content ul li{margin-bottom: 10px;}
+.view-more-faqs .outer-text .more-text{color: #2f5b96 !important;margin-right: 10px;}
+.view-more-faqs .rotated{transform: rotate(180deg);}
+
+@media (max-width: 767px){
+  .product_notes_section .pdp_notes_content{padding: 0px 15px;}
+}
+
+/* PDP FAQ & Notes section css ends here */
+
 {% comment %} Reviews CSS on mobile view {% endcomment %}
   .pdp-mobile-rating{position:absolute;top:5px;z-index:99;left:5px;background:#F2F5F9;padding:0px 10px !important;border-radius:5px;}
   .pdp-mobile-rating .rating__stars{font-size:12px!important;font-weight:normal!important;}
