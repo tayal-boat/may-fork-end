@@ -1362,11 +1362,17 @@ Shopify.custom_otp_login = function () {
     } else {
       let session_id = sessionStorage.getItem('login_session_id');
       let mobile_number = $('.mobile-login-input input').val()
-      let otp = $('.mobile-otp-inout input').val();
+      // Get the values of all the inputs
+      var inputs = document.querySelectorAll('#OTPInput > *[id]');
+      var compiledOtp = '';
+      for (let i = 0; i < inputs.length; i++) {
+        compiledOtp += inputs[i].value;
+      }
+      document.getElementById('otp').value = compiledOtp;
       let url = sessionStorage.getItem('login_location');
-      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
-        verifyemail(session_id, otp, url);
-      } else if (otp == '') {
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && compiledOtp !== '') {
+        verifyemail(session_id, compiledOtp, url);
+      } else if (compiledOtp == '') {
         $('.otp-login-error').html('OTP is required');
       }
     }
