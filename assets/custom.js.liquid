@@ -1566,10 +1566,12 @@ function closePopup() {
         event.preventDefault();
         var varient_id = $('#variants_select').val();
         var mobile_number = $('#notifyMe_mobile_number').val();
+        var productName = $('.notifyMe_popup_title').text().trim();
+        var variantTitle = $('#variants_select_title').val();
         var title = $('.notifyMe_popup_title').text().trim() + " - " + $('#variants_select_title').val();
         var notifyMe_arr = [];
         var notifyMe_data = '';
-        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title };
+        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title, "product_name": productName, "variant_title": variantTitle};
         if (mobile_number.length < 1) {
           $('#message_holder').html('Phone number is required.');
         } else if (mobile_number.length < 10) {
@@ -1586,6 +1588,14 @@ function closePopup() {
           }
           // CleverTap event for notify me
           clevertap.event.push("Notify Me When Available", notifyMe_varient);
+          clevertap.profile.push({
+            Site: {
+              "Product Subscribed for Notify": productName,
+              "Variant Subscribed for Notify": variantTitle,
+              "Variant ID Subscribed for Notify": varient_id,
+              "Mobile Number Subscribed for Notify": mobile_number
+            }
+          })
 
           if (isJson(localStorage.notifyMe_data)) {
             notifyMe_data = JSON.parse(localStorage.notifyMe_data);
