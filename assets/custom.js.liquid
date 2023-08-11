@@ -1290,7 +1290,7 @@ Shopify.custom_otp_login = function () {
         sessionStorage.setItem('login_session_id', response.session_id)
       } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('The phone field is required.');
-      } else if (response.code == 403 && response.message == 'Invalid phone number') {
+      } else if (response.code == 403) {
         $('.otp-login-error').html(response.message);
       } else if (response.code == 429) {
         $('.otp-login-error').html(response.message);
@@ -1362,11 +1362,17 @@ Shopify.custom_otp_login = function () {
     } else {
       let session_id = sessionStorage.getItem('login_session_id');
       let mobile_number = $('.mobile-login-input input').val()
-      let otp = $('.mobile-otp-inout input').val();
+      // Get the values of all the inputs
+      var inputs = document.querySelectorAll('#OTPInput > *[id]');
+      var compiledOtp = '';
+      for (let i = 0; i < inputs.length; i++) {
+        compiledOtp += inputs[i].value;
+      }
+      document.getElementById('otp').value = compiledOtp;
       let url = sessionStorage.getItem('login_location');
-      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
-        verifyemail(session_id, otp, url);
-      } else if (otp == '') {
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && compiledOtp !== '') {
+        verifyemail(session_id, compiledOtp, url);
+      } else if (compiledOtp == '') {
         $('.otp-login-error').html('OTP is required');
       }
     }
@@ -1395,7 +1401,7 @@ Shopify.custom_otp_login = function () {
   });
 
 };
-Shopify.custom_otp_login();
+
 
 $(document).on("click", ".custom-offer-add-to-cart", function (e) {
   e.preventDefault();
@@ -1466,6 +1472,8 @@ Shopify.loginInput = function ($otp_length) {
       let inputField = document.createElement('input'); // Creates a new input element
       inputField.id = 'otp-field' + i; // Don't remove
       inputField.maxLength = 1; // Sets individual field length to 1 char
+      inputField.type = 'tel';
+      inputField.pattern = '[0-9]*';
       OTP_element.appendChild(inputField); // Adds the input field to the parent div (OTPInput)
     }
 
@@ -1486,7 +1494,7 @@ Shopify.loginInput = function ($otp_length) {
         } else if (event.key === "ArrowRight" && i !== inputs.length - 1) {
           inputs[i + 1].focus();
         } else if (event.key != "ArrowLeft" && event.key != "ArrowRight") {
-          inputs[i].setAttribute("type", "text");
+          inputs[i].setAttribute("type", "tel");
           inputs[i].value = ''; // Bug Fix: allow user to change a random otp digit after pressing it
         }
       });
@@ -1504,6 +1512,9 @@ Shopify.loginInput = function ($otp_length) {
     }
   }
 }
+
+Shopify.loginInput(6);
+Shopify.custom_otp_login();
 
 Shopify.notifyMe = function (btn) {
   event.preventDefault();
@@ -1555,10 +1566,12 @@ function closePopup() {
         event.preventDefault();
         var varient_id = $('#variants_select').val();
         var mobile_number = $('#notifyMe_mobile_number').val();
+        var productName = $('.notifyMe_popup_title').text().trim();
+        var variantTitle = $('#variants_select_title').val();
         var title = $('.notifyMe_popup_title').text().trim() + " - " + $('#variants_select_title').val();
         var notifyMe_arr = [];
         var notifyMe_data = '';
-        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title };
+        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title, "product_name": productName, "variant_title": variantTitle};
         if (mobile_number.length < 1) {
           $('#message_holder').html('Phone number is required.');
         } else if (mobile_number.length < 10) {
@@ -1575,6 +1588,14 @@ function closePopup() {
           }
           // CleverTap event for notify me
           clevertap.event.push("Notify Me When Available", notifyMe_varient);
+          clevertap.profile.push({
+            Site: {
+              "Product Subscribed for Notify": productName,
+              "Variant Subscribed for Notify": variantTitle,
+              "Variant ID Subscribed for Notify": varient_id,
+              "Mobile Number Subscribed for Notify": mobile_number
+            }
+          })
 
           if (isJson(localStorage.notifyMe_data)) {
             notifyMe_data = JSON.parse(localStorage.notifyMe_data);
