@@ -36,14 +36,19 @@
 
         $.ajax(settings).done(function(response) {
           console.log(response);
-          sessionStorage.setItem('login', 'false');
-          setTimeout(function() {
-            if (sessionStorage.getItem('login') == 'false') {
-              localStorage.setItem('boatHead_input', response.Token);
-              clevertap.event.push('Persistent Login Worked')
-              window.location = response.URL;
-            }
-          }, 500);
+          if(response.success){
+            sessionStorage.setItem('login', 'false');
+            setTimeout(function() {
+              if (sessionStorage.getItem('login') == 'false') {
+                localStorage.setItem('boatHead_input', response.Token);
+                clevertap.event.push('Persistent Login Worked')
+                window.location = response.URL;
+              }
+            }, 500);
+          }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          console.log("Error:", textStatus, errorThrown);
         });
       }
     }
