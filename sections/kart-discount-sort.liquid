@@ -1,0 +1,41 @@
+{% capture KartDiscount_codes %}
+  [
+  {%- for block in section.blocks -%}
+    "{{- block.settings.code -}}"
+    {% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+  ]
+{% endcapture %}
+
+<script>
+  Shopify.KartDiscount_codes = `{{ KartDiscount_codes | strip }}`;
+</script>
+
+
+{% schema %}
+  {
+    "name": "KartDiscount",
+    "settings": [],
+    "blocks": [
+      {
+        "type": "cart",
+        "name": "Discount Codes",
+        "settings": [
+          {
+            "type": "text",
+            "id": "code",
+            "label": "Discount Code"
+          }
+        ]
+      }
+    ],
+
+    "presets": [
+      {
+        "category": "Cart",
+        "name": "KartDiscount",
+        "settings": {}
+      }
+    ]
+  }
+{% endschema %}
