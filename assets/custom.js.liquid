@@ -1681,3 +1681,36 @@ function closePopup() {
   });
   $('.login_popup_main_container').addClass('show');
 });
+Shopify.varient_view_popup = function(varient_id, btn) {
+  var varient_view_popup_close_btn = btn;
+  document.addEventListener("click", function (event) {
+    var varient_view_popup_container = document.querySelector(".pdp-360-view_container");
+    if (varient_view_popup_container != null && !varient_view_popup_container.contains(event.target) && event.target !== varient_view_popup_close_btn) {
+      $('.pdp-360-view').removeClass('show');
+      $('body').removeClass('overflow-hidden');
+      document.querySelector('.pdp-360-view_body').innerHTML = '';
+    }
+  });
+  $.ajax({
+    url: location.pathname + "?variant=" + varient_id + "&view=3D_view",
+    type: "GET",
+    dataType: "html",
+    success: function(e) {
+        $(".pdp-360-view_body").html(e);
+          $('.pdp-360-view').addClass('show');
+          $('body').addClass('overflow-hidden');
+          let popup_detail = $('.pdp_view_popup_item');
+        $('.pdp_view_popup_btn_container button').click(function(){
+        var index = $(this).attr('data-index');
+          for (i = 0; i < popup_detail.length; i++) {
+            if (popup_detail[i].hasAttribute("open")) {
+              popup_detail[i].removeAttribute("open");
+            }
+          }
+          $('.pdp_view_popup_btn_container button').removeAttr('active');
+          $(this).attr('active', 'true');
+          popup_detail[index].setAttribute('open', 'true');
+        });
+    }
+  })
+  }

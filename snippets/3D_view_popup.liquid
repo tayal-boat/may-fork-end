@@ -1,0 +1,33 @@
+{% assign 3D_view = product.selected_or_first_available_variant.metafields.custom.variant_view_popup.value %}
+{% assign threeD_flag = false %}
+<div class="pdp_view_popup_container">
+  <div class="pdp_view_popup_item" open>
+    {% for media in product.media %}
+    {% if media.media_type == 'model' and media.alt contains 'model_' and media.alt contains product.selected_or_first_available_variant.title %}
+    {% assign threeD_flag = true %}
+    <model-media product-handle="{{ product.handle }}" class="model-wrapper">
+      {{- media | model_viewer_tag: image_size: '1024x', reveal: 'interaction', toggleable: true -}}
+    </model-media>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% if 3D_view.view_360.value.media_type == 'video' %}
+  <div class="pdp_view_popup_item" {% unless threeD_flag %} open {% endunless %}>
+    <video width="100%" height="100%" loop controls="false" {% unless threeD_flag %} autoplay {% endunless %} preload muted>
+      {% for source in 3D_view.view_360.value.sources %}
+      <source src="{{ source.url }}" type="{{ source.mime_type }}">
+      {% endfor %}
+    </video>
+  </div>
+  {% endif %}
+</div>
+<div class="pdp_view_popup_btn_container">
+  {% if threeD_flag %}
+  <button class="button button--primary" data-index="0" active>3D View</button>
+  {% endif %}
+  {% if 3D_view.view_360.value.media_type == 'video' %}
+  <button class="button button--primary" data-index="1"
+    onclick="document.querySelector('.pdp_view_popup_item video').play()" {% unless threeD_flag %} active {% endunless
+    %}>360 View</button>
+  {% endif %}
+</div>
