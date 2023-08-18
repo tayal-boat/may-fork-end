@@ -100,60 +100,19 @@ console.log(KartDiscount_codes);
     }, 500);
   }
   // here we are updating the list of discount codes in discount filder
-  let discountListHtml = '', i;
-  let discountListContainer = document.querySelector('.discount_finder_body');
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-
-  function discount_finder_items(item) {
-      var discount_collection_link = '';
-    var discount_info = item.dependedProductCollection.entitled_collection;
-      if(discount_info && discount_info != ""){
-      var discount_collection = discount_info[0].handle;
-      var discount_collection_link = discount_collection ? '/collections/' + discount_collection : '';
-      }
-      var discount_collection_element = discount_collection_link != '' ? `<a href="${discount_collection_link}" class="discount_finder_view_product">View Products</a>` : '';
-      discountListHtml = discountListHtml + `
-          <div class="discount_finder_item">
-          <div class="discount_finder_item_details">
-          <div class="discount_finder_item_icon">
-          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.472" height="23.348" viewBox="0 0 22.472 23.348">
-          <defs>
-            <clipPath id="clip-path">
-              <rect id="Rectangle_116108" data-name="Rectangle 116108" width="22.472" height="23.348" fill="none"/>
-            </clipPath>
-          </defs>
-          <g id="Group_337143" data-name="Group 337143" transform="translate(0 0)">
-            <g id="Group_337142" data-name="Group 337142" transform="translate(0 0)" clip-path="url(#clip-path)">
-              <path id="Path_346390" data-name="Path 346390" d="M21.657,12.326a1.261,1.261,0,0,1,0-1.306l.41-.667a2.747,2.747,0,0,0-1.29-3.973l-.724-.3a1.245,1.245,0,0,1-.769-1.059l-.06-.785a2.757,2.757,0,0,0-3.38-2.457l-.764.181a1.255,1.255,0,0,1-1.244-.4l-.506-.6a2.747,2.747,0,0,0-4.18,0l-.511.6a1.253,1.253,0,0,1-1.245.4l-.764-.181a2.757,2.757,0,0,0-3.38,2.457l-.06.785A1.246,1.246,0,0,1,2.42,6.078l-.724.3A2.748,2.748,0,0,0,.4,10.352l.41.667a1.261,1.261,0,0,1,0,1.306L.4,13a2.75,2.75,0,0,0,1.29,3.974l.724.3a1.241,1.241,0,0,1,.769,1.052l.06.785a2.749,2.749,0,0,0,3.38,2.454l.764-.181a1.267,1.267,0,0,1,1.245.4l.511.6a2.752,2.752,0,0,0,4.179,0l.506-.6a1.267,1.267,0,0,1,1.244-.4l.764.181a2.749,2.749,0,0,0,3.38-2.454l.06-.785a1.241,1.241,0,0,1,.769-1.051l.724-.3a2.72,2.72,0,0,0,.38-.194A2.749,2.749,0,0,0,22.066,13ZM7.382,9.18v0a1,1,0,1,1,1,1,1,1,0,0,1-1-1M8.764,15.2a.728.728,0,0,1-.527.219A.747.747,0,0,1,7.7,14.153l0,0,6-6a.749.749,0,0,1,1.086,1.031l-.028.028Zm5.622-.031a1,1,0,0,1-1-.992v-.007a1,1,0,1,1,1,1" transform="translate(0 0)" fill="#1a2024"/>
-            </g>
-          </g>
-        </svg>
-        </div>
-              <div class="discount_finder_item_content">
-                <h6>${item.full_detail.split('•')[0]}</h6>
-                <!-- <p>${item.full_detail}</p> -->
-                  <div class="discount_finder_view_products_container">
-                <span>${item.code}</span>
-                  ${discount_collection_element}
-                  </div>
-              </div>
-          </div>
-          <div class="discount_finder_item_cta_btn">
-            <button type="button" onclick="CDSetupInit.applyDiscount('${item.code}')" ${item.is_active == 0 ? 'disabled' : ''} class="${preAppliedCoupon == item.code ? 'coupon_applied' : ''} ${item.code}">${preAppliedCoupon == item.code ? '<span>Applied</span>' : '</span>Tap To Apply</span>'}</button>
-          </div>
-      </div>`
-    }
 
   if (df_list.length > 0) {
     for (let j = 0; j < KartDiscount_codes.length; j++) {
       for (let i = 0; i < df_list.length; i++) {
         if(df_list[i].code.toLowerCase() == KartDiscount_codes[j].toLowerCase()){
-          discount_finder_items(df_list[i]);
+          console.log(df_list[j]);
+          df_list[j].is_active == 0 ? document.querySelectorAll('.discount_cta_btn')[j].setAttribute('disabled', 'true') : '';
+          preAppliedCoupon.toLowerCase() == df_list[j].code.toLowerCase() ? [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Applied</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.add('coupon_applied')] : [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Tap to Apply</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.remove('coupon_applied')];
         }
       }
     }
 
-    discountListContainer.innerHTML = discountListHtml;
     setTimeout(function(){
       var discount_finder_apply_btn = $('.discount_finder_btn_holder .discount_finder_apply_btn');
       $('#af_kd_custom_coupon_text').on('input', function() {
