@@ -1127,20 +1127,20 @@ document.addEventListener('cart:updated', (event) => {
 }) {% endcomment %}
 </script>
 
-{% capture KartDiscount_codes %}
-  [
+{% capture KartDiscount_detail %}
+  {
   {%- for block in section.blocks -%}
     {% case block.type %}
       {% when 'cart-offer' %}
-      "{{- block.settings.code -}}"
+      "{{- block.settings.code -}}" : "{{- block.settings.heading -}}"
       {% unless forloop.last %},{% endunless %}
     {% endcase %}
   {%- endfor -%}
-  ]
+  }
 {% endcapture %}
 
 <script>
-  Shopify.KartDiscount_codes = `{{ KartDiscount_codes | strip }}`;
+  Shopify.KartDiscount_detail = `{{ KartDiscount_detail | strip }}`;
 </script>
 
 {% schema %}

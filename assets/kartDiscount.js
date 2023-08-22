@@ -33,6 +33,12 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
       responseData.data.response.formatted_text.discount_amount = total_discount_amount.toFixed(2);
       responseData.data.response.formatted_text.final_total_price = after_discount.toFixed(2);
     }
+
+    var KartDiscount_detail = JSON.parse(Shopify.KartDiscount_detail);
+    if(KartDiscount_detail[discount_code[0]] != undefined) {
+      sessionStorage.setItem('applyCoupun_heading', KartDiscount_detail[discount_code[0]]);
+    }
+
     sessionStorage.setItem('applyCoupun', discount_code[0]);
     sessionStorage.setItem('Coupun_saveAmount', saveAmount);
     $('.af_coupon_text').html(discount_code[0]);
@@ -66,28 +72,30 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
 }
 
 window.KDHooks.__postDiscountFinder_af = function (df_list) {
-  console.log('df_list', df_list);
-  // alert('cart');
-var KartDiscount_codes = JSON.parse(Shopify.KartDiscount_codes);
-console.log(KartDiscount_codes);
+  var KartDiscount_detail = JSON.parse(Shopify.KartDiscount_detail);
+  var KartDiscount_codes = Object.keys(KartDiscount_detail);
   // here we can get the discount finder list and use it as required
   // here we are getting the data of active discount code from dicount finder list and updating the content of the dicount finder in cart drawer.
   if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
-    for (let j = 0; j < KartDiscount_codes.length; j++) {
-      for (let i = 0; i < df_list.length; i++) {
-        if (df_list[i].is_active == 1 && df_list[i].toLowerCase() == KartDiscount_codes[j].toLowerCase()) {
-          var applyCoupun = df_list[i].code;
-          var applyCoupun_heading = df_list[i].full_detail;
-          applyCoupun_heading = applyCoupun_heading.split('•')[0];
-          sessionStorage.setItem('applyCoupun', applyCoupun);
-          sessionStorage.setItem('applyCoupun_heading', applyCoupun_heading);
-          break
+    if (df_list.length > 0) {
+      var applyCoupun = '';
+      for (let j = 0; j < KartDiscount_codes.length; j++) {
+        if (applyCoupun == ''){
+          for (let i = 0; i < df_list.length; i++) {
+            if (df_list[i].code.toLowerCase() == KartDiscount_codes[j].toLowerCase() && df_list[i].is_active == 1) {
+              applyCoupun = df_list[i].code;
+              sessionStorage.setItem('applyCoupun', applyCoupun);
+              var applyCoupun_heading = df_list[i].full_detail;
+              applyCoupun_heading = applyCoupun_heading.split('•')[0];
+              sessionStorage.setItem('applyCoupun_heading', applyCoupun_heading);
+              break;
+            }
+          }
         }
       }
     }
     setTimeout(function () {
-      if (applyCoupun !== undefined) {
-        console.log(applyCoupun_heading, 'applyCoupun_heading');
+      if (applyCoupun) {
         $('.af_coupon_text').html(applyCoupun);
         $('.afHiddenDiscount').val(applyCoupun);
         $('#af_custom_coupon_text').val(applyCoupun);
@@ -111,7 +119,7 @@ console.log(KartDiscount_codes);
       for (let i = 0; i < df_list.length; i++) {
         if(df_list[i].code.toLowerCase() == KartDiscount_codes[j].toLowerCase()){
           df_list[i].is_active == 0 ? [document.querySelectorAll('.discount_cta_btn')[j].setAttribute('disabled', 'true')] : document.querySelectorAll('.discount_finder_item')[j].classList.add('active_discount');
-          preAppliedCoupon.toLowerCase() == df_list[i].code.toLowerCase() ? [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Applied</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.add('coupon_applied'), document.querySelectorAll('.discount_finder_item')[j].classList.add('applied_discount')] : [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Tap to Apply</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.remove('coupon_applied'), document.querySelectorAll('.discount_finder_item')[j].classList.remove('applied_discount')];
+          preAppliedCoupon ? preAppliedCoupon.toLowerCase() == df_list[i].code.toLowerCase() ? [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Applied</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.add('coupon_applied'), document.querySelectorAll('.discount_finder_item')[j].classList.add('applied_discount')] : [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Tap to Apply</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.remove('coupon_applied'), document.querySelectorAll('.discount_finder_item')[j].classList.remove('applied_discount')] : '';
         }
       }
     }
