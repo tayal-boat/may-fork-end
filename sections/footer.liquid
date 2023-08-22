@@ -548,7 +548,7 @@
       text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
     }
     div#timed-Modal.show {transform: translateY(0);visibility: visible;}
-    #timed-Modal .modal-dialog {position: absolute;bottom: 0; margin: 0;z-index:9999;}
+    #timed-Modal .modal-dialog {position: absolute;bottom: 0; margin: 0;z-index:9999;width:100%}
   </style>
   <div id="timed-Modal" class="modal fade" role="dialog">
     <span class="popover__overlay"></span>
@@ -572,8 +572,8 @@
               <a style="color: white;font-weight: 700!important;
                 padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
                 border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" 
-                href="https://t.me/boAtonTelegram" target="_blank">
-                Count Me In 🥳
+                    href="https://wa.me/919667700177?text=Hola%21%20I%20am%20here%20for%20the%20mysterious%20exclusive%20offer%21%21" target="_blank">
+                    Yes, Unmask The Offer!
               </a>
             </div>
           </div>
@@ -666,24 +666,29 @@ function openLink(evt, tabName) {
   evt.currentTarget.className += ' active';
 } {% endcomment %}
 {% if section.settings.time_popup  %}
-if(window.innerWidth <= 768){
-  if (sessionStorage.getItem("timed_popUpPoped") === null){
-    $(document).one('touchmove scroll', function() {
-      console.log("start_time")
-      setTimeout(function() {
-        if ($('cart-drawer#mini-cart[open], quick-buy-popover[open], quick-buy-drawer[open], mobile-navigation[open]').length == 0){
-          console.log("time")
-          $("#timed-Modal").addClass("show");
-          $("html").addClass("lock-mobile");
-          sessionStorage.setItem("timed_popUpPoped", "poped");
+  if(window.innerWidth <= 768){
+    if (sessionStorage.getItem("timed_popUpPoped") === null){
+      var flag = false;
+      $(document).one('touchmove scroll', function(event) {
+        if (!flag) {
+          flag = true;
+          console.log("start_time");
+          setTimeout(function() {
+            if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show').length == 0){
+              console.log("time")
+              $("#timed-Modal").addClass("show");
+              $("html").addClass("lock-mobile");
+              sessionStorage.setItem("timed_popUpPoped", "poped");
+            }
+          }, 10000);
         }
-      }, 15000);
-    })
-    $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
-      $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
-    })
+      })
+      $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+        $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
+      })
+    }
   }
-}
+  
 {% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
