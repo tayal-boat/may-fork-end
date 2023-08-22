@@ -161,6 +161,7 @@
   
   
   
+  
     
   // for quiz to popup
   $(document).ready(function() {
@@ -209,21 +210,7 @@
             self.forEach(element => {element.style.pointerEvents = "auto"; });
           }
         });
-        {% else %}
-        // for screen change 
-        if (i < 3) {
-         console.log(i); 
-         document.querySelector(`.screen${i+1}`).classList.add("d-none");
-         document.querySelector(`.screen${i+2}`).classList.remove("d-none");  
-        }
-        // sceens for taking decision
-          if (i == 1) {redirect = value; console.log(redirect); }
-          if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`; selft.style.backgroundColor = "#f4c730";
-            {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
-            console.log(final);  
-            submit.classList.remove("d-none");
-            self.forEach(element => {element.style.pointerEvents = "none"; });
-          }
+
         {% endif %}
      })
     }
@@ -239,6 +226,22 @@
       if (i == 2 || i == 3 ){
         submit.classList.add("d-none");}
     })
+    let nxt = next[i];
+    nxt.addEventListener("click", () => {
+            // for screen change 
+        if (i < 3) {
+         console.log(i); 
+         document.querySelector(`.screen${i+1}`).classList.add("d-none");
+         document.querySelector(`.screen${i+2}`).classList.remove("d-none");  
+        }
+        // sceens for taking decision
+          if (i == 1) {redirect = value; console.log(redirect); }
+          if (i == 3) {redirect2 = value; final = `${redirect}${redirect2}`; selft.style.backgroundColor = "#f4c730";
+            {% unless block.settings.enable_comma %} switch (final) {  {{- section.settings.quiz_url -}}  } {% endunless %}
+            console.log(final);  
+            submit.classList.remove("d-none");
+            self.forEach(element => {element.style.pointerEvents = "none"; });
+          }
     {% endunless %}
   }
 
@@ -267,6 +270,7 @@
   {% else %}
   submit.addEventListener("click", () => { document.location.href = final; })
   {% endif %}
+
 
 
 
