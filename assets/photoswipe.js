@@ -2008,7 +2008,9 @@
                   img = framework.createEl("pswp__img", "img");
                   img.style.opacity = 1;
                   img.style.top = "unset";
+                  img.style.left = "unset";
                   img.style.width = "100%";
+                  img.style.maxWidth = "max-content";
                   img.src = item.originalMedia.src;
                   _setImageSize(item, img);
                   _appendImage(index, item, baseDiv, img, true);
