@@ -51,6 +51,21 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.custom_kartdiscount_container').attr('couponCode', 'true');
     $('.mini-cart-total-price').hide();
     $('.discount_error').html('');
+    let cart_json = responseData.data.cart_json;
+    cart_json = JSON.parse(cart_json);
+      var cartTotal = cart_json.total_price;
+      var line_item = document.querySelectorAll('line-item');
+        for (var i = 0; i < cart_json.items.length; i++) {
+          var itemPrice = cart_json.items[i].line_price;
+          var discountPercent =itemPrice / cartTotal;
+          discountPercent = Math.round(discountPercent * 100);
+          var itemDiscount = saveAmount * discountPercent;
+          var finalItemPrice = itemPrice - itemDiscount;
+          finalItemPrice = Shopify.formatMoney(finalItemPrice, Shopify.money_format2);
+          line_item[i].querySelector('.price-list') ? line_item[i].querySelector('.price-list').classList.add('kartDiscount_applied') : '';
+          line_item[i].querySelector('.discount_line_price') ? line_item[i].querySelector('.discount_line_price').innerHTML = finalItemPrice : '';
+        }
+
   } else if (responseData.is_success == false && responseData.code == "516") {
     var discountCode = responseData.data.discount_code;
     KDSdk.showError('Coupon code ' + discountCode + ' is invalid. Please try another code')
@@ -151,7 +166,11 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
-  
+  var line_item = document.querySelectorAll('line-item');
+  for (var i = 0; i < line_item.length; i++) {
+    line_item[i].querySelector('.price-list') ? line_item[i].querySelector('.price-list').classList.remove('kartDiscount_applied') : '';
+    line_item[i].querySelector('.discount_line_price') ? line_item[i].querySelector('.discount_line_price').innerHTML = '' : '';
+  }
   setTimeout(() => {
     deleteCookie('discount_code');
   }, 1000)
