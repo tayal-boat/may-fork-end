@@ -2004,6 +2004,14 @@
                   img.src = item.src;
                   _setImageSize(item, img);
                   _appendImage(index, item, baseDiv, img, true);
+                }else if (!item.src && item.originalMedia.src) {
+                  img = framework.createEl("pswp__img", "img");
+                  img.style.opacity = 1;
+                  img.style.top = "unset";
+                  img.style.width = "100%";
+                  img.src = item.originalMedia.src;
+                  _setImageSize(item, img);
+                  _appendImage(index, item, baseDiv, img, true);
                 }
                 if (!_initialContentSet && index === _currentItemIndex) {
                   _currZoomElementStyle = baseDiv.style;
