@@ -20,7 +20,6 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     responseData = response;
   }
   if (responseData.is_success) {
-    console.log(responseData);
     var total_discount_amount = sessionStorage.total_discount_amount;
     total_discount_amount = parseInt(total_discount_amount);
     var cart_amount = responseData.data.response.formatted_text.total_price;
@@ -54,21 +53,15 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.discount_error').html('');
     let cart_json = responseData.data.cart_json;
     cart_json = JSON.parse(cart_json);
-    console.log(cart_json);
       var cartTotal = cart_json.total_price;
       var line_item = document.querySelectorAll('line-item');
-      console.log(cartTotal);
         for (var i = 0; i < cart_json.items.length; i++) {
           var itemPrice = cart_json.items[i].line_price;
-          console.log(itemPrice);
           var discountPercent =itemPrice / cartTotal;
           discountPercent = Math.round(discountPercent * 100);
-          console.log(discountPercent, 'discountPercent');
           var itemDiscount = saveAmount * discountPercent;
           var finalItemPrice = itemPrice - itemDiscount;
           finalItemPrice = Shopify.formatMoney(finalItemPrice, Shopify.money_format2);
-          console.log(finalItemPrice, 'finalItemPrice');
-          console.log(itemDiscount, 'itemDiscount');
           line_item[i].querySelector('.price-list') ? line_item[i].querySelector('.price-list').classList.add('kartDiscount_applied') : '';
           line_item[i].querySelector('.discount_line_price') ? line_item[i].querySelector('.discount_line_price').innerHTML = finalItemPrice : '';
         }
@@ -135,7 +128,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   }
   // here we are updating the list of discount codes in discount filder
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-console.log(df_list, 'df_list');
+
   if (df_list.length > 0) {
     for (let j = 0; j < KartDiscount_codes.length; j++) {
       for (let i = 0; i < df_list.length; i++) {
