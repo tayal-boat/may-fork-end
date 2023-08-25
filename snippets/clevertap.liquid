@@ -1,8 +1,3 @@
-{% if template contains 'index' %}
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-{% endif %}
 <script>
    var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
    clevertap.account.push({"id": "8W4-9WW-Z85Z"});
@@ -77,13 +72,13 @@
   $(document).ready(function () {
 
               setTimeout(function() {
-              {% comment %}    var isSubscribed = document.getElementById("ctIframe").contentWindow.subscribed;
+                var isSubscribed = document.getElementById("ctIframe").contentWindow.subscribed;
                   if (!isSubscribed) {
-                   if(!Cookies.get('WebPush')) { {% endcomment %}
+                    {% comment %} if(!Cookies.get('WebPush')) { {% endcomment %}
                       $("#myBtn").click();
                       Cookies.set("WebPush", 1, { expires : 3 });
                     {% comment %} } {% endcomment %}
-                 // }
+                  }
               }, 5000);
             $('#myModal').on('shown.bs.modal', function (e) {
               if(!$("#wzrk_wrapper", $("#ctIframe").contents()).length) {
@@ -97,23 +92,19 @@
     console.log('clevertap loaded');
 </script>
 <style>
-  .modal-custom {
-    width: 346px;
-    height:206px;
-    margin: auto;
-  }
-  .modal-content {
-    width: 346px;
-    height:250px;
-    border:0px;
-    background-color:transparent;
-    box-shadow:0 0;
+  #myModal .modal-content {
+    width: 100%;
+    height: 250px;
+    border: 0px;
+    background-color: transparent;
+    box-shadow: 0 0;
   }
   .modal-backdrop {
     background-color: transparent;
+    display: none !important;
   }
 </style>
-<div class="container">
+<div class="container ct-container">
   <button
     type="button"
     style="display:none"
@@ -125,30 +116,31 @@
     Open Modal
   </button>
   <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog" style="background-color:transparent !important;">
+  <div class="modal" id="myModal" role="dialog">
     <div class="modal-dialog modal-custom">
       <!-- Modal content -->
       <div class="modal-content">
+        <button hidden type="button" class="close" id="ct-close" data-dismiss="modal">&times;</button>
         <iframe
           id="ctIframe"
-          src="/a/d/testfile.html"
+          src="/apps/soft/testfile.html"
           title="Order Form_Shopify"
           width="400"
           height="250"
           frameborder="0"
+          style="margin: auto;"
         ></iframe>
       </div>
     </div>
   </div>
 </div>
-
 <script>
-  // $(document).ready(function () {
-  //  $("#myModal").css({"z-index": "10000", "background": "rgba(0,0,0,.7)"})
-  // if(window.innerWidth <= 768){
-  //   $("#myModal .modal-dialog").css({"position": "absolute", "bottom": "0%", "margin": "0%"})
-  // }else{
-  //   $("#myModal .modal-dialog").css({"position": "absolute","top": "12%", "right": "2%"})
-  // }
-  // });
+  $(document).ready(function () {
+   $("#myModal").css({"z-index": "10000", "background": "rgba(0,0,0,.7)"})
+  if(window.innerWidth <= 768){
+    $("#myModal .modal-dialog").css({"position": "absolute", "bottom": "0%", "margin": "0%"})
+  }else{
+    $("#myModal .modal-dialog").css({"position": "absolute","top": "12%", "right": "2%"})
+  }
+  });
 </script>
