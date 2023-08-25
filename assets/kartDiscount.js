@@ -44,7 +44,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     $('.af_coupon_text').html(discount_code[0]);
     $('.afHiddenDiscount').val(discount_code[0]);
     $('#af_custom_coupon_text').val(discount_code[0]);
-    $('.discountCode_details').html(`<span style="color:#12b985">₹${saveAmount} saved</span>`);
+    $('.discountCode_details').html(`<span style="color:#12b985">₹${saveAmount} savings with this coupon</span>`);
     $('.custom_kartdiscount_container').addClass('discount_applied');
     $('.custom_kartdiscount_container').addClass('discount_added');
     $('.discountCode_details_container').addClass('show');
