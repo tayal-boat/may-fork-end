@@ -74,10 +74,10 @@
               setTimeout(function() {
                 var isSubscribed = document.getElementById("ctIframe").contentWindow.subscribed;
                   if (!isSubscribed) {
-                    {% comment %} if(!Cookies.get('WebPush')) { {% endcomment %}
+                   if(!Cookies.get('WebPush')) {
                       $("#myBtn").click();
                       Cookies.set("WebPush", 1, { expires : 3 });
-                    {% comment %} } {% endcomment %}
+                   }
                   }
               }, 5000);
             $('#myModal').on('shown.bs.modal', function (e) {
@@ -85,6 +85,9 @@
                   $("#myModal").modal('toggle');
               }
             })
+            window.addEventListener("message", function(event) {
+            if (event.data === "closeModal") {$("#myModal").modal('hide'); }
+            }, false);
           });
     console.log('clevertap loaded');
 </script>
@@ -133,7 +136,7 @@
 </div>
 <script>
   $(document).ready(function () {
-  $("#myModal").css({"z-index": "10000", "background": "rgba(0,0,0,.7)"})
+   $("#myModal").css({"z-index": "10000", "background": "rgba(0,0,0,.7)"})
   if(window.innerWidth <= 768){
     $("#myModal .modal-dialog").css({"position": "absolute", "bottom": "0%", "margin": "0%"})
   }else{
