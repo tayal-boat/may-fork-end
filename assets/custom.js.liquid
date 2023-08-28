@@ -727,7 +727,11 @@ Shopify.custom_otp_login = function () {
     if ($('#otp-mobile-number').val().length > 0) {
       $('.otp-login-btn').addClass('active');
     } else ($('.otp-login-btn').removeClass('active'));
+    if ($('#otp').val().length > 5) {
+      $('.otp-login-confirm-btn').addClass('active');
+    } else ($('.otp-login-confirm-btn').removeClass('active'));
   })
+
   $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
     return _isNumberCheck(e);
   })
@@ -767,7 +771,7 @@ Shopify.custom_otp_login = function () {
     $('.resend-text').hide();
     $('.resend-btn').hide();
     $('.otp-login-body-container').removeClass('login_error');
-    $('#OTPInput input').val('');
+    $('#otp').val('');
     timer(60, timerOn);
   }
 
@@ -1181,7 +1185,7 @@ Shopify.custom_otp_login = function () {
             "MSG-whatsapp": "TRUE"
           }
         });
-      } else if (response.code == 401 && response.message == 'Customer does not exists , consider Sign up') {
+      } else if (response.code == 401 && response.message == 'Customer has not registered email , redirecting to Sign up') {
         sessionStorage.setItem('timerOn', false);
         $('.otp-login-error').html(response.message);
         $('.otp-login-body-container').addClass('login_error');
@@ -1348,13 +1352,7 @@ Shopify.custom_otp_login = function () {
   $('.otp-login-confirm-btn').click(function () {
     if (!$('.otp-login-confirm-btn').hasClass('email_varify')) {
       let session_id = sessionStorage.getItem('login_session_id');
-      // Get the values of all the inputs
-      var inputs = document.querySelectorAll('#OTPInput > *[id]');
-      var compiledOtp = '';
-      for (let i = 0; i < inputs.length; i++) {
-        compiledOtp += inputs[i].value;
-      }
-      document.getElementById('otp').value = compiledOtp;
+      var compiledOtp = document.getElementById('otp').value;
       let url = sessionStorage.getItem('login_location');
       if (session_id && session_id !== '' && session_id !== 'undefined' && url && compiledOtp !== '') {
         verifyotp(session_id, compiledOtp, url);
@@ -1362,17 +1360,11 @@ Shopify.custom_otp_login = function () {
     } else {
       let session_id = sessionStorage.getItem('login_session_id');
       let mobile_number = $('.mobile-login-input input').val()
-      // Get the values of all the inputs
-      var inputs = document.querySelectorAll('#OTPInput > *[id]');
-      var compiledOtp = '';
-      for (let i = 0; i < inputs.length; i++) {
-        compiledOtp += inputs[i].value;
-      }
-      document.getElementById('otp').value = compiledOtp;
+      let otp = document.getElementById('otp').value;
       let url = sessionStorage.getItem('login_location');
-      if (session_id && session_id !== '' && session_id !== 'undefined' && url && compiledOtp !== '') {
-        verifyemail(session_id, compiledOtp, url);
-      } else if (compiledOtp == '') {
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyemail(session_id, otp, url);
+      } else if (otp == '') {
         $('.otp-login-error').html('OTP is required');
       }
     }
@@ -1509,11 +1501,26 @@ Shopify.loginInput = function ($otp_length) {
           $('.otp-login-body-container').removeClass('login_error');
         }
       });
+
+      inputs[i].addEventListener('paste', function(event) {
+        event.preventDefault();
+        var clipboardData = event.clipboardData || window.clipboardData;
+        var pastedText = clipboardData.getData('text');
+        for (let j = 0; j < pastedText.length && i + j < inputs.length; j++) {
+          inputs[i + j].value = pastedText[j];
+    }
+        
+        if (i + pastedText.length < inputs.length) {
+          inputs[i + pastedText.length].focus();
+        } else if (i + pastedText.length === inputs.length) {
+          $('.otp-login-confirm-btn').addClass('active');
+  }
+      });
     }
   }
 }
 
-Shopify.loginInput(6);
+// Shopify.loginInput(6);
 Shopify.custom_otp_login();
 
 Shopify.notifyMe = function (btn) {
@@ -1557,7 +1564,7 @@ function closePopup() {
     dataType: "html",
     success: function (e) {
       $(".notifyMe_popup__main_container").html(e);
-      Shopify.loginInput(6);
+      // Shopify.loginInput(6);
       Shopify.custom_otp_login();
       const notifyMe_tempDiv = document.createElement('div');
       notifyMe_tempDiv.innerHTML = e;
@@ -1675,7 +1682,7 @@ function closePopup() {
     success: function (e) {
       document.querySelector('body').classList.add('overflow-hidden');
       $(".login_popup_main_container").html(e);
-      Shopify.loginInput(6);
+      // Shopify.loginInput(6);
       Shopify.custom_otp_login();
     }
   });
