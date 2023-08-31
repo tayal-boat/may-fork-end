@@ -505,6 +505,32 @@
 {% if product.handle == 'gift-card' %}
   #BIS_trigger{display:none !important}
 {% endif %}
+{%- if product.tags contains 'ring' -%}
+  .block-swatch-list{column-gap: 10px;}
+  .block-swatch__item{
+    min-width: 40px;
+    border-radius: 50%;
+    background: #f2f5f9;
+    font-size: 15px;
+    font-weight: bold;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    padding: 0;
+  }
+  .block-swatch__radio:checked+.block-swatch__item{
+    border: 1px solid rgb(var(--border-color));
+    background: #f2f5f9;
+  }
+  .block-swatch__item:after {
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 1px 1px #f4c730!important;
+  }
+{%- endif -%}
+{% unless product.tags contains 'customized' %}
+  .mobile-only.pdp_section_para{display:none!important;}
+{% endunless %}
 .product:has([handle="gift-card"]) .restocking{display:none;}
 {% comment %} !NEW PDP LAYOUT CSS ENDS {% endcomment %}
 
@@ -744,7 +770,7 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
 }
 .payment-offers-container .payment_offers .payment_icons {
   background: #fcf2cf;
-  padding: 0px 20px;
+  padding: 0px 0px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   display: flex;
@@ -823,21 +849,29 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
   /* Code ends for showing numbering dots on PDP slider */
 
   /* CSS starts for notify me button */
+
   .pdp_right_section .new-pdp #BIS_trigger.custom-notify-btn{justify-content: space-around;height: 68px;}
   .pdp_right_section .new-pdp #BIS_trigger.custom-notify-btn span{display: flex;align-items: center;}
   /* CSS ends for notify me button */
+
+  /* Marketplace logo css starts here */
+  .marketplace_logo img{width: 40px;}
+  /* marketplace logo css ends here */
 
 }
 @media(max-width:768px){
   .pdp_right_section .price-list {gap: 8px 4px;}
   product-payment-container .loader-button__text{flex-direction:row-reverse;}
-  .pdp_right_section .new-pdp #notifyMe_trigger{justify-content:space-between;height:68px;border-radius: 20px !important;}
+  .pdp_right_section .new-pdp #notifyMe_trigger{justify-content:space-between;height:68px;border-radius: 20px !important;padding: 0px 32px !important;}
 }
 .pdp_right_section .price-list {display: grid;justify-content: flex-start;grid-template-areas:'price stike-down flash''percent percent flash';}
 .pdp_right_section span.price.price--highlight.quick_product-price {grid-area: price;}
 .pdp_right_section span.price.price--compare.line-through {grid-area: stike-down;}
 .pdp_right_section p.custom-saved-price {grid-area: percent;}
 .custom_product_nav.hide_desc_nav {opacity: 0;height: 0px;margin: 0px; padding: 0px;}
+
+.pdp_right_section .new-pdp #notifyMe_trigger.coming_soon_btn{justify-content: space-between;margin-top: 16px;}
+.coming_soon_on_cta{color: #12b985;}
 
 /* Quick product highlights CSS starts here */
 
@@ -1069,5 +1103,7 @@ product-meta .desktop_reviews_wrapper .rating{display: none;}
     border-radius: 5px;
 }
 {% comment %} info: PDP 2.0 CSS ends here (CHANDU) {% endcomment %}
-
+      {% if product.tags contains 'ring' %}
+        /* .block-swatch__item {border-radius: 0;width: 60px;} */
+      {% endif %}
 </style>
