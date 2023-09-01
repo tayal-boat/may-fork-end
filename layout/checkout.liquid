@@ -1063,8 +1063,6 @@ li.mobile-nav__item.open collapsible-content {
                 discount_price = parseInt(discount_price/qty);
                 var percentOff = 1 - discount_price/price;
                 percentOff = Math.round(percentOff * 100);
-                console.log(discount_price,'discount_price.replace');
-                console.log(price,'price');
                 $('[data-order-summary-section="line-items"] [data-variant-id="'+ varient_id +'"] .product__price').append(`<span class='original__price' data-product-id='{{line_item.product.id }}'>&nbsp;<span class="original-price--text">₹${finalprice.toLocaleString()}.00</span></br>
                 <span class='discount' data-product-id='{{line_item.product.id }}'>
                 {% comment %} {{ line_item.product.compare_at_price |minus: line_item.product.price | times: 100.0 | divided_by: line_item.product.compare_at_price| floor | money_without_currency | times: 100 | remove: ".0"}}% off {% endcomment %}
@@ -1759,9 +1757,7 @@ li.mobile-nav__item.open collapsible-content {
                        gstin: gstInput,
                      },
                      success: function (data) {
-                       console.log(data, 'data');
                        if (data.message == 'The provided GST number is valid and here are the details') {
-                         console.log('GST no valid');
                          localStorage.setItem('gstin', gstInput);
                          let res = data.response;
                          let address = res.pradr.addr;
@@ -1781,7 +1777,6 @@ li.mobile-nav__item.open collapsible-content {
                          sessionStorage.setItem('gst_billing_state', `${address.stcd}`);
                          sessionStorage.setItem('gst_billing_pincode', `${address.pncd}`);
                        } else if (data.message == 'The provided GST number is invalid') {
-                         console.log('GST no Invalid');
                          $('.gst_error').html(data.message);
                        }
                      },
@@ -2373,14 +2368,12 @@ li.mobile-nav__item.open collapsible-content {
             $('#continue_button').eq(0).text('PLACE ORDER');
             var interval;
             function start() {
-              console.log('start');
               interval = setInterval(function () {
                 $('#continue_button').removeAttr('disabled');
                 $('#continue_button').css('background-color', 'red');
               }, 300);
             }
             function stop() {
-              console.log('stop');
               clearInterval(interval);
             }
             start();
@@ -2546,7 +2539,6 @@ li.mobile-nav__item.open collapsible-content {
               isMobile = true;
             }
           } catch (e) {
-            console.log('ios error isMobile');
             console.log(e);
           }
           try {
@@ -2810,7 +2802,7 @@ li.mobile-nav__item.open collapsible-content {
         }
         if (isMobile()) {
           //code here for plobal mobile handling webview
-          console.log('opened in plobal mobile app');
+          {% comment %} console.log('opened in plobal mobile app'); {% endcomment %}
           $('.login').hide();
         } else {
           console.log('not opened in plobal mobile app');
@@ -2855,6 +2847,32 @@ li.mobile-nav__item.open collapsible-content {
           
           $('[data-address-field="zip"]').insertBefore($('[data-address-field="city"]'));
         });
+
+        {% comment %} info: check checkbox if discount_code cookie exists {% endcomment %}
+        function checkCookie(cookieName) {
+          var cookies = document.cookie.split('; ');
+          for (var i = 0; i < cookies.length; i++) {
+              var parts = cookies[i].split('=');
+              var name = decodeURIComponent(parts[0]);
+              if (name === cookieName) {
+                  return true; // Cookie exists
+              }
+          }
+          return false; // Cookie does not exist
+        }
+      
+        var cookieName = 'discount_code';
+        if (checkCookie(cookieName)) {
+          setTimeout(() => {
+            $('#gift-card-redemption')[0].checked = true;
+          }, 3000)
+        } else {
+          setTimeout(() => {
+            $('#gift-card-redemption')[0].checked = false;
+          }, 3000)
+        }
+
+        {% comment %} info: Pincode to city state autofill {% endcomment %}
         $('#checkout_shipping_address_zip').keyup(function () {
           var zip = $(this).val();
           if (zip.length == 6) {
@@ -2882,7 +2900,7 @@ li.mobile-nav__item.open collapsible-content {
                 }
               },
               error: function (response) {
-                console.log(response);
+                {% comment %} console.log(response); {% endcomment %}
                 alert('something went wrong');
               },
             });
@@ -2913,7 +2931,7 @@ li.mobile-nav__item.open collapsible-content {
           const json = await response.json();
           if (json.data.pincode != null) {
             if (json.data.pincode.serviceable) {
-              $('#checkout_shipping_address_city')[0].value = json.data.pincode.city;
+              {% comment %} $('#checkout_shipping_address_city')[0].value = json.data.pincode.city; {% endcomment %}
               if ($('.wrong_pincode').length > 0) {
                 $('.wrong_pincode').remove();
               }
@@ -3026,7 +3044,6 @@ li.mobile-nav__item.open collapsible-content {
           itemType.push($(this).attr('data-product-type'))
         });
         const uniqueItemType = [...new Set(itemType)];
-        console.log(uniqueItemType)
         let imageDiv = ''
         if(uniqueItemType.includes('Smart')) {
           imageDiv = `<div class="exc-images" style="margin-top:16px;"><a href="https://www.boat-lifestyle.com/products/boat-airdopes-138-wireless-earbuds-1"><img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/TP-Banner-AD138.jpg?v=1690868467" style="display:block;width:100%;"></a></div>`
@@ -3105,15 +3122,12 @@ li.mobile-nav__item.open collapsible-content {
                 let menu_item ='';
                 for (let i = 0; i < menu.length; i++) {
                   menu[i].addEventListener("mouseover", function(event) {
-                    console.log('mouseenter');
-                    console.log(menu[i]);
                       if(this.querySelector('.nav-dropdown')){
                         this.querySelector('.nav-dropdown').classList.add("open");
                       }
                   });
                 
                   menu[i].addEventListener("mouseleave", function(event) {
-                    console.log('mouseleave');
                     if(this.querySelector('.nav-dropdown')){
                       this.querySelector('.nav-dropdown').classList.remove("open");
                     }

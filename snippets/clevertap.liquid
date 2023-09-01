@@ -1,136 +1,146 @@
 <script>
-    var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
-    clevertap.account.push({"id": "8W4-9WW-Z85Z"});
-    clevertap.privacy.push({optOut: false}); //set the flag to true, if the user of the device opts out of sharing their data
-    clevertap.privacy.push({useIP: false}); //set the flag to true, if the user agrees to share their IP data
-    (function () {
-        var wzrk = document.createElement('script');
-        wzrk.type = 'text/javascript';
-        wzrk.async = true;
-        wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/clevertap.min.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(wzrk, s);
-    })();
-        
-        var userSource = '';
-        if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
-        else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
-        else userSource = 'Desktop';
-        {%- if template == 'article' -%}
-          clevertap.event.push("Blog Visit", {
-            "Blog Title":"{{article.title}}",
-            "userSource": userSource
+   var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[], privacy:[]};
+   clevertap.account.push({"id": "8W4-9WW-Z85Z"});
+   clevertap.privacy.push({optOut: false}); //set the flag to true, if the user of the device opts out of sharing their data
+   clevertap.privacy.push({useIP: false}); //set the flag to true, if the user agrees to share their IP data
+   (function () {
+       var wzrk = document.createElement('script');
+       wzrk.type = 'text/javascript';
+       wzrk.async = true;
+       wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/clevertap.min.js';
+       var s = document.getElementsByTagName('script')[0];
+       s.parentNode.insertBefore(wzrk, s);
+   })();
+
+       var userSource = '';
+       if(navigator.userAgent.includes('Mobile')) userSource = 'Mobile';
+       else if(navigator.userAgent.includes('iPad')) userSource = 'Tablet';
+       else userSource = 'Desktop';
+       {%- if template == 'article' -%}
+         clevertap.event.push("Blog Visit", {
+           "Blog Title":"{{article.title}}",
+           "userSource": userSource
+         });
+       {%- endif -%}
+       {%- if template == 'page' -%}
+       clevertap.event.push("Page Visited", {
+         "Page Title": '{{page.title}}',
+         "Page Url": '{{page.url}}',
+         "userSource": userSource
+       });
+     {%- elsif template == 'collection' -%}
+     clevertap.event.push("Category Viewed", {
+         "Category Name": '{{collection.title}}',
+         "Page Url": '{{collection.url}}',
+         "userSource": userSource
+       });
+     {%- elsif template == 'product' -%}
+     clevertap.event.push("Product Viewed", {
+       {%- assign product__price = product.price | plus: 0 | divided_by: 100 -%}
+         "Product Name": '{{product.title}}',
+         "Product Id": {{product.id}},
+         "Product Category": '{{product.type}}',
+         "Product Price": {{product__price}},
+         "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
+         "IsProductAvailable": {{product.available}},
+         "Cart Value": {{ cart.item_count }},
+         "userSource": userSource
+       });
+       clevertap.profile.push({
+         "Site": {
+             "Product Name": '{{product.title}}'
+         }
+       });
+       {%- else -%}
+       var pageURL = window.location.href;
+       clevertap.event.push("Page Visited", {
+         "Page Url": pageURL,
+         "Cart Value": {{ cart.item_count }},
+         "userSource": userSource
+       });
+       {%- endif -%}
+       {%- if customer -%}
+           clevertap.onUserLogin.push({
+             "Site": {
+                "First Name": '{{ customer.first_name }}',
+                "Last Name": '{{ customer.last_name }}',
+                "Email": '{{ customer.email }}'
+              }
           });
-        {%- endif -%}
-        {%- if template == 'page' -%}
-        clevertap.event.push("Page Visited", {
-          "Page Title": '{{page.title}}',
-          "Page Url": '{{page.url}}',
-          "userSource": userSource
-        });
-  		{%- elsif template == 'collection' -%}
-  		clevertap.event.push("Category Viewed", {
-          "Category Name": '{{collection.title}}',
-          "Page Url": '{{collection.url}}',
-          "userSource": userSource
-        });
-  		{%- elsif template == 'product' -%}
-  		clevertap.event.push("Product Viewed", {
-        {%- assign product__price = product.price | plus: 0 | divided_by: 100 -%}
-          "Product Name": '{{product.title}}',
-          "Product Id": {{product.id}},
-          "Product Category": '{{product.type}}',
-          "Product Price": {{product__price}},
-          "Image url": 'https:{{product.featured_image | img_url: '1024x1024'}}',
-          "IsProductAvailable": {{product.available}},
-          "Cart Value": {{ cart.item_count }},
-          "userSource": userSource
-        });
-        clevertap.profile.push({
-          "Site": {
-              "Product Name": '{{product.title}}'
-          }
-        });
-        {%- else -%}
-        var pageURL = window.location.href;
-        clevertap.event.push("Page Visited", {
-          "Page Url": pageURL,
-          "Cart Value": {{ cart.item_count }},
-          "userSource": userSource
-        });
-        {%- endif -%}
-        {%- if customer -%}
-            clevertap.onUserLogin.push({
-              "Site": {
-                 "First Name": '{{ customer.first_name }}',
-                 "Last Name": '{{ customer.last_name }}',
-                 "Email": '{{ customer.email }}'
-               }
-           });
-        {%- endif -%}
+       {%- endif -%}
 
-   $(document).ready(function () {
+  $(document).ready(function () {
 
-               setTimeout(function() {
-                 var isSubscribed = document.getElementById("ctIframe").contentWindow.subscribed;
-                   if (!isSubscribed) {
-                     if(!Cookies.get('WebPush')) {
-                       $("#myBtn").click();
-                       Cookies.set("WebPush", 1, { expires : 3 });
-                     }
+              setTimeout(function() {
+                var isSubscribed = document.getElementById("ctIframe").contentWindow.subscribed;
+                  if (!isSubscribed) {
+                   if(!Cookies.get('WebPush')) {
+                      $("#myBtn").click();
+                      Cookies.set("WebPush", 1, { expires : 3 });
                    }
-               }, 5000);
-             $('#myModal').on('shown.bs.modal', function (e) {
-               if(!$("#wzrk_wrapper", $("#ctIframe").contents()).length) {
-                   $("#myModal").modal('toggle');
-               }
-             })
-           });
-     console.log('clevertap loaded');
+                  }
+              }, 5000);
+            $('#myModal').on('shown.bs.modal', function (e) {
+              if(!$("#wzrk_wrapper", $("#ctIframe").contents()).length) {
+                  $("#myModal").modal('toggle');
+              }
+            })
+            window.addEventListener("message", function(event) {
+            if (event.data === "closeModal") {$("#myModal").modal('hide'); }
+            }, false);
+          });
+    console.log('clevertap loaded');
 </script>
 <style>
-    #myModal .modal-content {
-      width: 100%;
-      height: 250px;
-      border: 0px;
-      background-color: transparent;
-      box-shadow: 0 0;
-    }
-    .modal-backdrop {
-      background-color: transparent;
-         display: none !important;
-    }
-    #myModal {
-      z-index: 10000;
-      height: max-content;
+  #myModal .modal-content {
+    width: 100%;
+    height: 250px;
+    border: 0px;
+    background-color: transparent;
+    box-shadow: 0 0;
   }
-    @media screen and (max-width: 767px) {
-      #myModal {
-      	bottom: unset !important;
-      	transform: none !important;
-      }
-    }
+  .modal-backdrop {
+    background-color: transparent;
+    display: none !important;
+  }
 </style>
 <div class="container ct-container">
-  <button type="button" style="display:none" class="btn btn-info btn-lg" data-toggle="modal" id="myBtn" data-target="#myModal">Open Modal</button>
+  <button
+    type="button"
+    style="display:none"
+    class="btn btn-info btn-lg"
+    data-toggle="modal"
+    id="myBtn"
+    data-target="#myModal"
+  >
+    Open Modal
+  </button>
   <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
+  <div class="modal" id="myModal" role="dialog">
     <div class="modal-dialog modal-custom">
-      <!-- Modal content-->
+      <!-- Modal content -->
       <div class="modal-content">
         <button hidden type="button" class="close" id="ct-close" data-dismiss="modal">&times;</button>
-        <iframe id="ctIframe" src="/apps/sw/testfile.html" title="Order Form_Shopify" width="400" height="250" frameborder="0" style="margin: auto;"></iframe>
+        <iframe
+          id="ctIframe"
+          src="/apps/soft/testfile.html"
+          title="Order Form_Shopify"
+          width="400"
+          height="250"
+          frameborder="0"
+          style="margin: auto;"
+        ></iframe>
       </div>
     </div>
   </div>
 </div>
 <script>
-$(document).ready(function () {
-  $("#myModal").css({"z-index": "10000","background-color": "rgba(0,0,0,0.6)"})
-  $("#myModal .modal-dialog").css({"position": "absolute","top": "11%"})
-});
-if (window.matchMedia("(max-width: 767px)").matches) {
-  $("#myModal .modal-dialog").css({"position": "absolute", "top": "12%"})
-}
-
+  $(document).ready(function () {
+   $("#myModal").css({"z-index": "10000", "background": "rgba(0,0,0,.7)"})
+  if(window.innerWidth <= 768){
+    $("#myModal .modal-dialog").css({"position": "absolute", "bottom": "0%", "margin": "0%"})
+  }else{
+    $("#myModal .modal-dialog").css({"position": "absolute","top": "0%", "right": "2%", "margin": "0"})
+  }
+  });
 </script>

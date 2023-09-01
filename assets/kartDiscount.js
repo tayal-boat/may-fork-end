@@ -129,7 +129,7 @@ window.KDHooks.__postDiscountFinder_af = function (df_list) {
   }
   // here we are updating the list of discount codes in discount filder
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-
+  
   if (df_list.length > 0) {
     for (let j = 0; j < KartDiscount_codes.length; j++) {
       for (let i = 0; i < df_list.length; i++) {
