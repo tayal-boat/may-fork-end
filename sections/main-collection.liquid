@@ -36,7 +36,7 @@
  @media screen and (max-width:768px){ 
   .product-item .product-item__info .product-item-meta__reviews-badge .variants-list:before{display: none;}
   .product-facet{margin-top: 10px;}
-  .heading.h1{font-size: 26px;}
+  .heading.h1{font-size: 26px;display: flex;justify-content: space-between;width: 97dvw;}
   product-list .product-list__inner{grid-gap: 22px;}
  }
  
@@ -231,6 +231,15 @@ nav.breadcrumb.breadcrumb--floating.text--xsmall.hidden-phone{display:none}
   <div class="container">
       <h1 class="heading h1">
         <split-lines>{{ collection.title }}</split-lines>
+        <div class="product-meta__share text--subdued">
+          {%- assign share_url = shop.url | append: collection.url -%}
+          <button is="share-toggle-button" share-url="{{ share_url | escape }}" share-title="{{ collection.title | escape }}"
+            class="product-meta__share-label link hidden-tablet-and-up" aria-controls="mobile-share-buttons-{{ section.id }}"
+            aria-expanded="false">
+            {% comment %} {{ 'product.general.share' | t }} {% endcomment %}
+            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/share_icon_1.png?v=1689752691" style="width: 20px;">
+          </button>
+        </div>
       </h1> 
     {%- if template contains 'flash' and settings.enable_flash_sale -%}
       <div class="flash_sale">
