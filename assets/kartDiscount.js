@@ -5,11 +5,6 @@ window.KDHooks.__handleHTMLCreations_af = function (htmlElem, cartSelectorObj) {
   return kartHtml;
 }
 
-window.KDHooks.__discountFinderClick_ba = function () {
-  // Preventing discount filder to open on click of view all coupons button
-  return false;
-}
-
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
   var responseData = '';
@@ -87,70 +82,6 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
   return response; // return the modified response back.
 }
 
-window.KDHooks.__postDiscountFinder_af = function (df_list) {
-  var KartDiscount_detail = JSON.parse(Shopify.KartDiscount_detail);
-  var KartDiscount_codes = Object.keys(KartDiscount_detail);
-  // here we can get the discount finder list and use it as required
-  // here we are getting the data of active discount code from dicount finder list and updating the content of the dicount finder in cart drawer.
-  if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
-    if (df_list.length > 0) {
-      var applyCoupun = '';
-      for (let j = 0; j < KartDiscount_codes.length; j++) {
-        if (applyCoupun == ''){
-          for (let i = 0; i < df_list.length; i++) {
-            if (df_list[i].code.toLowerCase() == KartDiscount_codes[j].toLowerCase() && df_list[i].is_active == 1) {
-              applyCoupun = df_list[i].code;
-              sessionStorage.setItem('applyCoupun', applyCoupun);
-              var applyCoupun_heading = df_list[i].full_detail;
-              applyCoupun_heading = applyCoupun_heading.split('•')[0];
-              sessionStorage.setItem('applyCoupun_heading', applyCoupun_heading);
-              break;
-            }
-          }
-        }
-      }
-    }
-    setTimeout(function () {
-      if (applyCoupun) {
-        $('.af_coupon_text').html(applyCoupun);
-        $('.afHiddenDiscount').val(applyCoupun);
-        $('#af_custom_coupon_text').val(applyCoupun);
-        $('.discountCode_details').html(applyCoupun_heading);
-        $('.custom_kartdiscount_container').addClass('discount_added');
-        $('.discountCode_details_container').addClass('show');
-        $('.discount_error').html('');
-      } else {
-        $('.afHiddenDiscount').val('');
-        $('#af_custom_coupon_text').val('');
-        $('.custom_kartdiscount_container').removeClass('discount_added');
-        $('.discountCode_details_container').removeClass('show');
-      }
-    }, 500);
-  }
-  // here we are updating the list of discount codes in discount filder
-  var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-  
-  if (df_list.length > 0) {
-    for (let j = 0; j < KartDiscount_codes.length; j++) {
-      for (let i = 0; i < df_list.length; i++) {
-        if(df_list[i].code.toLowerCase() == KartDiscount_codes[j].toLowerCase()){
-          df_list[i].is_active == 0 ? [document.querySelectorAll('.discount_cta_btn')[j].setAttribute('disabled', 'true')] : document.querySelectorAll('.discount_finder_item')[j].classList.add('active_discount');
-          preAppliedCoupon ? preAppliedCoupon.toLowerCase() == df_list[i].code.toLowerCase() ? [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Applied</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.add('coupon_applied'), document.querySelectorAll('.discount_finder_item')[j].classList.add('applied_discount')] : [document.querySelectorAll('.discount_cta_btn')[j].innerHTML = '<span>Tap to Apply</span>', document.querySelectorAll('.discount_cta_btn')[j].classList.remove('coupon_applied'), document.querySelectorAll('.discount_finder_item')[j].classList.remove('applied_discount')] : '';
-        }
-      }
-    }
-
-    setTimeout(function(){
-      var discount_finder_apply_btn = $('.discount_finder_btn_holder .discount_finder_apply_btn');
-      $('#af_kd_custom_coupon_text').on('input', function() {
-        $(this).val().length > 0 ? discount_finder_apply_btn.addClass('discount_finder_active_btn') : discount_finder_apply_btn.removeClass('discount_finder_active_btn');
-      });
-    },500);
-  }
-
-  return df_list;
-}
-
 function deleteCookie(cookieName) {
   document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
@@ -180,23 +111,15 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
 kdDom.addEventListener('KD_validDiscountApplied', (e) => {
   // let discountCode = e.detail;
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
-  $('.discount_finder_item_cta_btn .' + preAppliedCoupon).html('<span>Applied</span>');
-  $('.discount_finder_item_cta_btn .' + preAppliedCoupon).addClass('coupon_applied');
-  $('.custom_discount_filder_container').removeAttr('open_finder');
-});
-kdDom.addEventListener('KD_discountFinderClicked', (e) => {
-  if ($('.custom_kartdiscount_container').attr('data-finder') == "true") {
-    $('.custom_discount_filder_container').attr('open_finder', true);
+  var discount_item = document.querySelectorAll('.discount_finder_item');
+  for (var i = 0; i < discount_item.length; i++) {
+    discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').classList.contains(preAppliedCoupon) ? [discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').innerHTML = '<span>Applied</span>', discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').classList.add('coupon_applied'), discount_item[i].classList.add('applied_discount')]: [discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').innerHTML = '<span>Tap To Apply</span>', discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').classList.remove('coupon_applied'), discount_item[i].classList.remove('applied_discount') ];
   }
-});
 
-Shopify.KartDiscount = function (cartJson) {
-  var total_discount_amount = $('.discount_details').attr('data-discountAmount');
-  var offer_discount_code = $('.discount_details').attr('data-discountCode');
-  sessionStorage.setItem('total_discount_amount', total_discount_amount);
-  sessionStorage.setItem('offer_discount_code', offer_discount_code);
-  Shopify.KartDiscountHooks();
-}
+  // $('.discount_finder_item_cta_btn .' + preAppliedCoupon).html('<span>Applied</span>');
+  // $('.discount_finder_item_cta_btn .' + preAppliedCoupon).addClass('coupon_applied');
+  // $('.custom_discount_filder_container').removeAttr('open_finder');
+});
 
 Shopify.farziDiscount = function (basecode, cartToken) {
   $.ajax({
@@ -231,7 +154,7 @@ Shopify.farziDiscount = function (basecode, cartToken) {
       }, 1000);
   }, 3000);
       }
-  }).fail(() => {
+  }).fail((response) => {
     console.log(response , 'fail response');
 });
 }
@@ -247,19 +170,6 @@ Shopify.DiscountSubmit = function () {
     CDSetupInit.couponApplyClick(this);
   }, 500);
 }
-
-Shopify.KartDiscountHooks = function () {
-  // here we are regulating the condition for opening of discount finder on click of view all coupon button.
-  if ($('.custom_kartdiscount_container').attr('couponCode') !== "true") {
-    setTimeout(function () {
-      if ($('.custom_kartdiscount_container').attr('data-finder') == "false") {
-        $('.af_opens_popup').click();
-        $('.custom_kartdiscount_container').attr('data-finder', 'true');
-      }
-    }, 3000);
-  }
-}
-Shopify.KartDiscountHooks();
 
 window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
 // converted currency string from number
