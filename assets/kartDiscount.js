@@ -15,6 +15,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     responseData = response;
   }
   if (responseData.is_success) {
+    console.log('responseData', responseData);
     var total_discount_amount = sessionStorage.total_discount_amount;
     total_discount_amount = parseInt(total_discount_amount);
     var cart_amount = responseData.data.response.formatted_text.total_price;
@@ -164,12 +165,21 @@ Shopify.DiscountSubmit = function () {
   $.getJSON('/cart.js', function (cart) {
     var cartToken = cart.token;
     var basecode = $('#af_kd_custom_coupon_text').val();
-    Shopify.farziDiscount(basecode, cartToken);
+    console.log(basecode);
+    // Shopify.farziDiscount(basecode, cartToken);
   })
   setTimeout(function () {
-    CDSetupInit.couponApplyClick(this);
+    console.log($('#af_kd_custom_coupon_text').val(), 'basecode');
+    CDSetupInit.applyDiscount($('#af_kd_custom_coupon_text').val());
+    sessionStorage.setItem('applyCoupun',$('#af_kd_custom_coupon_text').val());
+    // Old kart discount apply function - CDSetupInit.couponApplyClick(this);
   }, 500);
 }
+
+var discount_finder_apply_btn = $('.discount_finder_btn_holder .discount_finder_apply_btn');
+$('#af_kd_custom_coupon_text').on('input', function() {
+  $(this).val().length > 0 ? discount_finder_apply_btn.addClass('discount_finder_active_btn') : discount_finder_apply_btn.removeClass('discount_finder_active_btn');
+});
 
 window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
 // converted currency string from number
