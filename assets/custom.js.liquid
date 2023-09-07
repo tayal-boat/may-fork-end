@@ -1733,3 +1733,24 @@ Shopify.varient_view_popup = function(varient_id, btn) {
   sessionStorage.setItem('total_discount_amount', total_discount_amount);
   sessionStorage.setItem('offer_discount_code', offer_discount_code);
   };
+
+  $(document).on("click", ".pdp-custom-payment-button", function(e) {
+    e.preventDefault();
+    let id = $(this).parents('.pdp-inner').find('form [name="id"]').val();
+    id = parseInt(id);
+    let quantity = $(this).attr('data-qty');
+    quantity = parseInt(quantity);
+    $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: {id: id,quantity: quantity},
+        success: function(e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                bubbles: !0
+            })), document.getElementById("mini-cart").open = !0,
+                Shopify.cart_item_count()
+        }
+    })
+  });
