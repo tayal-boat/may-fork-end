@@ -2501,7 +2501,7 @@ li.mobile-nav__item.open collapsible-content {
             });
             //     }, 3000);
   
-            if (sessionStorage.gstin && sessionStorage.gstin !== '') {
+            if (localStorage.gstin && localStorage.gstin !== '') {
               function setSelectedIndex(s, v) {
                 for (var i = 0; i < s.length; i++) {
                   if (s[i].innerHTML == v) {
@@ -2511,8 +2511,9 @@ li.mobile-nav__item.open collapsible-content {
                 }
               }
   
-              document.querySelector('[for="checkout_different_billing_address_true"]').click();
+              $('[for="checkout_different_billing_address_true"]')[0].click();
               $('#section--billing-address__different').show();
+              $('#section--billing-address__different').css('pointer-events', 'none');
               const GSTName = sessionStorage.gst_billing_name;
               const fisrtName = GSTName.slice(0, GSTName.indexOf(' '));
               const lastName = GSTName.slice(GSTName.indexOf(' ') + 1);
@@ -3038,7 +3039,7 @@ li.mobile-nav__item.open collapsible-content {
         const orderNumberDiv = `<p class="new-order-div" style="display: flex;align-items: center;justify-content: space-between;padding: 0;margin-block: 20px;background: red;color: white;padding-block: 10px;margin-inline: -20px;padding-inline: 23px;font-size: 14px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.43;letter-spacing: -0.28px;"><span>Order Id</span><span>#{{ order.order_number }}</span></p>`
         $('.telegram').after(orderNumberDiv);
         const orderItemCount = {{order.item_count}}
-        const itemType = []
+        let itemType = []
         
         $('table.product-table>tbody>tr.product').each(function() {
           itemType.push($(this).attr('data-product-type'))
