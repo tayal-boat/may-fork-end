@@ -1,0 +1,53 @@
+{% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
+{%- assign selected_variant_price_on_btn = product.selected_or_first_available_variant.price -%}
+{% assign cta_btn_discount_1 = selected_variant_price_on_btn | times: settings.cta_btn_discount_1 | divided_by: 100 %}
+{% assign cta_btn_discount_1 = selected_variant_price_on_btn | minus: cta_btn_discount_1 | divided_by: 100 %}
+{% assign cta_btn_discount_2 = selected_variant_price_on_btn | times: settings.cta_btn_discount_2 | divided_by: 100 %}
+{% assign cta_btn_discount_2 = selected_variant_price_on_btn | minus: cta_btn_discount_2 | divided_by: 100 %}
+<div class="pdp-custom-payment-container">
+    <h2 class="pdp-custom-cta-heading">Active Offers</h2>
+    <button class="pdp-custom-payment-button pdp-custom-cta-button" data-qty={{ settings.cta_btn_quantity_1 }}>
+      <span class="pdp-custom-cta-value-lable">
+        {{- settings.value_lable_1 -}}
+      </span>
+      <div class="pdp-custom-payment-button-inner">
+        <span class="pdp-custom-cta">{{ settings.cta_btn_lable_1 }}</span>
+        <div class="pdp-custom-cta-price-container">
+          <span class="pdp-custom-cta-discount">
+            Get {{- settings.cta_btn_discount_1 -}}% Off
+          </span>
+          <span class="pdp-custom-cta-price"> ₹{{ cta_btn_discount_1 }}<span>/item</span></span>
+        </div>
+      </div>
+    </button>
+    <button class="pdp-custom-payment-button pdp-custom-cta-button" data-qty={{ settings.cta_btn_quantity_2 }}>
+      <span class="pdp-custom-cta-value-lable">
+        {{- settings.value_lable_2 -}}
+      </span>
+      <div class="pdp-custom-payment-button-inner">
+        <span class="pdp-custom-cta">{{ settings.cta_btn_lable_2 }}</span>
+        <div class="pdp-custom-cta-price-container">
+          <span class="pdp-custom-cta-discount">
+            Get {{- settings.cta_btn_discount_2 -}}% Off
+          </span>
+          <span class="pdp-custom-cta-price"> ₹{{ cta_btn_discount_2 }}<span>/item</span></span>
+        </div>
+      </div>
+    </button>
+    <div class="pdp-custom-payment-button">
+        <a href="{{ settings.bulk_order_link }}" class="pdp-custom-corprate-button">
+      <span class="pdp-custom-cta-value-lable">
+        {{- settings.value_lable_bulk_order -}}
+      </span>
+      <div class="pdp-custom-payment-button-inner">
+        <span class="pdp-custom-cta">{{ settings.bulk_order_title }}</span>
+        <div class="pdp-custom-cta-link"><span>{{ settings.bulk_order_lable }}</span></div>
+      </div>
+      </a>
+    </div>
+  </div>
+{% endif %}
+<script>
+  Shopify.cta_btn_discount_1 = {{ settings.cta_btn_discount_1 | json }};
+  Shopify.cta_btn_discount_2 = {{ settings.cta_btn_discount_2 | json }};
+</script>
