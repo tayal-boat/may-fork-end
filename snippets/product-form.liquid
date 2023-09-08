@@ -574,6 +574,8 @@
         {% comment %} {% elsif product.tags contains 'customized' %}
           <input id="personalised_message" style="width:120px; max-width:100%;" type="hidden" name="properties[PersonalisedMessage]" autocomplete="off" variant-id="{{ product.selected_or_first_available_variant.id }}" type="hidden"> {% endcomment %}
         {%- endif -%}
+        
+        {% render 'pdp-custom-cta', product: product %}
         <product-payment-container form-id="{{ product_form_id }}" {% if update_url %}id="MainPaymentContainer" {% endif %}
           class="product-form__payment-container" {{ block.shopify_attributes }}>
           {%- if product.tags contains 'customized' -%}
@@ -780,6 +782,7 @@
     </div>
 
     {%- endif -%}
+
     {%- unless template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' -%}
     <div class="product-item__quick-form quick-buy-notify-me custom_notifyMe_btn" {% if product_varient.inventory_quantity >= settings.sold_out_threshold %} style="display: none;" {% endif %}>
       <a
@@ -797,52 +800,10 @@
     'quick-buy-drawer' -%}
     {%- comment -%} {{ form | payment_button }} {%- endcomment -%}
     {%- endif -%}
-
     </product-payment-container>
     {%- endform -%}
     {% if template.suffix != 'quick-buy-popover' and template.suffix != 'quick-buy-drawer' %}
     
-      <div class="pdp-custom-payment-container">
-        <button class="pdp-custom-payment-button" data-qty={{ settings.cta_btn_quantity_1 }}>
-          <span class="pdp-custom-cta-value-lable">
-            {{- settings.value_lable_1 -}}
-          </span>
-          <div class="pdp-custom-payment-button-inner">
-            <span class="pdp-custom-cta">{{ settings.cta_btn_lable_1 }}</span>
-            <div class="pdp-custom-cta-price-container">
-              <span class="pdp-custom-cta-discount">
-                Get {{- settings.cta_btn_discount_1 -}}% Off
-              </span>
-              <span class="pdp-custom-cta-price"> ₹{{ selected_variant_price_on_btn | times: settings.cta_btn_discount_1 |
-                divided_by: 100 }}<span>/item</span></span>
-            </div>
-          </div>
-        </button>
-        <button class="pdp-custom-payment-button" data-qty={{ settings.cta_btn_quantity_2 }}>
-          <span class="pdp-custom-cta-value-lable">
-            {{- settings.value_lable_2 -}}
-          </span>
-          <div class="pdp-custom-payment-button-inner">
-            <span class="pdp-custom-cta">{{ settings.cta_btn_lable_2 }}</span>
-            <div class="pdp-custom-cta-price-container">
-              <span class="pdp-custom-cta-discount">
-                Get {{- settings.cta_btn_discount_2 -}}% Off
-              </span>
-              <span class="pdp-custom-cta-price"> ₹{{ selected_variant_price_on_btn | times: settings.cta_btn_discount_2 |
-                divided_by: 100 }}<span>/item</span></span>
-            </div>
-          </div>
-        </button>
-        <button class="pdp-custom-payment-button">
-          <span class="pdp-custom-cta-value-lable">
-            {{- settings.value_lable_bulk_order -}}
-          </span>
-          <div class="pdp-custom-payment-button-inner">
-            <span class="pdp-custom-cta">{{ settings.bulk_order_title }}</span>
-            <a href="{{ settings.bulk_order_link }}" class="pdp-custom-cta-link">{{ settings.bulk_order_lable }}</a>
-          </div>
-        </button>
-      </div>
       <div class="d-flex flex-column pincode_checker_box" data-role="additonal-info">
         {% if product.available %}
           {% if product.metafields.custom.product_highlights %}

@@ -212,6 +212,12 @@ let usual_price = '';
 
 Shopify.variantChange = function (e) {
   var product_form = event.target;
+  let cta_btn_discount_1 = e.price * Shopify.cta_btn_discount_1 / 100;
+  cta_btn_discount_1 = e.price - cta_btn_discount_1;
+  let cta_btn_discount_2 = e.price * Shopify.cta_btn_discount_2 / 100;
+  cta_btn_discount_2 = e.price - cta_btn_discount_2;
+  product_form.querySelectorAll('.pdp-custom-payment-button')[0].querySelector('.pdp-custom-cta-price') ? product_form.querySelectorAll('.pdp-custom-payment-button')[0].querySelector('.pdp-custom-cta-price').innerHTML = `${Shopify.formatMoney(cta_btn_discount_1, Shopify.money_format2)}<span>/item</span>` : '';
+  product_form.querySelectorAll('.pdp-custom-payment-button')[1].querySelector('.pdp-custom-cta-price') ? product_form.querySelectorAll('.pdp-custom-payment-button')[1].querySelector('.pdp-custom-cta-price').innerHTML = `${Shopify.formatMoney(cta_btn_discount_2, Shopify.money_format2)}<span>/item</span>` : '';
   if (!e.available) {
     console.log(e.available, 'show notify me');
     // $('.custom-notify-btn').show();
@@ -223,6 +229,7 @@ Shopify.variantChange = function (e) {
     product_form.querySelector('.cutomized-btn') ? product_form.querySelector('.cutomized-btn').classList.add('hide_cTA') : '';
     product_form.querySelector('.button.custom-prebook') ? product_form.querySelector('.button.custom-prebook').classList.add('hide_cTA') : '';
     $("#gokwik-buy-now").addClass('hide_cTA');
+    product_form.querySelector('.pdp-custom-payment-container') ? product_form.querySelector('.pdp-custom-payment-container').classList.add('hide_cTA') : '';
     // $('quick-buy-drawer #AddToCart').hide();
     // $('quick-buy-popover #AddToCart').hide();
     product_form.querySelector('.custom_notifyMe_btn') ? product_form.querySelector('.custom_notifyMe_btn').classList.add('show_notifyMe') : '';
@@ -252,6 +259,7 @@ Shopify.variantChange = function (e) {
     product_form.querySelector('#AddToCart') ? product_form.querySelector('#AddToCart').classList.remove('hide_cTA') : '';
     product_form.querySelector('.cutomized-btn') ? product_form.querySelector('.cutomized-btn').classList.remove('hide_cTA') : '';
     product_form.querySelector('.button.custom-prebook') ? product_form.querySelector('.button.custom-prebook').classList.remove('hide_cTA') : '';
+    product_form.querySelector('.pdp-custom-payment-container') ? product_form.querySelector('.pdp-custom-payment-container').classList.remove('hide_cTA') : '';
     // $('quick-buy-drawer #AddToCart').show();
     // $('quick-buy-popover #AddToCart').show();
     product_form.querySelector('.custom_notifyMe_btn') ? product_form.querySelector('.custom_notifyMe_btn').classList.remove('show_notifyMe') : '';
