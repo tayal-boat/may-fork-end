@@ -543,18 +543,12 @@
 {% if section.settings.time_popup  %}
   <style>
     #timed-Modal.show .popover__overlay {visibility: visible;opacity: .3; top: 0;z-index:1111;}
-    #timed-Modal{display: block;visibility: hidden;z-index:1000;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1);}
+    #timed-Modal{display: block;visibility: hidden;z-index:1000;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1),opacity .6s cubic-bezier(.75,0,.175,1);}
     #timed-Modal .close{position: absolute;top: 12px;right: 12px;width: 30px;height: 30px;line-height: 24px;opacity: 1;
       text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
     }
     div#timed-Modal.show {transform: translateY(0);visibility: visible;}
-    #timed-Modal .modal-dialog {position: absolute!important;
-      bottom: 0!important;
-      top: unset!important;
-      left: unset!important;
-      transform: translate(0)!important;
-      z-index: 9999;
-    }
+    #timed-Modal .modal-dialog {position: absolute!important;bottom: 0!important;top: unset!important;left: unset!important;transform: translate(0)!important;z-index: 9999;}
   </style>
   <div id="timed-Modal" class=" modal fade" role="dialog">
     <span class="popover__overlay"></span>
@@ -563,22 +557,16 @@
         <div class="modal-body p-0">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <div class="modal-body-content">
-            <div class="p-4">
-              {% if section.settings.popup_text  %}            
-              <div class="pt-5 mb-0 text-center" style="font-size: 24px;line-height: 1.2;">
-                {{ section.settings.popup_text }}
-              </div>
-              {% endif %}
-              {% if section.settings.popup_image %}           
+            <div class="p-4">        
+              <div class="pt-5 mb-0 text-center dynamic-text" style="font-size: 24px;line-height: 1.2;">
+              </div>        
                 <div class="modal-image p-4 px-5" style="font-size: 16px;">
-                  <img class="image-overlay__image_" 
-                    {% render 'image-attributes', image: section.settings.popup_image, sizes: '300' %} alt="Popup Image"/>
+                  <img class="image-overlay__image_ dynamic-image" style="display:none" alt="Popup Image"/>
                 </div>
-              {% endif %}
               <a style="color: white;font-weight: 700!important;
                 padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
-                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" 
-                    href="https://wa.me/919667700177?text=Hola%21%20I%20am%20here%20for%20the%20mysterious%20exclusive%20offer%21%21" target="_blank">
+                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" class="dynamic-href"
+                    href="" target="_blank">
                     Yes, Unmask The Offer!
               </a>
             </div>
@@ -613,33 +601,6 @@
   <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chat-Icon.jpg?v=1690367119" style="width:45px;border-radius:50%;">
 </div>  
 
-{% comment %}
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog modal-custom">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <button
-          hidden
-          type="button"
-          class="close"
-          id="ct-close"
-          data-dismiss="modal"
-        >
-          &times;
-        </button>
-        <iframe
-          id="ctIframe"
-          src="/apps/sw/testfile.html"
-          title="Order Form_Shopify"
-          width="400"
-          height="250"
-          frameborder="0"
-          style="margin: auto"
-        ></iframe>
-      </div>
-    </div>
-  </div>
-{% endcomment %}
 <script>
   $(window).scroll(function(e){
   if (this.scrollY >= 1000){
@@ -671,31 +632,67 @@ function openLink(evt, tabName) {
   document.getElementById(tabName).style.display = 'block';
   evt.currentTarget.className += ' active';
 } {% endcomment %}
-{% if section.settings.time_popup  %}
-  if(window.innerWidth <= 768){
-    if (sessionStorage.getItem("timed_popUpPoped") === null){
-      var flag = false;
-      $(document).one('touchmove scroll', function(event) {
-        if (!flag) {
-          flag = true;
-          console.log("start_time");
-          setTimeout(function() {
-            if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show').length == 0){
-              console.log("time")
-              $("#timed-Modal").addClass("show");
-              $("html").addClass("lock-mobile");
-              sessionStorage.setItem("timed_popUpPoped", "poped");
-            }
-          }, 10000);
+{% if section.settings.time_popup %}
+    if(window.innerWidth <= 768){
+        // Cookie functions
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
         }
-      })
-      $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
-        $("#timed-Modal").removeClass("show");$("html").removeClass("lock-mobile");
-      })
+    
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+    
+        function setPopupContent(sessionCount) {
+            let textContent = "";
+            let imageSrc = "";
+            let btntext = "";
+            let btnhref = "";
+            switch(sessionCount) { {{ section.settings.popup_text }} }
+            $(".dynamic-text").html(textContent);
+            $(".dynamic-image").attr("srcset", imageSrc).css("display", "block");
+            $(".dynamic-href").attr("href", btnhref).text(btntext);
+        }
+    
+        var sessionCount = getCookie("sessionCount") || "0";
+        sessionCount = (parseInt(sessionCount) + 1).toString();
+    
+        if (sessionStorage.getItem("timed_popUpPoped") === null){         
+            var flag = false;
+            $(document).one('touchmove scroll', function(event) {
+              console.log("scroll_start")
+                if (!flag) {
+                    flag = true;
+                    setTimeout(function() {
+                        if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
+                          setPopupContent(sessionCount);
+                          setCookie("sessionCount", sessionCount, 90); // 90 days for 3 months
+                          console.log("time")
+                            $("#timed-Modal").addClass("show");
+                            $("html").addClass("lock-mobile");
+                            sessionStorage.setItem("timed_popUpPoped", "poped");
+                        }
+                    }, 10000);
+                }
+            });
+        }
+    
+        $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+            $("#timed-Modal").removeClass("show");
+            $("html").removeClass("lock-mobile");
+        });
     }
-  }
+    
+  {% endif %}
   
-{% endif %}
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
     $(this).find('.expanded').toggleClass('visually-hidden')
@@ -729,12 +726,7 @@ $('.menu-panel').each(function(i) {
   {
     "type": "html",
     "id": "popup_text",
-    "label": "Popup text"
-  },
-  {
-    "type": "image_picker",
-    "id": "popup_image",
-    "label": "Popup Image"
+    "label": "Popup flow content"
   },
   {
     "type": "link_list",
