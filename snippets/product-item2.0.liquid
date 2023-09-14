@@ -238,28 +238,238 @@
         {%- endif -%}
         {%- if settings.show_product_rating and reduced_content != true -%}
           <span class="product-item-meta__reviews-badge text--small">
-            {%- render 'product-rating', product: product -%}
-            {% comment %} info: marketplace logo {% endcomment %}
-            {% unless product.metafields.reviews.rating.value == blank %}
-              {%- if product.metafields.custom.marketplace_details != blank and section.settings.vertical_ui == false and vertical_ui == false -%}
-                <div class="mkp_bestseller">
-                  {%- if marketplace_name == 'amazon' -%}
-                    <img
-                      src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon_ce90d05b-dd92-4d8a-acad-b229003f27b2.png?v=1691406536"
-                      loading="lazy"
-                      alt="amazon" />
-                  {%- elsif marketplace_name == 'flipkart' -%}
-                    <img
-                      src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Flipkart.png?v=1691406536"
-                      loading="lazy"
-                      alt="flipkart"
-                      style="margin-top:-3px;" />
-                {%- else -%}
-                  {%- endif -%}
-                  <p class="bestseller">Best seller</p>
-                </div>
-              {%- endif -%}
-            {% endunless %}
+            {% if section.settings.vertical_ui or vertical_ui %}
+              <a href="{{ product.url }}" class="product-item-meta__title tile-title">
+                {{- product.title | split: '|' | first | split: 'boAt' | last -}}
+              </a>
+
+              <div class="product-item-meta__price-list-container">
+                {% unless product.tags contains 'NO-PRICE' %}
+                  <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}"
+                     {% unless section.settings.vertical_ui == true or vertical_ui == true %}style="border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;position: relative;"{% endunless %}
+                    >
+                    {%- if product.price_varies and product.compare_at_price -%}
+                      {%- capture price_min -%}
+                        {%- if settings.currency_code_enabled -%}
+                          {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{- cheapest_variant_discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      {%- endcapture -%}
+    
+                      {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
+                        <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                          <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+    
+                          {%- if settings.currency_code_enabled -%}
+                            {{-
+                              discounted_price
+                              | money_with_currency
+                              | remove: '.00'
+                              | remove: ' '
+                              | replace: 'Rs.', '₹' -}}
+                          {%- else -%}
+                            {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                          {%- endif -%}
+                        </span>
+                        <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                          <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+    
+                          {%- if settings.currency_code_enabled -%}
+                            {{-
+                              cheapest_variant.compare_at_price
+                              | money_with_currency
+                              | remove: '.00'
+                              | remove: ' '
+                              | replace: 'Rs.', '₹' -}}
+                          {%- else -%}
+                            {{-
+                              cheapest_variant.compare_at_price
+                              | money
+                              | remove: '.00'
+                              | remove: ' '
+                              | replace: 'Rs.', '₹' -}}
+                          {%- endif -%}
+                        </span>
+                        <p class="m-0 pr-2 off">
+                          {{-
+                            product.compare_at_price
+                            | minus: discounted_price
+                            | times: 100.0
+                            | divided_by: product.compare_at_price
+                            | round
+                            | append: '% off' -}}
+                        </p>
+                      {%- else -%}
+                        <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
+                          <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                          {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
+                        </span>
+                      {%- endif -%}
+                    {%- elsif product.price < product.compare_at_price -%}
+                      <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                        <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+    
+                        {%- if settings.currency_code_enabled -%}
+                          {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                      <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                        <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                        {%- if settings.currency_code_enabled -%}
+                          {{-
+                            product.compare_at_price
+                            | money_with_currency
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{- product.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                      <p class="m-0 pr-2 off">
+                        {{-
+                          product.compare_at_price
+                          | minus: discounted_price
+                          | times: 100.0
+                          | divided_by: product.compare_at_price
+                          | round
+                          | append: '% off' -}}
+                      </p>
+    
+                    {%- elsif product.price_varies -%}
+                      {%- capture price_min -%}
+                        {%- if settings.currency_code_enabled -%}
+                          {{ product.price_min | money_with_currency | replace: 'Rs.', '₹' }}
+                        {%- else -%}
+                          {{ product.price_min | money | replace: 'Rs.', '₹' }}
+                        {%- endif -%}
+                      {%- endcapture -%}
+    
+                      {%- capture price_max -%}
+                        {%- if settings.currency_code_enabled -%}
+                          {{- product.price_max | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{- product.price_max | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      {%- endcapture -%}
+    
+                      <span class="price">
+                        <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                        {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
+                      </span>
+                      <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                        <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+    
+                        {%- if settings.currency_code_enabled -%}
+                          {{-
+                            cheapest_variant.compare_at_price
+                            | money_with_currency
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{-
+                            cheapest_variant.compare_at_price
+                            | money
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                    {%- else -%}
+                      <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                        <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+    
+                        {%- if settings.currency_code_enabled -%}
+                          {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                      <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                        <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+    
+                        {%- if settings.currency_code_enabled -%}
+                          {{-
+                            cheapest_variant.compare_at_price
+                            | money_with_currency
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{-
+                            cheapest_variant.compare_at_price
+                            | money
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                    {%- endif -%}
+    
+                    {%- if product_varient.unit_price_measurement -%}
+                      <div class="price price--block text--xsmall text--subdued">
+                        <div class="unit-price-measurement">
+                          <span class="unit-price-measurement__price">
+                            {{- product_varient.unit_price | money -}}
+                          </span>
+                          <span class="unit-price-measurement__separator">/</span>
+    
+                          {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
+                            <span class="unit-price-measurement__reference-value">
+                              {{- product_varient.unit_price_measurement.reference_value -}}
+                            </span>
+                          {%- endif -%}
+    
+                          <span class="unit-price-measurement__reference-unit">
+                            {{- product_varient.unit_price_measurement.reference_unit -}}
+                          </span>
+                        </div>
+                      </div>
+                    {%- endif -%}
+                    {% if section.settings.vertical_ui == false or vertical_ui == false  %}
+                      {{ swatch_btn }}
+                    {% endif %}
+                  </div>
+    
+                  {% if section.settings.vertical_ui == false or vertical_ui == false %}
+                    <div class="features-list only-horizontal">
+                      {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+                      {% for feature in features %}
+                        <span class="feature feature-{{ forloop.index }}">{{ feature }}</span>
+                        {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endunless %}
+              </div>
+            {% else %}
+              {%- render 'product-rating', product: product -%}
+              {% comment %} info: marketplace logo {% endcomment %}
+              {% unless product.metafields.reviews.rating.value == blank %}
+                {%- if product.metafields.custom.marketplace_details != blank and section.settings.vertical_ui == false and vertical_ui == false -%}
+                  <div class="mkp_bestseller">
+                    {%- if marketplace_name == 'amazon' -%}
+                      <img
+                        src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon_ce90d05b-dd92-4d8a-acad-b229003f27b2.png?v=1691406536"
+                        loading="lazy"
+                        alt="amazon" />
+                    {%- elsif marketplace_name == 'flipkart' -%}
+                      <img
+                        src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Flipkart.png?v=1691406536"
+                        loading="lazy"
+                        alt="flipkart"
+                        style="margin-top:-3px;" />
+                  {%- else -%}
+                    {%- endif -%}
+                    <p class="bestseller">Best seller</p>
+                  </div>
+                {%- endif -%}
+              {% endunless %}
+            {% endif %}
             {% capture swatch_btn %}
               {% if available_variants > 1 and has_color_code %}
                 {% unless product.tags contains 'customized' %}
@@ -287,47 +497,167 @@
           </span>
         {%- endif -%}
         <div class="position-relative">
-          <a href="{{ product.url }}" class="product-item-meta__title tile-title">
-            {{- product.title | split: '|' | first | split: 'boAt' | last -}}
-          </a>
-          {% comment %}
-          {% if template contains 'collection' %}
-          {% if product.available and product.tags contains 'flash-sale' -%}
-          {%- render 'inventory-bar' with product -%}
-          {%- endif %}
-          {%- endif %}
-          {% endcomment %}
+          {% if section.settings.vertical_ui or vertical_ui %}
+            {%- render 'product-rating', product: product -%}
+          {% else %}
+            <a href="{{ product.url }}" class="product-item-meta__title tile-title">
+              {{- product.title | split: '|' | first | split: 'boAt' | last -}}
+            </a>
+            {% comment %}
+            {% if template contains 'collection' %}
+            {% if product.available and product.tags contains 'flash-sale' -%}
+            {%- render 'inventory-bar' with product -%}
+            {%- endif %}
+            {%- endif %}
+            {% endcomment %}
 
-          {% comment %}
-          Start automatically added Judge.me widget
-          {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
-          {% endcomment %}
+            {% comment %}
+            Start automatically added Judge.me widget
+            {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
+            {% endcomment %}
 
-          <div class="product-item-meta__price-list-container">
-            {% unless product.tags contains 'NO-PRICE' %}
-              <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}"
-                 {% unless section.settings.vertical_ui == true or vertical_ui == true %}style="border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;position: relative;"{% endunless %}
-                >
-                {%- if product.price_varies and product.compare_at_price -%}
-                  {%- capture price_min -%}
-                    {%- if settings.currency_code_enabled -%}
-                      {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+            <div class="product-item-meta__price-list-container">
+              {% unless product.tags contains 'NO-PRICE' %}
+                <div class="price-list price-list--centered{% if product.tags contains settings.tag_selector and settings.enable_fixed_discount %} custom-product-card_flash-sale {% elsif settings.enable_namagoo %}{% if product.tags contains 'namogoo' %} custom-product-card_namogoo {% endif %} {% endif %}"
+                  {% unless section.settings.vertical_ui == true or vertical_ui == true %}style="border-bottom: 1px solid #e3e3e3;margin-bottom: 0.3rem;padding-bottom: 0.3rem;width: 100%;position: relative;"{% endunless %}
+                  >
+                  {%- if product.price_varies and product.compare_at_price -%}
+                    {%- capture price_min -%}
+                      {%- if settings.currency_code_enabled -%}
+                        {{- cheapest_variant_discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- else -%}
+                        {{- cheapest_variant_discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- endif -%}
+                    {%- endcapture -%}
+
+                    {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
+                      <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                        <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+
+                        {%- if settings.currency_code_enabled -%}
+                          {{-
+                            discounted_price
+                            | money_with_currency
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                      <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                        <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                        {%- if settings.currency_code_enabled -%}
+                          {{-
+                            cheapest_variant.compare_at_price
+                            | money_with_currency
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- else -%}
+                          {{-
+                            cheapest_variant.compare_at_price
+                            | money
+                            | remove: '.00'
+                            | remove: ' '
+                            | replace: 'Rs.', '₹' -}}
+                        {%- endif -%}
+                      </span>
+                      <p class="m-0 pr-2 off">
+                        {{-
+                          product.compare_at_price
+                          | minus: discounted_price
+                          | times: 100.0
+                          | divided_by: product.compare_at_price
+                          | round
+                          | append: '% off' -}}
+                      </p>
                     {%- else -%}
-                      {{- cheapest_variant_discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
+                        <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                        {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
+                      </span>
                     {%- endif -%}
-                  {%- endcapture -%}
-
-                  {%- if cheapest_variant.price < cheapest_variant.compare_at_price -%}
+                  {%- elsif product.price < product.compare_at_price -%}
                     <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
                       <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
                       {%- if settings.currency_code_enabled -%}
+                        {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- else -%}
+                        {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- endif -%}
+                    </span>
+                    <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
+                      <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+                      {%- if settings.currency_code_enabled -%}
                         {{-
-                          discounted_price
+                          product.compare_at_price
                           | money_with_currency
                           | remove: '.00'
                           | remove: ' '
                           | replace: 'Rs.', '₹' -}}
+                      {%- else -%}
+                        {{- product.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- endif -%}
+                    </span>
+                    <p class="m-0 pr-2 off">
+                      {{-
+                        product.compare_at_price
+                        | minus: discounted_price
+                        | times: 100.0
+                        | divided_by: product.compare_at_price
+                        | round
+                        | append: '% off' -}}
+                    </p>
+
+                  {%- elsif product.price_varies -%}
+                    {%- capture price_min -%}
+                      {%- if settings.currency_code_enabled -%}
+                        {{ product.price_min | money_with_currency | replace: 'Rs.', '₹' }}
+                      {%- else -%}
+                        {{ product.price_min | money | replace: 'Rs.', '₹' }}
+                      {%- endif -%}
+                    {%- endcapture -%}
+
+                    {%- capture price_max -%}
+                      {%- if settings.currency_code_enabled -%}
+                        {{- product.price_max | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- else -%}
+                        {{- product.price_max | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
+                      {%- endif -%}
+                    {%- endcapture -%}
+
+                    <span class="price">
+                      <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+                      {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
+                    </span>
+                    <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
+                      <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
+
+                      {%- if settings.currency_code_enabled -%}
+                        {{-
+                          cheapest_variant.compare_at_price
+                          | money_with_currency
+                          | remove: '.00'
+                          | remove: ' '
+                          | replace: 'Rs.', '₹' -}}
+                      {%- else -%}
+                        {{-
+                          cheapest_variant.compare_at_price
+                          | money
+                          | remove: '.00'
+                          | remove: ' '
+                          | replace: 'Rs.', '₹' -}}
+                      {%- endif -%}
+                    </span>
+                  {%- else -%}
+                    <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
+                      <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
+
+                      {%- if settings.currency_code_enabled -%}
+                        {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                       {%- else -%}
                         {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
                       {%- endif -%}
@@ -351,161 +681,46 @@
                           | replace: 'Rs.', '₹' -}}
                       {%- endif -%}
                     </span>
-                    <p class="m-0 pr-2 off">
-                      {{-
-                        product.compare_at_price
-                        | minus: discounted_price
-                        | times: 100.0
-                        | divided_by: product.compare_at_price
-                        | round
-                        | append: '% off' -}}
-                    </p>
-                  {%- else -%}
-                    <span class="price product-card-price product-card-price-varies" data-price="{{ cheapest_variant.price }}">
-                      <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                      {{- 'collection.product.from_price_html' | t: price_min: price_min -}}
-                    </span>
                   {%- endif -%}
-                {%- elsif product.price < product.compare_at_price -%}
-                  <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
-                    <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
 
-                    {%- if settings.currency_code_enabled -%}
-                      {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- else -%}
-                      {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- endif -%}
-                  </span>
-                  <span class="price price--compare line-through" data-compare-price="{{ product.compare_at_price }}">
-                    <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-                    {%- if settings.currency_code_enabled -%}
-                      {{-
-                        product.compare_at_price
-                        | money_with_currency
-                        | remove: '.00'
-                        | remove: ' '
-                        | replace: 'Rs.', '₹' -}}
-                    {%- else -%}
-                      {{- product.compare_at_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- endif -%}
-                  </span>
-                  <p class="m-0 pr-2 off">
-                    {{-
-                      product.compare_at_price
-                      | minus: discounted_price
-                      | times: 100.0
-                      | divided_by: product.compare_at_price
-                      | round
-                      | append: '% off' -}}
-                  </p>
-
-                {%- elsif product.price_varies -%}
-                  {%- capture price_min -%}
-                    {%- if settings.currency_code_enabled -%}
-                      {{ product.price_min | money_with_currency | replace: 'Rs.', '₹' }}
-                    {%- else -%}
-                      {{ product.price_min | money | replace: 'Rs.', '₹' }}
-                    {%- endif -%}
-                  {%- endcapture -%}
-
-                  {%- capture price_max -%}
-                    {%- if settings.currency_code_enabled -%}
-                      {{- product.price_max | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- else -%}
-                      {{- product.price_max | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- endif -%}
-                  {%- endcapture -%}
-
-                  <span class="price">
-                    <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-                    {{- 'collection.product.from_price_html' | t: price_min: price_min, price_max: price_max -}}
-                  </span>
-                  <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
-                    <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-
-                    {%- if settings.currency_code_enabled -%}
-                      {{-
-                        cheapest_variant.compare_at_price
-                        | money_with_currency
-                        | remove: '.00'
-                        | remove: ' '
-                        | replace: 'Rs.', '₹' -}}
-                    {%- else -%}
-                      {{-
-                        cheapest_variant.compare_at_price
-                        | money
-                        | remove: '.00'
-                        | remove: ' '
-                        | replace: 'Rs.', '₹' -}}
-                    {%- endif -%}
-                  </span>
-                {%- else -%}
-                  <span class="price price--highlight product-card-price" data-price="{{ product.price }}">
-                    <span class="visually-hidden">{{ 'product.general.sale_price' | t }}</span>
-
-                    {%- if settings.currency_code_enabled -%}
-                      {{- discounted_price | money_with_currency | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- else -%}
-                      {{- discounted_price | money | remove: '.00' | remove: ' ' | replace: 'Rs.', '₹' -}}
-                    {%- endif -%}
-                  </span>
-                  <span class="price price--compare line-through" data-compare-price="{{ cheapest_variant.compare_at_price }}">
-                    <span class="visually-hidden">{{ 'product.general.regular_price' | t }}</span>
-
-                    {%- if settings.currency_code_enabled -%}
-                      {{-
-                        cheapest_variant.compare_at_price
-                        | money_with_currency
-                        | remove: '.00'
-                        | remove: ' '
-                        | replace: 'Rs.', '₹' -}}
-                    {%- else -%}
-                      {{-
-                        cheapest_variant.compare_at_price
-                        | money
-                        | remove: '.00'
-                        | remove: ' '
-                        | replace: 'Rs.', '₹' -}}
-                    {%- endif -%}
-                  </span>
-                {%- endif -%}
-
-                {%- if product_varient.unit_price_measurement -%}
-                  <div class="price price--block text--xsmall text--subdued">
-                    <div class="unit-price-measurement">
-                      <span class="unit-price-measurement__price">
-                        {{- product_varient.unit_price | money -}}
-                      </span>
-                      <span class="unit-price-measurement__separator">/</span>
-
-                      {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
-                        <span class="unit-price-measurement__reference-value">
-                          {{- product_varient.unit_price_measurement.reference_value -}}
+                  {%- if product_varient.unit_price_measurement -%}
+                    <div class="price price--block text--xsmall text--subdued">
+                      <div class="unit-price-measurement">
+                        <span class="unit-price-measurement__price">
+                          {{- product_varient.unit_price | money -}}
                         </span>
-                      {%- endif -%}
+                        <span class="unit-price-measurement__separator">/</span>
 
-                      <span class="unit-price-measurement__reference-unit">
-                        {{- product_varient.unit_price_measurement.reference_unit -}}
-                      </span>
+                        {%- if product_varient.unit_price_measurement.reference_value != 1 -%}
+                          <span class="unit-price-measurement__reference-value">
+                            {{- product_varient.unit_price_measurement.reference_value -}}
+                          </span>
+                        {%- endif -%}
+
+                        <span class="unit-price-measurement__reference-unit">
+                          {{- product_varient.unit_price_measurement.reference_unit -}}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                {%- endif -%}
-                {% if section.settings.vertical_ui == false or vertical_ui == false  %}
-                  {{ swatch_btn }}
-                {% endif %}
-              </div>
-
-              {% if section.settings.vertical_ui == false or vertical_ui == false %}
-                <div class="features-list only-horizontal">
-                  {% assign features = product.metafields.custom.product_card_features | split: '|' %}
-                  {% for feature in features %}
-                    <span class="feature feature-{{ forloop.index }}">{{ feature }}</span>
-                    {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
-                  {% endfor %}
+                  {%- endif -%}
+                  {% if section.settings.vertical_ui == false or vertical_ui == false  %}
+                    {{ swatch_btn }}
+                  {% endif %}
                 </div>
-              {% endif %}
-            {% endunless %}
-          </div>
+
+                {% if section.settings.vertical_ui == false or vertical_ui == false %}
+                  <div class="features-list only-horizontal">
+                    {% assign features = product.metafields.custom.product_card_features | split: '|' %}
+                    {% for feature in features %}
+                      <span class="feature feature-{{ forloop.index }}">{{ feature }}</span>
+                      {% comment %} {% unless forloop.last %} | {% endunless %} {% endcomment %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endunless %}
+            </div>
+
+          {% endif %}
           {%- if request.page_type != 'password'
  and settings.product_add_to_cart
  and reduced_content != true
