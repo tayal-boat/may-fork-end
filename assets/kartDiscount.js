@@ -232,7 +232,7 @@ Shopify.farziDiscount = function (basecode, cartToken) {
   }, 3000);
       }
   }).fail(() => {
-    console.log(response , 'fail response');
+    console.log('fail response');
 });
 }
 
