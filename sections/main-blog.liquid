@@ -1,8 +1,8 @@
 <style>
   .main-banner-img{margin-bottom:2rem;}
   .shopify-section.bootstrap-carousel .MultiCarousel .leftLst, .shopify-section.bootstrap-carousel .MultiCarousel .rightLst{display: none !important;}
-  .article-item__image-container{max-height:233px;border-radius: 0px;}
-  .article_container .article-item__image-container .article-item__image{border-radius: 10px 10px 0px 0px;}
+  .article-item__image-container{max-height:236px;border-radius: 0px;}
+  .article_container .article-item__image-container .article-item__image{border-radius: 10px 10px 0px 0px;max-height:236px;object-fit:cover;aspect-ratio:2/1}
   .section__header.blog__header {max-width:94%;margin-bottom:12px;}
   .article_container{display: flex;flex-direction: row;flex-wrap: wrap;column-gap: 0px;row-gap:15px;margin: 0 auto 2rem;max-width: 100%;justify-content: space-between;}
   .article--item {flex:0 0 32.5%;}
@@ -152,13 +152,19 @@
 
     <div class="container article_container">
       {% for article in blog.articles %}
+        {% if article.image %}
+          {% assign poster_image = article.image %}
+        {% else %}
+          {% assign poster_image = section.settings.default_image %}
+        {% endif%}
+          
         <div class="article--item scroller__inner">
           <a href="{{ article.url }}" class="article-item__image-container">
             <img
               class="article-item__image"
               sizes="(max-width: 740px) 81vw, (max-width: 999px) 37vw, 425px"
               loading="lazy"
-              {% render 'image-attributes', image: article.image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000' %}
+              {% render 'image-attributes', image: poster_image, sizes: '600,700,800,1000,1200,1400,1600,1800,2000' %}
             >
           </a>
           <div class="article--info">
@@ -217,6 +223,11 @@
   "name": "Blog",
   "class": "shopify-section--main-blog",
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "default_image",
+      "label": "Show Default Image"
+    },
     {
       "type": "checkbox",
       "id": "show_blog_title",
