@@ -145,6 +145,28 @@
       }
       return response;
     },
+    bestSeller: function inventory() {
+      let res = '';
+      let response = '';
+      let best_seller = this.meta && this.meta.custom && this.meta.custom.marketplace_details;
+      var reviews = this.meta.reviews;
+      if (best_seller && reviews) {
+        let mp_name = best_seller[0].split('-')[0].toLowerCase();
+        if(mp_name === 'amazon') {
+          res+=  `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/amazon_ce90d05b-dd92-4d8a-acad-b229003f27b2.png?v=1691406536" loading="lazy" alt="amazon" />
+                    <p class="bestseller">Best seller</p>
+                `
+        } else if(mp_name === 'flipkart') {
+          res+=  `<img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Flipkart.png?v=1691406536" loading="lazy" alt="amazon" style="margin-top:-3px;" />
+                    <p class="bestseller">Best seller</p>
+                `
+        } else {
+          res+= ''
+        }
+          response = `<div class="mkp_bestseller 123213"> ${res} </div>`;
+      }
+      return response;
+    },
     inventory: function inventory() {
       var res = this.inventory_available;
       var flashSale = '';
@@ -162,14 +184,18 @@
       }
       if(this.inventory_quantity < Shopify.sold_out_threshold) {
         if (this.tags.includes('Coming-Soon')) {
-          res = '<input name="add" value="Coming Soon" type="submit" class="custom-search-cta sold-out" />';
+          var varientUrl = '/products/' + this.handle + '?variant=' + this.objectID;
+          res = `<div class="product-item__quick-form">
+          <a href='#' id="notifyMe_trigger" class="custom-notify-btn" data-variant-id="${this.objectID}" data-url="${varientUrl}" onclick="Shopify.notifyMe(this)">Notify Me</a></div>`;
         } else if (this.tags.includes('Gift Cards')) {
           res = '<input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button" />';
         } 
         else {
+          varientUrl = '/products/' + this.handle + '?variant=' + this.objectID;
           // res = '<input name="add" value="Sold out" type="submit" class="custom-search-cta sold-out" />';
           res = `<div class="product-item__quick-form">
-          <a href='#' class='BIS_trigger search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
+          <a href='#' id="notifyMe_trigger" class="custom-notify-btn"
+          data-variant-id="${this.objectID}" data-url="${varientUrl}" onclick="Shopify.notifyMe(this)" class='search-custom-notify-me' data-product-data='{"id": "${this.id}","handle":"${this.handle}","title":"${this.title}","tags":[],"available":"${this.inventory_available}",
           "variants":[{"id":"${this.objectID}","title":"${this.variant_title}","available":"${this.inventory_available}","inventory_quantity":"${this.inventory_quantity}","inventory_management":"${this.inventory_management}"}]}'>
           Notify Me
           </a>
@@ -181,12 +207,21 @@
           res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-offer-add-to-cart algolia_pod_offer add-to-cart-button ' + ${flashSale} + '" />`;
         } else if(this.tags.includes('customized')){
           res = `<a href="${free}" class="product-item__cta button button--primary"
-          style="background: red;line-height: normal;
-          border: 1px solid red;padding: 8px 12px;color: #fff;text-align: center;width: 100%;
-          text-transform: uppercase;margin-top: 0.65rem;border-radius: 5px!important;
-          font-size: 15px!important;font-weight: 700!important;">
+          style="background: #1A2024;
+          border: 1px solid #1A2024;
+          padding: 12px;
+          border-radius: 10px!important;
+          color: #fff;
+          font-size: 14px!important;
+          font-weight: 500!important;
+          line-height: normal;
+          text-align: center;
+          width: 100%;
+          margin-top: 0.65rem;">
           View Product
         </a>`;
+        } else if(this.tags.includes('prebooking')){
+          res = `<input name="add" value="Pre-Order" type="submit" class="custom-search-cta add-to-cart-button '" />`;
         }
         else{
           res = ` ${free} <input name="add" value="Add to cart" type="submit" class="custom-search-cta add-to-cart-button ' + ${flashSale} + '" />`;
@@ -274,10 +309,13 @@
     containerClass: function containerClass() {
       var tags = this.tags;
       var res_class = ''
-      if (tags.includes('st-hide') || tags.includes('prebooking')) {
+      if (tags.includes('st-hide') || tags.includes('Developer_Test')) {
         res_class = 'aa-product hide-suggestion'
       } else {
         res_class = 'aa-product show-suggestion'
+      }
+      if (tags.includes('customized') && this.option1.includes('engrav_')){
+        res_class = res_class + ' algolia_customize_hide'
       }
       return res_class;
     },
@@ -293,14 +331,14 @@
       var response = '';
       if(this.inventory_quantity < Shopify.sold_out_threshold){
         if (tags.includes('Coming-Soon')) {
-          var response = `<div class="aa-product-badge d-block">Coming Soon</div>`;
+          var response = `<div class="aa-product-badge d-block coming-soon">⏳ Coming Soon</div>`;
         } else if (tags.includes('Gift Cards')) {
           var response = ``;
         } else if (tags.includes('Restocking-Soon')){
-          var response = `<div class="aa-product-badge d-block">Restocking-Soon</div>`;
+          var response = `<div class="aa-product-badge sold-out d-block">📦 Restocking Soon</div>`;
         }
         else {
-          var response = `<div class="aa-product-badge sold-out">SOLD OUT</div>`;
+          var response = `<div class="aa-product-badge sold-out d-block">📦 Restocking Soon</div>`;
         }
       }
       else if (this.inventory_available) {
@@ -320,10 +358,6 @@
             res = `₹${tags[i].replace('Coupon-','').split('|')[0]} OFF ON ${tags[i].replace('Coupon-',' ').split('|')[1]}`;
             res_class = 'coupon-label label bg-black z-9';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
-          } else if (tags[i].includes('flash-sale') && comparing) {
-            res = `⚡super saver`;
-            res_class = 'flash-sale-badge label bg-black z-8';
-            response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-Bestseller')) {
             res = `🚀 ${tags[i].replace('meta-label-',' ')}`;
             res_class = 'label bg-black z-7';
@@ -333,11 +367,11 @@
             res_class = 'label bg-black z-6';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-exclusive')) {
-            res = `💝 LIMITED EDITION`;
+            res = `💝 Limited Edition`;
             res_class = 'label bg-black z-5';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('meta-label-just launched')) {
-            res = `🎉 NEW LAUNCH`;
+            res = `🎉 New Launch`;
             res_class = 'label bg-black z-4';
             response = response + `<div class="aa-product-badge ${res_class} "> ${res} </div>`;
           } else if (tags[i].includes('Feature|')) {
@@ -525,7 +559,7 @@
         sessionStorage.setItem('queryList', queryList);
 
       } else {
-        res = `<div class="algolia-no-result-container"> <img style="display: block;margin: auto;margin-left:36%;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/empty_state.svg?v=1683096065"><h3> ${JSON.parse(Shopify.algolia_no_result)} </h3> <div class="algolia-trending-search-header px-3 mx-lg-4"><h4>Most Searched And Bought</h4></div> <div class="algolia-trending-list"> ${document.querySelector('.algolia-trending-list').innerHTML} </div></div>`;
+        res = `<div class="algolia-no-result-container"> <img style="display: block;margin:20px auto 0;" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/oh_shoot_boat_new.svg?v=1686034128"><h3> ${JSON.parse(Shopify.algolia_no_result)} </h3> <div class="algolia-trending-search-header px-3 mx-lg-4"><h4>Most Searched And Bought</h4></div> <div class="algolia-trending-list"> ${document.querySelector('.algolia-trending-list').innerHTML} </div></div>`;
         let algolia_trending_item = "";
 
         function algolia__input(algolia_no_result_input) {

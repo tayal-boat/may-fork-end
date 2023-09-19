@@ -24,7 +24,7 @@
   .footer__item-list {gap: 3vw;}
   .footer .container{background:#eff4f7;max-width:98%;padding:0 20px;}
   p.desktop_menu_link.footer__item-title.heading.heading--small, footer .signup-form .input-block #subscriber-email{color: #000;text-transform: none;}
-  button#btn-back-to-top {display: none;padding: 0.5rem 0.75rem;width: 40px;font-weight: 400!important;border-radius: 0!important;position: fixed;color:white;background-color:black;{% if template contains 'product' or template contains 'collection' %}bottom: 18%!important;{% else %}bottom: 9%;{% endif %}right: 0.1%;align-items: center;z-index:9;}
+  button#btn-back-to-top {display: none;padding: 0.5rem 0.75rem;width: 40px;font-weight: 400!important;border-radius: 0!important;position: fixed;color:white;background-color:black;{% if template contains 'product' or template contains 'collection' %}bottom: 18%!important;{% else %}bottom: 9%;{% endif %}right: 0.1%;align-items: center;z-index:99;}
   .social-media__item--facebook:before {background: #4267B2; }
   .social-media__item--twitter:before{background: #1DA1F2; }
   .social-media__item--instagram:before{background: #E95950; }
@@ -57,7 +57,7 @@
     {% comment %} footer ul.linklist.list--unstyled li:nth-child(odd) {border-right: 1px solid #bcbcbc;} {% endcomment %}
     .footer .container{max-width:95%;}
     footer ul.linklist.list--unstyled li:nth-child(even) {padding-left: 20px;}
-    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #000;border-bottom:1px solid #cad6dd;padding-bottom:10px;width:100%;text-transform:none;font-size: 14px !important;font-weight: 500 !important;border-radius:0!important;}
+    .mobile_footer_item_title button{ margin: 10px 0px 0!important;color: #000;padding-bottom:10px;width:100%;text-transform:none;font-size: 14px !important;font-weight: 500 !important;border-radius:0!important;}
     .mobile_footer_item_title button:active, .mobile_footer_item_title button:focus{outline: none;}
     {% comment %} .mobile_footer_item_title button span{display: none;} {% endcomment %}
     .mobile_footer_item_title .footer__item-content{display:none;padding:0!important;margin-bottom:2rem;}
@@ -91,6 +91,10 @@
 
   @media screen and (min-width: 767px){
     footer .footer__item{display: block !important;    padding-right: 2rem;}
+  }
+
+  @media screen and (max-width: 767px){
+    button#btn-back-to-top {bottom:unset!important;top:var(--mobilemenuHeightforbtt);}
   }
 
   @media screen and (min-width: 992px){
@@ -310,9 +314,12 @@
             {{- block_content -}}
           </div>
         {%- endif -%}
+        
       {%- endfor -%}
     </div>
-
+    {%- if section.settings.show_footer_filters -%}
+      {%- render 'footer-collection-filters' -%}
+    {%- endif -%}
     <div class="footer__aside footer_section">
       {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
         {%- assign country_selector = true -%}
@@ -459,6 +466,7 @@
           </div>
         {%- endif -%}
       {%- endcomment -%}
+      
       <div class="row mt-4 footer-bottom-row social_app_links">
         <div class="col-lg-12 text-left payment-box">
           <div class="row social--media hidden-phone">
@@ -532,7 +540,42 @@
   </div>
 </div>
 </footer>
-
+{% if section.settings.time_popup  %}
+  <style>
+    #timed-Modal.show .popover__overlay {visibility: visible;opacity: .3; top: 0;z-index:1111;}
+    #timed-Modal{display: block;visibility: hidden;z-index:1000;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1),opacity .6s cubic-bezier(.75,0,.175,1);}
+    #timed-Modal .close{position: absolute;top: 12px;right: 12px;width: 30px;height: 30px;line-height: 24px;opacity: 1;
+      text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
+    }
+    div#timed-Modal.show {transform: translateY(0);visibility: visible;}
+    #timed-Modal .modal-dialog {position: absolute!important;bottom: 0!important;top: unset!important;left: unset!important;transform: translate(0)!important;z-index: 9999;}
+  </style>
+  <div id="timed-Modal" class=" modal fade" role="dialog">
+    <span class="popover__overlay"></span>
+    <div class="modal-dialog w-100 m-0">
+      <div class="modal-content w-100" style="border-radius: 16px 16px 0 0;">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body-content">
+            <div class="p-4">        
+              <div class="pt-5 mb-0 text-center dynamic-text" style="font-size: 24px;line-height: 1.2;">
+              </div>        
+                <div class="modal-image p-4 px-5" style="font-size: 16px;">
+                  <img class="image-overlay__image_ dynamic-image" style="display:none;max-width: 100%;" alt="Popup Image"/>
+                </div>
+              <a style="color: white;font-weight: 700!important;
+                padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
+                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" class="dynamic-href"
+                    href="" target="_blank">
+                    Yes, Unmask The Offer!
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
 {%- if section.settings.show_cookie_bar -%}
 <cookie-bar section="{{ section.id }}" hidden class="cookie-bar text--xsmall">
   {%- if section.settings.cookie_bar_title != blank -%}
@@ -553,33 +596,11 @@
   </div>
 </cookie-bar>
 {%- endif -%}
-{% comment %}
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog modal-custom">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <button
-          hidden
-          type="button"
-          class="close"
-          id="ct-close"
-          data-dismiss="modal"
-        >
-          &times;
-        </button>
-        <iframe
-          id="ctIframe"
-          src="/apps/sw/testfile.html"
-          title="Order Form_Shopify"
-          width="400"
-          height="250"
-          frameborder="0"
-          style="margin: auto"
-        ></iframe>
-      </div>
-    </div>
-  </div>
-{% endcomment %}
+
+<div class="chatbot hidden-moble-chat" style="position:fixed;bottom:10px;right:10px;cursor:pointer;">
+  <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chat-Icon.jpg?v=1690367119" style="width:45px;border-radius:50%;">
+</div>  
+
 <script>
   $(window).scroll(function(e){
   if (this.scrollY >= 1000){
@@ -611,7 +632,67 @@ function openLink(evt, tabName) {
   document.getElementById(tabName).style.display = 'block';
   evt.currentTarget.className += ' active';
 } {% endcomment %}
-
+{% if section.settings.time_popup %}
+    if(window.innerWidth <= 768){
+        // Cookie functions
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+    
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+    
+        function setPopupContent(sessionCount) {
+            let textContent = "";
+            let imageSrc = "";
+            let btntext = "";
+            let btnhref = "";
+            switch(sessionCount) { {{ section.settings.popup_text }} }
+            $(".dynamic-text").html(textContent);
+            $(".dynamic-image").attr("srcset", imageSrc).css("display", "block");
+            $(".dynamic-href").attr("href", btnhref).text(btntext);
+        }
+    
+        var sessionCount = getCookie("sessionCount") || "0";
+        sessionCount = (parseInt(sessionCount) + 1).toString();
+    
+        if (sessionStorage.getItem("timed_popUpPoped") === null){         
+            var flag = false;
+            $(document).one('touchmove scroll', function(event) {
+              console.log("scroll_start")
+                if (!flag) {
+                    flag = true;
+                    setTimeout(function() {
+                        if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
+                          setPopupContent(sessionCount);
+                          setCookie("sessionCount-{{ shop.name }}", sessionCount, 90); // 90 days for 3 months
+                          console.log("time")
+                            $("#timed-Modal").addClass("show");
+                            $("html").addClass("lock-mobile");
+                            sessionStorage.setItem("timed_popUpPoped", "poped");
+                        }
+                    }, 10000);
+                }
+            });
+        }
+    
+        $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
+            $("#timed-Modal").removeClass("show");
+            $("html").removeClass("lock-mobile");
+        });
+    }
+    
+  {% endif %}
+  
 $('.menu-panel').each(function(i) {
   $(this).find(`.footer__item-title`).click(function() {
     $(this).find('.expanded').toggleClass('visually-hidden')
@@ -632,14 +713,30 @@ $('.menu-panel').each(function(i) {
 "max_blocks": 5,
 "settings": [
   {
-    "type": "image_picker",
-    "id": "payment_strip",
-    "label": "Payment Image"
+    "type": "checkbox",
+    "id": "show_footer_filters",
+    "label": "Show Footer Filters",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "time_popup",
+    "label": "Show time_popup throughout website"
+  },
+  {
+    "type": "html",
+    "id": "popup_text",
+    "label": "Popup flow content"
+  },
+  {
+    "type": "link_list",
+    "id": "filter_menu",
+    "label": "Filter Menu"
   },
   {
     "type": "image_picker",
-    "id": "popup_image",
-    "label": "Popup Image"
+    "id": "payment_strip",
+    "label": "Payment Image"
   },
   {
     "type": "checkbox",

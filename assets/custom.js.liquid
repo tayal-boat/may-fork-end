@@ -141,7 +141,6 @@
 Shopify.enable_namagoo = {{ settings.enable_namagoo }};
 Shopify.cart_item_count = function () {
   $.getJSON('/cart.js', function(cart){
-    console.log(cart.item_count);
     var cartCount = cart.item_count;
     $(".header__cart-count").html(cartCount);
     $('.header__cart-count.header__cart-count--floating.bubble-count').text(cartCount);
@@ -170,57 +169,34 @@ $(document).on("click", ".custom-search-cta", function(e) {
   })
 });
 
-document.addEventListener("readystatechange", (event) => {
-  if (event.target.readyState === "complete") {
-  function lazyloaded_sections() {
-      "false" == sessionStorage.getItem("lazyloaded_sections") && ($.ajax({
-          url: "/pages/custom-homepage",
-          type: "GET",
-          dataType: "html",
-          success: function(e) {
-              let t = $(e).find("#index-lazyload_sections").html();
-              $(".custom-lazyloaded-content").html(t);
-              Shopify.homepageLazyload();
-          }
-      }), sessionStorage.setItem("lazyloaded_sections", "true"));
+// if (!isIOSMobile()) {
+//   let i = Notification.permission;
 
-  }
-  sessionStorage.setItem("lazyloaded_sections", "false"), document.addEventListener("touchmove", lazyloaded_sections, !0), document.addEventListener("scroll", lazyloaded_sections, !0)
-  }
-});
+//   function e() {
+//       if ("visible" !== document.visibilityState) {
+//           icon = "image-url";
+//           var i = new Notification("Title", {
+//               body: "Message to be displayed",
+//               icon
+//           });
+//           i.onclick = () => {
+//               i.close(), window.parent.focus()
+//           }
+//       }
+//   }
 
-function isIOSMobile() {
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent)
-};
-
-if (!isIOSMobile()) {
-  let i = Notification.permission;
-
-  function e() {
-      if ("visible" !== document.visibilityState) {
-          icon = "image-url";
-          var i = new Notification("Title", {
-              body: "Message to be displayed",
-              icon
-          });
-          i.onclick = () => {
-              i.close(), window.parent.focus()
-          }
-      }
-  }
-
-  function t() {
-    Notification.requestPermission(function(i) {
-      "granted" === i && (clevertap.profile.push({
-        Site: {
-          "Web Push": !0,
-          "MSG-push": !0
-        }
-      }), e(), console.log("granted"))
-    })
-  }
-  "granted" === i ? e() : t()
-};
+//   function t() {
+//     Notification.requestPermission(function(i) {
+//       "granted" === i && (clevertap.profile.push({
+//         Site: {
+//           "Web Push": !0,
+//           "MSG-push": !0
+//         }
+//       }), e(), console.log("granted"))
+//     })
+//   }
+//   "granted" === i ? e() : t()
+// };
 
 // var actualDimension = $(window).width() + $(window).height();
 // $(window).on('resize', function(){
@@ -234,86 +210,206 @@ if (!isIOSMobile()) {
 let unitsLeft = '';
 let usual_price = '';
 
-Shopify.variantChange = function(e){
-  $('.pdp-btn-price').remove()
-  $("#AddToCart .loader-button__text, .cutomized-btn .loader-button__text").append(`<span class="pdp-btn-price">₹${e.price / 100}</span>`)
-  // console.log(e);
+Shopify.variantChange = function (e) {
+  var product_form = event.target;
+  let cta_btn_discount_1 = e.price * Shopify.cta_btn_discount_1 / 100;
+  cta_btn_discount_1 = e.price - cta_btn_discount_1;
+  let cta_btn_discount_2 = e.price * Shopify.cta_btn_discount_2 / 100;
+  cta_btn_discount_2 = e.price - cta_btn_discount_2;
+  if ($('.pdp-custom-payment-button').length > 0) {
+    product_form.querySelectorAll('.pdp-custom-payment-button')[0].querySelector('.pdp-custom-cta-price') ? product_form.querySelectorAll('.pdp-custom-payment-button')[0].querySelector('.pdp-custom-cta-price').innerHTML = `${Shopify.formatMoney(cta_btn_discount_1, Shopify.money_format2)}<span>/item</span>` : '';
+    product_form.querySelectorAll('.pdp-custom-payment-button')[1].querySelector('.pdp-custom-cta-price') ? product_form.querySelectorAll('.pdp-custom-payment-button')[1].querySelector('.pdp-custom-cta-price').innerHTML = `${Shopify.formatMoney(cta_btn_discount_2, Shopify.money_format2)}<span>/item</span>` : '';
+  }
+  if (!e.available) {
+    console.log(e.available, 'show notify me');
+    // $('.custom-notify-btn').show();
+    $('.out_of_stock_msg').show();
+    $('.pincode_checker_heading').hide();
+    $('.pdp_right_section .payment_offers').hide();
+    $('.product__info button#AddToCart').hide();
+    product_form.querySelector('#AddToCart') ? product_form.querySelector('#AddToCart').classList.add('hide_cTA') : '';
+    product_form.querySelector('.cutomized-btn') ? product_form.querySelector('.cutomized-btn').classList.add('hide_cTA') : '';
+    product_form.querySelector('.button.custom-prebook') ? product_form.querySelector('.button.custom-prebook').classList.add('hide_cTA') : '';
+    $("#gokwik-buy-now").addClass('hide_cTA');
+    product_form.querySelector('.pdp-custom-payment-container') ? product_form.querySelector('.pdp-custom-payment-container').classList.add('hide_cTA') : '';
+    // $('quick-buy-drawer #AddToCart').hide();
+    // $('quick-buy-popover #AddToCart').hide();
+    product_form.querySelector('.custom_notifyMe_btn') ? product_form.querySelector('.custom_notifyMe_btn').classList.add('show_notifyMe') : '';
+    $('.product-item__quick-form.quick-buy-notify-me #notifyMe_trigger').attr('data-variant-id', e.id);
+    $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
+    $('.d-lg-none.restocking, .desktop.restocking').show();
+    $('.pincode_checker_container').hide();
+    if ($('#notifyMe_trigger.custom-notify-btn').length > 0) {
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-variant-id', e.id);
+      var varient_url = $('#notifyMe_trigger.custom-notify-btn').attr('data-url');
+      varient_url = varient_url.split('?')[0];
+      varient_url = varient_url + "?variant=" + e.id;
+      $('#notifyMe_trigger.custom-notify-btn').attr('data-url', varient_url);
+    }
+    setTimeout(() => {
+      $('.flash-sale-lable').hide()
+    }, 10)
 
-function swatches_change(varient_swatches_input){
-for (let i = 0; i < varient_swatches_input.length; i++) {
-if(varient_swatches_input[i].checked){
-  if(JSON.parse(varient_swatches_input[i].parentElement.dataset.varient_disabled)) {
-      $('.custom-notify-btn').show();
-      $('.product__info button#AddToCart').hide();
-      $('#AddToCart, .cutomized-btn, .button.custom-prebook').addClass('hide_cTA');
-      $("#gokwik-buy-now").addClass('hide_cTA');
-      $('quick-buy-drawer #AddToCart').hide();
-      $('quick-buy-popover #AddToCart').hide();
-      $('.product-item__quick-form.quick-buy-notify-me').show();
-      $('.product-item__quick-form.quick-buy-notify-me .BIS_trigger').attr('data-variant-id',e.id);
-      $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').hide();
-      $('.d-lg-none.restocking, .desktop.restocking').show();
-      $('.pincode_checker_container').hide();
-    if($('#BIS_trigger.custom-notify-btn').length > 0){
-      $('#BIS_trigger.custom-notify-btn').attr('data-variant-id',e.id);
-    } 
-      
-  }else{
-    $('.custom-notify-btn').hide();
-    $('.product__info button#AddToCart').show();
+  } else {
+    console.log(e.available, 'hide notify me');
+    // $('.custom-notify-btn').hide();
+    $('.out_of_stock_msg').hide();
+    $('.pincode_checker_heading').show();
+    $('.product__info .product-form__add-button').show();
+    $('.pdp_right_section .payment_offers').show();
     $("#gokwik-buy-now").removeClass('hide_cTA');
-    $('#AddToCart, .cutomized-btn, .button.custom-prebook').removeClass('hide_cTA');
-    $('quick-buy-drawer #AddToCart').show();
-    $('quick-buy-popover #AddToCart').show();
-    $('.product-item__quick-form.quick-buy-notify-me').hide();
+    product_form.querySelector('#AddToCart') ? product_form.querySelector('#AddToCart').classList.remove('hide_cTA') : '';
+    product_form.querySelector('.cutomized-btn') ? product_form.querySelector('.cutomized-btn').classList.remove('hide_cTA') : '';
+    product_form.querySelector('.button.custom-prebook') ? product_form.querySelector('.button.custom-prebook').classList.remove('hide_cTA') : '';
+    product_form.querySelector('.pdp-custom-payment-container') ? product_form.querySelector('.pdp-custom-payment-container').classList.remove('hide_cTA') : '';
+    // $('quick-buy-drawer #AddToCart').show();
+    // $('quick-buy-popover #AddToCart').show();
+    product_form.querySelector('.custom_notifyMe_btn') ? product_form.querySelector('.custom_notifyMe_btn').classList.remove('show_notifyMe') : '';
     $('.d-lg-none.current-in-cart, .desktop.current-in-cart, .offer-callout-simple, .popup_wrapper').show();
     $('.d-lg-none.restocking, .desktop.restocking').hide();
     $('.pincode_checker_container').show();
-    var variant_personalization = sessionStorage.getItem('variant_personalization');
-    variant_personalization = JSON.parse(variant_personalization);
-    for (var key in variant_personalization) {
-      if (variant_personalization.hasOwnProperty(e.id)) {
-        $('.personalization-image-wrapper img').attr('src', variant_personalization[e.id]);
+
+    // Product personalization
+      var variant_personalization = $('.personilaztion-message-modal').attr('data-variant_personalization');
+        if (variant_personalization && variant_personalization !== null) {
+          variant_personalization = JSON.parse(variant_personalization);
+          // console.log(variant_personalization);
+          for (var key in variant_personalization) {
+            if (variant_personalization.hasOwnProperty(e.id)) {
+              $('.personalization-image-wrapper img').attr('src', variant_personalization[e.id]);
+              break;
+            }
+          }
+        }
+      var variant_personalization_id = $('.personilaztion-message-modal').attr('data-variant_personalization_id');
+        if (variant_personalization_id && variant_personalization_id !== null) {
+          variant_personalization_id = JSON.parse(variant_personalization_id);
+          var newvariantObj = {};
+          for (var key in variant_personalization_id) {
+            if (key.includes('engrav_')) {
+              var originalKey = key.replace('engrav_', '');
+              var engravValue = variant_personalization_id[key];
+              newvariantObj[variant_personalization_id[originalKey]] = engravValue;
+            }
+          }
+      
+          for (var key in newvariantObj) {
+            if (newvariantObj.hasOwnProperty(e.id)) {
+              $('.submit-personalization').attr('data-varientid', newvariantObj[e.id]);
+              break;
+            }
+          }
+        }
+  }
+  $('.pdp-btn-price').remove();
+  //let compare_price =  ( ${e.price / 100} *100 ) / ${e.compare_at_price / 100} ;
+
+  let regular_price = e.compare_at_price / 100;
+  let sale_price = e.price / 100;
+  let discount_percentage;
+
+  if (regular_price > sale_price) {
+    discount_percentage = Math.round(((regular_price - sale_price) / regular_price) * 100) + '% Off';
+  } else {
+    discount_percentage = ''
+  }
+  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text, #AddToCart.prebook .loader-button__text").html('');
+  $("#AddToCart.a2c .loader-button__text, .cutomized-btn .loader-button__text").append(`
+<span class="atc_btn">
+<svg id="Group_211011" data-name="Group 211011" xmlns="http://www.w3.org/2000/svg" width="19.725" height="20" viewBox="0 0 19.725 23">
+  <path id="Rectangle_760" data-name="Rectangle 760" d="M8.558,5.081a.8.8,0,1,0,1.6,0ZM0,5.081a.8.8,0,1,0,1.6,0ZM5.081,1.6A3.477,3.477,0,0,1,8.558,5.081h1.6A5.081,5.081,0,0,0,5.081,0Zm0-1.6A5.081,5.081,0,0,0,0,5.081H1.6A3.477,3.477,0,0,1,5.081,1.6Z" transform="translate(4.78)" fill="#fff"/>
+  <path id="Rectangle_788" data-name="Rectangle 788" d="M.836,13.108l.8.1Zm18.053,0-.8.1h0ZM17.819,4.55l.8-.1h0Zm-15.913,0-.8-.1ZM6.152,1.6h7.421V0H6.152ZM17.023,4.65l1.07,8.558,1.592-.2-1.07-8.558Zm-2.38,12.466H5.082v1.6h9.561ZM1.632,13.208,2.7,4.65l-1.592-.2L.04,13.009Zm3.45,3.908a3.477,3.477,0,0,1-3.45-3.908l-1.592-.2A5.081,5.081,0,0,0,5.082,18.72Zm13.011-3.908a3.477,3.477,0,0,1-3.45,3.908v1.6a5.081,5.081,0,0,0,5.042-5.712ZM13.573,1.6a3.477,3.477,0,0,1,3.45,3.045l1.592-.2A5.081,5.081,0,0,0,13.573,0ZM6.152,0A5.081,5.081,0,0,0,1.11,4.451l1.592.2A3.477,3.477,0,0,1,6.152,1.6Z" transform="translate(0 4.28)" fill="#fff"/>
+</svg>                    
+<span class="add_to_cart_btn">{{- 'product.form.add_to_cart' | t -}}</span>
+</span>
+<span class="pdp-btn-price custom_price_wrapper">
+<span class="inclusive_text_content">Inclusive of all Taxes</span>
+<span class="mobile_atc_btn">
+  <span class="mobile_atc_price">₹${e.price / 100}</span>
+  <span class="saved_price">${discount_percentage}</span>
+</span>
+</span>`);
+
+  $("#AddToCart.prebook .loader-button__text").append(`
+<span class="atc_btn">
+<span class="add_to_cart_btn">{{- 'product.form.pre_order' | t -}}</span>
+</span>
+<span class="pdp-btn-price custom_price_wrapper">
+<span class="inclusive_text_content">Inclusive of all Taxes</span>
+<span class="mobile_atc_btn">
+  <span class="mobile_atc_price">₹${e.price / 100}</span>
+  <span class="saved_price">${discount_percentage}</span>
+</span>
+</span>`);
+  //  console.log(e);
+
+  function swatches_change(varient_swatches_input) {
+    for (let i = 0; i < varient_swatches_input.length; i++) {
+
+      if (varient_swatches_input[i].checked) {
+        $.ajax({
+          url: location.pathname + "?variant=" + e.id + "&section_id=main-product",
+          type: "GET",
+          dataType: "html",
+          success: function (e) {
+            var product_media = $(e).find('product-media').html();
+            $("product-media").html(product_media);
+            setTimeout(function () {
+              var product_itemsDiv = '.product_media_section .MultiCarousel-inner';
+              var product_itemsMainDiv = ('.product_media_section .MultiCarousel');
+              var product_selector = 'MultiCarousel_product';
+              Shopify.product_slider(product_itemsDiv, product_itemsMainDiv, product_selector);
+              if ($('.MultiCarousel_loaded.MultiCarousel-inner .product__media-item').length < 2) {
+                $(product_itemsMainDiv).addClass('hide_dots');
+              } else {
+                $(product_itemsMainDiv).removeClass('hide_dots');
+              }
+              $('.product__media-image-wrapper img').click(function () {
+                $('.product__zoom-button').click();
+              });
+              $('button.product__thumbnail-item.hidden-pocket').hover(function () {
+                $(this).trigger('click');
+              });
+            }, 500);
+          }
+        })
+
+
+      }
+    }
+  }
+  let varient_swatches_input = document.querySelectorAll('.variant-swatch input');
+  swatches_change(varient_swatches_input);
+  let color_swatches_input = document.querySelectorAll('.color-swatch input');
+  swatches_change(color_swatches_input)
+
+  let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
+  if (home_pod_price) {
+    let custom_price = '';
+    let offerVariantdata = sessionStorage.getItem('variantQtys');
+    let OfferProperty = [];
+    let varient_pod_units = [];
+    offerVariantdata = JSON.parse(offerVariantdata);
+    for (var key in offerVariantdata) {
+      if (offerVariantdata.hasOwnProperty(e.id)) {
+        let OfferPropertyArr = offerVariantdata[e.id];
+        OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+        varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
         break;
       }
     }
-  }    
-}
-}
-}
-let varient_swatches_input = document.querySelectorAll('.variant-swatch input') ;
-swatches_change(varient_swatches_input);
-let color_swatches_input = document.querySelectorAll('.color-swatch input') ;
-swatches_change(color_swatches_input)
+    let varient_pod_unit = varient_pod_units[0];
+    varient_pod_unit = parseInt(varient_pod_unit);
+    OfferProperty = OfferProperty[0];
+    if (varient_pod_unit > 0 && OfferProperty == 'true') {
+      custom_price = parseInt(home_pod_price.dataset.pod)
+    } else {
+      custom_price = e.price / 100;
+    }
 
-let home_pod_price = document.querySelector('.custom-product-of-the-day-price .current_price');
-if(home_pod_price){
-let custom_price = '';
-let offerVariantdata = sessionStorage.getItem('variantQtys');
-let OfferProperty= [];
-let varient_pod_units = [];
-offerVariantdata = JSON.parse(offerVariantdata);
-for (var key in offerVariantdata) {
-  if (offerVariantdata.hasOwnProperty(e.id)) {
-   let OfferPropertyArr = offerVariantdata[e.id];
-    OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
-    varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
-    break;
-   }
- }
- let varient_pod_unit = varient_pod_units[0];
- varient_pod_unit = parseInt(varient_pod_unit);
- OfferProperty = OfferProperty[0];
- if(varient_pod_unit > 0 && OfferProperty == 'true'){  
-  custom_price = parseInt(home_pod_price.dataset.pod)
- }else{
-  custom_price = e.price / 100;
- }
-
-  home_pod_price.innerHTML = '₹ '+ custom_price;
+    home_pod_price.innerHTML = '₹ ' + custom_price;
+  }
 }
-}
-
 
 // Creating cleverTap push event
 function createCleverTapEvent( event_name, event_data ){
@@ -322,104 +418,11 @@ function createCleverTapEvent( event_name, event_data ){
   }
 }
 
-
-Shopify.homepageLazyload = function(){
-  // Shopify.custom_slider(e);
-
-  var press_itemsDiv = '.press_section .MultiCarousel-inner';
-  // console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
- var press_itemsMainDiv = ('.press_section .MultiCarousel');
- var press_selector = 'MultiCarousel_press';
-Shopify.custom_slider(press_itemsDiv, press_itemsMainDiv, press_selector);
-
-var explore_itemsDiv = '.explore_now_section .MultiCarousel-inner';
-// console.dir(document.querySelector(explore_itemsDiv, 'explore_itemsDiv'));
-var explore_itemsMainDiv = ('.explore_now_section .MultiCarousel');
-var explore_selector = 'MultiCarousel_explore';
-Shopify.custom_slider(explore_itemsDiv, explore_itemsMainDiv, explore_selector);
-
-// Explore our slide section
-var explore_now_slider_img = document.querySelectorAll('.explore_now_slider .explore_item');
-explore_now_slider_img.forEach((slide, i) => {
-    slide.addEventListener('click', function() {
-      
-        let imageurl = slide.querySelector('a').href;
-        let imageTitle = slide.querySelector('img').alt;
-        clevertap.event.push("Explore now clicked", {
-          "image url": imageurl,
-          "image Title": imageTitle,
-          "userSource": userSource
-        })
-    })
-  });
-
-  $('.shopify-section shopify-section--press').on('click', function() {
-    clevertap.event.push("In the Press section clicked", {"userSource": userSource});
-  });
-  $("button.press-list__logo-item.tap-area").hover(function() {
-    $(this).trigger("click")
-  });
-  labelsPriority()
-  // tabs_ajax()
-}
-
-function labelsPriority() {
-  $('.product-item').each(function() {
-      if($(this).find('.z-10').length > 0) {
-          $(this).find('.z-10').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-9').length > 0) {
-          $(this).find('.z-9').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-8').length > 0) {
-          $(this).find('.z-8').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-7').length > 0) {
-          $(this).find('.z-7').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-6').length > 0) {
-          $(this).find('.z-6').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-5').length > 0) {
-          $(this).find('.z-5').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-4').length > 0) {
-          $(this).find('.z-4').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-3').length > 0) {
-          $(this).find('.z-3').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } else if($(this).find('.z-2').length > 0) {
-          $(this).find('.z-2').css({
-            'display': 'flex',
-            'alignItems': 'center'
-          });
-      } 
-  })
-}
-window.addEventListener('load', labelsPriority)
-
 // Creating cleverTap push event
 function createCleverTapEvent( event_name, event_data ){
   if( event_name != '' && event_data != '' ){
     clevertap.event.push( event_name, event_data );
-    console.log(clevertap.getCleverTapID());
+    // console.log(clevertap.getCleverTapID());
   }
 }
 
@@ -506,8 +509,6 @@ if (window.matchMedia("(min-width: 769px)").matches) {
     });
   });
 }
-
-
 
 /* Clevertap Code for "shop by category and top collections on colletion page" ends here  */
 
@@ -642,25 +643,134 @@ $('a.banner_link').on('click', function() {
 
 /* clevertap code for clicking razor pay ends here */
 
+// # info: Collection Filters Code
+Shopify.accordion = function(tablinks) {
+  for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].hasAttribute("open")) {
+          tablinks[i].removeAttribute("open");
+          tablinks[i].previousElementSibling.setAttribute('aria-expanded', 'false');
+      }
+  }
+}
+
+function preserveQuery() {
+  Shopify.queryParams = {};
+  if (window.location.search.length) {
+      const params = window
+          .location
+          .search
+          .substr(1)
+          .split('&');
+      const filterParams = params.filter(checkPrice);
+      const fliterUrl = params.filter(priceNotInclude);
+
+      function checkPrice(param) {
+          return param.includes('filter.v.price');
+      }
+
+      function priceNotInclude(param) {
+          return !param.includes('filter.v.price');
+      }
+
+      let fliterBaseUrl = fliterUrl.toString();
+      fliterBaseUrl = fliterBaseUrl.replaceAll(',', '&')
+      Shopify.fliterUrl = fliterBaseUrl;
+      for (let i = 0; i < filterParams.length; i++) {
+          const keyValue = filterParams[i].split('=');
+
+          if (keyValue.length) {
+              Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+          }
+      }
+  }
+
+}
+
+function triggerEvent(element, name, data = {}) {
+  element.dispatchEvent(new CustomEvent(name, {
+      bubbles: true,
+      detail: data
+  }));
+}
+
+Shopify.collectionFilter = function(filterLoad) {
+
+  let details = document.querySelectorAll("#facet-filters-form collapsible-content");
+  let summary = $('#facet-filters-form .collapsible-toggle');
+
+  summary.click(function() {
+      Shopify.accordion(details);
+      $(this).attr('aria-expanded', 'true');
+      $(this).siblings('collapsible-content').attr('open', 'true');
+  });
+
+  preserveQuery();
+
+  let sortItems = document.querySelectorAll('.price-tag-filter .tag');
+  for (let i = 0; i < sortItems.length; i++) {
+      sortItems[i].addEventListener('click', function(e) {
+          preserveQuery();
+          Shopify.queryParams['filter.v.price.gte'] = e.target.attributes['data-min'].value;
+          Shopify.queryParams['filter.v.price.lte'] = e.target.attributes['data-max'].value;
+          let searchParams = new URLSearchParams(Shopify.queryParams).toString();
+          if (Shopify.fliterUrl) {
+              searchParams = `${Shopify.fliterUrl}&${searchParams}`
+          }
+          triggerEvent(this, "facet:criteria-changed", {
+              url: `${window.location.pathname}?${searchParams}`
+          });
+
+      })
+  }
+  if (filterLoad) {
+      Shopify.accordion(details);
+      if (summary[0] != undefined) {
+          summary[0].setAttribute('aria-expanded', 'true');
+          summary[0].nextElementSibling.setAttribute('open', 'true');
+      }
+  }
+}
+
+let collectionFilterLoad = true;
+Shopify.collectionFilter(collectionFilterLoad);
+
 // OTP Login
 
+const date = new Date()
+options = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  hour12: true
+};
+const LOGIN_TIMESTAMP = new Intl.DateTimeFormat("en-GB", options).format(date);
+Shopify.custom_otp_login = function () {
   //Function to allow only numbers
-     function _isNumberCheck(evt) {
-      var charCode = (evt.which) ? evt.which : event.keyCode
-      if (charCode > 31 && (charCode < 48 || charCode > 57))
+  function _isNumberCheck(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
       return false;
-      return true;
-   }
-   // Not allow 0 as first digit on input
-   $(document).on("input", "#otp-mobile-number, #otp", (e) => {
-      $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
-      $('.otp-login-error').html('');
-   })
-   $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
-      return _isNumberCheck(e);
-   })
-   let timerOn = false;
-   function timer(remaining, timerOn) {
+    return true;
+  }
+  // Not allow 0 as first digit on input
+  $(document).on("input", "#otp-mobile-number, #otp", (e) => {
+    $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+    $('.otp-login-error').html('');
+    if ($('#otp-mobile-number').val().length > 0) {
+      $('.otp-login-btn').addClass('active');
+    } else ($('.otp-login-btn').removeClass('active'));
+    if ($('#otp').val().length > 5) {
+      $('.otp-login-confirm-btn').addClass('active');
+    } else ($('.otp-login-confirm-btn').removeClass('active'));
+  })
+
+  $(document).on("keypress", "#otp-mobile-number, #otp", (e) => {
+    return _isNumberCheck(e);
+  })
+  let timerOn = false;
+  function timer(remaining, timerOn) {
     let m = Math.floor(remaining / 60);
     let s = remaining % 60;
 
@@ -668,16 +778,16 @@ $('a.banner_link').on('click', function() {
     s = s < 10 ? '0' + s : s;
     $('#timer').html(m + ':' + s);
     remaining -= 1;
-    if(remaining >= 0 && timerOn) {
-      setTimeout(function() {
+    if (remaining >= 0 && timerOn) {
+      setTimeout(function () {
         timerOn = sessionStorage.getItem('timerOn');
         timerOn = JSON.parse(timerOn);
-          timer(remaining, timerOn);
+        timer(remaining, timerOn);
       }, 1000);
       return;
     }
 
-    if(!timerOn) {
+    if (!timerOn) {
       // Do validate stuff here
       return;
     }
@@ -686,38 +796,40 @@ $('a.banner_link').on('click', function() {
     $('.resend-timer').hide();
     $('.resend-text').show();
     $('.resend-btn').show();
-    $('.otp-login-confirm-btn').css('background','#ED1C24');
   }
 
-   function TimerFunction(){
+  function TimerFunction() {
     timerOn = true;
     sessionStorage.setItem('timerOn', timerOn);
     $('.resend-timer').show();
     $('.resend-text').hide();
     $('.resend-btn').hide();
-    $('.otp-login-confirm-btn').removeAttr('style');
+    $('.otp-login-body-container').removeClass('login_error');
+    $('#otp').val('');
     timer(60, timerOn);
-   }
+  }
 
-   function countdown(timeleft, url){
+  function countdown(timeleft, url) {
     var timeleft = timeleft;
-    var downloadTimer = setInterval(function(){
-      if(timeleft <= 0){
+    var downloadTimer = setInterval(function () {
+      if (timeleft <= 0) {
         clearInterval(downloadTimer);
-        sessionStorage.setItem('login','false');
+        sessionStorage.setItem('login', 'false');
         location.href = url;
       } else {
-        document.getElementById("countdown").innerHTML = timeleft;
+        if(document.getElementById("countdown") != null){
+          document.getElementById("countdown").innerHTML = timeleft;
+        }
       }
       timeleft -= 1;
     }, 1000);
-   }
+  }
 
-   function emailMask(email) {
+  function emailMask(email) {
     var maskedEmail = email.replace(/([^@\.])/g, "*").split('');
-    var previous	= "";
-    for(i=0;i<maskedEmail.length;i++){
-      if (i<=1 || previous == "." || previous == "@"){
+    var previous = "";
+    for (i = 0; i < maskedEmail.length; i++) {
+      if (i <= 1 || previous == "." || previous == "@") {
         maskedEmail[i] = email[i];
       }
       previous = email[i];
@@ -727,44 +839,45 @@ $('a.banner_link').on('click', function() {
 
   var customer_container = document.querySelector('.customer-login-section.customer--section');
   function inputSubmit(input) {
-    if(input){
-    input.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        // debugger
-        if(customer_container.hasAttribute('otp_login_screen')){
-        //  console.log('otp_login_screen');
-        document.querySelector('.otp-login-btn').click();
-        }
-        else if(customer_container.hasAttribute('otp_send')){
-          document.querySelector('.otp-login-confirm-btn').click();  
-        }
-        else{
-        //  console.log('prevint defaunt reload');
+    if (input) {
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
           event.preventDefault();
+          // debugger
+          if (customer_container.hasAttribute('otp_login_screen')) {
+            document.querySelector('.otp-login-btn').click();
+          }
+          else if (customer_container.hasAttribute('otp_send')) {
+            document.querySelector('.otp-login-confirm-btn').click();
+          }
+          else {
+            //  console.log('prevint defaunt reload');
+            event.preventDefault();
+          }
         }
-      }
-    });
-  }
+      });
     }
+  }
 
-  function signup_window(session_id){
+  function signup_window(session_id) {
     $('.customer-login-section').attr('new_customer', 'true');
+    $('.mobile-login-otp_heading h2').html('<b>Continue with Email ID</b>');
+    $('.mobile-login-otp_heading span').html('Please enter your Name & Email ID to continue');
     $('.customer-login-section').removeAttr('multi_email');
     $('.otp-login-message h3').html('Continue with Email');
     $('.otp-timer-container').hide();
     $('.otp-login-error').html('');
-    $('.otp-login-submit-btn').click(function(){
+    $('.otp-login-submit-btn').click(function () {
       let full_name = $('.otp-fullName #full_name').val();
       let email = $('.otp-email #email').val();
       let phone = $('#otp-mobile-number').val();
       let register_url = sessionStorage.getItem('login_location');
-      sessionStorage.setItem('selected_email',email);
+      sessionStorage.setItem('selected_email', email);
       otpSignUp(full_name, email, phone, session_id, register_url);
     })
   }
 
-  function verifyemail(session_id, otp, url){
+  function verifyemail(session_id, otp, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/email/verify';
     var settings = {
       "url": base_Url,
@@ -779,28 +892,37 @@ $('a.banner_link').on('click', function() {
         "otp": otp
       }),
     };
-    
+
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200 && response.message == 'login URL sent'){
+      if (response.code == 200 && response.message == 'login URL sent') {
         $('.customer-login-section.customer--section').hide();
+        var notifyMeSuccessContainer = $('.notifyMe_popup__main_container .oto-login-success-container');
+        if(notifyMeSuccessContainer.length > 0) {
+          notifyMeSuccessContainer.html(`
+          <div class="notifyMe_sucess_heading"><h2>We will inform you once the Product is back in stock!</h2><p>Meanwhile checkout our <b>other collections</b>.</p></div><div class="notifyMe_sucess_content"></div><div class="notifyMe_sucess_button"><button class="button button--secondary button--full" onclick="location.reload()">Continue</button></div>`);
+        }
         $('.oto-login-success-container').show();
         localStorage.setItem('boatHead_input', response.Token);
         countdown(5, response.URL);
-        
-      }else if(response.code == 422 && response.message == 'validation_error'){
+        $('.otp-login-body-container').removeClass('login_error');
+      } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401){
+        $('.otp-login-body-container').addClass('login_error');
+      } else if (response.code == 401 || response.code == 429) {
         $('.otp-login-error').html(response.message);
-      }else if(response.code == 406){
+        $('.otp-login-body-container').addClass('login_error'); otp - login - error
+      } else if (response.code == 406) {
         $('.otp-login-error').html('Otp expired.');
-      }else{
+        $('.otp-login-body-container').addClass('login_error');
+      } else {
         $('.otp-login-error').html('Something went wrong please try again.');
+        $('.otp-login-body-container').addClass('login_error');
       }
     });
   }
-  
-  function emailResend(email, session_id){
+
+  function emailResend(email, session_id) {
     let base_Url = 'https://otp.boat-lifestyle.com/email/otp';
     var settings = {
       "url": base_Url,
@@ -814,18 +936,20 @@ $('a.banner_link').on('click', function() {
         "session_id": session_id
       }),
     };
-    
+
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
-        
-      }else{
+      if (response.code == 200) {
+
+      } else if (response.code == 429) {
+        $('.otp-login-error').html(response.message);
+      } else {
         $('.otp-login-error').html('Something went wrong please try again.');
       }
     });
   }
 
-  function selectEmail(email, session_id, url){
+  function selectEmail(email, session_id, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/emails/select';
     var settings = {
       "url": base_Url,
@@ -836,52 +960,57 @@ $('a.banner_link').on('click', function() {
       },
       "data": JSON.stringify({
         "session_id": session_id,
-        "email" : email,
+        "email": email,
         "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
+      if (response.code == 200) {
         $('.otp-login-error').html('');
-        if(response.message == 'Email exists with different number  , OTP sent to email'){
+        if (response.message == 'Email exists with different number  , OTP sent to email') {
           var session_id = response.session_id;
-  
-  // email varify code
-  $('.customer-login-section').attr('otp_send', 'true');
-  $('.customer-login-section').attr('otp_email_varify', 'true');
-  $('.customer-login-section').removeAttr('multi_email');
-  $('#resend__otp').removeClass('login-resend-btn');
-  $('#resend__otp').addClass('email-resend-btn');
-  $('.email-list-container').html('');
-  $('.mobile-otp-inout input').val('');
-  $('.otp-timer-container').show();
-$('.mobile-login-input').html(`
-<div class="input">
-  <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
-  <label for="mobile" class="input__label">Enter your email</label>
-</div>
-`);
-$('.otp-login-error').html('');
-$('.otp-login-confirm-btn').addClass('email_varify');
-TimerFunction();
-  sessionStorage.setItem('login_session_id', response.session_id );
-  
-          }else{
-        $('.customer-login-section.customer--section').hide();
-        $('.oto-login-success-container').show();
-        localStorage.setItem('boatHead_input', response.Token);
-        countdown(5, response.URL);
+
+          // email varify code
+          $('.customer-login-section').attr('otp_send', 'true');
+          $('.customer-login-section').attr('otp_email_varify', 'true');
+          $('.customer-login-section').removeAttr('multi_email');
+          $('#resend__otp').removeClass('login-resend-btn');
+          $('#resend__otp').addClass('email-resend-btn');
+          $('.email-list-container').html('');
+          $('.mobile-otp-inout input').val('');
+          $('.otp-timer-container').show();
+          $('.mobile-login-input').html(`
+            <div class="input">
+              <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
+              <label for="mobile" class="input__label">Enter your email</label>
+            </div>
+            `);
+          $('.otp-login-error').html('');
+          $('.otp-login-confirm-btn').addClass('email_varify');
+          TimerFunction();
+          sessionStorage.setItem('login_session_id', response.session_id);
+
+        } else {
+          $('.customer-login-section.customer--section').hide();
+          var notifyMeSuccessContainer = $('.notifyMe_popup__main_container .oto-login-success-container');
+          if(notifyMeSuccessContainer.length > 0) {
+            notifyMeSuccessContainer.html(`
+            <div class="notifyMe_sucess_heading"><h2>We will inform you once the Product is back in stock!</h2><p>Meanwhile checkout our <b>other collections</b>.</p></div><div class="notifyMe_sucess_content"></div><div class="notifyMe_sucess_button"><button class="button button--secondary button--full" onclick="location.reload()">Continue</button></div>`);
           }
-      }else if(response.code == 422 && response.message == 'validation_error'){
+          $('.oto-login-success-container').show();
+          localStorage.setItem('boatHead_input', response.Token);
+          countdown(5, response.URL);
+        }
+      } else if (response.code == 422 && response.message == 'validation_error') {
         // $('.otp-login-error').html('Something went wrong please try again.');
-      }else if(response.code == 401 || response.code == 404 ){
+      } else if (response.code == 401 || response.code == 404 || response.code == 429) {
         $('.otp-login-error').html(response.message);
       }
     });
   }
 
-  function otpSignUp(full_name, email, phone, session_id, url){
+  function otpSignUp(full_name, email, phone, session_id, url) {
     let base_Url = 'https://otp.boat-lifestyle.com/signup';
     var settings = {
       "url": base_Url,
@@ -891,78 +1020,83 @@ TimerFunction();
         "Content-Type": "application/json"
       },
       "data": JSON.stringify({
-        "full_name" : full_name,
+        "full_name": full_name,
         "email": email,
         "phone": phone,
         "session_id": session_id,
-        "url" : url
+        "url": url
       }),
     };
     $.ajax(settings).done(function (response) {
       // console.log(response);
-      if(response.code == 200){
+      if (response.code == 200) {
         $('.otp-login-error').html('');
-        if(response.message == 'Email exists with different number  , OTP sent to email'){
-        var session_id = response.session_id;
+        if (response.message == 'Email exists with different number  , OTP sent to email') {
+          var session_id = response.session_id;
 
-// email varify code
+          // email varify code
 
-  $('.customer-login-section').attr('otp_send', 'true');
-  $('.customer-login-section').attr('otp_email_varify', 'true');
-  $('.customer-login-section').removeAttr('new_customer');
-  $('.customer-login-section').removeAttr('multi_email');
-  $('#resend__otp').removeClass('login-resend-btn');
-  $('#resend__otp').addClass('email-resend-btn');
-  $('.email-list-container').html('');
-  $('.mobile-otp-inout input').val('');
-  $('.otp-timer-container').show();
-$('.mobile-login-input').html(`
-<div class="input">
-  <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
-  <label for="mobile" class="input__label">Enter your email</label>
-</div>
-`);
-$('.otp-login-error').html('');
-$('.otp-login-confirm-btn').addClass('email_varify');
-clevertap.event.push('OTP Signup', {
-  "Full Name": full_name,
-  "Email": email,
-  "Phone": phone,
-  "Message": response.message
-})
-clevertap.profile.push({
-  "Site": {
-    "OTP Signup Name": full_name,
-    "OTP Signuo Number": phone,
-    "OTP Signup Email": email,
-    "MSG-sms": "TRUE",
-    "MSG-whatsapp": "TRUE"
-  }
- }); 
-TimerFunction();
-  sessionStorage.setItem('login_session_id', response.session_id );
-        }else{
-        $('.customer-login-section.customer--section').hide();
-        $('.oto-login-success-container').show();
-        localStorage.setItem('boatHead_input', response.Token);
-        clevertap.event.push('OTP Signup', {
-          "Full Name": full_name,
-          "Email": email,
-          "Phone": phone,
-          "Message": response.message
-        })
-        clevertap.profile.push({
-          "Site": {
-            "OTP Signup Name": full_name,
-            "OTP Signuo Number": phone,
-            "OTP Signup Email": email,
-            "MSG-sms": "TRUE",
-            "MSG-whatsapp": "TRUE"
+          $('.customer-login-section').attr('otp_send', 'true');
+          $('.customer-login-section').attr('otp_email_varify', 'true');
+          $('.customer-login-section').removeAttr('new_customer');
+          $('.customer-login-section').removeAttr('multi_email');
+          $('#resend__otp').removeClass('login-resend-btn');
+          $('#resend__otp').addClass('email-resend-btn');
+          $('.email-list-container').html('');
+          $('.mobile-otp-inout input').val('');
+          $('.otp-timer-container').show();
+          $('.mobile-login-input').html(`
+            <div class="input">
+              <input type="textl" id="emailId" name="emailId" value="${sessionStorage.getItem('selected_email')}" class="input__field is-filled" required="" disabled="disabled">
+              <label for="mobile" class="input__label">Enter your email</label>
+            </div>
+            `);
+          $('.otp-login-error').html('');
+          $('.otp-login-confirm-btn').addClass('email_varify');
+          clevertap.event.push('OTP Signup', {
+            "Full Name": full_name,
+            "Email": email,
+            "Phone": phone,
+            "Message": response.message
+          })
+          clevertap.profile.push({
+            "Site": {
+              "OTP Signup Name": full_name,
+              "OTP Signuo Number": phone,
+              "OTP Signup Email": email,
+              "MSG-sms": "TRUE",
+              "MSG-whatsapp": "TRUE"
+            }
+          });
+          TimerFunction();
+          sessionStorage.setItem('login_session_id', response.session_id);
+        } else {
+          $('.customer-login-section.customer--section').hide();
+          var notifyMeSuccessContainer = $('.notifyMe_popup__main_container .oto-login-success-container');
+          if(notifyMeSuccessContainer.length > 0) {
+            notifyMeSuccessContainer.html(`
+            <div class="notifyMe_sucess_heading"><h2>We will inform you once the Product is back in stock!</h2><p>Meanwhile checkout our <b>other collections</b>.</p></div><div class="notifyMe_sucess_content"></div><div class="notifyMe_sucess_button"><button class="button button--secondary button--full" onclick="location.reload()">Continue</button></div>`);
           }
-        }); 
-        countdown(5, response.URL);
-      }
-      }else if(response.code == 422 && response.message == 'validation_error'){
+          $('.oto-login-success-container').show();
+          localStorage.setItem('boatHead_input', response.Token);
+          clevertap.event.push('OTP Signup', {
+            "Full Name": full_name,
+            "Email": email,
+            "Phone": phone,
+            "Message": response.message
+          })
+          clevertap.profile.push({
+            "Site": {
+              "OTP Signup Name": full_name,
+              "OTP Signuo Number": phone,
+              "OTP Signup Email": email,
+              "MSG-sms": "TRUE",
+              "MSG-whatsapp": "TRUE"
+            }
+          });
+          countdown(5, response.URL);
+        }
+      } else if (response.code == 422 && response.message == 'validation_error') {
         $('.otp-login-error').html('Something went wrong please try again.');
         clevertap.event.push('OTP Signup', {
           "Full Name": full_name,
@@ -978,8 +1112,8 @@ TimerFunction();
             "MSG-sms": "TRUE",
             "MSG-whatsapp": "TRUE"
           }
-        }); 
-      }else if(response.code == 401){
+        });
+      } else if (response.code == 401) {
         $('.otp-login-error').html('Customer already exist with this email ID and with ' + response.message + ' phone number login with this number.');
         let login_btn = $('.otp-login-submit-btn');
         login_btn.html('Back to Login');
@@ -998,826 +1132,962 @@ TimerFunction();
             "MSG-sms": "TRUE",
             "MSG-whatsapp": "TRUE"
           }
-        }); 
-        $('.otp-login-submit-btn[return_to_login]').click(function(e){
+        });
+        $('.otp-login-submit-btn[return_to_login]').click(function (e) {
           e.preventDefault();
           location.reload();
+        })
+      } else if (response.code == 429) {
+        $('.otp-login-error').html(response.message);
+      }else{
+        $('.otp-login-error').html('Something went wrong please try again.');
+      }
+    });
+  }
+
+  function verifyotp(session_id, otp, url) {
+    let base_Url = 'https://otp.boat-lifestyle.com/login/verifyotp';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "session_id": session_id,
+        "otp": otp,
+        "url": url
+      }),
+    };
+
+    $.ajax(settings).done(function (response) {
+      // console.log(response);
+      let mobile_number = $('.mobile-login-input input').val()
+      if (response.code == 200 && response.message == 'login URL sent') {
+        sessionStorage.setItem('timerOn', false);
+        $('.customer-login-section.customer--section').hide();
+        var notifyMeSuccessContainer = $('.notifyMe_popup__main_container .oto-login-success-container');
+        if(notifyMeSuccessContainer.length > 0) {
+          notifyMeSuccessContainer.html(`
+          <div class="notifyMe_sucess_heading"><h2>We will inform you once the Product is back in stock!</h2><p>Meanwhile checkout our <b>other collections</b>.</p></div><div class="notifyMe_sucess_content"></div><div class="notifyMe_sucess_button"><button class="button button--secondary button--full" onclick="location.reload()">Continue</button></div>`);
+        }
+        $('.oto-login-success-container').show();
+        $('.otp-login-body-container').removeClass('login_error');
+        localStorage.setItem('boatHead_input', response.Token);
+        clevertap.event.push('Successful Login', {
+          "Mobile Number": mobile_number,
+          "Session ID": session_id,
+          "Login Timestamp": LOGIN_TIMESTAMP
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Login Number": mobile_number,
+            "Login Timestamp": LOGIN_TIMESTAMP,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE",
+            "Login Timestamp": LOGIN_TIMESTAMP
+          }
+        });
+        countdown(5, response.URL);
+
+      } else if (response.code == 422 && response.message == 'validation_error') {
+        $('.otp-login-error').html('Something went wrong please try again.');
+        $('.otp-login-body-container').addClass('login_error');
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": 'Something went wrong please try again.'
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+      } else if (response.code == 401 && response.message == 'Incorrect OTP') {
+        $('.otp-login-error').html(response.message);
+        $('.otp-login-body-container').addClass('login_error');
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": response.message
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+      } else if (response.code == 401 && response.message == 'Customer has not registered email , redirecting to Sign up' || response.code == 401 && response.message == 'Customer does not exists , consider Sign up') {
+        sessionStorage.setItem('timerOn', false);
+        $('.otp-login-error').html(response.message);
+        $('.otp-login-body-container').addClass('login_error');
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": response.message
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+        signup_window(session_id);
+      } else if (response.code == 406) {
+        $('.otp-login-error').html('OTP expired.');
+        $('.otp-login-body-container').addClass('login_error');
+        clevertap.event.push('Failed Login', {
+          "Mobile Number": mobile_number,
+          "Error Message": response.message
+        })
+        clevertap.profile.push({
+          "Site": {
+            "OTP Failed Mobile Number": mobile_number,
+            "MSG-sms": "TRUE",
+            "MSG-whatsapp": "TRUE"
+          }
+        });
+      } else if (response.code == 300 && response.message == 'emailId list') {
+        sessionStorage.setItem('timerOn', false);
+        $('.otp-login-message h3').html('Please select your Primary email id');
+        $('.customer-login-section').attr('multi_email', 'true');
+        $('.otp-timer-container').hide();
+        $('.otp-login-error').html('');
+        let emailList = response.emailList;
+        let emailListHtml = '', i;
+        let emailListContainer = document.querySelector('.email-list-container');
+        if (emailList.length > 0) {
+          $('.mobile-login-otp_heading h2').html('<b>Select your primary Email ID</b>');
+          $('.mobile-login-otp_heading span').html('Please select one of the below to continue');
+          for (let i = 0; i < emailList.length; i++) {
+            emailListHtml = emailListHtml + '<span data-value="' + emailList[i] + '">' + emailList[i] + '</span>'
+          }
+          emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
+          let emailSelector = $('.email-list-container span');
+          let selectedEmail = '';
+          console.dir(emailSelector[0]);
+          selectedEmail = emailSelector[0].dataset.value;
+          sessionStorage.setItem('selected_email', selectedEmail);
+          emailSelector[0].setAttribute('selected', 'true');
+          emailSelector.click(function (event) {
+            selectedEmail = event.target.dataset.value;
+            for (i = 0; i < emailSelector.length; i++) {
+              if (emailSelector[i].hasAttribute("selected")) {
+                emailSelector[i].removeAttribute("selected");
+              }
+            }
+            sessionStorage.setItem('selected_email', selectedEmail);
+            $(this).attr('selected', 'true');
+          });
+
+          $('.redirect_to_signup').click(function () {
+            signup_window(session_id);
+          });
+          let selectedEmail_url = sessionStorage.getItem('login_location');
+          $('.customer-login-section[multi_email] .otp-login-submit-btn').click(function () {
+            selectEmail(selectedEmail, session_id, selectedEmail_url);
+          });
+        } else {
+          signup_window(session_id);
+        }
+      } else if (response.code == 429) {
+        $('.otp-login-error').html(response.message);
+        $('.otp-login-body-container').addClass('login_error');
+      } else {
+        $('.otp-login-error').html('Something went wrong please try again.');
+        $('.otp-login-body-container').addClass('login_error');
+        clevertap.event.push('Failed Login', {
+          "Error Message": 'Something went wrong please try again.'
         })
       }
     });
   }
-  
-function verifyotp(session_id, otp, url){
-  let base_Url = 'https://otp.boat-lifestyle.com/login/verifyotp';
-  var settings = {
-    "url": base_Url,
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "data": JSON.stringify({
-      "session_id": session_id,
-      "otp": otp,
-      "url": url
-    }),
-  };
-  
-  $.ajax(settings).done(function (response) {
-    // console.log(response);
-    let mobile_number = $('.mobile-login-input input').val()
-    if(response.code == 200 && response.message == 'login URL sent'){
-      sessionStorage.setItem('timerOn', false);
-    //  console.log(timerOn,'timerOn');
-      $('.customer-login-section.customer--section').hide();
-      $('.oto-login-success-container').show();
-      localStorage.setItem('boatHead_input', response.Token);
-      clevertap.event.push('Successful Login', {
-        "Mobile Number": mobile_number,
-        "Session ID": session_id
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Login Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-       }); 
-      countdown(5, response.URL);
-      
-    }else if(response.code == 422 && response.message == 'validation_error'){
-      $('.otp-login-error').html('Something went wrong please try again.');
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": 'Something went wrong please try again.'
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      }); 
-    }else if(response.code == 401 && response.message == 'Incorrect Otp'){
-      $('.otp-login-error').html(response.message);
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": response.message
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      });
-    }else if(response.code == 401 && response.message == 'Customer does not exists , consider Sign up'){
-      sessionStorage.setItem('timerOn', false);
-    //  console.log(timerOn,'timerOn');
-      $('.otp-login-error').html(response.message);
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": response.message
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      });
-      signup_window(session_id);
-    }else if(response.code == 406){
-      $('.otp-login-error').html('Otp expired.');
-      clevertap.event.push('Failed Login', {
-        "Mobile Number": mobile_number,
-        "Error Message": response.message
-      })
-      clevertap.profile.push({
-        "Site": {
-          "OTP Failed Mobile Number": mobile_number,
-          "MSG-sms": "TRUE",
-          "MSG-whatsapp": "TRUE"
-        }
-      });
-    }else if(response.code == 300 && response.message == 'emailId list'){
-      sessionStorage.setItem('timerOn', false);
-    //  console.log(timerOn,'timerOn');
-      $('.otp-login-message h3').html('Please select your Primary email id');
-      $('.customer-login-section').attr('multi_email', 'true');
-      $('.otp-timer-container').hide();
-      $('.otp-login-error').html('');
-      let emailList = response.emailList;
-      let emailListHtml = '', i ;
-      let emailListContainer = document.querySelector('.email-list-container');
-      if(emailList.length > 0){
-      for (let i = 0; i < emailList.length; i++) {
-        emailListHtml = emailListHtml + '<span data-value="'+ emailList[i] +'">'+ emailMask(emailList[i]) +'</span>'
+
+  function otpLogin(phone) {
+    let base_Url = 'https://otp.boat-lifestyle.com/login/sendotp';
+    var settings = {
+      "url": base_Url,
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "phone": phone
+      }),
+    };
+    $.ajax(settings).done(function (response) {
+      if (response.code == 200 && response.message == 'OTP sent') {
+        $('.customer-login-section').attr('otp_send', 'true');
+        $('.customer-login-section').removeAttr('otp_login_screen');
+        $('#otp-mobile-number').attr('disabled', true)
+        $('.otp-login-error').html('');
+        TimerFunction();
+        sessionStorage.setItem('login_session_id', response.session_id)
+      } else if (response.code == 422 && response.message == 'validation_error') {
+        $('.otp-login-error').html('The phone field is required.');
+      } else if (response.code == 403) {
+        $('.otp-login-error').html(response.message);
+      } else if (response.code == 429) {
+        $('.otp-login-error').html(response.message);
       }
-      emailListContainer.innerHTML = emailListHtml + '<span class="redirect_to_signup">Continue with Email</span>';
-      let emailSelector = $('.email-list-container span');
-      let selectedEmail = '';
-      console.dir(emailSelector[0]);
-      selectedEmail = emailSelector[0].dataset.value;
-      sessionStorage.setItem('selected_email', selectedEmail);
-    //  console.log(selectedEmail);
-      emailSelector[0].setAttribute('selected','true');
-      emailSelector.click(function(event){
-      selectedEmail = event.target.dataset.value;
-      for (i = 0; i < emailSelector.length; i++) {
-        if (emailSelector[i].hasAttribute("selected")) {
-          emailSelector[i].removeAttribute("selected");   
-        }
-    }
-    sessionStorage.setItem('selected_email', selectedEmail);
-      $(this).attr('selected','true'); 
-      });
+    });
+  }
 
-      $('.redirect_to_signup').click(function(){
-        signup_window(session_id);
-      });
-      let selectedEmail_url = sessionStorage.getItem('login_location');
-      $('.customer-login-section[multi_email] .otp-login-submit-btn').click(function(){
-      selectEmail(selectedEmail, session_id, selectedEmail_url);
-      });
-    }else{
-      signup_window(session_id);
+  $('.otp-login-btn, .login-resend-btn').click(function () {
+    if (!$('#resend__otp').hasClass('email-resend-btn')) {
+      var phone = $('#otp-mobile-number').val();
+      if (phone.length < 1) {
+        $('.otp-login-error').html('The phone field is required.');
+      } else if (phone.length < 10) {
+        $('.otp-login-error').html('Invalid phone number.');
+      } else {
+        $('.otp-login-btn').attr('disabled', true);
+        otpLogin(phone);
+      }
     }
-    }else{
-      $('.otp-login-error').html('Something went wrong please try again.');
-      clevertap.event.push('Failed Login', {
-        "Error Message": 'Something went wrong please try again.'
-      })
-    }
-  });
-}
+  })
 
-function otpLogin(phone){
-  let base_Url = 'https://otp.boat-lifestyle.com/login/sendotp';
-  var settings = {
-    "url": base_Url,
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "data": JSON.stringify({
-      "phone": phone
-    }),
-  };
-  $.ajax(settings).done(function (response) {
-    // console.log(response);
-    if(response.code == 200 && response.message == 'OTP sent'){
-    $('.customer-login-section').attr('otp_send', 'true');
-    $('.customer-login-section').removeAttr('otp_login_screen');
-    $('#otp-mobile-number').attr('disabled', true)
-    $('.otp-login-error').html('');
+  $(document).on('click', '#resend__otp', function () {
     TimerFunction();
-      sessionStorage.setItem('login_session_id', response.session_id )
-  }else if(response.code == 422 && response.message == 'validation_error'){
-    $('.otp-login-error').html('The phone field is required.');
-  }else if(response.code == 403 && response.message == 'Invalid phone number'){
-    $('.otp-login-error').html(response.message);
-  }
   });
-}
 
-$('.otp-login-btn, .login-resend-btn').click(function(){
-  if(!$('#resend__otp').hasClass('email-resend-btn')){
-//  console.log('login-resend-btn');
-  let phone = $('#otp-mobile-number').val();
-  if(phone.length < 1){
-    $('.otp-login-error').html('The phone field is required.');
-  }else if(phone.length < 10){
-    $('.otp-login-error').html('Invalid phone number.');
-  }else {
-    $('.otp-login-btn').attr('disabled', true);
-    otpLogin(phone);
-  }
-  }
-})
-
-$(document).on('click', '#resend__otp', function(){
-  TimerFunction();
-});
-
-$( "#otp" ).on( "input", function() {
-  if($(this).val().length >5 ){
-    $('.otp-login-confirm-btn').css('background','#ED1C24');
-  }
-});
-
-$('.mobile-login-edit-icon').click(function(){
-  $('.otp-login-error').html('');
-  $('.otp-login-btn').attr('disabled', false);
-  $('.customer--section').removeAttr('otp_send');
-  $('.mobile-otp-inout input').val('');
-  $('#otp-mobile-number').attr('disabled', false)
+  $('.mobile-login-edit-icon').click(function () {
+    $('.otp-login-error').html('');
+    $('.otp-login-btn').attr('disabled', false);
+    $('.customer--section').removeAttr('otp_send');
+    $('.mobile-otp-inout input').val('');
+    $('#otp-mobile-number').attr('disabled', false)
   });
-  if(!sessionStorage.login_location && sessionStorage.login_location !== ''){
-    sessionStorage.setItem('login_location','https://www.boat-lifestyle.com/');
+  if (!sessionStorage.login_location && sessionStorage.login_location !== '') {
+    sessionStorage.setItem('login_location', 'https://www.boat-lifestyle.com/');
   }
-  
+
 
   document.querySelector('.custom-account-icon').addEventListener("click", function myFunction(event) {
     event.preventDefault();
-      sessionStorage.setItem('login_location',window.location.href);
+    sessionStorage.setItem('login_location', window.location.href);
   });
 
   let mobile_account = document.querySelectorAll('.mobile-custom-account-icon');
   for (let i = 0; i < mobile_account.length; i++) {
     mobile_account[i].addEventListener("click", function myFunction(event) {
       event.preventDefault();
-        sessionStorage.setItem('login_location',window.location.href);
-        var account_url = this.firstElementChild.getAttribute('href');
-        window.location = account_url;
+      sessionStorage.setItem('login_location', window.location.href);
+      if(document.querySelectorAll('.login-popup-trigger').length == 0){
+      var account_url = this.firstElementChild.getAttribute('href');
+      window.location = account_url;
+    }
     });
   }
 
- $('.otp-login-confirm-btn').click(function(){
-   if(!$('.otp-login-confirm-btn').hasClass('email_varify')){
-//  console.log('verifyotp');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){  
-  verifyotp(session_id, otp, url);
-}
-     }else{
-  let session_id = sessionStorage.getItem('login_session_id');
-  let mobile_number = $('.mobile-login-input input').val()
-  let otp = $('.mobile-otp-inout input').val();
-  let url = sessionStorage.getItem('login_location');
-if(session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== ''){   
-  verifyemail(session_id, otp, url);
-}else if(otp == ''){
-  $('.otp-login-error').html('OTP is required');
-}   
-     }
-})
+  $('.otp-login-confirm-btn').click(function () {
+    if (!$('.otp-login-confirm-btn').hasClass('email_varify')) {
+      let session_id = sessionStorage.getItem('login_session_id');
+      var compiledOtp = document.getElementById('otp').value;
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && compiledOtp !== '') {
+        verifyotp(session_id, compiledOtp, url);
+      }
+    } else {
+      let session_id = sessionStorage.getItem('login_session_id');
+      let mobile_number = $('.mobile-login-input input').val()
+      let otp = document.getElementById('otp').value;
+      let url = sessionStorage.getItem('login_location');
+      if (session_id && session_id !== '' && session_id !== 'undefined' && url && otp !== '') {
+        verifyemail(session_id, otp, url);
+      } else if (otp == '') {
+        $('.otp-login-error').html('OTP is required');
+      }
+    }
+  })
 
-$('#resend__otp').click(function(){
-  if($(this).hasClass('email-resend-btn')){
-//  console.log('email-resend-btn');
-  let session_id = sessionStorage.getItem('login_session_id');
-  let email = $('#emailId').val();
-if(session_id && session_id !== '' && session_id !== 'undefined' && email){   
-  emailResend(email, session_id);
-}  
-  }
-})
+  $('#resend__otp').click(function () {
+    if ($(this).hasClass('email-resend-btn')) {
+      let session_id = sessionStorage.getItem('login_session_id');
+      let email = $('#emailId').val();
+      if (session_id && session_id !== '' && session_id !== 'undefined' && email) {
+        emailResend(email, session_id);
+      }
+    }
+  })
 
-var input_login = document.querySelector('.mobile-login-input input');
-inputSubmit(input_login);  
-var otp_login = document.querySelector('.mobile-otp-inout input');
-inputSubmit(otp_login);  
+  var input_login = document.querySelector('.mobile-login-input input');
+  inputSubmit(input_login);
+  var otp_login = document.querySelector('.mobile-otp-inout input');
+  inputSubmit(otp_login);
 
-$('.mobile-otp-inout').click(function(){
-  if($('.otp-login-error').html() !== ''){
-    $('.otp-login-error').html('');
-    $(this).children('input').val('');
-  }
-});
+  $('.mobile-otp-inout').click(function () {
+    if ($('.otp-login-error').html() !== '') {
+      $('.otp-login-error').html('');
+      $(this).children('input').val('');
+    }
+  });
 
-// if( window.location = '/account/logout'){
-//   localStorage.removeItem('boatHead_input');
-//   sessionStorage.removeItem('login')
-// }
-  // if ('OTPCredential' in window) {
-  //   window.addEventListener('DOMContentLoaded', (e) => {
-      
-  //     const input = document.querySelector('input[autocomplete="one-time-code"]');
-  //     if (!input) return;
-  //     const ac = new AbortController();
-  //     const form = input.closest('form');
-  //     if (form) {
-  //       form.addEventListener('submit', (e) => {
-  //         ac.abort();
-  //       });
-  //     }
-  //     // alert('Hii 1 otp');
-  //     navigator.credentials.get({
-  //       otp: { transport:['sms'] },
-  //       signal: ac.signal
-  //     }).then((otp) => {
-  //       alert('otp');
-  //       alert(otp);
-  //       input.value = otp.code;
-        
-  //       // if (form) form.submit();
-  //     }).catch((err) => {
-  //       console.error(err);
-  //     });
-  //   });
-  // }
-  
-$(document).on("click", ".custom-offer-add-to-cart", function(e) {
+};
+
+
+$(document).on("click", ".custom-offer-add-to-cart", function (e) {
   e.preventDefault();
   let offerForm = $(this).parents("form")[0];
   let offerId = offerForm.querySelector('[name="id"]').value;
   let offerVariantData = sessionStorage.getItem('variantQtys');
-  let OfferProperty= [];
+  let OfferProperty = [];
   let varient_pod_units = [];
   let podData = {};
   offerVariantData = JSON.parse(offerVariantData);
-    for (var key in offerVariantData) {
-     if (offerVariantData.hasOwnProperty(offerId)) {
+  for (var key in offerVariantData) {
+    if (offerVariantData.hasOwnProperty(offerId)) {
       let OfferPropertyArr = offerVariantData[offerId];
-       OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
-       varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
-       break;
-      }
+      OfferProperty.push(OfferPropertyArr[0]['pod_deal_applicability']);
+      varient_pod_units.push(OfferPropertyArr[0]['pod_units']);
+      break;
     }
+  }
   let varient_pod_unit = varient_pod_units[0];
   varient_pod_unit = parseInt(varient_pod_unit);
   OfferProperty = OfferProperty[0];
-  if(varient_pod_unit > 0){
-   podData = {'quantity': 1,'id': offerId,'properties': {'_POD': OfferProperty }}
-  }else{
-   podData = {'quantity': 1,'id': offerId} 
+  if (varient_pod_unit > 0) {
+    podData = { 'quantity': 1, 'id': offerId, 'properties': { '_POD': OfferProperty } }
+  } else {
+    podData = { 'quantity': 1, 'id': offerId }
   }
-    if($(this).hasClass( "algolia_pod_offer" )){
-      $.ajax({
-        url: "/cart/add.js",
-        dataType: "json",
-        cache: !1,
-        type: "post",
-        data: podData,
-        success: function(e) {
-            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
-                bubbles: !0
-            }));
-            setTimeout(function() {
-              Shopify.cart_item_count();
-          }, 1500)
-            // console.log('hiii');
-            document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex')
-        }
+  if ($(this).hasClass("algolia_pod_offer")) {
+    $.ajax({
+      url: "/cart/add.js",
+      dataType: "json",
+      cache: !1,
+      type: "post",
+      data: podData,
+      success: function (e) {
+        document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+          bubbles: !0
+        }));
+        setTimeout(function () {
+          Shopify.cart_item_count();
+        }, 1500)
+        document.getElementById("mini-cart").open = !0, document.querySelector("body").classList.add("noScroll"), $(".search-clear-icon").css('display', 'flex')
+      }
     })
-    }else{
-      $.ajax({
-        url: "/cart/add.js",
-        dataType: "json",
-        cache: !1,
-        type: "post",
-        data: podData,
-        success: function(e) {
-            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
-                bubbles: !0
-            }));
-            setTimeout(function() {
-              Shopify.cart_item_count();
-          }, 1500)
-        }
+  } else {
+    $.ajax({
+      url: "/cart/add.js",
+      dataType: "json",
+      cache: !1,
+      type: "post",
+      data: podData,
+      success: function (e) {
+        document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+          bubbles: !0
+        }));
+        setTimeout(function () {
+          Shopify.cart_item_count();
+        }, 1500)
+      }
     })
-    }
-});
-
-
-
-// Custom JavaScript slider
-
-var autoplay = false,
-infinite_loop = false,
-autoplay_delay = false,
-center_slide_scale = false,
-show_active_dots = false,
-oldX = 0,
-oldY = 0,
-autoplay_timeout = '';
-
-Shopify.custom_slider = function(itemsDiv, itemsMainDiv, selector){
-slidePre = '',
-slidePost = '',
-slideItem = '',
-numberOfSlides = '',
-slide_length = '',
-slider_dots = '';
-  var itemWidth = "";
-  if(document.querySelector(itemsMainDiv) !== null){
-  //  console.log("hii custom slider ");
-  autoplay = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay'));
-  autoplay_timeout = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-autoplay-timeout'));
-  infinite_loop = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-loop'));
-  center_slide_scale = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-centerSlideScale'));
-  show_active_dots = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-showActiveDots'));
-  slidePre = document.createDocumentFragment();
-  slidePost = document.createDocumentFragment();
-  slideItem = document.querySelectorAll(itemsDiv + ' .item');
-  slide_length = slideItem.length;
-  slider_dots = $(itemsDiv).siblings('.MultiCarousel_dots_container').children('.multiCarousel_dots');
-  let leftBth = '#' + selector + ' .leftLst';
-  let RightBth = '#' + selector + ' .rightLst';
-
-  $(itemsDiv).attr('autoplay_delay','false');
-for(var l = 0 ; l < slideItem.length; l++) {
-  slideItem[l].setAttribute('data-index', [l]);
-}
-
-  $(RightBth).click(function () {
-    click(1, this)
-  });
-
-  $(leftBth).click(function () {
-      var condition = $(this).hasClass("leftLst");
-      if (condition)click(0, this);
-  });
-
-$('.multiCarousel_dots').click(function () {
-  var curr = $(this).attr('data-index');
-  changeCurrent(curr, this);
-});
-
- ResCarouselSize(itemsMainDiv, selector);
- if(!isIOSMobile()){
-$(window).resize(function () {
-  ResCarouselSize(itemsMainDiv, selector);
-});
- }
-if(autoplay){
-slideAutoplay(itemsMainDiv , autoplay_timeout);
-}
-
-//this function define the size of the items
-function ResCarouselSize(itemsMainDiv, selector) {
-  var incno = 0;
-  var dataItems = ("data-items");
-  var itemClass = ('.item');
-  var id = 0;
-  var btnParentSb = '';
-  var itemsSplit = '';
-  var sampwidth = $(itemsMainDiv).width();
-  var bodyWidth = $('body').width();
-  $(itemsDiv).each(function () {
-      id = id + 1;
-      var itemNumbers = $(this).find(itemClass).length;
-      btnParentSb = $(this).parent().attr(dataItems);
-      itemsSplit = btnParentSb.split(',');
-      $(this).parent().attr("id", selector + id);
-      
-      let desktop_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_desk_items'));
-      let mid_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_mid_items'));
-      let mobile_slide = JSON.parse(document.querySelector(itemsMainDiv).getAttribute('data-responsive_Small_items'));
-      if (bodyWidth >= 992) {
-          incno = desktop_slide;
-          itemWidth = sampwidth / incno;
-      }
-      else if (bodyWidth >= 768) {
-          incno = mid_slide;
-          itemWidth = sampwidth / incno;
-      }
-      else {
-          incno = mobile_slide;
-          itemWidth = sampwidth / incno;
-      }
-
-      if(!$(this).hasClass('MultiCarousel_loaded')){
-      $(this).addClass('MultiCarousel_loaded');
-      $(this).parent().addClass('MultiCarousel_load');
-      if(incno > 1 && center_slide_scale){
-      for(var j = 1 ; j <= incno-1; j++) {
-        slider_dots[slider_dots.length-j].remove();
-      }
-      let centerIndex = Math.floor(incno / 2);
-      $(this).find(itemClass)[centerIndex].classList.add('center');
-      }
-
-      for(var k = 0 ; k <= incno-1; k++) {
-        $(this).find(itemClass)[k].classList.add('active');
-        if(!center_slide_scale && incno < 2 && slider_dots[k]){
-        slider_dots[k].classList.add('active');
-      }
-      }
-    }
-      $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
-      $(this).find(itemClass).each(function () {
-          $(this).outerWidth(itemWidth);
-      });
-      $(this).addClass('MultiCarousel_loaded');
-      if(autoplay == false && infinite_loop == false) {
-      $(".leftLst").addClass("over");
-      $(".rightLst").removeClass("over");
-      }
-      
-  });
-}
-
-// Get the drag direction
-
-document.querySelector(itemsDiv).addEventListener('dragstart', (e) => {
-  oldX = e.pageX;
-  oldY = e.pageY;
-  $(itemsDiv).attr('autoplay_delay','true');
-});
-
-document.querySelector(itemsDiv).addEventListener('touchstart', (e) => {
-  oldX = e.changedTouches[0].pageX;
-  oldY = e.changedTouches[0].pageY;
-  $(itemsDiv).attr('autoplay_delay','true');
-});
-
-document.querySelector(itemsDiv).addEventListener("dragend", getMouseDirection, false);
-
-document.querySelector(itemsDiv).addEventListener('touchend', (event) => {
-  var touch_event = event.changedTouches[0]; 
-  getMouseDirection(touch_event);
-  // if($(itemsDiv).attr('autoplay_delay') == 'true'){
-  //   setTimeout(function() {$(itemsDiv).attr('autoplay_delay','false');},9000);
-  // }
-});
   }
- 
-  }
-  
-//this function used to move the items
-function ResCarousel(e, el, s, slide_container) {
-    var leftBtn = ('.leftLst');
-    var rightBtn = ('.rightLst');
-    var itemClass = ('.item');
-    var translateXval = '';
-    var divStyle = $(slide_container).css('transform');
-    var slider_item = $(slide_container).find(itemClass);
-    var slider_dots = $(el).find('.multiCarousel_dots');
-    if(divStyle == 'none'){
-      divStyle = 'matrix(1, 0, 0, 1, 0, 0)';
-    }
-    var values = divStyle.match(/-?[\d\.]+/g);
-    var xds = Math.abs(values[4])
-    var itemWidth = $(slide_container).children().innerWidth();
-    var last_item_padding = 0;
-    if(window.innerWidth < 768){
-    last_item_padding = JSON.parse(document.querySelector(el).getAttribute('data-last_item_padding'));
-    }
-    var itemsCondition = $(slide_container).width() - $(el).width();
-    var itemsCondition_lastSlide = $(slide_container).width() - $(el).innerWidth() + last_item_padding;
-    var active_slide = $(slide_container).find('.active');
-    var active_slide_number = active_slide.length;
-    var slider_dots_length = slider_dots_length;
-    let counter = 0;
-    center_slide_scale = JSON.parse(document.querySelector(el).getAttribute('data-centerSlideScale'));
- 
+});
 
-    // Slider dots for multiple items have some work left to do. And active slide on right click have some work left to do.
-    if(active_slide.length > 1){
-    slider_dots_length = slider_dots_length - active_slide_number - 1;
-    }
-    function active_slider_dots(e){
-
-      if(e == 0){
-    var active_slide_position = parseInt(active_slide[active_slide_number - 1].dataset.index) - 1;
-    if(active_slide_position < 0){
-      active_slide_position = slider_item.length - 1;
+Shopify.loginInput = function ($otp_length) {
+  // FOR LOGIN OTP INPUT FIELDS
+  var OTP_element = document.getElementById('OTPInput');
+  if (OTP_element != null) {
+    for (let i = 0; i < $otp_length; i++) {
+      let inputField = document.createElement('input'); // Creates a new input element
+      inputField.id = 'otp-field' + i; // Don't remove
+      inputField.maxLength = 1; // Sets individual field length to 1 char
+      inputField.type = 'tel';
+      inputField.pattern = '[0-9]*';
+      OTP_element.appendChild(inputField); // Adds the input field to the parent div (OTPInput)
     }
 
-    let centerIndex = active_slide_position;
-    let centerFlag = true;
-      for(var k = 0 ; k < slider_item.length; k++) {
-
-        if(slider_item[k].classList.contains('active')){
-          slider_item[k].classList.remove('active');
-        }
-        if(slider_item[k].classList.contains('center')){
-          slider_item[k].classList.remove('center');
-        }
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k].classList.contains('active')){
-          slider_dots[k].classList.remove('active');
-          }
-          
-      if(k == active_slide_position){ 
-        for(var j = 0 ; j < active_slide_number; j++) {
-          if(k - active_slide_number + 1 >= 0){
-            counter = k - j; 
-          }else{
-            counter = slider_item.length - j - 1; 
-          }
-        slider_item[counter].classList.add('active');
-        if(!center_slide_scale && active_slide_number < 2){
-        slider_dots[counter].classList.add('active');
-        }
-        if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
-          centerIndex = Math.floor(active_slide_number / 2);
-          slider_item[counter - centerIndex].classList.add('center');
-          centerFlag = false;
-        }     
-        }
-      }     
-    }
-
-  }else if(e == 1){
-    var active_slide_position = parseInt(active_slide[0].dataset.index) + 1;
-    if(active_slide_position > slider_item.length - 1){
-      active_slide_position = 0;
-    }
-
-    let centerIndex = active_slide_position;
-    let centerFlag = true;
-      for(var k = 0 ; k < slider_item.length; k++) {
-        
-        if(slider_item[k].classList.contains('active')){
-          slider_item[k].classList.remove('active');
-        }
-        if(slider_item[k].classList.contains('center')){
-          slider_item[k].classList.remove('center');
-        }
-
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k].classList.contains('active')){
-          slider_dots[k].classList.remove('active');
-          }
-                    
-      if(k == active_slide_position){ 
-        for(var j = 0 ; j < active_slide_number; j++) {
-          if(k + active_slide_number - 1 < slider_item.length){
-            counter = k + j; 
-          }else{
-            counter = j; 
-          }
-
-        slider_item[counter].classList.add('active');
-        if(!center_slide_scale && active_slide_number < 2 ){
-        slider_dots[counter].classList.add('active');
-        }
-        if(active_slide_number > 1 && active_slide_number%2 !== 0 && centerFlag){
-          centerIndex = Math.floor(active_slide_number / 2);
-          slider_item[counter + centerIndex].classList.add('center');
-          centerFlag = false;
-        }  
-        }
-      }     
-    }
-  }else{
-   
-    var active_slide_position = s;
-    if(!center_slide_scale && active_slide_number < 2){
-      // slider_dots.removeClass("active");
-      for(var k = 0 ; k < slider_dots.length; k++) {
-        if(!center_slide_scale && active_slide_number < 2 && slider_dots[k] && slider_dots[k].classList.contains('active')){
-          slider_dots[k].classList.remove('active');
-          }
-      }
-    slider_dots[active_slide_position].classList.add('active');
-  } 
-  }
-  }
-  active_slider_dots(e);
-    if (e == 0) {
-        translateXval = parseInt(xds) - parseInt(itemWidth * s);
-        if(autoplay == false && infinite_loop == false) {
-        $(el + ' ' + rightBtn).removeClass("over");
-        }
-
-        if (translateXval < 0 - itemWidth / 2) {
-          translateXval = itemsCondition_lastSlide;
-        }else if (translateXval <= itemWidth / 2 ) {
-          translateXval = 0;
-          if(autoplay == false && infinite_loop == false) {
-          $(el + ' ' + leftBtn).addClass("over");
-          }
-        }
-    }
-    else if (e == 1) {
-        translateXval = parseInt(xds) + parseInt(itemWidth * s);
-        if(autoplay == false && infinite_loop == false) {
-        $(el + ' ' + leftBtn).removeClass("over");
-        }
-
-        if (translateXval > itemsCondition) {
-          translateXval = 0;
-        }else if(translateXval > itemsCondition - itemWidth / 2){
-            translateXval = itemsCondition_lastSlide;
-            if(autoplay == false && infinite_loop == false) {
-            $(el + ' ' + rightBtn).addClass("over");
+    /*  This is for switching back and forth the input box for user experience */
+    const inputs = document.querySelectorAll('#OTPInput > *[id]');
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener('keydown', function (event) {
+        if (event.key === "Backspace") {
+          if (inputs[i].value == '') {
+            if (i != 0) {
+              inputs[i - 1].focus();
             }
+          } else {
+            inputs[i].value = '';
+          }
+        } else if (event.key === "ArrowLeft" && i !== 0) {
+          inputs[i - 1].focus();
+        } else if (event.key === "ArrowRight" && i !== inputs.length - 1) {
+          inputs[i + 1].focus();
+        } else if (event.key != "ArrowLeft" && event.key != "ArrowRight") {
+          inputs[i].setAttribute("type", "tel");
+          inputs[i].value = ''; // Bug Fix: allow user to change a random otp digit after pressing it
         }
-    }else{
-      
-      translateXval = parseInt(itemWidth * s);
-      if (translateXval > itemsCondition - itemWidth / 2) {
-        translateXval = itemsCondition_lastSlide;
-      }else if (translateXval <= itemWidth / 2) {
-        translateXval = 0;
-      }
-      
+      });
+      inputs[i].addEventListener('input', function () {
+        inputs[i].value = inputs[i].value.toUpperCase(); // Converts to Upper case. Remove .toUpperCase() if conversion isnt required.
+        if (i === inputs.length - 1 && inputs[i].value !== '') {
+          $('.otp-login-confirm-btn').addClass('active');
+          return true;
+        } else if (inputs[i].value !== '') {
+          inputs[i + 1].focus();
+          $('.otp-login-confirm-btn').removeClass('active');
+          $('.otp-login-body-container').removeClass('login_error');
+        }
+      });
+
+      inputs[i].addEventListener('paste', function(event) {
+        event.preventDefault();
+        var clipboardData = event.clipboardData || window.clipboardData;
+        var pastedText = clipboardData.getData('text');
+        for (let j = 0; j < pastedText.length && i + j < inputs.length; j++) {
+          inputs[i + j].value = pastedText[j];
     }
-    $(slide_container).css('transform', 'translateX(' + -translateXval + 'px)');
-    if($(slide_container).attr('autoplay_delay') == 'true'){
-      setTimeout(function() {$(slide_container).attr('autoplay_delay','false');},5000);
-    }
-}
-
-//It is used to get some elements from btn
-function click(ell, ee) {
-    var Parent = "#" + $(ee).parent().attr("id");
-    var slide = $(Parent).attr("data-slide");
-    var slide_container = $(Parent).children('.MultiCarousel-inner');
-    slide_container.attr('autoplay_delay','true');
-    ResCarousel(ell, Parent, slide, slide_container);
-}
-
-/* slide number click function */  
-function changeCurrent(curr, dot) {
-var Parent = "#" + $(dot).parent().parent().attr("id");
-var slide_container = $(Parent).children('.MultiCarousel-inner');
-slide_container.attr('autoplay_delay','true');
-ResCarousel(e=null, Parent, curr, slide_container);
-}
-
-/* slide autoplay function */  
-function slideAutoplay(selector , duration) {
-var newIndex = $(selector).attr("data-slide");
-var slides_container = $(selector).children('.MultiCarousel-inner');
-setInterval(function() {
-if(slides_container.attr('autoplay_delay') == 'false'){ 
-ResCarousel(1, selector, newIndex, slides_container);
-}
-}, duration);
-}
-
-/* slide Drag function */  
-
-function sliderDrag(event, slide_direction) {
-  var Parent = "#" + $(event.target).parents('.MultiCarousel').attr('id');
-    var slide = $(Parent).attr("data-slide");
-    var slide_container = $(Parent).children('.MultiCarousel-inner');
-      ResCarousel(slide_direction, Parent, slide, slide_container);
-}
-
-var xDirection = "";
-var yDirection = "";
-// function to get the drag_direction
-function getMouseDirection(e) {
-    //Adding threshold for IOS anchor not working
-    // console.log(oldX-e.pageX, 'oldX-e.pageX');
-    // console.log(oldX-e.pageX > -20 && oldX-e.pageX < 20);
-    if (oldX-e.pageX > -20 && oldX-e.pageX < 20 ) {
-      // e.target.closest('a')?.click();
-    }else{
-    //deal with the horizontal case
-    if (oldX < e.pageX) {
-        xDirection = "right";
-    } else if(oldX > e.pageX) {
-        xDirection = "left";
-    }
- 
-    //deal with the vertical case
-    if (oldY < e.pageY) {
-        yDirection = "down";
-    } else {
-        yDirection = "up";
-    }
-
-    if(xDirection == "right"){
-      sliderDrag(e, 0)
-     }else if( xDirection == "left"){
-      sliderDrag(e, 1)
-     }
-      
-    oldX = e.pageX;
-    oldY = e.pageY;
+        
+        if (i + pastedText.length < inputs.length) {
+          inputs[i + pastedText.length].focus();
+        } else if (i + pastedText.length === inputs.length) {
+          $('.otp-login-confirm-btn').addClass('active');
   }
-    // console.log(xDirection + " " + yDirection);
-}
-var Slider_section_id = '';
-var slider_Selector = document.querySelectorAll('.MultiCarousel:not(.MultiCarousel_load)');
-for(let i = 0; i < slider_Selector.length; i++){
-  Slider_section_id = slider_Selector[i].getAttribute('data-sliderId');
-  var itemsDiv = '.MultiCarousel-inner.' + Slider_section_id;
-  //  console.dir(document.querySelector(itemsDiv));
-  var itemsMainDiv = ('.MultiCarousel.' + Slider_section_id);
-  var selector = 'MultiCarousel_' + Slider_section_id;
-  Shopify.custom_slider(itemsDiv, itemsMainDiv, selector);
-}
-
-$(document).ready(function(){
-  // $('.mobile_hamburger_btn').on('click', function(e){
-  //   e.preventDefault();
-  //   if( $(this).attr('aria-expanded') == 'false' ){
-  //     $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
-  //   }else{
-  //     // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
-  //     $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110');
-  //     $(this).find('.mobile_hamburger_icon').css('height', 'auto');
-  //   }
-  //   return false;
-  // })
-
-  $('.mobile_hamburger_btn, #data-hamburger').on('click', function(e){
-    e.preventDefault();
-    if( $('.mobile_hamburger_btn').attr('aria-expanded') == 'false' ){
-      $('.mobile_hamburger_btn').find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
-    }else{
-      // $(this).find('.mobile_hamburger_icon').attr('test', 'newtest');
-     $('.mobile_hamburger_btn').find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Chevron-Left-opt-2.png?v=1677134110');
-      $('.mobile_hamburger_btn').find('.mobile_hamburger_icon').css('height', 'auto');
+      });
     }
-    return false;
+  }
+}
+
+// Shopify.loginInput(6);
+Shopify.custom_otp_login();
+
+Shopify.notifyMe = function (btn) {
+  event.preventDefault();
+  let notifyMe_popup_Button = btn;
+  var quick_popup_desktop = document.querySelectorAll('quick-buy-drawer');
+  var quick_popup_mobile = document.querySelectorAll('quick-buy-popover');
+  function quick_add_popup (quick_popup){
+    if(quick_popup != null) {
+      for (let i = 0; i < quick_popup.length; i++) {
+        quick_popup[i].open=!1
+      }
+    }
+  }
+  quick_add_popup(quick_popup_desktop);
+  quick_add_popup(quick_popup_mobile);
+  document.querySelector('body').classList.add('overflow-hidden');
+  var popupCloseButton = event.target;
+  document.addEventListener("click", function (event) {
+    var popupContainer = document.querySelector(".notifyMe_popup_container");
+    // Check if the click occurred outside the popup container and not on the close button
+    if (popupContainer != null && !popupContainer.contains(event.target) && event.target !== popupCloseButton) {
+        closePopup();
+    }
+  });
+
+function closePopup() {
+  $('.notifyMe_popup__main_container').removeClass('show');
+  $('body').removeClass('overflow-hidden');
+  document.querySelector('.notifyMe_popup__main_container').innerHTML = '';
+}
+  var dataSet = btn.dataset;
+  var varientID = dataSet["variantId"];
+  varientID = parseInt(varientID);
+  var varientSelector = '';
+  var varientUrl = dataSet["url"];
+  varientUrl = varientUrl + "?variant=" + varientID + "&view=notifyMe-popup";
+  $.ajax({
+    url: varientUrl,
+    type: "GET",
+    dataType: "html",
+    success: function (e) {
+      $(".notifyMe_popup__main_container").html(e);
+      // Shopify.loginInput(6);
+      Shopify.custom_otp_login();
+      const notifyMe_tempDiv = document.createElement('div');
+      notifyMe_tempDiv.innerHTML = e;
+
+      $('#notifyMe_submit_btn').click(function () {
+        event.preventDefault();
+        var varient_id = $('#variants_select').val();
+        var mobile_number = $('#notifyMe_mobile_number').val();
+        var productName = $('.notifyMe_popup_title').text().trim();
+        var variantTitle = $('#variants_select_title').val();
+        var title = $('.notifyMe_popup_title').text().trim() + " - " + $('#variants_select_title').val();
+        var notifyMe_arr = [];
+        var notifyMe_data = '';
+        var notifyMe_varient = { "id": varient_id, "mobile_number": mobile_number, "title": title, "product_name": productName, "variant_title": variantTitle};
+        if (mobile_number.length < 1) {
+          $('#message_holder').html('Phone number is required.');
+        } else if (mobile_number.length < 10) {
+          $('#message_holder').html('Invalid phone number.');
+        } else {
+          $('#message_holder').html('');
+          function isJson(str) {
+            try {
+              JSON.parse(str);
+            } catch (e) {
+              return false;
+            }
+            return true;
+          }
+          // CleverTap event for notify me
+          clevertap.event.push("Notify Me When Available", notifyMe_varient);
+          clevertap.profile.push({
+            Site: {
+              "Product Subscribed for Notify": productName,
+              "Variant Subscribed for Notify": variantTitle,
+              "Variant ID Subscribed for Notify": varient_id,
+              "Mobile Number Subscribed for Notify": mobile_number
+            }
+          })
+
+          if (isJson(localStorage.notifyMe_data)) {
+            notifyMe_data = JSON.parse(localStorage.notifyMe_data);
+            notifyMe_data = notifyMe_data.filter(obj => obj.id !== varient_id);
+            notifyMe_arr = notifyMe_data;
+          }
+          notifyMe_arr.push(notifyMe_varient);
+          notifyMe_arr = JSON.stringify(notifyMe_arr);
+          localStorage.setItem('notifyMe_data', notifyMe_arr);
+          document.querySelector('.completed_message').style.display = 'block';
+          var custom_popup_body = this.closest('.custom_popup');
+          setTimeout(function () {
+            custom_popup_body.classList.remove('show');
+            document.querySelector('body').classList.remove('overflow-hidden');
+            $('#mobile_number').val('');
+            document.querySelector('.completed_message').removeAttribute('style');
+          }, 3000);
+        }
+      });
+      $('.variants_color_select').change(function () {
+        var varientImage = $(this).attr('data-image');
+        var varientId = $(this).attr('data-id');
+        var variantTitle = $(this).attr('data-title');
+        $('.notifyMe_popup_product_img img').attr('src', varientImage);
+        $('.notifyMe_form-group input').val(varientId);
+        $('#variants_select_title').val(variantTitle);
+      });
+    }
   })
 
-$('store-header').on('click', function(){
- 
- $(this).find(".mobile_hamburger_btn").click();
- $(this).find(".mobile_hamburger_btn").attr('aria-expanded', 'false');
- $(this).find('.mobile_hamburger_icon').attr('src', 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/hamburger-icon.png?v=1675762678');
+  $('.notifyMe_popup__main_container').addClass('show');
+
+}
+
+$('#notifyMe_trigger').click(function (e) {
+  e.preventDefault();
+  sessionStorage.setItem('login_location', window.location.href);
+});
+//Function to allow only numbers
+function _isNumberCheck(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  if (charCode > 31 && (charCode < 48 || charCode > 57 || evt.target.value.length > 9))
+    return false;
+  return true;
+}
+
+// Not allow 0 as first digit on input
+$(document).on("input", "#mobile_number", (e) => {
+  $(e.target).val($(e.target).val().replace(/^[^1-9][^0-9]*$/, ''));
+  $('#message_holder').html('');
+})
+$(document).on("keypress", "#mobile_number", (e) => {
+  return _isNumberCheck(e);
 })
 
+$('.login, .login-popup-trigger').click(function () {
+  event.preventDefault();
+  var popupCloseButton = event.target;
+  document.addEventListener("click", function (event) {
+    var popupContainer = document.querySelector(".notifyMe_popup_container");
+    // Check if the click occurred outside the popup container and not on the close button
+    if (popupContainer != null && !popupContainer.contains(event.target) && event.target !== popupCloseButton) {
+        closePopup();
+    }
+  });
+
+function closePopup() {
+  $('.login_popup_main_container').removeClass('show');
+  $('body').removeClass('overflow-hidden');
+  document.querySelector('.login_popup_main_container').innerHTML = '';
+}
+
+  $.ajax({
+    url: "/account/login?view=otp-login-popup",
+    type: "GET",
+    dataType: "html",
+    success: function (e) {
+      document.querySelector('body').classList.add('overflow-hidden');
+      $(".login_popup_main_container").html(e);
+      // Shopify.loginInput(6);
+      Shopify.custom_otp_login();
+    }
+  });
+  $('.login_popup_main_container').addClass('show');
+});
+Shopify.varient_view_popup = function(varient_id, btn) {
+  var varient_view_popup_close_btn = btn;
+  document.addEventListener("click", function (event) {
+    var varient_view_popup_container = document.querySelector(".pdp-360-view_container");
+    if (varient_view_popup_container != null && !varient_view_popup_container.contains(event.target) && event.target !== varient_view_popup_close_btn) {
+      $('.pdp-360-view').removeClass('show');
+      $('body').removeClass('overflow-hidden');
+      document.querySelector('.pdp-360-view_body').innerHTML = '';
+    }
+  });
+  $.ajax({
+    url: location.pathname + "?variant=" + varient_id + "&view=3D_view",
+    type: "GET",
+    dataType: "html",
+    success: function(e) {
+        $(".pdp-360-view_body").html(e);
+          $('.pdp-360-view').addClass('show');
+          $('body').addClass('overflow-hidden');
+          let popup_detail = $('.pdp_view_popup_item');
+        $('.pdp_view_popup_btn_container button').click(function(){
+        var index = $(this).attr('data-index');
+          for (i = 0; i < popup_detail.length; i++) {
+            if (popup_detail[i].hasAttribute("open")) {
+              popup_detail[i].removeAttribute("open");
+            }
+          }
+          $('.pdp_view_popup_btn_container button').removeAttr('active');
+          $(this).attr('active', 'true');
+          popup_detail[index].setAttribute('open', 'true');
+        });
+    }
+  })
+  }
+
+   // Product personalization
+
+ $.ajax({
+  type: "GET",
+  url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Validate_Words_-_Sheet1.csv?v=1686812344",
+  dataType: "text",
+  success: function (data) {
+    var Validate_Words = data.split(/\r\n|\n/);
+    console.log(Validate_Words);
+    for (var i = 0; i < Validate_Words.length; i++) {
+      Validate_Words[i] = Validate_Words[i].toUpperCase();
+    }
+    Validate_Words = JSON.stringify(Validate_Words);
+    sessionStorage.setItem('Validate_Words', Validate_Words);
+  }
 });
 
+Shopify.personalizedText = function () {
+  var customPrebookBtn = document.querySelector('.custom-prebook');
+  var customPreorderBtn = document.querySelector('.cutomized-btn');
+  var personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
+  var personalizationModal = document.querySelector('.personilaztion-message-modal');
+  var personalizationModalClose = document.querySelectorAll('.personalized-modal-close');
+  var personalizationSkipBtn = document.querySelector('.skip-personalization');
+  var personalizationSubmitBtn = document.querySelector('.submit-personalization');
+  var prebookBtn = document.querySelector('#AddToCart');
+  var personalizedText = document.querySelector('#personalized-text');
+  var editMessage = document.querySelector(".edit-msg");
+  var msgContainer = document.querySelector(".message-form-container");
+  var customHeading = document.querySelector(".custom-prebook-heading");
+  var customSubHeading = document.querySelector(".custom-prebook-subheading");
+  var editText = document.querySelector(".edit-red");
+  var errorMsg = document.querySelector(".max-limit-reached");
+  var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
+  var personalize_flag = false;
+  var personalized_Data = sessionStorage.getItem('personalized_data');
+  // if (personalized_Data !== null) {
+  //   personalized_Data = JSON.parse(personalized_Data);
+  //   for (let i = 0; i < personalized_Data.length; i++) {
+  //     if (personalized_Data[i].id === sessionStorage.varientID) {
+  //       var line_item = personalized_Data[i].id;
+  //       var pmsg = personalized_Data[i].personalized_text;
+  //       personalize_flag = true;
+  //       break;
+  //     }
+  //   }
+  // }
+
+  //Input validation
+  let currentInputValue = '';
+  let value = "";
+  let str = "";
+
+  var personalized_arr = [];
+  var personalized_data = '';
+  var personalized_varient = '';
+  var imageText = document.querySelector(".personalization-image-txt");
+
+  if (personalize_flag) {
+    personalizationSubmitBtn.classList.remove('visually-hidden')
+  }
+
+
+  if (personalizedText) {
+    // Disable  paste events
+    personalizedText.addEventListener('paste', (e) => { e.preventDefault(); });
+
+    personalizedText.addEventListener("keyup", () => {
+      setTimeout(() => {
+        imageText.innerHTML = currentInputValue !== '' ? `<span>${currentInputValue.toUpperCase()}</span>` : '';
+      }, 2000);
+      if (personalizedText.value.trim().length >= 1) {
+        personalizationSubmitBtn.classList.remove('visually-hidden')
+      } else {
+        personalizationSubmitBtn.classList.add('visually-hidden')
+      }
+    })
+
+    var maxCharacters = 12;
+    personalizedText.addEventListener('input', (e) => {
+      let inputValue = e.target.value;
+      // Remove characters that are not alphanumeric or white space
+      inputValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
+      inputValue = inputValue.toUpperCase();
+      // Limit the input to the maximum number of characters
+      inputValue = inputValue.slice(0, maxCharacters);
+      e.target.value = inputValue;
+    });
+
+    // personalizedText.addEventListener("keydown", (e) => {
+    //   if (e.keyCode == 8) {
+    //     str = personalizedText.value.slice(0, personalizedText.value.length - 1);
+    //     currentInputValue = str;
+    //   }
+    // })
+
+    function openPersonalizationModal() {
+      personalizationModalOverlay.classList.remove('hide')
+      personalizationModal.classList.remove("hide")
+      document.body.classList.add('noScroll');
+      if (personalizedText.value.length === 12) {
+        errorMsg.classList.remove('visually-hidden')
+      } else {
+        errorMsg.classList.add('visually-hidden')
+      }
+    }
+     Shopify.closePersonalizationModal = function() {
+      personalizedText.value = "";
+      personalizationSubmitBtn.classList.add('visually-hidden');
+      personalizationModalOverlay.classList.add('hide');
+      personalizationModal.classList.add("hide");
+      document.body.classList.remove('noScroll');
+      document.querySelector('.personalization-error-mes').innerHTML = '';
+    }
+    function btnClick() {
+      $('#AddToCart')[0].click();
+      personalizedText.value = "";
+      Shopify.closePersonalizationModal();
+    }
+
+    function cartRefresh() {
+      document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 })),
+        document.getElementById("mini-cart").open = !0,
+        $(".search-clear-icon").css('display', 'flex'), setTimeout(function () {
+          $(".header__cart-count").html($("#mini-cart input.cart--count").val());
+          $('.header__cart-count.header__cart-count--floating.bubble-count').text($("#mini-cart input.cart--count").val());
+          cart_bubble();
+        }, 1500)
+    }
+    (() => {
+      if (!personalize_flag) {
+        personalizationModal.classList.add("hide");
+        $('.personilaztion-message-modal .skip-personalization').removeClass('d-none');
+        personalizationModalOverlay.classList.add("hide");
+        personalizedText.value = "";
+      } else {
+        personalizationModal.classList.remove("hide");
+        personalizationModalOverlay.classList.remove("hide");
+        $('.personilaztion-message-modal .skip-personalization').addClass('d-none');
+        currentInputValue = "";
+      }
+    })()
+    function storePersonalizedMessage() {
+      personalized_varient = { "id": sessionStorage.varientID, "personalized_text": personalizedText.value }
+      function isJson(str) {
+        try {
+          JSON.parse(str);
+        } catch (e) {
+          return false;
+        }
+        return true;
+      }
+      if (isJson(sessionStorage.personalized_data)) {
+        personalized_data = JSON.parse(sessionStorage.personalized_data);
+        personalized_data = personalized_data.filter(obj => obj.id !== sessionStorage.varientID);
+        personalized_arr = personalized_data;
+      }
+      personalized_arr.push(personalized_varient);
+      personalized_arr = JSON.stringify(personalized_arr);
+      sessionStorage.setItem('personalized_data', personalized_arr);
+    }
+
+    customPrebookBtn.addEventListener('click', openPersonalizationModal)
+    customPreorderBtn.addEventListener('click', openPersonalizationModal)
+    personalizationModalOverlay.addEventListener('click', Shopify.closePersonalizationModal)
+    personalizationModalClose.forEach((closeBtn) => {
+      closeBtn.addEventListener('click', Shopify.closePersonalizationModal)
+    })
+
+    personalizationSubmitBtn.addEventListener('click', (e) => {
+      let pMessage = personalizedText.value;
+      var variantId = e.target.dataset.varientid;
+      var Validate_Words = sessionStorage.getItem('Validate_Words');
+      Validate_Words = JSON.parse(Validate_Words);
+      for (var i = 0; i < Validate_Words.length; i++) {
+        if (Validate_Words[i] == pMessage) {
+          document.querySelector('.personalization-error-mes').innerHTML = 'Please enter valid word';
+          document.querySelector('.personalization-error-mes').classList.remove('visually-hidden');
+          return;
+        }
+      }
+      if (!personalize_flag && pMessage.trim() !== '' 
+        //  comment the code below if mavin finishes
+          && engravproductArray.length  == 0 
+        ) {
+        // btnClick()
+        var personalization_data = { 'quantity': 1, 'id': variantId, 'properties': { 'PersonalisedMessage': pMessage } };
+        var drawer_element = document.querySelector(".drawer--quick-buy[open], .popover--quick-buy[open]");
+        $.ajax({
+          url: "/cart/add.js",
+          dataType: "json",
+          cache: !1,
+          type: "post",
+          data: personalization_data,
+          success: function (e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+              bubbles: !0
+            })), document.getElementById("mini-cart").open = !0, setTimeout(function () {
+              Shopify.cart_item_count();
+              cart_bubble();
+            }, 1500)
+              if(drawer_element != null) {
+                drawer_element.removeAttribute("open");
+              }
+              Shopify.closePersonalizationModal();
+            storePersonalizedMessage();
+          },
+          error: function (e) {
+            console.warn(e);
+            document.querySelector('.personalization-error-mes').innerHTML = 'Engrave variant is out of stock, please add another variant';
+            document.querySelector('.personalization-error-mes').classList.remove('visually-hidden');
+          }
+        })
+      } else {
+        document.querySelector('.personalization-error-mes').innerHTML = 'only one Engrave variant is allowed <br>  Please checkout current cart first';
+        document.querySelector('.personalization-error-mes').classList.remove('visually-hidden');
+      }
+    })
+
+    document.querySelector('.skip-personalization').addEventListener('click', (e) => {
+      $('#AddToCart')[0].click();
+      personalizedText.value = "";
+      Shopify.closePersonalizationModal()
+    });
+    $('.drawer__close-button').click(function () {
+      Shopify.closePersonalizationModal()
+    });
+  }
+
+}
+
+Shopify.personalizedText();
+Shopify.cartNote = function (text) {
+  $.ajax({
+    url: '/cart/update.js',
+    dataType: 'json',
+    type: 'post',
+    data: { note: text },
+    success: function (cart) {
+      //  console.log(cart);
+    }
+  })
+}
+
+
+var engravproductArray;
+let cartItem;
+// Fetch cart items and filter for personalized messages
+function engrv_cart_update() { 
+  jQuery.getJSON('/cart.js', function(cart) {
+    cartItem = cart.items;
+    engravproductArray = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage !== undefined);
+    if (engravproductArray.length > 0){ Shopify.cartNote('personalised')}else{ Shopify.cartNote('');}
+    //   comment the code below if mavin finishes
+    if(engravproductArray.length && cartItem.length > 1){
+      console.log("cart-popup", engravproductArray.length); $("#cart-popup").addClass("show");
+    } else {
+      console.log("normal-cart", engravproductArray.length, cartItem.length);$("#cart-popup").removeClass("show");
+    }
+  });
+}engrv_cart_update();
+
+Shopify.cartUpdate = function() {
+  engrv_cart_update();
+}
+
+
+// Function to update cart items
+function updateCartItems(updates, successCallback) {
+  $.ajax({
+      type: 'POST',
+      url: '/cart/update.js',
+      data: { updates: updates },
+      dataType: 'json',
+      success: successCallback,
+      error: function(xhr, status, error) {
+          console.error("Error updating cart:", error);
+      }
+  });
+}
+
+function onCheckoutEngrav() {
+  // Create an object with item IDs to be removed set to 0 quantity
+  const updates = {};
+  cartItem.forEach(item => {
+      if (!engravproductArray.includes(item)) {
+          updates[item.id] = 0;
+      }
+  });
+  updateCartItems(updates, function(cart) {
+      console.log("non-engavItems removed successfully!", cart);
+      refreshCartUI()
+  });
+}
+
+function onCheckoutwithoutengrav() {
+  // Create an object with item IDs from engravproductArray set to 0 quantity
+  const updates = {};
+  engravproductArray.forEach(item => {
+      updates[item.id] = 0;
+  });
+  updateCartItems(updates, function(cart) {
+      console.log("engavItems removed successfully!", cart);
+      refreshCartUI()
+  });
+}
+function refreshCartUI() {
+  document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: true }));
+  document.getElementById("mini-cart").open = true;
+  setTimeout(function() {
+    Shopify.cart_item_count();
+    cart_bubble();
+  }, 1500);
+}
+
+  $(document).on("click", ".pdp-custom-cta-button", function(e) {
+    e.preventDefault();
+    let id = $(this).parents('.pdp-inner').find('form [name="id"]').val();
+    id = parseInt(id);
+    let quantity = $(this).attr('data-qty');
+    quantity = parseInt(quantity);
+    $.ajax({
+        url: "/cart/add.js",
+        dataType: "json",
+        cache: !1,
+        type: "post",
+        data: {id: id,quantity: quantity},
+        success: function(e) {
+            document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", {
+                bubbles: !0
+            })), document.getElementById("mini-cart").open = !0,
+                Shopify.cart_item_count()
+        }
+    })
+  });

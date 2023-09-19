@@ -56,7 +56,6 @@
      .product-meta__price-list-container, .price-container {display:none!important;}
     {% endif %}  
   </style>
-
   <section>
     {% comment %}
     ! commented sticky form on New PDP Layout 
@@ -99,45 +98,33 @@
     <img src="{{ product.metafields.custom.productbanner_url | split: "," | first }}"
       style="border-radius:10px;">
     </a>
-    {% elsif section.settings.banners_url != blank %}
-    <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ section.settings.banners_url | split: "," | last }}" class="banner_link">
-      <img src="{{ section.settings.banners_url | split: "," | first }}"
+    {% elsif settings.banners_url != blank %}
+    <a data-title="{{- product.title | split: '|' | first | split: 'boAt' | last -}}"  href="{{ settings.banners_url | split: "," | last }}" class="banner_link">
+      <img src="{{ settings.banners_url | split: "," | first }}"
         style="border-radius:10px;">
       </a>
     {% endif %}
   {% endunless %}
 <!-- PRODUCT TOP PART -->
   <div
-    class="product py-lg-2 {% if product.metafields.custom.productbanner_url != blank or section.settings.banners_url != blank  %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}"
+    class="product py-lg-2 {% if product.metafields.custom.productbanner_url != blank or settings.banners_url != blank  %}mt-3 {% endif %} mt-lg-0 product--thumbnails-{{ section.settings.desktop_thumbnails_position }}"
   >
+    <div class="pdp_left_section">
+      {%- render 'product-info', product: product, update_url: true -%}
+      {%- render 'product-media', product: product -%}
+    </div>
+
+    <div class="pdp_right_section">
+      
+      {%- render 'product-info', product: product, update_url: true -%}
+      {%- render 'product-form', product: product, update_url: update_url -%}
+    </div>
   {% comment %}
   ! Changed the position of 'product-info' & 'product-media' in New PDP Design
   {% endcomment %}
-  {%- render 'product-info', product: product, update_url: true -%}
-  {%- render 'product-form', product: product, update_url: update_url -%}
-  {%- render 'product-media', product: product -%}
-        {% unless product.tags contains "Gift Cards" or product.tags contains "mask" %}
-          {%- if product.tags contains 'flash-sale' and settings.enable_flash_sale -%}
-            <div class="flash-sale-lable d-flex position-relative">
-    
-              <div class="flash_sale">
-                <p class="m-0 text-uppercase flash_text"><span class="thunder"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                      height="16" fill="currentColor" class="bi bi-lightning-fill" viewBox="0 0 16 16">
-                      <path
-                        d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
-                    </svg></span>&nbsp;</p>
-                {% render 'flashsale-timer', title: settings.flash_timer_text, end_date: settings.flash_end_date %}
-              </div>
-              {%- render 'inventory-bar' product: product -%}
-            </div>
-            {%- endif -%}
-      </div>
-
-{% comment %}Start automatically added Judge.me widget
-  {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
-End automatically added Judge.me widget{% endcomment %}
-
-      {% endunless %}
+  
+  
+        
 
               {% if product.metafields.custom.product_highlights %}
                 <div class="price-container product-highlight pt-2 d-lg-none">
@@ -151,61 +138,57 @@ End automatically added Judge.me widget{% endcomment %}
   <div class="section__color-wrapper promise-icons mt-3 mt-lg-5">
     <div class="mySect py-2 container">
       <div class="img-row text-center row justify-content-around pb-1 pb-lg-0" style="max-width: 100%;margin: auto;">
-  
-        <div class="col-2 pipe p-0">
+        
+        <div class="col-1 single_prmoise">
+        </div>
+
+        <div class="col-2 pipe p-0 single_prmoise">
           <div class="row myIconRow">
-            <div class="col-md-4 myIcon">
-              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-1b_6c0c5f7d-a48c-40f5-946d-ea50fb1a9b82_small.png?v=1661243559">
+            <div class="myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_334305_small.svg?v=1682336123">
             </div>
-            <div class="col-md-8 myText">
-              <p class="mb-0 promis_icon_text">{% if product.tags contains "two year warranty" %} 2 {% else %}1{% endif %} Year <br>Warranty</p>
+            <div class="myText">
+              <p class="mb-0 promis_icon_text"><b>{% if product.tags contains "two year warranty" %} 2 {% else %}1{% endif %} Year</b> <br>Warranty</p>
             </div>
           </div>
         </div>
         
-        <div class="col-2 pipe p-0">
+        <div class="col-2 pipe p-0 single_prmoise">
           <div class="row myIconRow">
-            <div class="col-md-4 myIcon">
-              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-3b_b82496cc-51ed-47ad-b27a-a195b646bea1_small.png?v=1661244593">
+            <div class="myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_334304_small.svg?v=1682336123">
             </div>
-            <div class="col-md-8 myText">
-               <p class="mb-0 promis_icon_text">7 Days <br>Replacement</p>
+            <div class="myText">
+               <p class="mb-0 promis_icon_text"><b>7 Days</b> <br>Replacement</p>
             </div>
           </div>
         </div>
                         
-        <div class="col-2 pipe p-0">
+        <div class="col-2 pipe p-0 single_prmoise">
           <div class="row myIconRow">
-            <div class="col-md-4 myIcon">
-              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-2b_dc921406-33cc-4867-846b-293610d69a41_small.png?v=1661244611">
+            <div class="myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_334303_small.svg?v=1682336123">
             </div>
-            <div class="col-md-8 myText">
-              <p class="mb-0 promis_icon_text">Free <br>Shipping</p>
+            <div class="myText">
+              <p class="mb-0 promis_icon_text"><b>Free</b> <br>Shipping</p>
             </div>
           </div>
         </div>
                         
-        <div class="col-2 pipe p-0">
+        <div class="col-2 pipe p-0 single_prmoise">
           <div class="row myIconRow">
-            <div class="col-md-4 myIcon">
-              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-4b_1d19c7fb-8da7-407e-8612-946e106cc508_small.png?v=1661244611">
+            <div class="myIcon">
+              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/Group_334302_small.svg?v=1682336123">
             </div>
-            <div class="col-md-8 myText">
-              <p class="mb-0 promis_icon_text">Secure <br>Checkout</p>
+            <div class="myText">
+              <p class="mb-0 promis_icon_text"><b>GST</b> <br>Billing</p>
             </div>
           </div>
         </div>
-                        
-        <div class="col-2 pipe p-0">
-          <div class="row myIconRow">
-            <div class="col-md-4 myIcon">
-              <img alt="" loading="lazy" src="//cdn.shopify.com/s/files/1/0057/8938/4802/files/icon-black-v1_small.png?v=1661245767">
-            </div>
-            <div class="col-md-8 myText">
-              <p class="mb-0 promis_icon_text">GST <br>Billing</p>
-            </div>
-          </div>
+
+        <div class="col-1 single_prmoise">
         </div>
+
       </div>
     </div>
   </div>
@@ -220,7 +203,7 @@ End automatically added Judge.me widget{% endcomment %}
       {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
 
       {%- if template.suffix == 'quick-buy-drawer' -%}
-        <img loading="lazy" sizes="150px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '150,300,600' %}>
+        <img loading="lazy" sizes="200px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '150,300,600' %}>
       {%- else -%}
         <img loading="lazy" sizes="85px" class="quick-buy-product__image" {% render 'image-attributes', image: featured_media, sizes: '65,130,195' %}>
       {%- endif -%} 
@@ -333,7 +316,6 @@ End automatically added Judge.me widget{% endcomment %}
           {%- render 'icon' with 'close' -%}
         </button>
 
-
       <div class="drawer__content">
         {{- quick_buy_product_info -}}
         {%- render 'product-form', product: product -%}
@@ -358,6 +340,11 @@ End automatically added Judge.me widget{% endcomment %}
     </quick-buy-popover>
   {%- endif -%}
 {%- endunless -%}
+{% if product.tags contains "Developer_Test" and settings.Developer_Test %}
+  <script>
+    location.href = '/pages/404';
+  </script>
+{% endif %}
 <script>
        var _rmData = _rmData || [];
        _rmData.push(['productView', {
@@ -400,16 +387,16 @@ End automatically added Judge.me widget{% endcomment %}
   sessionStorage.setItem('pincode_serviceable','true');
   for (let i = 0; i < response.data.length; i++) {
   if(response.data[i].service_code == 'SR_QUICK'){
-    let super_delivery = response.data[i].max_delivery_date;
+    let super_delivery = response.data[i].min_delivery_date;
     delivery = super_delivery;
     order_cutoff = response.data[i].order_cutoff;
   }
   else if(response.data[i].service_code == 'SR_EXPRESS'){
-    let express_delivery = response.data[i].max_delivery_date;
+    let express_delivery = response.data[i].min_delivery_date;
     delivery = express_delivery;
     order_cutoff = response.data[i].order_cutoff;
   }else if(response.data[i].service_code == 'SR_STANDARD'){
-    let standard_delivery = response.data[i].max_delivery_date;
+    let standard_delivery = response.data[i].min_delivery_date;
     delivery = standard_delivery;
     order_cutoff = response.data[i].order_cutoff; 
   }else if(response.data[i].service_code == 'STD'){
@@ -439,13 +426,13 @@ End automatically added Judge.me widget{% endcomment %}
   }else if(diffDays == 1){
     pincodeDeliveryText = 'Free delivery by tomorrow';
   }else{
-    pincodeDeliveryText = 'Free delivery by '+ day + ', ' + delivery_day + ' ' + month ;
+    pincodeDeliveryText = 'Free delivery by <strong>'+ day + ', ' + delivery_day + ' ' + month + '</strong>' ;
   }
   if( sessionStorage.pincode_serviceable == 'false'){
      pincodeDeliveryText = '';
       order_cutoff = '';
-      sessionStorage.setItem('pincode_error','Pincode not servicable. Try another one.');
-       $('.pincode_error').html('Pincode not servicable. Try another one.');
+      sessionStorage.setItem('pincode_error','Oops, it looks like we don’t ship to your Pincode <br class="mobile-only">Try another one.');
+       $('.pincode_error').html('Oops, it looks like we don’t ship to your Pincode <br class="mobile-only">Try another one.');
   }
   $('.pincode_details h6').html(pincodeDeliveryText);
   sessionStorage.setItem('pincode_delivery_text',pincodeDeliveryText);
@@ -485,14 +472,14 @@ End automatically added Judge.me widget{% endcomment %}
   if(sessionStorage.pincode_error && sessionStorage.pincode_error !== ''){
   $('.pincode_error').html(sessionStorage.pincode_error); 
   }
-  $(document).on('click', '.pincode_checker_input', function(event) {
+  {% comment %} $(document).on('click', '.pincode_checker_input', function(event) {
     if($('.pincode_checker_btn').attr('pincodeAdded') == 'true'){
     pincodeIn.val('');
     pincode_buttom.text('Check'); 
     pincode_buttom.attr('pincodeAdded','false');
     $('.quick-delivery-icon svg .cls-2').removeAttr('style');
     }
-  });   
+  });    {% endcomment %}
   $(document).on('click', '.pincode_checker_btn', function(event) {
   event.preventDefault();
   let pincodeValue = $(this).siblings('.pincode_checker_input').val();
@@ -839,9 +826,22 @@ End automatically added Judge.me widget{% endcomment %}
       "default": true
     },
     {
-      "type": "text",
-      "id": "banners_url",
-      "label": "bannersurl + redirectionurl"
+      "type": "checkbox",
+      "id": "hide_active_offers",
+      "label": "Hide Active Offers",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_payment_rewards",
+      "label": "Hide payment and rewards widget",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_marketplace_widget",
+      "label": "Hide marketplace widget",
+      "default": false
     },
 	{
       "type": "checkbox",
