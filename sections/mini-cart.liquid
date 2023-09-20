@@ -249,7 +249,22 @@
                     {% endfor %}
                   </select>
                 </div>
-
+                {% for p in line_item.properties %}
+                  {% if p.last != blank and p.first == 'PersonalisedMessage' %}
+                    <div class="personalised-msg-container mb-2" line={{ data-loop }}>
+                    <div class="personalised-msg-wrapper">
+                    <div class="personalised-msg-content">
+                      <span> Your Engraving </span>
+                    <p style="font-weight: 700;">{{ p.last | upcase }}</p>
+                    {% comment %} <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
+                    <span class="edit-msg">Edit</span>
+                    </a> {% endcomment %}
+                    </div>
+                    {% comment %} <div class="personalised-msg-free">Free</div> {% endcomment %}
+                    </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
                 <div class="product_item-meta_wrapper">
                   {%- if line_item_properties != blank -%}
                     <div class="product-item-meta__property-list">
@@ -273,17 +288,6 @@
                     {%- assign max_allowed_quantity = line_item.variant.inventory_quantity -%}
                     {%- assign allow_more = false -%}
                   {%- endif -%}
-                  {% if line_item.product.tags contains 'customized' %}
-                    {% for p in line_item.properties %}
-                      {% if p.last != blank and p.first == 'PersonalisedMessage' %}
-                        <line-note class="customise-accordian" line={{ forloop.index }}>
-                          <span>1 customization</span>
-                          <span span class="downArrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="17" viewBox="0 0 24 24"><path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z"/></svg></span>
-                        </line-note>
-                      {% elsif p.last == blank and p.first == 'PersonalisedMessage' %}
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
                   <line-item-quantity class="line-item__quantity">
                     <div class="quantity-selector">
                       <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | minus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button" aria-label="{{ 'cart.general.decrease_quantity' | t | escape }}" data-no-instant>
@@ -317,7 +321,7 @@
                         </a>
                       {% else %}
                         {%- if allow_more -%}
-                          <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666 or line_item.product.tags contains 'customized' %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
+                          <a href="{{ routes.cart_change_url }}?quantity={{ line_item.quantity | plus: 1 }}&line={{ forloop.index }}" class="quantity-selector__button {% if line_item.quantity > 6666 or line_item.variant.option1 contains 'engrav_' %}unusable{% endif %}" aria-label="{{ 'cart.general.increase_quantity' | t | escape }}" data-no-instant>
                             {%- render 'icon' with 'plus' -%}
                           </a>
                         {%- else -%}
@@ -373,22 +377,6 @@
 
               
             {% assign data-loop = forloop.index %}
-      
-              {% for p in line_item.properties %}
-                        {% if p.last != blank and p.first == 'PersonalisedMessage' %}
-                          <div class="personalised-msg-container visibility-hidden" line={{ data-loop }}>
-                          <div class="personalised-msg-wrapper">
-                          <div class="personalised-msg-content">
-                          <p style="font-size:10px; font-weight: 500;padding-top:2px;line-height:normal;">{{ p.last | upcase }}</p>
-                          <a href="{{ line_item.url }}&personalized&line-item={{ data-loop }}&msg={{ p.last }}" tabindex="-1" aria-hidden="true" class="personlized-anchor">
-                          <span class="edit-msg">Edit</span>
-                          </a>
-                          </div>
-                          <div class="personalised-msg-free">Free</div>
-                          </div>
-                          </div>
-                        {% endif %}
-                      {% endfor %}
             </line-item>
           {%- endfor -%}
         {% if total_discount_amount > 0 %}
@@ -621,6 +609,11 @@
               {%- assign product_limit_ok = true -%}
               {%- assign product_flash = false -%}
               {% for line_item in cart.items %}
+                {% comment %}info comment the code below if mavin finishes         {% endcomment %}           
+                 {% if  line_item.variant.option1 contains 'engrav_' and cart.item_count > 1 %} 
+                   {%- assign is_validation_ok = false -%}
+                 {% endif %}
+              
                 {% if line_item.product.tags contains 'prebooking' %} 
                   {%- assign magic_ok = false -%}
                 {% endif %}
@@ -700,7 +693,8 @@
                   {%- endif -%} {%- endcomment -%}
                 </div>
               {% else %}
-          <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
+                 <p class="cart-val-error" style="margin-bottom: 12px !important">{{- qty_error_msg -}}</p>
+                 <style>.button.main-checkout-btn.checkout-button.hide.button.button--primary.button--full {display: none!important;}</style>
               {% endif %}
           {%- else -%}
           <p class="cart-val-error" style="margin-bottom: 12px !important">Your cart value should be less than <strong>Rs.49990/-!</strong> Modify your cart to proceed.</p>
@@ -722,76 +716,41 @@
         <button type="button" data-action="close" class="form__submit form__submit--closer button button--secondary">{{ 'cart.general.order_note_save' | t }}</button>
       </openable-element>
     {%- endif -%}
-    {% comment %} <div class="custom_discount_filder_container">
-      <div class="custom-discount-finder">
-    <div class="discount-finder-header">
-        <button type="button" class="discount-finder-close"
-            onclick="document.querySelector('.custom_discount_filder_container').removeAttribute('open_finder');">
-            <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right_arrow_40x40.jpg" style="transform: rotate(180deg);">
-            </button>
-            <h2 class="custom-discount-finder-heading">Offers for you</h2>
-    </div>
-    <div class="discount_finder_coupon_holder">
-        <div class="finder_discountCode_txtbx_holder">
-            <input type="text" autocomplete="off" spellcheck="false" maxlength="120" placeholder="Type coupon code here" value="" onkeyup id="af_kd_custom_coupon_text" class="afcd_coupon-inputtext af_custom_coupon_text">
-        </div>
-        <div class="discount_finder_btn_holder">
-            <button type="button" id="af_kd_custom_apply_coupon_trigger" class="discount_finder_apply_btn af_kd_df_apply_coupon_btn af_custom_apply_coupon_trigger" onclick="Shopify.DiscountSubmit()">
-                <af class="af_after_loading">Apply</af>
-            </button>
-        </div>
-    </div>
-    <div class="discount_finder_header_field_details">
-    <div id="af_kd_tagged_discounts" class="af_tagged_discounts"></div>
-    <p id="af_kd_discount_response" class="af_discount_response af_stacked_response" style="text-align:left;"></p>
-    <input type="hidden" name="discount" class="af_HiddenDiscount" value="">
-    <div class="afcd_coupon_error"></div>
-    </div>
-    <div class="discount_finder_body">
-      {% for block in section.blocks %}
-        {% case block.type %}
-        {% when 'cart-offer' %}
-          {% if block.settings.code != blank %}
-            <div class="discount_finder_item">
-              <div class="discount_finder_item_details">
-                <div class="discount_finder_item_icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.472" height="23.348"
-                    viewBox="0 0 22.472 23.348">
-                    <defs>
-                      <clipPath id="clip-path">
-                        <rect id="Rectangle_116108" data-name="Rectangle 116108" width="22.472" height="23.348" fill="none" />
-                      </clipPath>
-                    </defs>
-                    <g id="Group_337143" data-name="Group 337143" transform="translate(0 0)">
-                      <g id="Group_337142" data-name="Group 337142" transform="translate(0 0)" clip-path="url(#clip-path)">
-                        <path id="Path_346390" data-name="Path 346390"
-                          d="M21.657,12.326a1.261,1.261,0,0,1,0-1.306l.41-.667a2.747,2.747,0,0,0-1.29-3.973l-.724-.3a1.245,1.245,0,0,1-.769-1.059l-.06-.785a2.757,2.757,0,0,0-3.38-2.457l-.764.181a1.255,1.255,0,0,1-1.244-.4l-.506-.6a2.747,2.747,0,0,0-4.18,0l-.511.6a1.253,1.253,0,0,1-1.245.4l-.764-.181a2.757,2.757,0,0,0-3.38,2.457l-.06.785A1.246,1.246,0,0,1,2.42,6.078l-.724.3A2.748,2.748,0,0,0,.4,10.352l.41.667a1.261,1.261,0,0,1,0,1.306L.4,13a2.75,2.75,0,0,0,1.29,3.974l.724.3a1.241,1.241,0,0,1,.769,1.052l.06.785a2.749,2.749,0,0,0,3.38,2.454l.764-.181a1.267,1.267,0,0,1,1.245.4l.511.6a2.752,2.752,0,0,0,4.179,0l.506-.6a1.267,1.267,0,0,1,1.244-.4l.764.181a2.749,2.749,0,0,0,3.38-2.454l.06-.785a1.241,1.241,0,0,1,.769-1.051l.724-.3a2.72,2.72,0,0,0,.38-.194A2.749,2.749,0,0,0,22.066,13ZM7.382,9.18v0a1,1,0,1,1,1,1,1,1,0,0,1-1-1M8.764,15.2a.728.728,0,0,1-.527.219A.747.747,0,0,1,7.7,14.153l0,0,6-6a.749.749,0,0,1,1.086,1.031l-.028.028Zm5.622-.031a1,1,0,0,1-1-.992v-.007a1,1,0,1,1,1,1"
-                          transform="translate(0 0)" fill="#1a2024" />
-                      </g>
-                    </g>
-                  </svg>
+   {% comment %}info comment this div below if mavin finishes    {% endcomment %}
+      <div id="cart-popup" class="modal" role="dialog">
+        <span class="popover__overlay d-block"></span>
+        <div class="modal-dialog">
+          <div class="modal-content" style="border-radius: 16px 16px 0 0;">
+                <div class="d-flex p-4">
+                  <button type="button"  class="btn mr-2 p-2 label bg-black" onclick="onCheckoutwithoutengrav()">
+                    <span class="btn-text">
+                        <span>Checkout with Other Items</span>
+                        <span class="visually-hidden"></span>
+                    </span>
+                    <span class="d-none pay-opt-icon">
+                      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/upi-icons.svg?v=1650964128">
+                      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow.svg?v=1650964128">
+                    </span>
+                    <div style="display:none"><div class="cir-loader">Loading..</div></div>
+                  </button>
+                  <button type="button" class="btn ml-2 p-2 label bg-black" onclick="onCheckoutEngrav()">
+                    <span class="btn-text">
+                        <span>Checkout with Personalized Order</span>
+                        <span class="visually-hidden"></span>
+                    </span>
+                    <span class="d-none pay-opt-icon">
+                      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/upi-icons.svg?v=1650964128">
+                      <img src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/right-arrow.svg?v=1650964128">
+                    </span>
+                    <div style="display:none"><div class="cir-loader">Loading..</div></div>
+                  </button>
+
                 </div>
-                <div class="discount_finder_item_content">
-                  <h6>{{- block.settings.heading -}}</h6>
-                  <div class="discount_finder_view_products_container">
-                    <span>{{- block.settings.code -}}</span>
-                    {% if block.settings.link != blank %}
-                      <a href="{{- block.settings.link -}}" class="discount_finder_view_product">View Products</a>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-              <div class="discount_finder_item_cta_btn">
-                <button type="button" onclick="CDSetupInit.applyDiscount('{{- block.settings.code -}}')"
-                  class="discount_cta_btn {{ block.settings.code }}"></span>Tap To Apply</span></button>
-              </div>
-            </div>
-          {% endif %}
-        {% endcase %}
-      {% endfor %}
-    </div>
-</div>
-    </div> {% endcomment %}
+          </div>
+        </div>
+
+      </div>
+
   </cart-drawer>
 <script>
   
@@ -957,6 +916,58 @@ $(window).on("load", function(){
         "type": "cart-offer",
         "name": "Discount Codes",
         "settings": [
+      {
+        "type": "select",
+        "id": "cart_discount_type",
+        "label": "Cart discount type",
+        "options": [
+          {
+            "value": "qty",
+            "label": "Quantity based discount"
+          },
+          {
+            "value": "tag",
+            "label": "Product tag based discount"
+          },
+          {
+            "value": "price",
+            "label": "Price based discount"
+          },
+          {
+            "value": "collection",
+            "label": "Collection based discount"
+          },
+          {
+            "value": "tag_with_qty",
+            "label": "Product tag with qty condition offer"
+          },
+          {
+            "value": "collection_with_qty",
+            "label": "Collection with qty condition offer"
+          }
+        ],
+        "default": "qty"
+      },
+        {
+            "type": "number",
+            "id": "cart_qty",
+            "label": "No of quantity in cart for offer"
+          },
+          {
+            "type": "text",
+            "id": "cart_product_tag",
+            "label": "Product tag based offer"
+          },
+          {
+            "type": "number",
+            "id": "cart_min_price",
+            "label": "Minimum cart price for offer"
+          },
+          {
+            "type": "text",
+            "id": "cart_collection",
+            "label": "Collection title for offer"
+          },
           {
             "type": "text",
             "id": "heading",
