@@ -284,18 +284,29 @@ Shopify.variantChange = function (e) {
       var variant_personalization_id = $('.personilaztion-message-modal').attr('data-variant_personalization_id');
         if (variant_personalization_id && variant_personalization_id !== null) {
           variant_personalization_id = JSON.parse(variant_personalization_id);
-          var newvariantObj = {};
-          for (var key in variant_personalization_id) {
+          var newvariantObj = {}; 
+          for (let key in variant_personalization_id) {
             if (key.includes('engrav_')) {
               var originalKey = key.replace('engrav_', '');
-              var engravValue = variant_personalization_id[key];
-              newvariantObj[variant_personalization_id[originalKey]] = engravValue;
+              var engravValue = variant_personalization_id[key].id;
+              var engravValue_avail = variant_personalization_id[key].available;
+              newvariantObj[originalKey] = [engravValue, engravValue_avail];
+            }else{
+
             }
           }
-      
+
+        //  console.log(newvariantObj);
+
           for (var key in newvariantObj) {
-            if (newvariantObj.hasOwnProperty(e.id)) {
-              $('.submit-personalization').attr('data-varientid', newvariantObj[e.id]);
+            if (key == e.option1) {
+              $('.submit-personalization').attr('data-varientid', newvariantObj[key][0]);
+              // console.log(key,newvariantObj[key][0],newvariantObj[key][1]);
+               if (newvariantObj[key][1] === "true"){ 
+                 console.log("engraved_avialable")
+               } else{
+                 console.log("engraved_unavialable")
+                }
               break;
             }
           }
@@ -1779,7 +1790,6 @@ Shopify.personalizedText = function () {
   var personalizationModalOverlay = document.querySelector('.personilaztion-message-modal-overlay');
   var personalizationModal = document.querySelector('.personilaztion-message-modal');
   var personalizationModalClose = document.querySelectorAll('.personalized-modal-close');
-  var personalizationSkipBtn = document.querySelector('.skip-personalization');
   var personalizationSubmitBtn = document.querySelector('.submit-personalization');
   var prebookBtn = document.querySelector('#AddToCart');
   var personalizedText = document.querySelector('#personalized-text');
@@ -1918,16 +1928,15 @@ Shopify.personalizedText = function () {
       sessionStorage.setItem('personalized_data', personalized_arr);
     }
 
-    customPrebookBtn.addEventListener('click', openPersonalizationModal)
-    customPreorderBtn.addEventListener('click', openPersonalizationModal)
+  
     personalizationModalOverlay.addEventListener('click', Shopify.closePersonalizationModal)
     personalizationModalClose.forEach((closeBtn) => {
       closeBtn.addEventListener('click', Shopify.closePersonalizationModal)
     })
-
+    var variantId;
     personalizationSubmitBtn.addEventListener('click', (e) => {
       let pMessage = personalizedText.value;
-      var variantId = e.target.dataset.varientid;
+      variantId = e.target.dataset.varientid;
       var Validate_Words = sessionStorage.getItem('Validate_Words');
       Validate_Words = JSON.parse(Validate_Words);
       for (var i = 0; i < Validate_Words.length; i++) {
@@ -1975,6 +1984,8 @@ Shopify.personalizedText = function () {
       }
     })
 
+     customPrebookBtn.addEventListener('click', openPersonalizationModal)
+     customPreorderBtn.addEventListener('click', openPersonalizationModal)
     document.querySelector('.skip-personalization').addEventListener('click', (e) => {
       $('#AddToCart')[0].click();
       personalizedText.value = "";

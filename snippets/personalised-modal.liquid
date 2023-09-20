@@ -14,13 +14,17 @@
 {% capture variant_personalization_id %}
   {
   {% for variant in product.variants %}
-    "{{ variant.option1 | escape }}" : "{{ variant.id }}"
+    "{{ variant.option1 | escape }}" : {
+      "id": "{{ variant.id }}",
+      "available": "{{ variant.available }}"
+    }
     {% unless forloop.last %}
       ,
     {% endunless %}
   {% endfor %}
   }
 {% endcapture %}
+
 
 {% assign engrav_varient_id = '' %}
 {% for variant in product.variants %}
@@ -109,9 +113,9 @@
   variant_personalization = JSON.stringify(variant_personalization);
   let variant_personalization_id = {{ variant_personalization_id }};
   variant_personalization_id = JSON.stringify(variant_personalization_id);
-  console.log(variant_personalization);
+  // console.log(variant_personalization);
   sessionStorage.setItem('variant_personalization', variant_personalization);
   sessionStorage.setItem('varientID', '{{ product.selected_or_first_available_variant.id }}');
   sessionStorage.setItem('variant_personalization_id', variant_personalization_id);
-  console.log({{ product.selected_or_first_available_variant.id }});
+ // console.log({{ product.selected_or_first_available_variant.id }});
 </script>
