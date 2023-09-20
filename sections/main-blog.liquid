@@ -149,14 +149,14 @@
         </div>
       </link-bar>
     {%- endif -%}
-
-    <div class="container article_container">
-      {% for article in blog.articles %}
-        {% if article.image %}
-          {% assign poster_image = article.image %}
-        {% else %}
-          {% assign poster_image = section.settings.default_image %}
-        {% endif%}
+    {%- paginate blog.articles by section.settings.articles_per_page -%}
+      <div class="container article_container article-list {% if paginate.pages > 1 %} load-more__inner {% endif %}" id="Huratips-Loop">
+        {% for article in blog.articles %}
+          {% if article.image %}
+            {% assign poster_image = article.image %}
+          {% else %}
+            {% assign poster_image = section.settings.default_image %}
+          {% endif%}
           
         <div class="article--item scroller__inner">
           <a href="{{ article.url }}" class="article-item__image-container">
@@ -189,6 +189,7 @@
         </div>
       {% endfor %}
     </div>
+    {%- endpaginate -%}
   {%- endif -%}
 </section>
 
