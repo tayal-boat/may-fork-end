@@ -4,7 +4,9 @@ window.KDHooks.__handleHTMLCreations_af = function (htmlElem, cartSelectorObj) {
   // updating html of discount field
   return kartHtml;
 }
-
+$('.custom_kartdiscount_container.custom_kart_Discount').addClass('discount_applied');
+$('.custom_kartdiscount_container.custom_kart_Discount').addClass('discount_added');
+$('.custom_kart_Discount .discountCode_details_container').addClass('show');
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
   var responseData = '';
@@ -15,7 +17,7 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
     responseData = response;
   }
   if (responseData.is_success) {
-    console.log('responseData', responseData);
+    // console.log('responseData', responseData);
     var total_discount_amount = sessionStorage.total_discount_amount;
     total_discount_amount = parseInt(total_discount_amount);
     var cart_amount = responseData.data.response.formatted_text.total_price;
@@ -90,7 +92,7 @@ function deleteCookie(cookieName) {
 var kdDom = document.querySelector('body');
 kdDom.addEventListener('KD_discountRemoved', (e) => {
   // here we are updating the content of discount field in cart drawer on removal of discount code.
-  $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="af_custom_apply_coupon_trigger btn btn--regular btn--color btn--fill tlblbr0" id="af_custom_apply_coupon_trigger" onclick="CDSetupInit.couponApplyClick(this)" style="margin:0;width:100%;max-height:42px;min-height:42px;padding: 8px 31px;">
+  $('.custom_kartdiscount_container .af_btn_holder').html(`<button type="button" class="af_custom_apply_coupon_trigger btn btn--regular btn--color btn--fill tlblbr0" id="af_custom_apply_coupon_trigger" onclick="Shopify.DiscountSubmit()" style="margin:0;width:100%;max-height:42px;min-height:42px;padding: 8px 31px;">
     <af class="af_after_loading">Apply</af>
   </button>`);
   $('.custom_kartdiscount_container').removeAttr('couponCode');
@@ -99,6 +101,7 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
   $('.discount_finder_item_cta_btn button').removeClass('coupon_applied');
   $('.custom_kartdiscount_container').removeClass('discount_applied');
   $('#af_custom_coupon_text').val(sessionStorage.applyCoupun);
+  $('.discountCode .af_coupon_code').html(sessionStorage.applyCoupun);
   $('.discountCode_details').html(sessionStorage.getItem('applyCoupun_heading'));
   var line_item = document.querySelectorAll('line-item');
   for (var i = 0; i < line_item.length; i++) {
@@ -112,6 +115,10 @@ kdDom.addEventListener('KD_discountRemoved', (e) => {
 kdDom.addEventListener('KD_validDiscountApplied', (e) => {
   // let discountCode = e.detail;
   var preAppliedCoupon = $('.discount_finder_header_field_details .af_coupon_text.af_coupon_code').html();
+  var KartDiscount_detail = JSON.parse(Shopify.KartDiscount_detail);
+  if(KartDiscount_detail[preAppliedCoupon] == undefined) {
+    sessionStorage.setItem('applyCoupun_heading', '');
+  }
   var discount_item = document.querySelectorAll('.discount_finder_item');
   for (var i = 0; i < discount_item.length; i++) {
     discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').classList.contains(preAppliedCoupon) ? [discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').innerHTML = '<span>Applied</span>', discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').classList.add('coupon_applied'), discount_item[i].classList.add('applied_discount')]: [discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').innerHTML = '<span>Tap To Apply</span>', discount_item[i].querySelector('.discount_finder_item_cta_btn .discount_cta_btn').classList.remove('coupon_applied'), discount_item[i].classList.remove('applied_discount') ];
@@ -156,22 +163,23 @@ Shopify.farziDiscount = function (basecode, cartToken) {
   }, 3000);
       }
   }).fail((response) => {
-    console.log(response , 'fail response');
+    // console.log(response , 'fail response');
 });
 }
 
 Shopify.DiscountSubmit = function () {
 // here we are farzi discount api on kart discount field submit
-  $.getJSON('/cart.js', function (cart) {
-    var cartToken = cart.token;
-    var basecode = $('#af_kd_custom_coupon_text').val();
-    console.log(basecode);
-    // Shopify.farziDiscount(basecode, cartToken);
-  })
+let coupon = $('#af_kd_custom_coupon_text').val() != '' ? $('#af_kd_custom_coupon_text').val() : $('.discountCode .af_coupon_code').html();
+  if($('#af_kd_custom_coupon_text').val() != ''){
+    $.getJSON('/cart.js', function (cart) {
+      var cartToken = cart.token;
+       Shopify.farziDiscount(coupon, cartToken);
+    })
+  }
+  
   setTimeout(function () {
-    console.log($('#af_kd_custom_coupon_text').val(), 'basecode');
-    CDSetupInit.applyDiscount($('#af_kd_custom_coupon_text').val());
-    sessionStorage.setItem('applyCoupun',$('#af_kd_custom_coupon_text').val());
+    CDSetupInit.applyDiscount(coupon);
+    sessionStorage.setItem('applyCoupun',coupon);
     // Old kart discount apply function - CDSetupInit.couponApplyClick(this);
   }, 500);
 }
