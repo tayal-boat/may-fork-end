@@ -1,22 +1,15 @@
-{% capture variant_personalization %}
-  {
-  {% for variant in product.variants %}
-    "{{ variant.id }}": "{%- if variant.metafields.custom.personalised_image != blank -%}
-      {{- variant.metafields.custom.personalised_image | strip_newlines -}}
-    {%- else -%}
-      {{- variant.featured_image | image_url -}}{%- endif -%}"
-    {% unless forloop.last %}
-      ,
-    {% endunless %}
-  {% endfor %}
-  }
-{% endcapture %}
+
 {% capture variant_personalization_id %}
   {
   {% for variant in product.variants %}
     "{{ variant.option1 | escape }}" : {
       "id": "{{ variant.id }}",
-      "available": "{{ variant.available }}"
+      "available": "{{ variant.available }}",
+      "image" : "{%- if variant.metafields.custom.personalised_image != blank -%}
+                  {{- variant.metafields.custom.personalised_image | strip_newlines -}}
+                 {%- else -%}
+                  {{- variant.featured_image | image_url -}}
+                {%- endif -%}"
     }
     {% unless forloop.last %}
       ,
@@ -43,7 +36,6 @@
 <div class="personilaztion-message-modal-overlay hide"></div>
 <div
   class="personilaztion-message-modal hide"
-  data-variant_personalization='{{ variant_personalization | strip_newlines }}'
   data-variant_personalization_id='{{ variant_personalization_id | strip_newlines }}'>
   <div class="personilaztion-message-container">
     <div class="message-form-container">
@@ -109,12 +101,9 @@
 
 <script>
   console.log('hii personalization data');
-  let variant_personalization = {{ variant_personalization }};
-  variant_personalization = JSON.stringify(variant_personalization);
   let variant_personalization_id = {{ variant_personalization_id }};
   variant_personalization_id = JSON.stringify(variant_personalization_id);
-  // console.log(variant_personalization);
-  sessionStorage.setItem('variant_personalization', variant_personalization);
+  // console.log(variant_personalization_id);
   sessionStorage.setItem('varientID', '{{ product.selected_or_first_available_variant.id }}');
   sessionStorage.setItem('variant_personalization_id', variant_personalization_id);
  // console.log({{ product.selected_or_first_available_variant.id }});

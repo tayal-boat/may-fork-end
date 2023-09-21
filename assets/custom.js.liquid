@@ -270,47 +270,36 @@ Shopify.variantChange = function (e) {
     $('.pincode_checker_container').show();
 
     // Product personalization
-      var variant_personalization = $('.personilaztion-message-modal').attr('data-variant_personalization');
-        if (variant_personalization && variant_personalization !== null) {
-          variant_personalization = JSON.parse(variant_personalization);
-          // console.log(variant_personalization);
-          for (var key in variant_personalization) {
-            if (variant_personalization.hasOwnProperty(e.id)) {
-              $('.personalization-image-wrapper img').attr('src', variant_personalization[e.id]);
-              break;
-            }
+    var variant_personalization_id = $('.personilaztion-message-modal').attr('data-variant_personalization_id');
+      if (variant_personalization_id && variant_personalization_id !== null) {
+        variant_personalization_id = JSON.parse(variant_personalization_id);
+        var newvariantObj = {}; 
+        for (let key in variant_personalization_id) {
+          if (key.includes('engrav_')) {
+            var originalKey = key.replace('engrav_', '');
+            var engravValue = variant_personalization_id[key].id;
+            var engravValue_avail = variant_personalization_id[key].available;
+            var engravValue_img = variant_personalization_id[key].image;
+            newvariantObj[originalKey] = [engravValue, engravValue_avail, engravValue_img];
           }
         }
-      var variant_personalization_id = $('.personilaztion-message-modal').attr('data-variant_personalization_id');
-        if (variant_personalization_id && variant_personalization_id !== null) {
-          variant_personalization_id = JSON.parse(variant_personalization_id);
-          var newvariantObj = {}; 
-          for (let key in variant_personalization_id) {
-            if (key.includes('engrav_')) {
-              var originalKey = key.replace('engrav_', '');
-              var engravValue = variant_personalization_id[key].id;
-              var engravValue_avail = variant_personalization_id[key].available;
-              newvariantObj[originalKey] = [engravValue, engravValue_avail];
-            }else{
 
-            }
-          }
+       //  console.log(newvariantObj);
 
-        //  console.log(newvariantObj);
-
-          for (var key in newvariantObj) {
-            if (key == e.option1) {
-              $('.submit-personalization').attr('data-varientid', newvariantObj[key][0]);
-              // console.log(key,newvariantObj[key][0],newvariantObj[key][1]);
-               if (newvariantObj[key][1] === "true"){ 
-                 console.log("engraved_avialable")
-               } else{
-                 console.log("engraved_unavialable")
-                }
-              break;
-            }
+        for (var key in newvariantObj) {
+          if (key == e.option1) {
+            $('.submit-personalization').attr('data-varientid', newvariantObj[key][0]);
+            $('.personalization-image-wrapper img').attr('src', newvariantObj[key][2]);
+          //  console.log(key,newvariantObj[key][0],newvariantObj[key][1], newvariantObj[key][2] );
+            if (newvariantObj[key][1] === "true"){ 
+              console.log("engraved_avialable")
+            } else{
+              console.log("engraved_unavialable")
+              }
+            break;
           }
         }
+     }
   }
   $('.pdp-btn-price').remove();
   //let compare_price =  ( ${e.price / 100} *100 ) / ${e.compare_at_price / 100} ;
