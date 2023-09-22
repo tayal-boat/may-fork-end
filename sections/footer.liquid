@@ -627,7 +627,7 @@ $('.menu-panel').each(function(i) {
   </div>
   <script>
     if(window.innerWidth <= 768){
-     const utm_location = window.location.href; 
+     const utm_location = window.location.href.toLowerCase(); 
      console.log(utm_location);
          function setPopupContent(sessionCount) {
             let textContent = "";
@@ -640,22 +640,30 @@ $('.menu-panel').each(function(i) {
             $("#timed-Modal .dynamic-href").attr("href", btnhref).text(btntext);
          }
      if (utm_location.indexOf('utm_source=') !== -1){
-        if(utm_location.indexOf('utm_source=Sprinklr') !== -1){
-          let sessionCount = `Sprinklr`;console.log(sessionCount);
-            setTimeout(function() {
-                if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
-                  setPopupContent(sessionCount); console.log("time")
-                    $("#timed-Modal").addClass("show");$("html").addClass("lock-mobile");
-                }
-            }, 5000);
-        }else{
-          let sessionCount = `telegram`;onsole.log(sessionCount);
+        if(utm_location.indexOf('utm_source=sprinklr') !== -1){
+          let sessionCount = `sprinklr`;console.log(sessionCount);
+            // setTimeout(function() {
+            //     if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
+            //       setPopupContent(sessionCount); console.log("time")
+            //         $("#timed-Modal").addClass("show");$("html").addClass("lock-mobile");
+            //     }
+            // }, 10000);
+        }else if(utm_location.indexOf('utm_source=paytm') !== -1 || utm_location.indexOf('utm_source=phonepe') !== -1){
+            let sessionCount = `telegram`;console.log(sessionCount);
             setTimeout(function() {
                   if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
                     setPopupContent(sessionCount); console.log("time")
                       $("#timed-Modal").addClass("show");$("html").addClass("lock-mobile");
                   }
-            }, 5000);
+            }, 10000);
+        }else{
+          let sessionCount = `default`;console.log(sessionCount);
+            setTimeout(function() {
+                  if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
+                    setPopupContent(sessionCount); console.log("time")
+                      $("#timed-Modal").addClass("show");$("html").addClass("lock-mobile");
+                  }
+            }, 10000);
         }
      }else{
         // Cookie functions
