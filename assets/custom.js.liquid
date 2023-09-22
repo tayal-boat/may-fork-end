@@ -1756,16 +1756,12 @@ Shopify.varient_view_popup = function(varient_id, btn) {
 
 var variant_personalization_id;
 var newvariantObj = {}; 
-function hide_unavilEngravbtn(key){
-  if (newvariantObj[key][1] === "true"){ 
-  //console.log("engraved_avialable")
-  $("a.cutomized-btn, .desktop_reviews_wrapper .offer-callout-simple.personalised, .offer-callout-simple.personalised").removeClass("customized-hidden");
-  $("button#AddToCart").addClass("customized-hidden");
-  } else {
-  //console.log("engraved_unavialable")
-  $("a.cutomized-btn, .desktop_reviews_wrapper .offer-callout-simple.personalised, .offer-callout-simple.personalised").addClass("customized-hidden");
-  $("button#AddToCart").removeClass("customized-hidden");
- }
+
+function hide_unavilEngravbtn(key) {
+  const show = newvariantObj[key][1] === "true";
+  $(".cutomized-btn, .desktop_reviews_wrapper .offer-callout-simple.personalised, .offer-callout-simple.personalised")
+    .toggleClass("customized-hidden", !show);
+  $("#AddToCart").toggleClass("customized-hidden", show);
 }
 
 Shopify.personalizedText = function () {
@@ -1775,29 +1771,11 @@ Shopify.personalizedText = function () {
   var personalizationModal = document.querySelector('.personilaztion-message-modal');
   var personalizationModalClose = document.querySelectorAll('.personalized-modal-close');
   var personalizationSubmitBtn = document.querySelector('.submit-personalization');
-  var prebookBtn = document.querySelector('#AddToCart');
   var personalizedText = document.querySelector('#personalized-text');
-  var editMessage = document.querySelector(".edit-msg");
-  var msgContainer = document.querySelector(".message-form-container");
-  var customHeading = document.querySelector(".custom-prebook-heading");
-  var customSubHeading = document.querySelector(".custom-prebook-subheading");
-  var editText = document.querySelector(".edit-red");
   var errorMsg = document.querySelector(".max-limit-reached");
-  var loaderText = document.querySelector('.cutomized-btn .loader-button__text');
   var personalize_flag = false;
-  // var personalized_Data = sessionStorage.getItem('personalized_data');
-  // if (personalized_Data !== null) {
-  //   personalized_Data = JSON.parse(personalized_Data);
-  //   for (let i = 0; i < personalized_Data.length; i++) {
-  //     if (personalized_Data[i].id === sessionStorage.varientID) {
-  //       var line_item = personalized_Data[i].id;
-  //       var pmsg = personalized_Data[i].personalized_text;
-  //       personalize_flag = true;
-  //       break;
-  //     }
-  //   }
-  // }
   
+
   variant_personalization_id = $('.personilaztion-message-modal').attr('data-variant_personalization_id');
   if (variant_personalization_id && variant_personalization_id !== null) {
     variant_personalization_id = JSON.parse(variant_personalization_id);
@@ -1901,34 +1879,7 @@ Shopify.personalizedText = function () {
       }
     })()
 
-        // function cartRefresh() {
-    //   document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: !0 })),
-    //     document.getElementById("mini-cart").open = !0,
-    //     $(".search-clear-icon").css('display', 'flex'), setTimeout(function () {
-    //       $(".header__cart-count").html($("#mini-cart input.cart--count").val());
-    //       $('.header__cart-count.header__cart-count--floating.bubble-count').text($("#mini-cart input.cart--count").val());
-    //       cart_bubble();
-    //     }, 1500)
-    // }
-    // function storePersonalizedMessage() {
-    //   personalized_varient = { "id": sessionStorage.varientID, "personalized_text": personalizedText.value }
-    //   function isJson(str) {
-    //     try {
-    //       JSON.parse(str);
-    //     } catch (e) {
-    //       return false;
-    //     }
-    //     return true;
-    //   }
-    //   if (isJson(sessionStorage.personalized_data)) {
-    //     personalized_data = JSON.parse(sessionStorage.personalized_data);
-    //     personalized_data = personalized_data.filter(obj => obj.id !== sessionStorage.varientID);
-    //     personalized_arr = personalized_data;
-    //   }
-    //   personalized_arr.push(personalized_varient);
-    //   personalized_arr = JSON.stringify(personalized_arr);
-    //   sessionStorage.setItem('personalized_data', personalized_arr);
-    // }
+
 
   
     personalizationModalOverlay.addEventListener('click', Shopify.closePersonalizationModal)
@@ -1972,6 +1923,7 @@ Shopify.personalizedText = function () {
                 drawer_element.removeAttribute("open");
               }
               Shopify.closePersonalizationModal();
+              engrv_cart_update();
           },
           error: function (e) {
             console.warn(e);
@@ -2028,10 +1980,12 @@ function engrv_cart_update() {
       console.log("normal-cart", engravproductArray.length, cartItem.length);$("#cart-popup").removeClass("show");
     }
   });
+  console.log("empy1"); 
 }engrv_cart_update();
 
-Shopify.cartUpdate = function() { engrv_cart_update(); }
-
+ document.addEventListener('cart:updated', function(event) {
+    engrv_cart_update();
+  });
 
 // Function to update cart items
 function updateCartItems(updates, successCallback) {
