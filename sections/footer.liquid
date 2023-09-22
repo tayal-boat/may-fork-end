@@ -540,42 +540,6 @@
   </div>
 </div>
 </footer>
-{% if section.settings.time_popup  %}
-  <style>
-    #timed-Modal.show .popover__overlay {visibility: visible;opacity: .3; top: 0;z-index:1111;}
-    #timed-Modal{display: block;visibility: hidden;z-index:1000;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1),opacity .6s cubic-bezier(.75,0,.175,1);}
-    #timed-Modal .close{position: absolute;top: 12px;right: 12px;width: 30px;height: 30px;line-height: 24px;opacity: 1;
-      text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
-    }
-    div#timed-Modal.show {transform: translateY(0);visibility: visible;}
-    #timed-Modal .modal-dialog {position: absolute!important;bottom: 0!important;top: unset!important;left: unset!important;transform: translate(0)!important;z-index: 9999;}
-  </style>
-  <div id="timed-Modal" class=" modal fade" role="dialog">
-    <span class="popover__overlay"></span>
-    <div class="modal-dialog w-100 m-0">
-      <div class="modal-content w-100" style="border-radius: 16px 16px 0 0;">
-        <div class="modal-body p-0">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <div class="modal-body-content">
-            <div class="p-4">        
-              <div class="pt-5 mb-0 text-center dynamic-text" style="font-size: 24px;line-height: 1.2;">
-              </div>        
-                <div class="modal-image p-4 px-5" style="font-size: 16px;">
-                  <img class="image-overlay__image_ dynamic-image" style="display:none;max-width: 100%;" alt="Popup Image"/>
-                </div>
-              <a style="color: white;font-weight: 700!important;
-                padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
-                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" class="dynamic-href"
-                    href="" target="_blank">
-                    Yes, Unmask The Offer!
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-{% endif %}
 {%- if section.settings.show_cookie_bar -%}
 <cookie-bar section="{{ section.id }}" hidden class="cookie-bar text--xsmall">
   {%- if section.settings.cookie_bar_title != blank -%}
@@ -614,26 +578,86 @@ $('#btn-back-to-top').click(function () {
   $(window).scrollTop(0);
   clevertap.event.push('Back to Top clicked');
 });
+
+$('.menu-panel').each(function(i) {
+  $(this).find(`.footer__item-title`).click(function() {
+    $(this).find('.expanded').toggleClass('visually-hidden')
+    $(this).find('.collapsed').toggleClass('visually-hidden')
+    $(this).siblings(`.footer__item-mobile`).toggleClass('active')
+    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.footer__item-mobile').removeClass('active')
+    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.expanded').removeClass('visually-hidden')
+    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.collapsed').addClass('visually-hidden')
+  })
+})
 </script>
-
-<script>
-{% comment %} document.getElementById('link_btn_1').click();
-
-function openLink(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName('footer__item-mobile');
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = 'none';
-  }
-  tablinks = document.getElementsByClassName('footer__item-title');
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(' active', '');
-  }
-  document.getElementById(tabName).style.display = 'block';
-  evt.currentTarget.className += ' active';
-} {% endcomment %}
 {% if section.settings.time_popup %}
+    <style>
+    #timed-Modal.show .popover__overlay {visibility: visible;opacity: .3; top: 0;z-index:1111;}
+    #timed-Modal{display: block;visibility: hidden;z-index:1000;padding:0!important;transform:translateY(100%);transition: transform 1s cubic-bezier(.75,0,.175,1),visibility .6s cubic-bezier(.75,0,.175,1),opacity .6s cubic-bezier(.75,0,.175,1);}
+    #timed-Modal .close{position: absolute;top: 12px;right: 12px;width: 30px;height: 30px;line-height: 24px;opacity: 1;
+      text-align: center;font-weight: 400!important;font-size: 30px!important;background: #d9d9d9;padding: 5px;border-radius: 50%!important;
+    }
+    div#timed-Modal.show {transform: translateY(0);visibility: visible;}
+    #timed-Modal .modal-dialog {position: absolute!important;bottom: 0!important;top: unset!important;left: unset!important;transform: translate(0)!important;z-index: 9999;}
+  </style>
+  <div id="timed-Modal" class=" modal fade" role="dialog">
+    <span class="popover__overlay"></span>
+    <div class="modal-dialog w-100 m-0">
+      <div class="modal-content w-100" style="border-radius: 16px 16px 0 0;">
+        <div class="modal-body p-0">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-body-content">
+            <div class="p-4">        
+              <div class="pt-5 mb-0 text-center dynamic-text" style="font-size: 24px;line-height: 1.2;">
+              </div>        
+                <div class="modal-image p-4 px-5" style="font-size: 16px;">
+                  <img class="image-overlay__image_ dynamic-image" style="display:none" alt="Popup Image"/>
+                </div>
+              <a style="color: white;font-weight: 700!important;
+                padding: 1rem;display: block;text-align: center;background-color: #1a2024;margin-bottom:1rem;
+                border-radius: 10px!important;text-transform: capitalize;font-size: 15px!important;" class="dynamic-href"
+                    href="" target="_blank">
+                    Yes, Unmask The Offer!
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
     if(window.innerWidth <= 768){
+     const utm_location = window.location.href; 
+     console.log(utm_location);
+         function setPopupContent(sessionCount) {
+            let textContent = "";
+            let imageSrc = "";
+            let btntext = "";
+            let btnhref = "";
+            switch(sessionCount) { {{ section.settings.popup_text }} }
+            $("#timed-Modal .dynamic-text").html(textContent);
+            $("#timed-Modal .dynamic-image").attr("srcset", imageSrc).css("display", "block");
+            $("#timed-Modal .dynamic-href").attr("href", btnhref).text(btntext);
+         }
+     if (utm_location.indexOf('utm_source=') !== -1){
+        if(utm_location.indexOf('utm_source=Sprinklr') !== -1){
+          let sessionCount = `Sprinklr`;console.log(sessionCount);
+            setTimeout(function() {
+                if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
+                  setPopupContent(sessionCount); console.log("time")
+                    $("#timed-Modal").addClass("show");$("html").addClass("lock-mobile");
+                }
+            }, 5000);
+        }else{
+          let sessionCount = `telegram`;onsole.log(sessionCount);
+            setTimeout(function() {
+                  if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
+                    setPopupContent(sessionCount); console.log("time")
+                      $("#timed-Modal").addClass("show");$("html").addClass("lock-mobile");
+                  }
+            }, 5000);
+        }
+     }else{
         // Cookie functions
         function getCookie(name) {
             var value = "; " + document.cookie;
@@ -651,18 +675,7 @@ function openLink(evt, tabName) {
             document.cookie = name + "=" + value + expires + "; path=/";
         }
     
-        function setPopupContent(sessionCount) {
-            let textContent = "";
-            let imageSrc = "";
-            let btntext = "";
-            let btnhref = "";
-            switch(sessionCount) { {{ section.settings.popup_text }} }
-            $(".dynamic-text").html(textContent);
-            $(".dynamic-image").attr("srcset", imageSrc).css("display", "block");
-            $(".dynamic-href").attr("href", btnhref).text(btntext);
-        }
-    
-        var sessionCount = getCookie("sessionCount") || "0";
+        let sessionCount = getCookie("sessionCount") || "0";
         sessionCount = (parseInt(sessionCount) + 1).toString();
     
         if (sessionStorage.getItem("timed_popUpPoped") === null){         
@@ -672,9 +685,9 @@ function openLink(evt, tabName) {
                 if (!flag) {
                     flag = true;
                     setTimeout(function() {
-                        if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show, .personilaztion-message-modal:not(.hide)').length == 0){
+                        if ($('cart-drawer#mini-cart[open], .login_popup_main_container.show, #myModal.show').length == 0){
                           setPopupContent(sessionCount);
-                          setCookie("sessionCount-{{ shop.name }}", sessionCount, 90); // 90 days for 3 months
+                          setCookie("sessionCount--{{ shop.name }}", sessionCount, 90); // 90 days for 3 months
                           console.log("time")
                             $("#timed-Modal").addClass("show");
                             $("html").addClass("lock-mobile");
@@ -684,28 +697,15 @@ function openLink(evt, tabName) {
                 }
             });
         }
-    
+      }
         $("#timed-Modal .close, #timed-Modal .popover__overlay").click(function(){
             $("#timed-Modal").removeClass("show");
             $("html").removeClass("lock-mobile");
         });
     }
-    
-  {% endif %}
-  
-$('.menu-panel').each(function(i) {
-  $(this).find(`.footer__item-title`).click(function() {
-    $(this).find('.expanded').toggleClass('visually-hidden')
-    $(this).find('.collapsed').toggleClass('visually-hidden')
-    $(this).siblings(`.footer__item-mobile`).toggleClass('active')
-    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.footer__item-mobile').removeClass('active')
-    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.expanded').removeClass('visually-hidden')
-    $(this).closest('.menu-panel').siblings(`.menu-panel`).find('.collapsed').addClass('visually-hidden')
-  })
-})
-
-</script>
-
+ 
+  </script>   
+{% endif %}
 {% schema %}
 {
 "name": "Footer",
