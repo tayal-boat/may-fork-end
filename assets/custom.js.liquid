@@ -1748,13 +1748,9 @@ Shopify.varient_view_popup = function(varient_id, btn) {
   url: "https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Validate_Words_-_Sheet1.csv?v=1686812344",
   dataType: "text",
   success: function (data) {
-    var Validate_Words = data.split(/\r\n|\n/);
+    const Validate_Words = data.split(/\r\n|\n/).map(word => word.toUpperCase());
     console.log(Validate_Words);
-    for (var i = 0; i < Validate_Words.length; i++) {
-      Validate_Words[i] = Validate_Words[i].toUpperCase();
-    }
-    Validate_Words = JSON.stringify(Validate_Words);
-    sessionStorage.setItem('Validate_Words', Validate_Words);
+    sessionStorage.setItem('Validate_Words', JSON.stringify(Validate_Words));
   }
 });
 
