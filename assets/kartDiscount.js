@@ -59,8 +59,8 @@ window.KDHooks.__postDiscountProcess_af = function (response) {
           var itemDiscount = saveAmount * discountPercent;
           var finalItemPrice = itemPrice - itemDiscount;
           finalItemPrice = Shopify.formatMoney(finalItemPrice, Shopify.money_format2);
-          line_item[i].querySelector('.price-list') ? line_item[i].querySelector('.price-list').classList.add('kartDiscount_applied') : '';
-          line_item[i].querySelector('.discount_line_price') ? line_item[i].querySelector('.discount_line_price').innerHTML = finalItemPrice : '';
+          line_item[i] ? line_item[i].querySelector('.price-list') ? line_item[i].querySelector('.price-list').classList.add('kartDiscount_applied') : '' : '';
+          line_item[i] ? line_item[i].querySelector('.discount_line_price') ? line_item[i].querySelector('.discount_line_price').innerHTML = finalItemPrice : '' : '';
         }
 
   } else if (responseData.is_success == false && responseData.code == "516") {
@@ -194,4 +194,4 @@ window.KDHooks.__numberToMoney_af = function (convertedMoneyStr, extras) {
   extras.money_format_first = "₹";
   convertedMoneyStr = extras.money_format_first + finalAmount + extras.money_format_second;
   return convertedMoneyStr; // $1.000,00 | {money_format_first: "$", finalAmount: '1.000,00', money_format_second: '', unconvertedString: '100000'}
-} 
+}   
