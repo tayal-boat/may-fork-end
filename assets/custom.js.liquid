@@ -1749,7 +1749,7 @@ Shopify.varient_view_popup = function(varient_id, btn) {
   dataType: "text",
   success: function (data) {
     const Validate_Words = data.split(/\r\n|\n/).map(word => word.toUpperCase());
-    console.log(Validate_Words);
+    //console.log(Validate_Words);
     sessionStorage.setItem('Validate_Words', JSON.stringify(Validate_Words));
   }
 });
@@ -1772,7 +1772,6 @@ Shopify.personalizedText = function () {
   var personalizationModalClose = document.querySelectorAll('.personalized-modal-close');
   var personalizationSubmitBtn = document.querySelector('.submit-personalization');
   var personalizedText = document.querySelector('#personalized-text');
-  var errorMsg = document.querySelector(".max-limit-reached");
   var personalize_flag = false;
   
 
@@ -1816,41 +1815,26 @@ Shopify.personalizedText = function () {
       setTimeout(() => {
         imageText.innerHTML = currentInputValue !== '' ? `<span>${currentInputValue.toUpperCase()}</span>` : '';
       }, 2000);
-      if (personalizedText.value.trim().length >= 1) {
-        personalizationSubmitBtn.classList.remove('visually-hidden')
-      } else {
-        personalizationSubmitBtn.classList.add('visually-hidden')
-      }
+      personalizationSubmitBtn.classList.toggle('visually-hidden', personalizedText.value.trim().length < 1);
     })
 
-    var maxCharacters = 12;
     personalizedText.addEventListener('input', (e) => {
       let inputValue = e.target.value;
       // Remove characters that are not alphanumeric or white space
-      inputValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
-      inputValue = inputValue.toUpperCase();
+      inputValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '').toUpperCase();
       // Limit the input to the maximum number of characters
-      inputValue = inputValue.slice(0, maxCharacters);
+      inputValue = inputValue.slice(0, 12);
       e.target.value = inputValue;
     });
 
-    // personalizedText.addEventListener("keydown", (e) => {
-    //   if (e.keyCode == 8) {
-    //     str = personalizedText.value.slice(0, personalizedText.value.length - 1);
-    //     currentInputValue = str;
-    //   }
-    // })
 
     function openPersonalizationModal() {
       personalizationModalOverlay.classList.remove('hide')
       personalizationModal.classList.remove("hide")
       document.body.classList.add('noScroll');
-      if (personalizedText.value.length === 12) {
-        errorMsg.classList.remove('visually-hidden')
-      } else {
-        errorMsg.classList.add('visually-hidden')
-      }
     }
+
+
      Shopify.closePersonalizationModal = function() {
       personalizedText.value = "";
       personalizationSubmitBtn.classList.add('visually-hidden');
@@ -1859,6 +1843,7 @@ Shopify.personalizedText = function () {
       document.body.classList.remove('noScroll');
       document.querySelector('.personalization-error-mes').innerHTML = '';
     }
+
     function btnClick() {
       $('#AddToCart')[0].click();
       personalizedText.value = "";
@@ -1879,8 +1864,6 @@ Shopify.personalizedText = function () {
       }
     })()
 
-
-
   
     personalizationModalOverlay.addEventListener('click', Shopify.closePersonalizationModal)
     personalizationModalClose.forEach((closeBtn) => {
@@ -1888,17 +1871,16 @@ Shopify.personalizedText = function () {
     })
 
     personalizationSubmitBtn.addEventListener('click', (e) => {
-      let pMessage = personalizedText.value;
-      let variantId = e.target.dataset.varientid;
-      var Validate_Words = sessionStorage.getItem('Validate_Words');
-      Validate_Words = JSON.parse(Validate_Words);
-      for (var i = 0; i < Validate_Words.length; i++) {
-        if (Validate_Words[i] == pMessage) {
-          document.querySelector('.personalization-error-mes').innerHTML = 'Please enter valid word';
-          document.querySelector('.personalization-error-mes').classList.remove('visually-hidden');
-          return;
-        }
+      const pMessage = personalizedText.value;
+      const variantId = e.target.dataset.varientid;
+      const Validate_Words = JSON.parse(sessionStorage.getItem('Validate_Words'));
+      
+      if (Validate_Words.includes(pMessage)) {
+        document.querySelector('.personalization-error-mes').innerHTML = 'Please enter a valid word';
+        document.querySelector('.personalization-error-mes').classList.remove('visually-hidden');
+        return;
       }
+
       if (!personalize_flag && pMessage.trim() !== '' 
         //  comment the code below if mavin finishes
           && engravproductArray.length  == 0 
@@ -1936,12 +1918,10 @@ Shopify.personalizedText = function () {
       }
     })
 
-     customPrebookBtn.addEventListener('click', openPersonalizationModal)
-     customPreorderBtn.addEventListener('click', openPersonalizationModal)
+    customPrebookBtn.addEventListener('click', openPersonalizationModal)
+    customPreorderBtn.addEventListener('click', openPersonalizationModal)
     document.querySelector('.skip-personalization').addEventListener('click', (e) => {
-      $('#AddToCart')[0].click();
-      personalizedText.value = "";
-      Shopify.closePersonalizationModal()
+      btnClick()
     });
     $('.drawer__close-button').click(function () {
       Shopify.closePersonalizationModal()
@@ -1971,18 +1951,21 @@ function engrv_cart_update() {
   jQuery.getJSON('/cart.js', function(cart) {
     cartItem = cart.items;
     engravproductArray = cartItem.filter(item => item.properties && item.properties.PersonalisedMessage !== undefined);
-    if (engravproductArray.length > 0){ Shopify.cartNote('personalised')}else{ Shopify.cartNote('');}
-    //   comment the code below if mavin finishes
-    if(engravproductArray.length && cartItem.length > 1){
-      console.log("cart-popup", engravproductArray.length); $("#cart-popup").addClass("show");
-    } else {
-      console.log("normal-cart", engravproductArray.length, cartItem.length);$("#cart-popup").removeClass("show");
-    }
+      if (engravproductArray.length > 0){ 
+        Shopify.cartNote('personalised');
+        //   comment the code below if mavin finishes
+        if(cartItem.length > 1){
+          console.log("cart-popup", engravproductArray.length); $("#cart-popup").addClass("show");
+        } else {
+          console.log("normal-cart", engravproductArray.length, cartItem.length);$("#cart-popup").removeClass("show");
+        }
+      }else{
+       Shopify.cartNote('');
+      }
   });
 }engrv_cart_update()
 
-Shopify.customCartUpdate = function(cart) {console.log(cart); engrv_cart_update(); }
-
+Shopify.customCartUpdate = function(cart) {engrv_cart_update(); }
 
 // Function to update cart items
 function updateCartItems(updates, successCallback) {
@@ -1998,31 +1981,33 @@ function updateCartItems(updates, successCallback) {
   });
 }
 
+
 function onCheckoutEngrav() {
-  // Create an object with item IDs to be removed set to 0 quantity
   const updates = {};
-  cartItem.forEach(item => {
-      if (!engravproductArray.includes(item)) {
-          updates[item.id] = 0;
-      }
+  // Create an object with item IDs to be removed set to 0 quantity
+  cartItem.forEach(item => { 
+    if (!engravproductArray.includes(item)) {
+       updates[item.id] = 0;
+    } 
   });
   updateCartItems(updates, function(cart) {
-      console.log("non-engavItems removed successfully!", cart);
-      refreshCartUI()
+      console.log("non-engavItems removed successfully!");
+      refreshCartUI();
   });
 }
 
 function onCheckoutwithoutengrav() {
-  // Create an object with item IDs from engravproductArray set to 0 quantity
   const updates = {};
+  // Create an object with item IDs from engravproductArray set to 0 quantity
   engravproductArray.forEach(item => {
-      updates[item.id] = 0;
+    updates[item.id] = 0;
   });
   updateCartItems(updates, function(cart) {
-      console.log("engavItems removed successfully!", cart);
+      console.log("engavItems removed successfully!");
       refreshCartUI()
   });
 }
+
 function refreshCartUI() {
   document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles: true }));
   document.getElementById("mini-cart").open = true;
