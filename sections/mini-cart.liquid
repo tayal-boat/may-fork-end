@@ -8,9 +8,22 @@
         {%- render 'icon' with 'close' -%}
       </button>
     </header>
+
     {% for line_item in cart.items %}
       {% assign item_type = '' %}
       {% assign purple_msg_check = false %}
+      {% assign bogo_msg_check = "" %}
+      {% assign bogo_tag_check = "" %}
+
+        {% comment %} info: For BOGO free with 2For1 code {% endcomment %}
+        {% assign bogo_tag_check = line_item.product.tags | join: ' ' %}
+        {% if line_item.product.tags contains 'meta-label-Buy 1 Get 1 Free with 2FOR1' %}
+          
+          {% assign bogo_msg_check = "show" %}
+          
+          {% break %}
+        {%- endif -%}
+
         {% if line_item.product.tags contains 'IPurpleU' %}
           {% assign purple_msg_check = true %}
           
@@ -24,6 +37,7 @@
           {% assign item_type = 'TWS' %}
           {% break %}
         {%- endif -%}
+
     {% endfor %}
   <p class="drawer__title heading h6" style="padding: 12px 12px;color: #2B2B2B;font-weight: 600;font-size: 20px;">
     
@@ -384,18 +398,29 @@
             {% assign total_discount_amount = section.settings.discount_code_max_amount %}
           {% endif %}
           <p class="discount_details" style="display: none;" data-discountAmount="{{ total_discount_amount }}" data-discountCode="{{ section.settings.discount_code }}"></p>
-            {% if section.settings.show_discount_msg %}
-              <small class="discount-info">
-              Get flat <b>₹{{- total_discount_amount -}}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
-              </small>
-            {% endif %}
-         {% else %}
+          {% if section.settings.show_discount_msg %}
+            <small class="discount-info">
+            Get flat <b>₹{{- total_discount_amount -}}</b> Off by using <span class="cart-code" style="font-weight:bold">{{ section.settings.discount_code }}</span>
+            </small>
+          {% endif %}
+
+          {%- if bogo_msg_check != blank -%}
+            <small class="discount-info" style="background:#4c218c;">Please add minimum 2 or more units of Wave pro & use <b>2FOR1</b> code on checkout for offer</small>
+          {% endif %}
+
+        {% else %}
           {%- if purple_msg_check == true -%}
                 {% comment %} <small class="discount-info" style="background:#4c218c;">Get flat <b>₹500</b> off by using <b>IPURPLEYOU</b></small> {% endcomment %}
           {% else %}
             
           {% endif %}
-       {% endif %}
+
+          {%- if bogo_msg_check != blank -%}
+            <small class="discount-info" style="background:#4c218c;">Please add minimum 2 or more units of Wave pro & use <b>2FOR1</b> code on checkout for offer</small>
+          {% endif %}
+
+        {% endif %}
+
         </form>
 
       {% comment %} info: No more required on 2.0 {% endcomment %}
