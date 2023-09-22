@@ -4,9 +4,7 @@ window.KDHooks.__handleHTMLCreations_af = function (htmlElem, cartSelectorObj) {
   // updating html of discount field
   return kartHtml;
 }
-$('.custom_kartdiscount_container.custom_kart_Discount').addClass('discount_applied');
-$('.custom_kartdiscount_container.custom_kart_Discount').addClass('discount_added');
-$('.custom_kart_Discount .discountCode_details_container').addClass('show');
+
 window.KDHooks.__postDiscountProcess_af = function (response) {
   // Updating html of discount field on the basis of applied discount and updating responce of kart discount api for discount capping.
   var responseData = '';
@@ -126,7 +124,7 @@ kdDom.addEventListener('KD_validDiscountApplied', (e) => {
 
   // $('.discount_finder_item_cta_btn .' + preAppliedCoupon).html('<span>Applied</span>');
   // $('.discount_finder_item_cta_btn .' + preAppliedCoupon).addClass('coupon_applied');
-  // $('.custom_discount_filder_container').removeAttr('open_finder');
+   $('.custom_discount_filder_container').removeAttr('open_finder');
 });
 
 Shopify.farziDiscount = function (basecode, cartToken) {
