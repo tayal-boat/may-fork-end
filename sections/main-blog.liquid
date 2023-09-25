@@ -1,3 +1,4 @@
+{% comment %} !important info: This section is being used on /blogs page {% endcomment %}
 <style>
   .main-banner-img{margin-bottom:2rem;}
   .shopify-section.bootstrap-carousel .MultiCarousel .leftLst, .shopify-section.bootstrap-carousel .MultiCarousel .rightLst{display: none !important;}
@@ -149,14 +150,14 @@
         </div>
       </link-bar>
     {%- endif -%}
-
-    <div class="container article_container">
-      {% for article in blog.articles %}
-        {% if article.image %}
-          {% assign poster_image = article.image %}
-        {% else %}
-          {% assign poster_image = section.settings.default_image %}
-        {% endif%}
+    {%- paginate blog.articles by 1000000 -%}
+      <div class="container article_container {% if paginate.pages > 1 %} load-more__inner {% endif %}" id="Huratips-Loop">
+        {% for article in blog.articles %}
+          {% if article.image %}
+            {% assign poster_image = article.image %}
+          {% else %}
+            {% assign poster_image = section.settings.default_image %}
+          {% endif%}
           
         <div class="article--item scroller__inner">
           <a href="{{ article.url }}" class="article-item__image-container">
@@ -189,6 +190,16 @@
         </div>
       {% endfor %}
     </div>
+    {% if paginate.pages > 1 %}
+      <input type="hidden" value="{{ paginate.next.url }}" data-next-url>
+      <input type="hidden" value="{{ paginate.pages }}" data-total-pages>
+        <input type="hidden" value="{{ paginate.current_page  }}" data-current-page>
+        <div class="load-more_wrap">
+          <button class="btn js-load-more">
+            <span class="load-more-icon" loader> <img class="lazyload" src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/final-loader.gif?v=1670845994" alt="Load More" style="width: 50px;" /></span>
+          </button>
+      {%- endif -%}
+    {%- endpaginate -%}
   {%- endif -%}
 </section>
 
